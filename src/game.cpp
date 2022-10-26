@@ -22,9 +22,9 @@ Game::~Game()
 	SDL_Quit();
 }
 
-bool Game::initialize()
+bool Game::initialize( const char* title )
 {
-	_window = new Window( "my-cpp-game" );
+	_window = new Window( title );
 	_render_batch = new RenderBatch();
 	return _window->initialize() && _render_batch->initialize( _window );
 }

@@ -38,7 +38,7 @@ public:
 	Game& operator=( Game&& ) = delete;
 	~Game();
 
-	bool initialize();
+	bool initialize( const char* title = "my-cpp-game" );
 	void loop();
 
 	void add_entity( Entity* entity );

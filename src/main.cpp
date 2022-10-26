@@ -11,7 +11,7 @@ int main( int arg_count, char** args )
 {
 	//  create game
 	auto& game = Game::instance();
-	if ( !game.initialize() )
+	if ( !game.initialize( "my-engine-demo" ) )
 	{
 		return 0;
 	}
