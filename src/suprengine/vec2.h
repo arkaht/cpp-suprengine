@@ -1,0 +1,37 @@
+#pragma once
+
+namespace suprengine
+{
+	struct Vec2
+	{
+		static const Vec2 zero, one;
+
+		float x { 0.0f }, y { 0.0f };
+
+		Vec2& operator+=( const Vec2& v )
+		{
+			x += v.x;
+			y += v.y;
+			return *this;
+		}
+
+		Vec2 operator-( const Vec2& v )
+		{
+			return Vec2 { x - v.x, y - v.y };
+		}
+
+		Vec2 operator*( const Vec2& v )
+		{
+			return Vec2 { x * v.x, y * v.y };
+		}
+		Vec2 operator*( float m )
+		{
+			return Vec2 { x * m, y * m };
+		}
+
+		bool operator==( const Vec2& v )
+		{
+			return x == v.x && y == v.y;
+		}
+	};
+}
