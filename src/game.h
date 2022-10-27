@@ -46,5 +46,6 @@ public:
 
 	Window* get_window() const { return _window; }
 	RenderBatch* get_render_batch() const { return _render_batch; }
+	Timer* get_timer() { return &_timer; }
 };
 

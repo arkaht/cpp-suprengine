@@ -148,8 +148,6 @@ void Game::update( float dt )
 void Game::render()
 {
 	_render_batch->begin_render();
-
 	_render_batch->render();
-
 	_render_batch->end_render();
 }

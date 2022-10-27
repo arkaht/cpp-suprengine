@@ -15,7 +15,7 @@ namespace suprengine
 
 		void render() override
 		{
-			Rect render_rect = rect.add_pos( owner->transform->pos );
+			Rect render_rect = owner->transform->get_rect( rect );
 			render_batch->draw_rect( render_rect, modulate );
 		}
 	};

@@ -2,7 +2,7 @@
 #include "transform2.fwd.h"
 #include "../component.h"
 
-#include "suprengine/vec2.h"
+#include "suprengine/rect.h"
 
 namespace suprengine
 {
@@ -23,6 +23,11 @@ namespace suprengine
 		{
 			pos += Vec2 { 100.0f * dt, 50.0f * dt };
 			printf( "x:%f; y:%f\n", pos.x, pos.y );
+		}
+
+		Rect get_rect( const Rect& rect )
+		{
+			return { rect.x * size.x + pos.x, rect.y * size.y + pos.y, rect.w * size.x, rect.h * size.y };
 		}
 	};
 }
