@@ -6,9 +6,18 @@
 #include "ecs/entity.fwd.h"
 
 #include <vector>
+#include <unordered_set>
 
 namespace suprengine
 {
+	enum class KeyState
+	{
+		UP,
+		DOWN,
+		PRESSED,
+		RELEASED,
+	};
+
 	class Game
 	{
 	private:
@@ -24,6 +33,9 @@ namespace suprengine
 		Window* _window { nullptr };
 		RenderBatch* _render_batch { nullptr };
 		Timer _timer {};
+
+		std::map<SDL_Scancode, KeyState> keystates;
+		std::unordered_set<SDL_Scancode> survey_keys;
 	public:
 		//  ensure singleton
 		static Game& instance()
@@ -43,6 +55,12 @@ namespace suprengine
 
 		void add_entity( Entity* entity );
 		void remove_entity( Entity* entity );
+
+		bool is_key_pressed( SDL_Scancode code );
+		bool is_key_released( SDL_Scancode code );
+		bool is_key_down( SDL_Scancode code );
+		bool is_key_up( SDL_Scancode code );
+		KeyState get_key_state( SDL_Scancode code );
 
 		Window* get_window() const { return _window; }
 		RenderBatch* get_render_batch() const { return _render_batch; }

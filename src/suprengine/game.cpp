@@ -92,23 +92,82 @@ void Game::remove_entity( Entity* entity )
 	}
 }
 
+bool Game::is_key_pressed( SDL_Scancode code )
+{
+	return get_key_state( code ) == KeyState::PRESSED;
+}
+
+bool Game::is_key_released( SDL_Scancode code )
+{
+	return get_key_state( code ) == KeyState::RELEASED;
+}
+
+bool Game::is_key_down( SDL_Scancode code )
+{
+	KeyState state = get_key_state( code );
+	return state == KeyState::DOWN || state == KeyState::PRESSED;
+}
+
+bool Game::is_key_up( SDL_Scancode code )
+{
+	KeyState state = get_key_state( code );
+	return state == KeyState::UP || state == KeyState::RELEASED;
+}
+
+KeyState Game::get_key_state( SDL_Scancode code )
+{
+	if ( keystates.find( code ) == keystates.end() ) return KeyState::UP;
+	return keystates[code];
+}
 
 void Game::process_input()
 {
+	//  survey keystates
+	//  NOTE: subject to key repeat :(
+	if ( !survey_keys.empty() )
+	{
+		for ( auto itr = survey_keys.begin(); itr != survey_keys.end(); itr++ )
+		{
+			SDL_Scancode code = *itr;
+			switch ( get_key_state( code ) )
+			{
+			case KeyState::PRESSED:
+				keystates[code] = KeyState::DOWN;
+				break;
+			case KeyState::RELEASED:
+				keystates[code] = KeyState::UP;
+				break;
+			}
+		}
+		survey_keys.clear();
+	}
+
+	//  quit game
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
 	{
+		SDL_Scancode code;
+
 		switch ( event.type )
 		{
+		case SDL_KEYUP:
+			code = event.key.keysym.scancode;
+			keystates[code] = KeyState::RELEASED;
+			survey_keys.insert( code );
+			break;
+		case SDL_KEYDOWN:
+			code = event.key.keysym.scancode;
+			keystates[event.key.keysym.scancode] = KeyState::PRESSED;
+			survey_keys.insert( code );
+			break;
 		case SDL_QUIT:
 			_is_running = false;
 			break;
 		}
 	}
-
-	auto keyboard_state = SDL_GetKeyboardState( nullptr );
+	
 	//  quit on escape
-	if ( keyboard_state[SDL_SCANCODE_ESCAPE] )
+	if ( is_key_pressed( SDL_SCANCODE_ESCAPE ) )
 	{
 		_is_running = false;
 	}
