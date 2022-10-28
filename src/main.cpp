@@ -47,6 +47,14 @@ int main( int arg_count, char** args )
 	anim_sprite->dest = { 0.0f, 0.0f, 16.0f, 16.0f };
 	anim_sprite->set_fps( 16 );
 
+	SDL_Surface* surface = Texture::load_surface( "atlas.png" );
+	printf( "%i\n", Texture::get_pixel_at( surface, 1, 1 ) );
+	printf( "%i\n", Texture::get_pixel_at( surface, 5, 1 ) );
+
+	Color color = Texture::get_pixel_color_at( surface, 169, 18 );
+	printf( "%i; %i; %i; %i\n", color.r, color.g, color.b, color.a );
+	SDL_FreeSurface( surface );
+
 	//  game loop
 	game.loop();
 

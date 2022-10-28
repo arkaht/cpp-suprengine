@@ -18,6 +18,9 @@ namespace suprengine
 
 		static Texture* load( RenderBatch* render_batch, const std::string& filename );
 		static SDL_Surface* load_surface( const std::string& filename );
+		
+		static uint32_t get_pixel_at( SDL_Surface* surface, int x, int y );
+		static Color get_pixel_color_at( SDL_Surface* surface, int x, int y );
 
 		std::string get_filename() const { return filename; }
 		Vec2 get_size() const { return size; };
