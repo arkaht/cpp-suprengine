@@ -149,6 +149,7 @@
     <ClCompile Include="src\suprengine\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\demos\pacman\main.h" />
     <ClInclude Include="src\suprengine\assets.h" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\anim_sprite_renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\sprite_renderer.hpp" />

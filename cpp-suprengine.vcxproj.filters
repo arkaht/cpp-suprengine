@@ -122,6 +122,9 @@
     <ClInclude Include="src\suprengine\ecs\components\renderers\anim_sprite_renderer.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="src\demos\pacman\main.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

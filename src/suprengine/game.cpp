@@ -27,9 +27,18 @@ Game::~Game()
 
 bool Game::initialize( const char* title, int width, int height )
 {
+	//  init window
 	_window = new Window( title, width, height );
+	if ( !_window->initialize() ) return false;
+
+	//  init render batch
 	_render_batch = new RenderBatch();
-	return _window->initialize() && _render_batch->initialize( _window );
+	if ( !_render_batch->initialize( _window ) ) return false;
+
+	//  init assets
+	Assets::set_render_batch( _render_batch );
+
+	return true;
 }
 
 void Game::loop()
