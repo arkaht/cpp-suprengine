@@ -6,7 +6,7 @@ namespace suprengine
 {
 	struct Vec2
 	{
-		static const Vec2 zero, one;
+		static const Vec2 zero, one, up, down, left, right;
 
 		float x { 0.0f }, y { 0.0f };
 
