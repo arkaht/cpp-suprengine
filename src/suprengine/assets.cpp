@@ -27,4 +27,5 @@ void Assets::release()
 
 		delete texture;
 	}
+	textures.clear();
 }

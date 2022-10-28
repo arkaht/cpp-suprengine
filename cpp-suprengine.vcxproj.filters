@@ -119,6 +119,9 @@
     <ClInclude Include="src\suprengine\texture.fwd.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="src\suprengine\ecs\components\renderers\anim_sprite_renderer.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
