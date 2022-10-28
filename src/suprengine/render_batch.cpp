@@ -51,9 +51,9 @@ void RenderBatch::end_render()
 	SDL_RenderPresent( _sdl_renderer );
 }
 
-void RenderBatch::draw_rect( const Rect& rect, const Color& _color )
+void RenderBatch::draw_rect( const Rect& rect, const Color& color )
 {
-	SDL_SetRenderDrawColor( _sdl_renderer, _color.r, _color.g, _color.b, _color.a );
+	SDL_SetRenderDrawColor( _sdl_renderer, color.r, color.g, color.b, color.a );
 
 	auto sdl_rect = rect.to_sdl_rect();
 	SDL_RenderFillRect( _sdl_renderer, &sdl_rect );
@@ -61,6 +61,7 @@ void RenderBatch::draw_rect( const Rect& rect, const Color& _color )
 
 void RenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color )
 {
+	SDL_Texture* sdl_texture = texture->get_sdl_texture();
 	SDL_Rect src = src_rect.to_sdl_rect(), dest = dest_rect.to_sdl_rect();
 	SDL_Point center = ( origin * texture->get_size() ).to_sdl_point();
 
@@ -70,10 +71,13 @@ void RenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, con
 		dest.x -= center.x, dest.y -= center.y;
 	}
 
+	//  modulate color
+	SDL_SetTextureColorMod( sdl_texture, color.r, color.g, color.b );
+
 	//  draw texture
 	SDL_RenderCopyEx(
 		_sdl_renderer,
-		texture->get_sdl_texture(),
+		sdl_texture,
 		&src,
 		&dest,
 		rotation,

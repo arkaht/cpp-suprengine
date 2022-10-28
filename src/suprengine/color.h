@@ -13,11 +13,16 @@ namespace suprengine
 		static Color from_pixel( uint32_t pixel )
 		{
 			return Color {
-				static_cast<unsigned char>( pixel ),
-				static_cast<unsigned char>( pixel >> 8 ),
-				static_cast<unsigned char>( pixel >> 16 ),
-				static_cast<unsigned char>( pixel >> 24 )
+				static_cast<uint8_t>( pixel ),
+				static_cast<uint8_t>( pixel >> 8 ),
+				static_cast<uint8_t>( pixel >> 16 ),
+				static_cast<uint8_t>( pixel >> 24 )
 			};
+		}
+
+		bool operator==( const Color& c ) const
+		{
+			return r == c.r && g == c.g && b == c.b && a == c.a;
 		}
 
 		SDL_Color to_sdl_color()

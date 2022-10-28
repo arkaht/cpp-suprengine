@@ -42,7 +42,7 @@ int main( int arg_count, char** args )
 
 	Entity* ghost_frightened_anim = new Entity();
 	ghost_frightened_anim->transform->pos = { 160.0f + 48.0f, 160.0f + 24.0f };
-	anim_sprite = new AnimSpriteRenderer( ghost_frightened_anim, Assets::get_texture( "atlas.png" ) );
+	anim_sprite = new AnimSpriteRenderer( ghost_frightened_anim, Assets::get_texture( "atlas.png" ), 6, Color::green );
 	anim_sprite->gen_frames( Rect { 128.0f, 16.0f, 64.0f, 16.0f }, Vec2 { 16.0f, 16.0f } );
 	anim_sprite->dest = { 0.0f, 0.0f, 16.0f, 16.0f };
 	anim_sprite->set_fps( 16 );
