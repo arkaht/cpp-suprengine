@@ -1,7 +1,9 @@
 #pragma once
-#include "../component.h"
 #include "renderer.fwd.h"
-#include "suprengine/render_batch.h"
+
+#include <suprengine/ecs/entity.h>
+#include <suprengine/ecs/components/transform2.hpp>
+#include <suprengine/render_batch.h>
 
 namespace suprengine
 {

@@ -1,6 +1,8 @@
 #include "game.h"
-#include "suprengine/ecs/entity.h"
-#include "suprengine/ecs/components/transform2.hpp"
+#include "ecs/entity.h"
+#include "ecs/components/transform2.hpp"
+
+using namespace suprengine;
 
 Game::~Game()
 {
@@ -10,21 +12,22 @@ Game::~Game()
 		delete entities.back();
 	}
 
+	//  release assets
+	Assets::release();
+
 	//  release renderer
-	_render_batch->close();
 	delete _render_batch;
 
 	//  release window
-	_window->close();
 	delete _window;
 
 	//  quit sdl
 	SDL_Quit();
 }
 
-bool Game::initialize( const char* title )
+bool Game::initialize( const char* title, int width, int height )
 {
-	_window = new Window( title );
+	_window = new Window( title, width, height );
 	_render_batch = new RenderBatch();
 	return _window->initialize() && _render_batch->initialize( _window );
 }

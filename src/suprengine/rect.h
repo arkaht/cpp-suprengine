@@ -23,7 +23,7 @@ namespace suprengine
 			return *this;
 		}
 
-		SDL_Rect to_sdl_rect()
+		SDL_Rect to_sdl_rect() const
 		{
 			return SDL_Rect {
 				static_cast<int>( x ),

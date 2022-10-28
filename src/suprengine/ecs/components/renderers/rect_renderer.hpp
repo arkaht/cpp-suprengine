@@ -1,7 +1,5 @@
 #pragma once
 #include "renderer.h"
-#include "transform2.hpp"
-#include "suprengine/rect.h"
 
 namespace suprengine
 {

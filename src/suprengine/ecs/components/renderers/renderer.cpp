@@ -1,5 +1,6 @@
 #include "renderer.h"
-#include "../entity.h"
+
+#include <suprengine/ecs/entity.h>
 
 using namespace suprengine;
 

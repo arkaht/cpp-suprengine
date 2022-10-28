@@ -5,6 +5,13 @@ using namespace suprengine;
 Window::Window( const char* title ) : _title( title ) {}
 Window::Window( const char* title, const int width, const int height ) : _title( title ), _width( width ), _height( height ) {}
 
+Window::~Window()
+{
+	if ( _sdl_window == nullptr ) return;
+
+	SDL_DestroyWindow( _sdl_window );
+}
+
 bool Window::initialize()
 {
 	if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
@@ -21,9 +28,4 @@ bool Window::initialize()
 	}
 
 	return true;
-}
-
-void Window::close()
-{
-	SDL_DestroyWindow( _sdl_window );
 }

@@ -134,26 +134,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\suprengine\assets.cpp" />
+    <ClCompile Include="src\suprengine\game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\suprengine\ecs\component.cpp" />
     <ClCompile Include="src\suprengine\color.cpp" />
-    <ClCompile Include="src\suprengine\ecs\components\renderer.cpp" />
+    <ClCompile Include="src\suprengine\ecs\components\renderers\renderer.cpp" />
     <ClCompile Include="src\suprengine\ecs\entity.cpp" />
     <ClCompile Include="src\suprengine\render_batch.cpp" />
     <ClCompile Include="src\suprengine\timer.cpp" />
     <ClCompile Include="src\suprengine\vec2.cpp" />
     <ClCompile Include="src\suprengine\window.cpp" />
     <ClCompile Include="src\suprengine\logger.cpp" />
+    <ClCompile Include="src\suprengine\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\game.h" />
+    <ClInclude Include="src\suprengine\assets.h" />
+    <ClInclude Include="src\suprengine\ecs\components\renderers\sprite_renderer.hpp" />
+    <ClInclude Include="src\suprengine\texture.fwd.h" />
+    <ClInclude Include="src\suprengine\game.h" />
     <ClInclude Include="src\suprengine\color.h" />
     <ClInclude Include="src\suprengine\ecs\component.fwd.h" />
     <ClInclude Include="src\suprengine\ecs\component.h" />
-    <ClInclude Include="src\suprengine\ecs\components\rect_renderer.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\renderer.fwd.h" />
-    <ClInclude Include="src\suprengine\ecs\components\renderer.h" />
+    <ClInclude Include="src\suprengine\ecs\components\renderers\rect_renderer.hpp" />
+    <ClInclude Include="src\suprengine\ecs\components\renderers\renderer.fwd.h" />
+    <ClInclude Include="src\suprengine\ecs\components\renderers\renderer.h" />
     <ClInclude Include="src\suprengine\ecs\components\transform2.fwd.h" />
     <ClInclude Include="src\suprengine\ecs\components\transform2.hpp" />
     <ClInclude Include="src\suprengine\ecs\entity.fwd.h" />
@@ -164,6 +169,7 @@
     <ClInclude Include="src\suprengine\timer.h" />
     <ClInclude Include="src\suprengine\vec2.h" />
     <ClInclude Include="src\suprengine\window.h" />
+    <ClInclude Include="src\suprengine\texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

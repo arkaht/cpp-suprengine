@@ -20,9 +20,9 @@ namespace suprengine
 		Window( const char* title, const int width, const int height );
 		Window( const Window& ) = delete;
 		Window& operator=( const Window& ) = delete;
+		~Window();
 
 		bool initialize();
-		void close();
 
 		SDL_Window* get_sdl_window() const { return _sdl_window; }
 		int get_width() const { return _width; }

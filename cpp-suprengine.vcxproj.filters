@@ -33,7 +33,7 @@
     <ClCompile Include="src\suprengine\window.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\game.cpp">
+    <ClCompile Include="src\suprengine\game.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\suprengine\ecs\component.cpp">
@@ -42,10 +42,16 @@
     <ClCompile Include="src\suprengine\ecs\entity.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\suprengine\ecs\components\renderer.cpp">
+    <ClCompile Include="src\suprengine\ecs\components\renderers\renderer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\suprengine\color.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\suprengine\texture.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\suprengine\assets.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +77,7 @@
     <ClInclude Include="src\suprengine\window.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\game.h">
+    <ClInclude Include="src\suprengine\game.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\ecs\components\transform2.hpp">
@@ -92,13 +98,25 @@
     <ClInclude Include="src\suprengine\ecs\components\transform2.fwd.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\components\renderer.h">
+    <ClInclude Include="src\suprengine\ecs\components\renderers\renderer.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\components\rect_renderer.hpp">
+    <ClInclude Include="src\suprengine\ecs\components\renderers\rect_renderer.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\components\renderer.fwd.h">
+    <ClInclude Include="src\suprengine\ecs\components\renderers\renderer.fwd.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\suprengine\texture.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\suprengine\assets.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\suprengine\ecs\components\renderers\sprite_renderer.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\suprengine\texture.fwd.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

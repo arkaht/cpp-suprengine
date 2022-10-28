@@ -3,7 +3,7 @@
 #include "entity.fwd.h"
 #include "component.fwd.h"
 #include "components/transform2.fwd.h"
-#include "game.h"
+#include "suprengine/game.h"
 
 #include <vector>
 
