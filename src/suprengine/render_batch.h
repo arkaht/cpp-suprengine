@@ -19,6 +19,8 @@ namespace suprengine
 		SDL_Renderer* _sdl_renderer { nullptr };
 
 		std::vector<Renderer*> renderers;
+
+		Color background_color { Color::black };
 	public:
 		RenderBatch() {};
 		RenderBatch( const RenderBatch& ) = delete;
@@ -36,6 +38,8 @@ namespace suprengine
 
 		void add_renderer( Renderer* renderer );
 		void remove_renderer( Renderer* renderer );
+
+		void set_background_color( Color color ) { background_color = color; }
 
 		SDL_Renderer* get_sdl_renderer() const { return _sdl_renderer; }
 	};

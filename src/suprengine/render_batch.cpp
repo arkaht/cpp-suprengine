@@ -34,7 +34,7 @@ bool RenderBatch::initialize( Window* _window )
 
 void RenderBatch::begin_render()
 {
-	SDL_SetRenderDrawColor( _sdl_renderer, 27, 27, 27, 255 );
+	SDL_SetRenderDrawColor( _sdl_renderer, background_color.r, background_color.g, background_color.b, background_color.a );
 	SDL_RenderClear( _sdl_renderer );
 }
 
