@@ -134,6 +134,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\demos\pacman\components\debug_level_renderer.cpp" />
+    <ClCompile Include="src\demos\pacman\int2_16b.cpp" />
     <ClCompile Include="src\suprengine\assets.cpp" />
     <ClCompile Include="src\suprengine\game.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -149,10 +151,17 @@
     <ClCompile Include="src\suprengine\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\demos\pacman\components\debug_level_renderer.h" />
+    <ClInclude Include="src\demos\pacman\components\mover.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\level.fwd.h" />
+    <ClInclude Include="src\demos\pacman\entities\level.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\pacman.hpp" />
     <ClInclude Include="src\demos\pacman\main.h" />
+    <ClInclude Include="src\demos\pacman\int2_16b.h" />
     <ClInclude Include="src\suprengine\assets.h" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\anim_sprite_renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\sprite_renderer.hpp" />
+    <ClInclude Include="src\suprengine\math.h" />
     <ClInclude Include="src\suprengine\texture.fwd.h" />
     <ClInclude Include="src\suprengine\game.h" />
     <ClInclude Include="src\suprengine\color.h" />
