@@ -13,6 +13,12 @@
 
 namespace suprengine
 {
+	enum class DrawType
+	{
+		FILL,
+		LINE,
+	};
+
 	class RenderBatch
 	{
 	private:
@@ -33,7 +39,7 @@ namespace suprengine
 		void render();
 		void end_render();
 
-		void draw_rect( const Rect& rect, const Color& color );
+		void draw_rect( DrawType draw, const Rect& rect, const Color& color );
 		void draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color );
 
 		void add_renderer( Renderer* renderer );

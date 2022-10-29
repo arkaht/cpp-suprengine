@@ -53,12 +53,21 @@ void RenderBatch::end_render()
 	SDL_RenderPresent( _sdl_renderer );
 }
 
-void RenderBatch::draw_rect( const Rect& rect, const Color& color )
+void RenderBatch::draw_rect( DrawType draw, const Rect& rect, const Color& color )
 {
 	SDL_SetRenderDrawColor( _sdl_renderer, color.r, color.g, color.b, color.a );
 
 	auto sdl_rect = rect.to_sdl_rect();
-	SDL_RenderFillRect( _sdl_renderer, &sdl_rect );
+
+	switch ( draw )
+	{
+	case DrawType::FILL:
+		SDL_RenderFillRect( _sdl_renderer, &sdl_rect );
+		break;
+	case DrawType::LINE:
+		SDL_RenderDrawRect( _sdl_renderer, &sdl_rect );
+		break;
+	}
 }
 
 void RenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color )
