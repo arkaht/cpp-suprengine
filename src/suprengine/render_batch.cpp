@@ -36,6 +36,8 @@ void RenderBatch::begin_render()
 {
 	SDL_SetRenderDrawColor( _sdl_renderer, background_color.r, background_color.g, background_color.b, background_color.a );
 	SDL_RenderClear( _sdl_renderer );
+
+	SDL_SetRenderDrawBlendMode( _sdl_renderer, SDL_BLENDMODE_BLEND );
 }
 
 void RenderBatch::render()
@@ -73,6 +75,8 @@ void RenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, con
 
 	//  modulate color
 	SDL_SetTextureColorMod( sdl_texture, color.r, color.g, color.b );
+	SDL_SetTextureBlendMode( sdl_texture, SDL_BLENDMODE_BLEND );
+	SDL_SetTextureAlphaMod( sdl_texture, color.a );
 
 	//  draw texture
 	SDL_RenderCopyEx(
