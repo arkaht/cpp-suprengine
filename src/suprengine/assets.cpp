@@ -3,14 +3,15 @@
 using namespace suprengine;
 
 std::map<std::string, Texture*> Assets::textures;
-RenderBatch* Assets::render_batch;
+RenderBatch* Assets::render_batch { nullptr };
+std::string Assets::path { "" };
 
 Texture* Assets::get_texture( const std::string& filename )
 {
 	//  load texture if un-found
 	if ( textures.find( filename ) == textures.end() )
 	{
-		textures[filename] = Texture::load( render_batch, filename );
+		textures[filename] = Texture::load( render_batch, path + filename );
 	}
 
 	//  get from textures
