@@ -18,9 +18,9 @@ namespace suprengine
 
 	class Entity
 	{
-	private:
-		EntityState _state { EntityState::ACTIVE };
-		Game* _game { &Game::instance() };
+	protected:
+		EntityState state { EntityState::ACTIVE };
+		Game* game { &Game::instance() };
 	public:
 		std::vector<Component*> components;
 		Transform2* transform;
@@ -37,8 +37,10 @@ namespace suprengine
 		void update( float dt );
 		void kill();
 
-		Game* get_game() const { return _game; }
-		EntityState get_state() const { return _state; }
+		virtual void update_this( float dt ) {}
+
+		Game* get_game() const { return game; }
+		EntityState get_state() const { return state; }
 	};
 }
 

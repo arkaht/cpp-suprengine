@@ -9,13 +9,13 @@ Entity::Entity()
 	transform = new Transform2( this );
 
 	//  register in game
-	_game->add_entity( this );
+	game->add_entity( this );
 }
 
 Entity::~Entity()
 {
 	//  remove from game
-	_game->remove_entity( this );
+	game->remove_entity( this );
 
 	//  release components
 	while ( !components.empty() )
@@ -61,16 +61,18 @@ std::vector<Component*>::iterator Entity::get_component_iterator( Component* com
 
 void Entity::update( float dt )
 {
-	if ( _state != EntityState::ACTIVE ) return;
+	if ( state != EntityState::ACTIVE ) return;
 
 	for ( auto comp : components )
 	{
 		comp->update( dt );
 	}
+
+	update_this( dt );
 }
 
 void Entity::kill()
 {
-	_state = EntityState::DEAD;
+	state = EntityState::DEAD;
 }
 
