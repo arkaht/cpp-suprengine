@@ -157,7 +157,7 @@ void Game::process_input()
 			break;
 		case SDL_KEYDOWN:
 			code = event.key.keysym.scancode;
-			keystates[event.key.keysym.scancode] = KeyState::PRESSED;
+			keystates[code] = KeyState::PRESSED;
 			survey_keys.insert( code );
 			break;
 		case SDL_QUIT:

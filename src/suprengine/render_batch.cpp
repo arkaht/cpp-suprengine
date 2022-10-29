@@ -63,7 +63,7 @@ void RenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, con
 {
 	SDL_Texture* sdl_texture = texture->get_sdl_texture();
 	SDL_Rect src = src_rect.to_sdl_rect(), dest = dest_rect.to_sdl_rect();
-	SDL_Point center = ( origin * texture->get_size() ).to_sdl_point();
+	SDL_Point center = ( origin * src_rect.get_size() ).to_sdl_point();
 
 	//  apply origin
 	if ( center.x > 0 || center.y > 0 )

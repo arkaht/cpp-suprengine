@@ -23,6 +23,16 @@ namespace suprengine
 			return *this;
 		}
 
+		Vec2 get_pos() const
+		{
+			return Vec2 { x, y };
+		}
+
+		Vec2 get_size() const
+		{
+			return Vec2 { w, h };
+		}
+
 		SDL_Rect to_sdl_rect() const
 		{
 			return SDL_Rect {
