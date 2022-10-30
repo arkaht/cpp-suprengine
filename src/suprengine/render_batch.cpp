@@ -53,13 +53,13 @@ void RenderBatch::end_render()
 	SDL_RenderPresent( _sdl_renderer );
 }
 
-void RenderBatch::draw_rect( DrawType draw, const Rect& rect, const Color& color )
+void RenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
 {
 	SDL_SetRenderDrawColor( _sdl_renderer, color.r, color.g, color.b, color.a );
 
 	auto sdl_rect = rect.to_sdl_rect();
 
-	switch ( draw )
+	switch ( draw_type )
 	{
 	case DrawType::FILL:
 		SDL_RenderFillRect( _sdl_renderer, &sdl_rect );
