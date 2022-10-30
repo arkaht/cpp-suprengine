@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include "math.h"
 
 namespace suprengine
 {
@@ -38,6 +39,13 @@ namespace suprengine
 		bool operator==( const Vec2& v ) const
 		{
 			return x == v.x && y == v.y;
+		}
+
+		Vec2& approach( Vec2 target, float delta )
+		{
+			x = math::approach( x, target.x, delta );
+			y = math::approach( y, target.y, delta );
+			return *this;
 		}
 
 		SDL_Point to_sdl_point() const

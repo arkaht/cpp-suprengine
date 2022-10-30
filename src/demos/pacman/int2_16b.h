@@ -32,7 +32,7 @@ struct Int2_16b
 	}
 	int8_t get_y() const
 	{
-		return value;
+		return (int8_t) value;
 	}
 
 	void set_x( uint16_t x )
@@ -46,7 +46,7 @@ struct Int2_16b
 
 	float get_angle() const
 	{
-		return atan2( get_y(), get_x() ) * suprengine::RAD2DEG;
+		return atan2( get_y(), get_x() ) * suprengine::math::RAD2DEG;
 	}
 
 	Int2_16b& operator+=( const Int2_16b& i )
@@ -55,9 +55,14 @@ struct Int2_16b
 		return *this;
 	}
 
-	Int2_16b operator+( const Int2_16b& i )
+	Int2_16b operator+( const Int2_16b& i ) const
 	{
 		return Int2_16b( value + i.value );
+	}
+
+	bool operator==( const Int2_16b& i ) const
+	{
+		return value == i.value;
 	}
 
 	Vec2 to_vec2() const
