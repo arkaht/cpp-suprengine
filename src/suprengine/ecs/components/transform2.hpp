@@ -31,7 +31,12 @@ namespace suprengine
 
 		Rect get_rect( const Rect& rect )
 		{
-			return { rect.x * size.x + pos.x, rect.y * size.y + pos.y, rect.w * size.x, rect.h * size.y };
+			return { 
+				pos.x + rect.x * size.x, 
+				pos.y + rect.y * size.y, 
+				rect.w * size.x, 
+				rect.h * size.y 
+			};
 		}
 	};
 }
