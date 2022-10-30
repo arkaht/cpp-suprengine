@@ -10,12 +10,13 @@ using suprengine::Vec2;
 //  the integer overflow Pac-Man had for handling directions
 // 
 //  I must use uint16_t for Y setter instead of uint_8t 
-//  or I can't emulate the overflows (since the type truncates)
+//  or I can't emulate the overflows (since the type truncates the overflowed bit)
 //
 //  e.g.: Pinky's target have a X offset of 4 on the left (instead of none)
 //		  when Pac-Man faces up, because:
 //		  - when scaling the Y direction by 4: 0xFF * 0x4 = 0x03FC (where 0x03 overflows on the X byte)
 //		  - when adding the direction & position: Y byte overflows on X byte again
+//		  => resulting in an offset of X4;Y-4
 struct Int2_16b
 {
 	static const Int2_16b up, down, left, right;
