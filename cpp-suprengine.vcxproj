@@ -159,6 +159,7 @@
     <ClInclude Include="src\demos\pacman\main.h" />
     <ClInclude Include="src\demos\pacman\int2_16b.h" />
     <ClInclude Include="src\suprengine\assets.h" />
+    <ClInclude Include="src\suprengine\camera.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\anim_sprite_renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\sprite_renderer.hpp" />
     <ClInclude Include="src\suprengine\math.h" />

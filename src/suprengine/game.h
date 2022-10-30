@@ -4,6 +4,7 @@
 #include "timer.h"
 #include "vec2.h"
 #include "ecs/entity.fwd.h"
+#include "camera.hpp"
 
 #include <vector>
 #include <unordered_set>
@@ -32,7 +33,9 @@ namespace suprengine
 
 		Window* _window { nullptr };
 		RenderBatch* _render_batch { nullptr };
+		
 		Timer _timer {};
+		Camera camera;
 
 		std::map<SDL_Scancode, KeyState> keystates;
 		std::unordered_set<SDL_Scancode> survey_keys;
@@ -65,5 +68,6 @@ namespace suprengine
 		Window* get_window() const { return _window; }
 		RenderBatch* get_render_batch() const { return _render_batch; }
 		Timer* get_timer() { return &_timer; }
+		Camera* get_camera() { return &camera; }
 	};
 }

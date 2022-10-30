@@ -38,6 +38,9 @@ bool Game::initialize( const char* title, int width, int height )
 	//  init assets
 	Assets::set_render_batch( _render_batch );
 
+	//  setup camera viewport
+	camera.viewport.w = width, camera.viewport.h = height;
+
 	return true;
 }
 
@@ -142,7 +145,6 @@ void Game::process_input()
 		survey_keys.clear();
 	}
 
-	//  quit game
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
 	{
@@ -160,6 +162,7 @@ void Game::process_input()
 			keystates[code] = KeyState::PRESSED;
 			survey_keys.insert( code );
 			break;
+		//  quit game
 		case SDL_QUIT:
 			_is_running = false;
 			break;
@@ -208,17 +211,14 @@ void Game::update( float dt )
 		}
 		dead_entities.clear();
 	}
-
-	/*player.x = player.x + 100.0f * dt;
-	player.y = 100.0f + sinf( _timer.get_accumulated_seconds() * 3.0f ) * 50.0f;*/
-
-	//player.transform->pos += Vec2 { 100.0f * dt, 20.0f * dt };
-	//printf( "%f\n", dt);
 }
 
 void Game::render()
 {
+	SDL_Renderer* sdl_renderer = _render_batch->get_sdl_renderer();
 	_render_batch->begin_render();
+	camera.push( sdl_renderer );
+
 	_render_batch->render();
 	_render_batch->end_render();
 }

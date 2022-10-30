@@ -23,6 +23,15 @@ namespace suprengine
 			return *this;
 		}
 
+		Rect& operator/( const float m )
+		{
+			x /= m;
+			y /= m;
+			w /= m;
+			h /= m;
+			return *this;
+		}
+
 		Vec2 get_pos() const
 		{
 			return Vec2 { x, y };
@@ -43,9 +52,9 @@ namespace suprengine
 			};
 		}
 
-		Rect add_pos( const Vec2& v )
+		void add_pos( const Vec2& v )
 		{
-			return Rect( x + v.x, y + v.y, w, h );
+			x += v.x, y += v.y;
 		}
 	};
 }
