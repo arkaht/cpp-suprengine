@@ -11,6 +11,11 @@ namespace suprengine
 
 		float x { 0.0f }, y { 0.0f };
 
+		Vec2 operator-() const
+		{
+			return Vec2 { -x, -y };
+		}
+
 		Vec2& operator+=( const Vec2& v )
 		{
 			x += v.x;
@@ -34,6 +39,15 @@ namespace suprengine
 		Vec2 operator*( float m ) const
 		{
 			return Vec2 { x * m, y * m };
+		}
+
+		Vec2 operator/( const Vec2& v ) const
+		{
+			return Vec2 { x / v.x, y / v.y };
+		}
+		Vec2 operator/( float m ) const
+		{
+			return Vec2 { x / m, y / m };
 		}
 
 		bool operator==( const Vec2& v ) const
