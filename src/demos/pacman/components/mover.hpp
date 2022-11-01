@@ -33,37 +33,35 @@ public:
 			//  set current pos
 			current_pos = next_pos;
 
-			//  try change direction
-			is_blocked = false;
-			if ( !try_set_dir( get_desired_dir() ) )
-			{
-				//  continue otherwise
-				if ( !try_set_dir( direction ) )
-				{
-					is_blocked = true;
-				}
-			}
+			on_next_pos_reached();
 		}
 
-		if ( !is_blocked && ( current_move_time += dt ) >= move_time )
+		if ( !is_blocked )
 		{
-			//  move
-			Transform2* transf = owner->transform;
-			transf->pos = transf->pos.approach( next_pos * Level::TILE_SIZE, 1.0f );
+			current_move_time += dt;
 
-			//  rotate
-			if ( rotate_towards_dir )
+			while ( current_move_time >= move_time )
 			{
-				transf->rotation = direction.get_angle();
-			}
+				//  move
+				Transform2* transf = owner->transform;
+				transf->pos = transf->pos.approach( next_pos * Level::TILE_SIZE, 1.0f );
 
-			//  reset timer
-			current_move_time = 0.0f;
+				//  rotate
+				if ( rotate_towards_dir )
+				{
+					transf->rotation = direction.get_angle();
+				}
+
+				//  reset timer
+				current_move_time -= move_time;
+			}
 		}
 	}
 
 	bool try_set_dir( Vec2 dir )
 	{
+		if ( dir == Vec2::zero ) return false;
+
 		Vec2 new_pos = current_pos + dir;
 
 		//  check wall collision
@@ -90,6 +88,20 @@ public:
 
 	Vec2 get_next_pos() const { return next_pos; }
 	Vec2 get_pos() const { return current_pos; }
+
+	virtual void on_next_pos_reached() 
+	{
+		//  try change direction
+		is_blocked = false;
+		if ( !try_set_dir( get_desired_dir() ) )
+		{
+			//  continue otherwise
+			if ( !try_set_dir( direction ) )
+			{
+				is_blocked = true;
+			}
+		}
+	}
 
 	virtual Vec2 get_desired_dir()
 	{

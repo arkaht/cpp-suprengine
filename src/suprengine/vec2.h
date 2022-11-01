@@ -55,6 +55,18 @@ namespace suprengine
 			return x == v.x && y == v.y;
 		}
 
+		Vec2& normalize()
+		{
+			float mag = length();
+			x /= mag, y /= mag;
+			return *this;
+		}
+
+		float length() const
+		{
+			return sqrtf( length_sqr() );
+		}
+
 		float length_sqr() const
 		{
 			return x * x + y * y;

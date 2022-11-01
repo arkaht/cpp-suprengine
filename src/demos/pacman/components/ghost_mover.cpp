@@ -86,31 +86,56 @@ void GhostMover::update_target()
 		target = personality->get_chase_target();
 		break;
 	case GhostState::EATEN:
-		target = level->get_ghost_house_pos();
+		target = level->get_ghost_door_pos();
 		break;
 	}
 }
 
 void GhostMover::set_state( GhostState _state )
 {
-	//  revert move speed
-	if ( state == GhostState::FLEE )
-	{
-		move_time = NORMAL_MOVE_TIME;
-	}
-
 	state = _state;
 
-	//  set flee move speed
-	if ( state == GhostState::FLEE )
+	//  set appropriate move speed
+	switch ( state )
 	{
+	case GhostState::FLEE:
 		move_time = FLEE_MOVE_TIME;
 		current_flee_time = 0.0f;
 		is_flee_ending = false;
+		break;
+	case GhostState::EATEN:
+		move_time = EATEN_MOVE_TIME;
+		break;
+	default:
+		move_time = NORMAL_MOVE_TIME;
+		break;
 	}
 
 	//  turn backwards
 	try_set_dir( -direction );
+}
+
+void GhostMover::on_next_pos_reached()
+{
+	//  eaten state
+	if ( state == GhostState::EATEN )
+	{
+		//  enter the house
+		if ( current_pos == target )
+		{
+			next_pos = level->get_ghost_house_pos();
+			direction = ( next_pos - current_pos ).normalize();
+			return;
+		}
+		//  exit state on entered
+		else if ( current_pos == level->get_ghost_house_pos() )
+		{
+			set_state( GhostState::SCATTER );
+			return;
+		}
+	}
+
+	Mover::on_next_pos_reached();
 }
 
 Vec2 GhostMover::get_desired_dir()
