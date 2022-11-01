@@ -34,7 +34,7 @@ void GhostMover::update( float dt )
 		if ( !is_waiting_finished && ( wait_time -= dt ) <= 0.0f )
 		{
 			is_waiting_finished = true;
-			move_time = WAIT_FINISH_MOVE_TIME;
+			move_time = SLOW_MOVE_TIME;
 
 			Vec2 door_pos = level->get_ghost_door_pos();
 

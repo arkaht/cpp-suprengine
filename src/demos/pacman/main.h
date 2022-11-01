@@ -6,6 +6,7 @@
 #include "entities/ghost_pinky.hpp"
 #include "entities/ghost_inky.hpp"
 #include "entities/ghost_clyde.hpp"
+#include "entities/ghost_slow_zone.hpp"
 
 #include "entities/pacman.h"
 #include "entities/level.hpp"
@@ -22,6 +23,27 @@ void run()
 
 	//  create entities & components
 	auto level = new Level();
+
+	auto slow_zone_l = new GhostSlowZone( 
+		Rect { 
+			0.0f, 
+			0.0f, 
+			6.0f, 
+			1.0f,
+		} * Level::TILE_SIZE 
+	);
+	slow_zone_l->transform->pos = Vec2 { 0.0f, 14.0f } * Level::TILE_SIZE;
+
+	auto slow_zone_r = new GhostSlowZone(
+		Rect {
+			0.0f,
+			0.0f,
+			6.0f,
+			1.0f,
+		} *Level::TILE_SIZE
+		);
+	slow_zone_r->transform->pos = Vec2 { 22.0f, 14.0f } *Level::TILE_SIZE;
+
 
 	auto pacman = new PacMan( level );
 	pacman->mover->set_pos( { 14, 23 } );

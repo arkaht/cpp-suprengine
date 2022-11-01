@@ -23,13 +23,23 @@ namespace suprengine
 			return *this;
 		}
 
-		Rect& operator/( const float m )
+		Rect operator*( const float m ) const
 		{
-			x /= m;
-			y /= m;
-			w /= m;
-			h /= m;
-			return *this;
+			return Rect {
+				x * m,
+				y * m,
+				w * m,
+				h * m,
+			};
+		}
+		Rect operator/( const float m ) const
+		{
+			return Rect {
+				x / m,
+				y / m,
+				w / m,
+				h / m,
+			};
 		}
 
 		Vec2 get_pos() const

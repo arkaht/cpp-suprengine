@@ -22,16 +22,17 @@ private:
 	const float FLEE_TIME { 8.0f };
 	const float FLEE_END_TIME { 2.0f };  //  2 seconds before FLEE_TIME
 	
-	const float WAIT_MOVE_TIME { 0.02f };
-	const float WAIT_FINISH_MOVE_TIME { 0.03f };
-	const float NORMAL_MOVE_TIME { 0.016f };
-	const float FLEE_MOVE_TIME { 0.018f };
-	const float EATEN_MOVE_TIME { 0.01f };
 
 	float current_flee_time { 0.0f };
 	bool is_flee_ending { false };
 	bool is_waiting_finished { false };
 public:
+	const float WAIT_MOVE_TIME { 0.02f };
+	const float SLOW_MOVE_TIME { 0.03f };
+	const float NORMAL_MOVE_TIME { 0.016f };
+	const float FLEE_MOVE_TIME { 0.018f };
+	const float EATEN_MOVE_TIME { 0.01f };
+
 	int wait_id = 0;
 	float wait_time = 1.0f;
 
