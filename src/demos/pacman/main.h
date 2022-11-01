@@ -21,17 +21,16 @@ void run()
 	auto pacman = new PacMan( level );
 	pacman->mover->set_pos( { 14, 23 } );
 
-	printf( "%i; %i\n", level->get_width(), level->get_height() );
+	//  configure camera
 	auto camera = game.get_camera();
 	float level_width = level->get_width() * Level::TILE_SIZE, level_height = level->get_height() * Level::TILE_SIZE;
+	camera->zoom = ( camera->viewport.h - 100.0f ) / level_height;
 	camera->translate(
 		Vec2 {
-			camera->viewport.w / 2.0f - level_width / 2.0f,
-			camera->viewport.h / 2.0f - level_height / 2.0f
+			camera->viewport.w / camera->zoom / 2.0f - level_width / 2.0f,
+			camera->viewport.h / camera->zoom / 2.0f - level_height / 2.0f
 		}
 	);
-	camera->zoom = ( camera->viewport.h /*- 50.0f*/ ) / level_height;
-	printf( "z%f; %f; %f; %f; %f\n", camera->zoom, camera->viewport.x, camera->viewport.y, camera->viewport.w, camera->viewport.h );
 
 	/*Entity* ghost_frightened_anim = new Entity();
 	ghost_frightened_anim->transform->pos = { 160.0f + 48.0f, 160.0f + 24.0f };

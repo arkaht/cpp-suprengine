@@ -34,6 +34,8 @@ bool RenderBatch::initialize( Window* _window )
 
 void RenderBatch::begin_render()
 {
+	translation = Vec2::zero;
+
 	SDL_SetRenderDrawColor( _sdl_renderer, background_color.r, background_color.g, background_color.b, background_color.a );
 	SDL_RenderClear( _sdl_renderer );
 
@@ -59,6 +61,9 @@ void RenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& 
 
 	auto sdl_rect = rect.to_sdl_rect();
 
+	//  apply translation
+	sdl_rect.x += translation.x, sdl_rect.y += translation.y;
+
 	switch ( draw_type )
 	{
 	case DrawType::FILL:
@@ -81,6 +86,9 @@ void RenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, con
 	{
 		dest.x -= center.x, dest.y -= center.y;
 	}
+
+	//  apply translation
+	dest.x += translation.x, dest.y += translation.y;
 
 	//  modulate color
 	SDL_SetTextureColorMod( sdl_texture, color.r, color.g, color.b );

@@ -22,6 +22,7 @@ namespace suprengine
 	class RenderBatch
 	{
 	private:
+		Vec2 translation { Vec2::zero };
 		SDL_Renderer* _sdl_renderer { nullptr };
 
 		std::vector<Renderer*> renderers;
@@ -38,6 +39,8 @@ namespace suprengine
 		void begin_render();
 		void render();
 		void end_render();
+
+		void translate( const Vec2& pos ) { translation += pos; }
 
 		void draw_rect( DrawType draw_type, const Rect& rect, const Color& color );
 		void draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color );
