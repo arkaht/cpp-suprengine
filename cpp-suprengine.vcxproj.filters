@@ -137,9 +137,6 @@
     <ClInclude Include="src\demos\pacman\entities\level.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\demos\pacman\entities\level.fwd.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="src\demos\pacman\int2_16b.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -147,9 +144,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\demos\pacman\components\player_mover.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="src\demos\pacman\components\debug_mover_renderer.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\camera.hpp">
