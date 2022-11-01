@@ -3,11 +3,19 @@
 
 namespace suprengine
 {
+	struct AnimClip
+	{
+		int start_frame { 0 }, end_frame { 0 };
+	};
+
 	class AnimSpriteRenderer : public SpriteRenderer
 	{
 	private:
 		float current_time_per_frame { 0.0f };
+		std::string current_clip { "" };
 	public:
+		std::map<std::string, AnimClip> clips;
+
 		std::vector<Rect> frames;
 		int current_frame { 0 };
 		float time_per_frame { 0.0f };
@@ -24,17 +32,27 @@ namespace suprengine
 		{
 			if ( !is_playing ) return;
 
+
 			if ( ( current_time_per_frame += dt ) >= time_per_frame )
 			{
 				current_time_per_frame -= time_per_frame;
 
+				int start_frame { 0 }, end_frame = frames.size();
+
+				//  retrieve anim clip infos
+				if ( current_clip != "" )
+				{
+					AnimClip& clip = clips[current_clip];
+					start_frame = clip.start_frame, end_frame = clip.end_frame + 1;
+				}
+
 				//  increment current frame
 				int next_frame = current_frame + 1;
-				if ( next_frame >= frames.size() )
+				if ( next_frame >= end_frame )
 				{
 					if ( is_looping )
 					{
-						set_current_frame( 0 );
+						set_current_frame( start_frame );
 					}
 					else
 					{
@@ -73,6 +91,25 @@ namespace suprengine
 					add_frame( Rect { x, y, size.x, size.y } );
 				}
 			}
+		}
+
+		void set_current_clip( const std::string& clip_name )
+		{
+			if ( current_clip == clip_name ) return;
+
+			if ( clips.find( clip_name ) == clips.end() )
+			{
+				Logger::error( "AnimSpriteRenderer: clip '" + clip_name + "' doesn't exists, aborting!" );
+				return;
+			};
+
+			current_clip = clip_name;
+			set_current_frame( clips[clip_name].start_frame );
+		}
+
+		void add_clip( const std::string& name, const AnimClip& clip )
+		{
+			clips[name] = clip;
 		}
 	};
 }
