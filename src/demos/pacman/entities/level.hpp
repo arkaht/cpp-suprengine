@@ -11,7 +11,7 @@ private:
 	int width { 0 }, height { 0 };
 	std::vector<bool> tiles;
 
-	const std::string TEXTURE_PATH { "level.png" };
+	const std::string TEXTURE_PATH { "level-no-tunnel.png" };
 public:
 	static const int TILE_SIZE { 8 };
 
