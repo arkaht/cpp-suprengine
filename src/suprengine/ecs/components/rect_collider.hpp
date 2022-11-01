@@ -16,14 +16,14 @@ namespace suprengine
 
 		bool intersects( Collider* c ) override
 		{
-			Rect abs_shape = owner->transform->get_rect( shape );
+			Rect rect = owner->transform->get_rect( shape );
 
 			//  rect-rect collision
 			if ( auto rc = dynamic_cast<RectCollider*>( c ) )
 			{
-				Rect abs_rc_shape = rc->owner->transform->get_rect( shape );
-				return abs_shape.x < abs_rc_shape.x + abs_rc_shape.w && abs_rc_shape.x < abs_shape.x + abs_shape.w
-					&& abs_shape.y < abs_rc_shape.y + abs_rc_shape.h && abs_rc_shape.y < abs_shape.y + abs_shape.h;
+				Rect rc_rect = rc->owner->transform->get_rect( rc->shape );
+				return rect.x < rc_rect.x + rc_rect.w && rc_rect.x < rect.x + rect.w
+					&& rect.y < rc_rect.y + rc_rect.h && rc_rect.y < rect.y + rect.h;
 			}
 
 			return false;
