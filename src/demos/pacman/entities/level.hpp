@@ -12,6 +12,8 @@ private:
 	std::vector<bool> tiles;
 
 	const std::string TEXTURE_PATH { "level-no-tunnel.png" };
+
+	Vec2 ghost_house_pos { 13, 11 };
 public:
 	static const int TILE_SIZE { 8 };
 
@@ -78,6 +80,8 @@ public:
 
 	int get_width() const { return width; }
 	int get_height() const { return height; }
+
+	Vec2 get_ghost_house_pos() const { return ghost_house_pos; }
 
 
 	void debug_render( RenderBatch* render_batch ) override

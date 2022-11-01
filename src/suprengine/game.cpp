@@ -1,6 +1,7 @@
 #include "game.h"
 #include "ecs/entity.h"
 #include "ecs/components/transform2.hpp"
+#include "ecs/components/collider.h"
 
 using namespace suprengine;
 
@@ -93,6 +94,33 @@ void Game::remove_entity( Entity* entity )
 		std::iter_swap( itr, pending_entities.end() - 1 );
 		pending_entities.pop_back();
 	}
+}
+
+void Game::add_collider( Collider* collider )
+{
+	//  get priority order
+	int order = collider->get_priority_order();
+
+	//  search order position
+	auto itr = colliders.begin();
+	for ( ; itr != colliders.end(); itr++ )
+	{
+		if ( order < (*itr)->get_priority_order() )
+		{
+			break;
+		}
+	}
+
+	colliders.push_back( collider );
+}
+
+void Game::remove_collider( Collider* collider )
+{
+	auto itr = std::find( colliders.begin(), colliders.end(), collider );
+	if ( itr == colliders.end() ) return;
+
+	std::iter_swap( itr, colliders.end() - 1 );
+	colliders.pop_back();
 }
 
 bool Game::is_key_pressed( SDL_Scancode code )
@@ -206,6 +234,18 @@ void Game::update( float dt )
 		}
 	}
 	_is_updating = false;
+
+	//  update colliders
+	for ( auto collider : colliders )
+	{
+		for ( auto other : colliders )
+		{
+			bool is_active = collider->intersects( other );
+
+			collider->update_collision_with( other, is_active );
+			other->update_collision_with( collider, is_active );
+		}
+	}
 
 	//  delete dead entities
 	if ( !dead_entities.empty() )

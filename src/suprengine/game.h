@@ -4,6 +4,7 @@
 #include "timer.h"
 #include "vec2.h"
 #include "ecs/entity.fwd.h"
+#include "ecs/components/collider.fwd.h"
 #include "camera.hpp"
 
 #include <vector>
@@ -30,6 +31,7 @@ namespace suprengine
 
 		bool _is_running { true }, _is_updating { false };
 		std::vector<Entity*> pending_entities, entities, dead_entities;
+		std::vector<Collider*> colliders;
 
 		Window* _window { nullptr };
 		RenderBatch* _render_batch { nullptr };
@@ -60,6 +62,9 @@ namespace suprengine
 
 		void add_entity( Entity* entity );
 		void remove_entity( Entity* entity );
+
+		void add_collider( Collider* collider );
+		void remove_collider( Collider* collider );
 
 		bool is_key_pressed( SDL_Scancode code );
 		bool is_key_released( SDL_Scancode code );

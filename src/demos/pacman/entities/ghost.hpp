@@ -39,6 +39,9 @@ public:
 
 		//  create mover
 		mover = new GhostMover( this, level, pacman, anim );
+
+		//  create collider
+		new RectCollider( this, Rect { 2.0f, 2.0f, 4.0f, 4.0f } );
 	}
 
 	virtual Vec2 get_scatter_target() = 0;

@@ -136,6 +136,8 @@
   <ItemGroup>
     <ClCompile Include="src\demos\pacman\components\ghost_mover.cpp" />
     <ClCompile Include="src\suprengine\assets.cpp" />
+    <ClCompile Include="src\suprengine\ecs\components\collider.cpp" />
+    <ClCompile Include="src\demos\pacman\entities\pacman.cpp" />
     <ClCompile Include="src\suprengine\game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\suprengine\ecs\component.cpp" />
@@ -160,10 +162,13 @@
     <ClInclude Include="src\demos\pacman\components\player_mover.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost.hpp" />
     <ClInclude Include="src\demos\pacman\entities\level.hpp" />
-    <ClInclude Include="src\demos\pacman\entities\pacman.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\pacman.h" />
     <ClInclude Include="src\demos\pacman\main.h" />
     <ClInclude Include="src\suprengine\assets.h" />
     <ClInclude Include="src\suprengine\camera.hpp" />
+    <ClInclude Include="src\suprengine\ecs\components\collider.fwd.h" />
+    <ClInclude Include="src\suprengine\ecs\components\collider.h" />
+    <ClInclude Include="src\suprengine\ecs\components\rect_collider.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\anim_sprite_renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\sprite_renderer.hpp" />
     <ClInclude Include="src\suprengine\math.h" />

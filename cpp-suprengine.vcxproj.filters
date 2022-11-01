@@ -57,6 +57,12 @@
     <ClCompile Include="src\demos\pacman\components\ghost_mover.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="src\suprengine\ecs\components\collider.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\pacman\entities\pacman.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\suprengine\color.h">
@@ -131,7 +137,7 @@
     <ClInclude Include="src\demos\pacman\components\mover.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\demos\pacman\entities\pacman.hpp">
+    <ClInclude Include="src\demos\pacman\entities\pacman.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\demos\pacman\entities\level.hpp">
@@ -165,6 +171,15 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\demos\pacman\entities\ghost_clyde.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\suprengine\ecs\components\collider.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\suprengine\ecs\components\rect_collider.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\suprengine\ecs\components\collider.fwd.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

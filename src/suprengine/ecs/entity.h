@@ -2,6 +2,7 @@
 
 #include "entity.fwd.h"
 #include "component.fwd.h"
+#include "components/collider.fwd.h"
 #include "components/transform2.fwd.h"
 #include "suprengine/game.h"
 
@@ -23,7 +24,9 @@ namespace suprengine
 		Game* game { &Game::instance() };
 	public:
 		std::vector<Component*> components;
-		Transform2* transform;
+
+		Transform2* transform { nullptr };
+		Collider* collider { nullptr };
 
 		Entity();
 		~Entity();
@@ -39,6 +42,10 @@ namespace suprengine
 
 		virtual void update_this( float dt ) {}
 		virtual void debug_render( RenderBatch* render_batch ) {};
+
+		virtual void on_trigger_enter( Collider* collider ) {};
+		virtual void on_trigger_stay( Collider* collider ) {};
+		virtual void on_trigger_exit( Collider* collider ) {};
 
 		Game* get_game() const { return game; }
 		EntityState get_state() const { return state; }

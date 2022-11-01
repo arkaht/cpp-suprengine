@@ -85,6 +85,9 @@ void GhostMover::update_target()
 	case GhostState::CHASE:
 		target = personality->get_chase_target();
 		break;
+	case GhostState::EATEN:
+		target = level->get_ghost_house_pos();
+		break;
 	}
 }
 

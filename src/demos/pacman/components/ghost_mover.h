@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../entities/ghost.fwd.h"
-#include "../entities/pacman.hpp"
+#include "../entities/pacman.h"
 #include "mover.hpp"
 #include <suprengine/ecs/components/renderers/anim_sprite_renderer.hpp>
 

@@ -7,7 +7,7 @@
 #include "entities/ghost_inky.hpp"
 #include "entities/ghost_clyde.hpp"
 
-#include "entities/pacman.hpp"
+#include "entities/pacman.h"
 #include "entities/level.hpp"
 
 using namespace suprengine;
