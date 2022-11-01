@@ -58,6 +58,9 @@ namespace suprengine
 		Vec2& normalize()
 		{
 			float mag = length();
+			if ( mag == 0.0f ) 
+				return *this;
+
 			x /= mag, y /= mag;
 			return *this;
 		}
