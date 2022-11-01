@@ -132,4 +132,5 @@ void RenderBatch::remove_renderer( Renderer* renderer )
 	if ( itr == renderers.end() ) return;
 
 	std::iter_swap( itr, renderers.end() - 1 );
+	renderers.pop_back();
 }
