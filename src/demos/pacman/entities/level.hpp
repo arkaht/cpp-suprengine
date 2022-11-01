@@ -1,7 +1,4 @@
 #pragma once
-#include "level.fwd.h"
-
-#include "../components/debug_level_renderer.h"
 #include <suprengine/ecs/components/renderers/sprite_renderer.hpp>
 
 #include <vector>
@@ -22,8 +19,6 @@ public:
 	{
 		auto sprite = new SpriteRenderer( this, Assets::get_texture( TEXTURE_PATH ) );
 		sprite->origin = Vec2::zero;
-
-		//new DebugLevelRenderer( this, Color { 127, 127, 0, 88 } );
 
 		gen_tiles();
 	}
@@ -83,4 +78,32 @@ public:
 
 	int get_width() const { return width; }
 	int get_height() const { return height; }
+
+
+	void debug_render( RenderBatch* render_batch ) override
+	{
+		float tile_size = Level::TILE_SIZE;
+
+		for ( int ty = 0; ty < height; ty++ )
+		{
+			for ( int tx = 0; tx < width; tx++ )
+			{
+				Rect rect {
+					tx * tile_size,
+					ty * tile_size,
+					tile_size,
+					tile_size,
+				};
+
+				//  draw grid
+				render_batch->draw_rect( DrawType::LINE, rect, Color { 255, 255, 255, 27 } );
+
+				//  draw wall
+				if ( is_wall_tile( tx, ty ) )
+				{
+					render_batch->draw_rect( DrawType::FILL, rect, Color { 127, 127, 0, 88 } );
+				}
+			}
+		}
+	}
 };

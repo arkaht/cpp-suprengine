@@ -35,11 +35,13 @@ namespace suprengine
 		RenderBatch* _render_batch { nullptr };
 		
 		Timer _timer {};
-		Camera camera;
+		Camera camera {};
 
 		std::map<SDL_Scancode, KeyState> keystates;
 		std::unordered_set<SDL_Scancode> survey_keys;
 	public:
+		bool is_debug { false };
+
 		//  ensure singleton
 		static Game& instance()
 		{

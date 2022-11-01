@@ -2,6 +2,7 @@
 
 #include "component.fwd.h"
 #include "entity.fwd.h"
+#include <suprengine/render_batch.h>
 
 namespace suprengine
 {
@@ -19,6 +20,7 @@ namespace suprengine
 		Component& operator=( const Component& ) = delete;
 
 		virtual void update( float dt );
+		virtual void debug_render( RenderBatch* render_batch ) {}
 
 		int get_priority_order() const { return priority_order; }
 	};

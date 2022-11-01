@@ -54,9 +54,6 @@
     <ClCompile Include="src\suprengine\assets.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\demos\pacman\components\debug_level_renderer.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="src\demos\pacman\int2_16b.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -138,9 +135,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\demos\pacman\entities\level.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="src\demos\pacman\components\debug_level_renderer.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\demos\pacman\entities\level.fwd.h">

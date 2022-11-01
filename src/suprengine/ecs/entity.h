@@ -38,6 +38,7 @@ namespace suprengine
 		void kill();
 
 		virtual void update_this( float dt ) {}
+		virtual void debug_render( RenderBatch* render_batch ) {};
 
 		Game* get_game() const { return game; }
 		EntityState get_state() const { return state; }

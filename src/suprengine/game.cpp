@@ -169,10 +169,15 @@ void Game::process_input()
 		}
 	}
 	
-	//  quit on escape
+	//  quit
 	if ( is_key_pressed( SDL_SCANCODE_ESCAPE ) )
 	{
 		_is_running = false;
+	}
+	//  toggle debug
+	if ( is_key_pressed( SDL_SCANCODE_COMMA ) )
+	{
+		is_debug = !is_debug;
 	}
 }
 
@@ -230,6 +235,20 @@ void Game::render()
 
 	//  render components
 	_render_batch->render();
+
+	//  debug render entities & components
+	if ( is_debug )
+	{
+		for ( auto ent : entities )
+		{
+			ent->debug_render( _render_batch );
+
+			for ( auto comp : ent->components )
+			{
+				comp->debug_render( _render_batch );
+			}
+		}
+	}
 
 	//  show rendering
 	_render_batch->end_render();

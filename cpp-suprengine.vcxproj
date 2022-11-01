@@ -134,7 +134,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\demos\pacman\components\debug_level_renderer.cpp" />
     <ClCompile Include="src\demos\pacman\int2_16b.cpp" />
     <ClCompile Include="src\suprengine\assets.cpp" />
     <ClCompile Include="src\suprengine\game.cpp" />
@@ -151,7 +150,6 @@
     <ClCompile Include="src\suprengine\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\demos\pacman\components\debug_level_renderer.h" />
     <ClInclude Include="src\demos\pacman\components\debug_mover_renderer.hpp" />
     <ClInclude Include="src\demos\pacman\components\mover.hpp" />
     <ClInclude Include="src\demos\pacman\components\player_mover.hpp" />

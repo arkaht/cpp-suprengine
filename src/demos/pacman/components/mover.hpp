@@ -108,4 +108,38 @@ public:
 	{
 		return Int2_16b::right;
 	};
+
+
+	void debug_render( RenderBatch* render_batch ) override
+	{
+		Vec2 pos = get_pos().to_vec2() * Level::TILE_SIZE;
+		Vec2 size { Level::TILE_SIZE, Level::TILE_SIZE };
+
+		//  transform pos
+		/*render_batch->draw_rect(
+			DrawType::FILL,
+			Rect { owner->transform->pos, size },
+			Color { 255, 0, 0, 54 }
+		);*/
+
+		render_batch->draw_rect(
+			DrawType::FILL,
+			Rect { get_next_pos().to_vec2() * Level::TILE_SIZE, size },
+			Color { 255, 0, 0, 54 }
+		);
+
+		//  grid pos
+		render_batch->draw_rect(
+			DrawType::FILL,
+			Rect { pos, size },
+			Color { 0, 255, 0, 54 }
+		);
+
+		//  direction pos
+		/*render_batch->draw_rect(
+			DrawType::FILL,
+			Rect { pos + mover->direction.to_vec2() * Level::TILE_SIZE, size },
+			Color { 0, 0, 255, 90 }
+		);*/
+	}
 };
