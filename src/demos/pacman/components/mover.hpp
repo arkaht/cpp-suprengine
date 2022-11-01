@@ -12,7 +12,10 @@ using namespace suprengine;
 class Mover : public Component
 {
 protected:
-	Vec2 current_pos { 0 }, next_pos { 0 };
+	Vec2 current_pos { Vec2::zero }, next_pos { Vec2::zero };
+
+	Vec2 end_tunnel_pos { Vec2::zero };
+	bool is_in_tunnel { false };
 public:
 	bool is_blocked { false };
 	Vec2 direction { Vec2::zero };
@@ -30,10 +33,19 @@ public:
 	{
 		if ( owner->transform->pos == next_pos * Level::TILE_SIZE )
 		{
-			//  set current pos
-			current_pos = next_pos;
-
-			on_next_pos_reached();
+			//  tunnel
+			if ( is_in_tunnel )
+			{
+				set_pos( end_tunnel_pos - direction );
+				next_pos = current_pos + direction;
+				is_in_tunnel = false;
+			}
+			else
+			{
+				//  set current pos
+				current_pos = next_pos;
+				on_next_pos_reached();
+			}
 		}
 
 		if ( !is_blocked )
@@ -64,8 +76,28 @@ public:
 
 		Vec2 new_pos = current_pos + dir;
 
-		//  check wall collision
-		if ( level->is_wall_tile( (int) new_pos.x, (int) new_pos.y ) ) return false;
+		//  check tunnel
+		int tunnel_id = level->get_tunnel_id( new_pos ); 
+		if ( tunnel_id > -1 ) 
+		{
+			is_in_tunnel = true;
+
+			//  target off-screen pos
+			new_pos += dir;
+
+			//  get end tunnel pos
+			if ( tunnel_id % 2 == 0 )
+				end_tunnel_pos = level->get_tunnel( tunnel_id + 1 );
+			else
+				end_tunnel_pos = level->get_tunnel( tunnel_id - 1 );
+		}
+		else
+		{
+			//  check wall collision
+			if ( level->is_wall_tile( (int) new_pos.x, (int) new_pos.y ) ) 
+				return false;
+		}
+
 
 		//  apply direction
 		next_pos = new_pos;

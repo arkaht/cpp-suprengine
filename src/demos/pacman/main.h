@@ -28,7 +28,7 @@ void run()
 
 	auto blinky = new GhostBlinky( level, pacman );
 	blinky->mover->set_pos( { 14, 11 } );
-	blinky->mover->set_state( GhostState::SCATTER );
+	blinky->mover->set_state( GhostState::CHASE );
 
 	auto pinky = new GhostPinky( level, pacman );
 	pinky->mover->set_pos( level->get_wait_pos( pinky->mover->wait_id ) );

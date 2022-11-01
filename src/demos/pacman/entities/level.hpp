@@ -5,15 +5,21 @@
 
 using namespace suprengine;
 
+const int TUNNELS_COUNT { 2 };
+
 class Level : public Entity
 {
 private:
 	int width { 0 }, height { 0 };
 	std::vector<bool> tiles;
 
-	const std::string TEXTURE_PATH { "level-no-tunnel.png" };
+	const std::string TEXTURE_PATH { "level.png" };
 
-	Vec2 wait_pos[6] 
+	Vec2 tunnels_pos[TUNNELS_COUNT]
+	{
+		{ 0.0f, 14.0f }, { 27.0f, 14.0f },
+	};
+	Vec2 waits_pos[6] 
 	{
 		{ 11.5f, 13.5f }, { 11.5f, 14.5f },
 		{ 13.5f, 14.5f }, { 13.5f, 13.5f },
@@ -88,7 +94,21 @@ public:
 	int get_width() const { return width; }
 	int get_height() const { return height; }
 
-	Vec2 get_wait_pos( int id ) const { return wait_pos[id]; }
+	int get_tunnel_id( Vec2 pos )
+	{
+		for ( int i = 0; i < TUNNELS_COUNT; i++ )
+		{
+			if ( tunnels_pos[i] == pos )
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	Vec2 get_tunnel( int id ) const { return tunnels_pos[id]; }
+	Vec2 get_wait_pos( int id ) const { return waits_pos[id]; }
 	Vec2 get_ghost_door_pos() const { return ghost_door_pos; }
 	Vec2 get_ghost_house_pos() const { return ghost_house_pos; }
 
