@@ -13,7 +13,14 @@ private:
 
 	const std::string TEXTURE_PATH { "level-no-tunnel.png" };
 
-	Vec2 ghost_door_pos { 13, 11 }, ghost_house_pos { 13, 14 };
+	Vec2 wait_pos[6] 
+	{
+		{ 11.5f, 13.5f }, { 11.5f, 14.5f },
+		{ 13.5f, 14.5f }, { 13.5f, 13.5f },
+		{ 15.5f, 13.5f }, { 15.5f, 14.5f },
+	};
+	Vec2 ghost_door_pos { 13.5f, 11.0f }, 
+		 ghost_house_pos { 13.5f, 13.0f };
 public:
 	static const int TILE_SIZE { 8 };
 
@@ -81,6 +88,7 @@ public:
 	int get_width() const { return width; }
 	int get_height() const { return height; }
 
+	Vec2 get_wait_pos( int id ) const { return wait_pos[id]; }
 	Vec2 get_ghost_door_pos() const { return ghost_door_pos; }
 	Vec2 get_ghost_house_pos() const { return ghost_house_pos; }
 

@@ -10,8 +10,9 @@ GhostMover::GhostMover( Ghost* owner, Level* level, PacMan* pacman, AnimSpriteRe
 void GhostMover::update( float dt )
 {
 	//  flee state
-	if ( state == GhostState::FLEE )
+	switch ( state )
 	{
+	case GhostState::FLEE:
 		current_flee_time += dt;
 
 		if ( !is_flee_ending )
@@ -28,6 +29,28 @@ void GhostMover::update( float dt )
 				set_state( GhostState::SCATTER );
 			}
 		}
+		break;
+	case GhostState::WAIT:
+		if ( !is_waiting_finished && ( wait_time -= dt ) <= 0.0f )
+		{
+			is_waiting_finished = true;
+			move_time = WAIT_FINISH_MOVE_TIME;
+
+			Vec2 door_pos = level->get_ghost_door_pos();
+
+			//  direct exit if same x
+			if ( owner->transform->pos.x == door_pos.x )
+			{
+				next_pos = door_pos;
+			}
+			//  target entrance height
+			else
+			{
+				next_pos = Vec2 { door_pos.x, current_pos.y };
+			}
+			direction = ( next_pos - current_pos ).normalize();
+		}
+		break;
 	}
 
 	//  base update
@@ -38,6 +61,7 @@ void GhostMover::update( float dt )
 	{
 		switch ( state )
 		{
+		case GhostState::WAIT:
 		case GhostState::CHASE:
 		case GhostState::SCATTER:
 			if ( direction == Vec2::left )
@@ -52,13 +76,9 @@ void GhostMover::update( float dt )
 			break;
 		case GhostState::FLEE:
 			if ( !is_flee_ending )
-			{
 				anim->set_current_clip( "flee" );
-			}
 			else
-			{
 				anim->set_current_clip( "flee_end" );
-			}
 			break;
 		case GhostState::EATEN:
 			if ( direction == Vec2::left )
@@ -93,11 +113,15 @@ void GhostMover::update_target()
 
 void GhostMover::set_state( GhostState _state )
 {
-	state = _state;
-
-	//  set appropriate move speed
-	switch ( state )
+	//  init states
+	switch ( _state )
 	{
+	case GhostState::WAIT:
+		move_time = WAIT_MOVE_TIME;
+		is_waiting_finished = false;
+		next_pos = level->get_wait_pos( wait_id );
+		direction = ( next_pos - current_pos ).normalize();
+		break;
 	case GhostState::FLEE:
 		move_time = FLEE_MOVE_TIME;
 		current_flee_time = 0.0f;
@@ -112,14 +136,70 @@ void GhostMover::set_state( GhostState _state )
 	}
 
 	//  turn backwards
-	try_set_dir( -direction );
+	if ( state != GhostState::WAIT && _state != GhostState::WAIT )
+	{
+		try_set_dir( -direction );
+	}
+
+	state = _state;
 }
 
 void GhostMover::on_next_pos_reached()
 {
-	//  eaten state
-	if ( state == GhostState::EATEN )
+	switch ( state )
 	{
+	case GhostState::WAIT:
+	{
+		if ( !is_waiting_finished )
+		{
+			Vec2 first_wait_pos = level->get_wait_pos( wait_id );
+			Vec2 second_wait_pos = level->get_wait_pos( wait_id + 1 );
+
+			//  patrol between two pos
+			if ( current_pos == first_wait_pos )
+			{
+				next_pos = second_wait_pos;
+				direction = ( next_pos - current_pos ).normalize();
+				return;
+			}
+			else if ( current_pos == second_wait_pos )
+			{
+				next_pos = first_wait_pos;
+				direction = ( next_pos - current_pos ).normalize();
+				return;
+			}
+		}
+		else
+		{
+			Vec2 door_pos = level->get_ghost_door_pos();
+			Vec2 floored_door_pos = Vec2 {
+				floorf( door_pos.x ),
+				floorf( door_pos.y ),
+			};
+
+			//  at floored door, behave!
+			if ( current_pos == floored_door_pos )
+			{
+				set_state( GhostState::SCATTER );
+				return;
+			}
+			//  at door, fix your pos (so it doesn't offset)
+			else if ( current_pos == door_pos )
+			{
+				next_pos = floored_door_pos;
+			}
+			//  at door-x, go to door-y
+			else if ( current_pos.x == door_pos.x )
+			{
+				next_pos = door_pos;
+			}
+
+			direction = ( next_pos - current_pos ).normalize();
+			return;
+		}
+		break;
+	}
+	case GhostState::EATEN:
 		//  enter the house
 		if ( current_pos == target )
 		{
@@ -133,6 +213,7 @@ void GhostMover::on_next_pos_reached()
 			set_state( GhostState::SCATTER );
 			return;
 		}
+		break;
 	}
 
 	Mover::on_next_pos_reached();
@@ -239,4 +320,6 @@ void GhostMover::debug_render( RenderBatch* render_batch )
 		},
 		color
 	);
+
+	Mover::debug_render( render_batch );
 }

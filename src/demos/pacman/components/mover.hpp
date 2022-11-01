@@ -15,7 +15,7 @@ protected:
 	Vec2 current_pos { 0 }, next_pos { 0 };
 public:
 	bool is_blocked { false };
-	Vec2 direction { Vec2::right };
+	Vec2 direction { Vec2::zero };
 	float move_time { 0.125f };
 	float current_move_time { 0.0f };
 	float rotation { 0.0f };

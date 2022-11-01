@@ -28,19 +28,19 @@ void run()
 
 	auto blinky = new GhostBlinky( level, pacman );
 	blinky->mover->set_pos( { 14, 11 } );
-	blinky->mover->set_state( GhostState::FLEE );
+	blinky->mover->set_state( GhostState::SCATTER );
 
 	auto pinky = new GhostPinky( level, pacman );
-	pinky->mover->set_pos( { 13, 11 } );
-	pinky->mover->set_state( GhostState::FLEE );
+	pinky->mover->set_pos( level->get_wait_pos( pinky->mover->wait_id ) );
+	pinky->mover->set_state( GhostState::WAIT );
 
 	auto inky = new GhostInky( level, blinky, pacman );
-	inky->mover->set_pos( { 12, 11 } );
-	inky->mover->set_state( GhostState::FLEE );
+	inky->mover->set_pos( level->get_wait_pos( inky->mover->wait_id ) );
+	inky->mover->set_state( GhostState::WAIT );
 
 	auto clyde = new GhostClyde( level, pacman );
-	clyde->mover->set_pos( { 11, 11 } );
-	clyde->mover->set_state( GhostState::FLEE );
+	clyde->mover->set_pos( level->get_wait_pos( clyde->mover->wait_id ) );
+	clyde->mover->set_state( GhostState::WAIT );
 
 	//  configure camera
 	auto camera = game.get_camera();

@@ -8,7 +8,11 @@ public:
 	GhostPinky( Level* level, PacMan* pacman )
 		: Ghost( level, pacman )
 	{
+		mover->wait_id = 2;
+		mover->wait_time = 1.0f;
+
 		anim->gen_frames( Rect { 0.0f, 32.0f, 128.0f, 16.0f }, Vec2 { 16.0f, 16.0f } );
+		
 		color = { 255, 183, 255 };
 	}
 

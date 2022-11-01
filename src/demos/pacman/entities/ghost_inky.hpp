@@ -10,7 +10,11 @@ public:
 	GhostInky( Level* level, GhostBlinky* blinky, PacMan* pacman )
 		: blinky( blinky ), Ghost( level, pacman )
 	{
+		mover->wait_id = 0;
+		mover->wait_time = 5.0f;
+
 		anim->gen_frames( Rect { 0.0f, 48.0f, 128.0f, 16.0f }, Vec2 { 16.0f, 16.0f } );
+		
 		color = { 0, 255, 255 };
 	}
 
