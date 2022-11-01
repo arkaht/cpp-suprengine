@@ -37,7 +37,7 @@ namespace suprengine
 			{
 				current_time_per_frame -= time_per_frame;
 
-				int start_frame { 0 }, end_frame = frames.size();
+				int start_frame { 0 }, end_frame = (int) frames.size();
 
 				//  retrieve anim clip infos
 				if ( current_clip != "" )

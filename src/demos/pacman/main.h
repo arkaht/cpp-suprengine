@@ -44,8 +44,8 @@ void run()
 
 	//  configure camera
 	auto camera = game.get_camera();
-	float level_width = level->get_width() * Level::TILE_SIZE, level_height = level->get_height() * Level::TILE_SIZE;
-	camera->zoom = (int) floorf( ( camera->viewport.h - 100.0f ) / level_height );
+	float level_width = (float) level->get_width() * Level::TILE_SIZE, level_height = (float) level->get_height() * Level::TILE_SIZE;
+	camera->zoom = floorf( ( camera->viewport.h - 100.0f ) / level_height );
 	camera->translate(
 		Vec2 {
 			camera->viewport.w / camera->zoom / 2.0f - level_width / 2.0f,

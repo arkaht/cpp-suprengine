@@ -25,6 +25,8 @@ namespace suprengine
 				return abs_shape.x < abs_rc_shape.x + abs_rc_shape.w && abs_rc_shape.x < abs_shape.x + abs_shape.w
 					&& abs_shape.y < abs_rc_shape.y + abs_rc_shape.h && abs_rc_shape.y < abs_shape.y + abs_shape.h;
 			}
+
+			return false;
 		}
 
 		void debug_render( RenderBatch* render_batch ) override

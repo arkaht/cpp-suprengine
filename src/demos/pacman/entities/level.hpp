@@ -32,7 +32,7 @@ public:
 
 		//  reserve tiles
 		width = surface->w / TILE_SIZE, height = surface->h / TILE_SIZE;
-		tiles.resize( static_cast<size_t>( surface->w * surface->h ), false );
+		tiles.resize( (size_t)( surface->w * surface->h ), false );
 
 		//  read image pixels
 		for ( int ty = 0; ty < height; ty++ )

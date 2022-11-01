@@ -11,7 +11,7 @@ void Logger::info( const std::string& message )
 
 void Logger::error( log_category category, const std::string& message )
 {
-	SDL_LogError( static_cast<int>( category ), "%s | SDL: %s", message.c_str(), SDL_GetError() );
+	SDL_LogError( (int) category, "%s | SDL: %s", message.c_str(), SDL_GetError() );
 }
 
 void Logger::error( const std::string& message )

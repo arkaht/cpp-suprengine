@@ -13,10 +13,10 @@ namespace suprengine
 		static Color from_pixel( uint32_t pixel )
 		{
 			return Color {
-				static_cast<uint8_t>( pixel ),
-				static_cast<uint8_t>( pixel >> 8 ),
-				static_cast<uint8_t>( pixel >> 16 ),
-				static_cast<uint8_t>( pixel >> 24 )
+				(uint8_t) pixel,
+				(uint8_t) ( pixel >> 8 ),
+				(uint8_t) ( pixel >> 16 ),
+				(uint8_t) ( pixel >> 24 )
 			};
 		}
 

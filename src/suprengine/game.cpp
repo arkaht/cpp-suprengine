@@ -40,7 +40,7 @@ bool Game::initialize( const char* title, int width, int height )
 	Assets::set_render_batch( _render_batch );
 
 	//  setup camera viewport
-	camera.viewport.w = width, camera.viewport.h = height;
+	camera.viewport.w = (float) width, camera.viewport.h = (float) height;
 
 	return true;
 }

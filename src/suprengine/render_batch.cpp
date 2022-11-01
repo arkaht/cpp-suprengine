@@ -62,7 +62,7 @@ void RenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& 
 	auto sdl_rect = rect.to_sdl_rect();
 
 	//  apply translation
-	sdl_rect.x += translation.x, sdl_rect.y += translation.y;
+	sdl_rect.x += (int) translation.x, sdl_rect.y += (int) translation.y;
 
 	switch ( draw_type )
 	{
@@ -88,7 +88,7 @@ void RenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, con
 	}
 
 	//  apply translation
-	dest.x += translation.x, dest.y += translation.y;
+	dest.x += (int) translation.x, dest.y += (int) translation.y;
 
 	//  modulate color
 	SDL_SetTextureColorMod( sdl_texture, color.r, color.g, color.b );

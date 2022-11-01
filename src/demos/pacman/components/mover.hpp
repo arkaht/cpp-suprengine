@@ -67,7 +67,7 @@ public:
 		Vec2 new_pos = current_pos + dir;
 
 		//  check wall collision
-		if ( level->is_wall_tile( new_pos.x, new_pos.y ) ) return false;
+		if ( level->is_wall_tile( (int) new_pos.x, (int) new_pos.y ) ) return false;
 
 		//  apply direction
 		next_pos = new_pos;

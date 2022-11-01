@@ -136,7 +136,7 @@ Vec2 GhostMover::get_desired_dir()
 		//  remove backward
 		if ( dir == backward ) continue;
 		//  remove walls
-		if ( level->is_wall_tile( current_pos.x + dir.x, current_pos.y + dir.y ) ) continue;
+		if ( level->is_wall_tile( (int) ( current_pos.x + dir.x ), (int) ( current_pos.y + dir.y ) ) ) continue;
 
 		//  add possibility
 		possibilities.push_back( dir );
@@ -145,7 +145,7 @@ Vec2 GhostMover::get_desired_dir()
 	//  the choosen one?!
 	Vec2 desired { Vec2::up };
 
-	int length = possibilities.size();
+	int length = (int) possibilities.size();
 	if ( length > 1 )
 	{
 		//  flee is a random choice
