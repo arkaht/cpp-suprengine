@@ -8,6 +8,7 @@ public:
 	GhostSlowZone( Rect zone ) : Entity()
 	{
 		new RectCollider( this, zone );
+		collider->debug_color = { 255, 0, 255, 127 };
 	}
 
 	void on_trigger_enter( Collider* other )

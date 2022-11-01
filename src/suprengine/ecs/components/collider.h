@@ -12,8 +12,9 @@ namespace suprengine
 	protected:
 		std::unordered_set<Collider*> collisions;
 
-		const Color COLOR { 0, 255, 0, 127 };
 	public:
+		Color debug_color { 0, 255, 0, 127 };
+
 		Collider( Entity* owner, int priority_order = 0 );
 		~Collider() override;
 

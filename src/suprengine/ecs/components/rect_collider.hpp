@@ -34,7 +34,7 @@ namespace suprengine
 			render_batch->draw_rect( 
 				DrawType::FILL, 
 				owner->transform->get_rect( shape ), 
-				COLOR 
+				debug_color
 			);
 		}
 	};
