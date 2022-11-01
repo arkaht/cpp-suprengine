@@ -6,16 +6,16 @@
 #include <suprengine/vec2.h>
 
 #include "../entities/level.hpp"
-#include "../int2_16b.h"
 
 using namespace suprengine;
 
 class Mover : public Component
 {
-private:
-	Int2_16b current_pos { 0 }, next_pos { 0 };
+protected:
+	Vec2 current_pos { 0 }, next_pos { 0 };
 public:
-	Int2_16b direction { Int2_16b::right };
+	bool is_blocked { false };
+	Vec2 direction { Vec2::right };
 	float move_time { 0.125f };
 	float current_move_time { 0.0f };
 	float rotation { 0.0f };
@@ -28,27 +28,28 @@ public:
 
 	void update( float dt ) override
 	{
-		if ( owner->transform->pos == next_pos.to_vec2() * Level::TILE_SIZE )
+		if ( owner->transform->pos == next_pos * Level::TILE_SIZE )
 		{
 			//  set current pos
 			current_pos = next_pos;
 
 			//  try change direction
+			is_blocked = false;
 			if ( !try_set_dir( get_desired_dir() ) )
 			{
 				//  continue otherwise
 				if ( !try_set_dir( direction ) )
 				{
-					direction.value = 0;
+					is_blocked = true;
 				}
 			}
 		}
 
-		if ( direction.value != 0 && ( current_move_time += dt ) >= move_time )
+		if ( !is_blocked && ( current_move_time += dt ) >= move_time )
 		{
 			//  move
 			Transform2* transf = owner->transform;
-			transf->pos = transf->pos.approach( next_pos.to_vec2() * Level::TILE_SIZE, 1.0f );
+			transf->pos = transf->pos.approach( next_pos * Level::TILE_SIZE, 1.0f );
 
 			//  rotate
 			if ( rotate_towards_dir )
@@ -61,26 +62,12 @@ public:
 		}
 	}
 
-	bool try_set_dir( Int2_16b dir )
+	bool try_set_dir( Vec2 dir )
 	{
-		Int2_16b new_pos = current_pos;
-
-		//  applying direction
-		//  NOTE: it's a workaround due of Int2_16b overflow for up-vector :'(
-		if ( dir.get_y() != 0 )
-		{
-			new_pos = Int2_16b(
-				new_pos.get_x(),
-				new_pos.get_y() + dir.get_y()
-			);
-		}
-		else
-		{
-			new_pos += dir;
-		}
+		Vec2 new_pos = current_pos + dir;
 
 		//  check wall collision
-		if ( level->is_wall_tile( new_pos.get_x(), new_pos.get_y() ) ) return false;
+		if ( level->is_wall_tile( new_pos.x, new_pos.y ) ) return false;
 
 		//  apply direction
 		next_pos = new_pos;
@@ -93,26 +80,26 @@ public:
 		return true;
 	}
 
-	void set_pos( Int2_16b pos )
+	void set_pos( Vec2 pos )
 	{
-		owner->transform->pos.x = pos.get_x() * Level::TILE_SIZE;
-		owner->transform->pos.y = pos.get_y() * Level::TILE_SIZE;
+		owner->transform->pos.x = pos.x * Level::TILE_SIZE;
+		owner->transform->pos.y = pos.y * Level::TILE_SIZE;
 		
 		current_pos = pos, next_pos = pos;
 	}
 
-	Int2_16b get_next_pos() const { return next_pos; }
-	Int2_16b get_pos() const { return current_pos; }
+	Vec2 get_next_pos() const { return next_pos; }
+	Vec2 get_pos() const { return current_pos; }
 
-	virtual Int2_16b get_desired_dir() 
+	virtual Vec2 get_desired_dir()
 	{
-		return Int2_16b::right;
+		return Vec2::right;
 	};
 
 
 	void debug_render( RenderBatch* render_batch ) override
 	{
-		Vec2 pos = get_pos().to_vec2() * Level::TILE_SIZE;
+		Vec2 pos = current_pos * Level::TILE_SIZE;
 		Vec2 size { Level::TILE_SIZE, Level::TILE_SIZE };
 
 		//  transform pos
@@ -124,7 +111,7 @@ public:
 
 		render_batch->draw_rect(
 			DrawType::FILL,
-			Rect { get_next_pos().to_vec2() * Level::TILE_SIZE, size },
+			Rect { get_next_pos() * Level::TILE_SIZE, size },
 			Color { 255, 0, 0, 54 }
 		);
 

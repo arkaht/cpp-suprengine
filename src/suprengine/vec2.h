@@ -55,6 +55,16 @@ namespace suprengine
 			return x == v.x && y == v.y;
 		}
 
+		float length_sqr() const
+		{
+			return x * x + y * y;
+		}
+
+		float get_angle() const
+		{
+			return atan2( y, x ) * math::RAD2DEG;
+		}
+
 		Vec2& approach( Vec2 target, float delta )
 		{
 			x = math::approach( x, target.x, delta );

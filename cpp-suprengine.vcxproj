@@ -134,7 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\demos\pacman\int2_16b.cpp" />
+    <ClCompile Include="src\demos\pacman\components\ghost_mover.cpp" />
     <ClCompile Include="src\suprengine\assets.cpp" />
     <ClCompile Include="src\suprengine\game.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -150,12 +150,18 @@
     <ClCompile Include="src\suprengine\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\demos\pacman\entities\ghost_clyde.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\ghost_inky.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\ghost_pinky.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\ghost.fwd.h" />
+    <ClInclude Include="src\demos\pacman\entities\ghost_blinky.hpp" />
+    <ClInclude Include="src\demos\pacman\components\ghost_mover.h" />
     <ClInclude Include="src\demos\pacman\components\mover.hpp" />
     <ClInclude Include="src\demos\pacman\components\player_mover.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\ghost.hpp" />
     <ClInclude Include="src\demos\pacman\entities\level.hpp" />
     <ClInclude Include="src\demos\pacman\entities\pacman.hpp" />
     <ClInclude Include="src\demos\pacman\main.h" />
-    <ClInclude Include="src\demos\pacman\int2_16b.h" />
     <ClInclude Include="src\suprengine\assets.h" />
     <ClInclude Include="src\suprengine\camera.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\anim_sprite_renderer.hpp" />

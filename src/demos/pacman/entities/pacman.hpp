@@ -20,12 +20,12 @@ public:
 		anim = new AnimSpriteRenderer( this, Assets::get_texture( "atlas.png" ), 16 );
 		anim->gen_frames( Rect { 0.0f, 0.0f, 48.0f, 16.0f }, Vec2 { 16.0f, 16.0f } );
 		//anim->add_frame( Rect { 16.0f, 0.0f, 16.0f, 16.0f } );
-		anim->dest = { Level::TILE_SIZE / 2, Level::TILE_SIZE / 2, 16.0f, 16.0f };
+		anim->dest = { Level::TILE_SIZE / 2.0f, Level::TILE_SIZE / 2.0f, 16.0f, 16.0f };
 	}
 
 	void update_this( float dt ) override
 	{
 		//  play animation if moving
-		anim->is_playing = mover->direction.value != 0;
+		anim->is_playing = !mover->is_blocked;
 	}
 };

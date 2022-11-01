@@ -2,6 +2,11 @@
 
 #include <suprengine/game.h>
 
+#include "entities/ghost_blinky.hpp"
+#include "entities/ghost_pinky.hpp"
+#include "entities/ghost_inky.hpp"
+#include "entities/ghost_clyde.hpp"
+
 #include "entities/pacman.hpp"
 #include "entities/level.hpp"
 
@@ -20,6 +25,22 @@ void run()
 
 	auto pacman = new PacMan( level );
 	pacman->mover->set_pos( { 14, 23 } );
+
+	auto blinky = new GhostBlinky( level, pacman );
+	blinky->mover->set_pos( { 14, 11 } );
+	blinky->mover->state = GhostState::CHASE;
+
+	auto pinky = new GhostPinky( level, pacman );
+	pinky->mover->set_pos( { 13, 11 } );
+	pinky->mover->state = GhostState::CHASE;
+
+	auto inky = new GhostInky( level, blinky, pacman );
+	inky->mover->set_pos( { 12, 11 } );
+	inky->mover->state = GhostState::CHASE;
+
+	auto clyde = new GhostClyde( level, pacman );
+	clyde->mover->set_pos( { 11, 11 } );
+	clyde->mover->state = GhostState::CHASE;
 
 	//  configure camera
 	auto camera = game.get_camera();

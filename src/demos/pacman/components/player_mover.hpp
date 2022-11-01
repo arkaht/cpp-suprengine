@@ -5,7 +5,7 @@
 class PlayerMover : public Mover
 {
 public:
-	Int2_16b desired_dir { Int2_16b::right };
+	Vec2 desired_dir { Vec2::right };
 
 	PlayerMover( Entity* owner, Level* level, int priority_order = 0 )
 		: Mover( owner, level, priority_order ) {}
@@ -17,26 +17,26 @@ public:
 		//  set desired direction
 		if ( game->is_key_pressed( SDL_SCANCODE_W ) || game->is_key_pressed( SDL_SCANCODE_UP ) )
 		{
-			desired_dir = Int2_16b::up;
+			desired_dir = Vec2::up;
 		}
 		else if ( game->is_key_pressed( SDL_SCANCODE_S ) || game->is_key_pressed( SDL_SCANCODE_DOWN ) )
 		{
-			desired_dir = Int2_16b::down;
+			desired_dir = Vec2::down;
 		}
 		else if ( game->is_key_pressed( SDL_SCANCODE_A ) || game->is_key_pressed( SDL_SCANCODE_LEFT ) )
 		{
-			desired_dir = Int2_16b::left;
+			desired_dir = Vec2::left;
 		}
 		else if ( game->is_key_pressed( SDL_SCANCODE_D ) || game->is_key_pressed( SDL_SCANCODE_RIGHT ) )
 		{
-			desired_dir = Int2_16b::right;
+			desired_dir = Vec2::right;
 		}
 
 		//  base update
 		Mover::update( dt );
 	}
 
-	Int2_16b get_desired_dir() override
+	Vec2 get_desired_dir() override
 	{
 		return desired_dir;
 	}
