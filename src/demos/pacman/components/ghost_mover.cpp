@@ -3,10 +3,33 @@
 
 GhostMover::GhostMover( Ghost* owner, Level* level, PacMan* pacman, AnimSpriteRenderer* anim, int priority_order )
 	: personality( owner ), anim( anim ), pacman( pacman ), Mover( owner, level, priority_order )
-{}
+{
+	move_time = NORMAL_MOVE_TIME;
+}
 
 void GhostMover::update( float dt )
 {
+	//  flee state
+	if ( state == GhostState::FLEE )
+	{
+		current_flee_time += dt;
+
+		if ( !is_flee_ending )
+		{
+			if ( current_flee_time >= FLEE_TIME - FLEE_END_TIME )
+			{
+				is_flee_ending = true;
+			}
+		}
+		else
+		{
+			if ( current_flee_time >= FLEE_TIME )
+			{
+				set_state( GhostState::SCATTER );
+			}
+		}
+	}
+
 	//  base update
 	Mover::update( dt );
 
@@ -28,7 +51,14 @@ void GhostMover::update( float dt )
 
 			break;
 		case GhostState::FLEE:
-			anim->set_current_clip( "flee" );
+			if ( !is_flee_ending )
+			{
+				anim->set_current_clip( "flee" );
+			}
+			else
+			{
+				anim->set_current_clip( "flee_end" );
+			}
 			break;
 		case GhostState::EATEN:
 			if ( direction == Vec2::left )
@@ -50,29 +80,34 @@ void GhostMover::update_target()
 	switch ( state )
 	{
 	case GhostState::SCATTER:
-		//uint8_t max_x = level->get_width() - 1, max_y = level->get_height() - 1;
 		target = personality->get_scatter_target();
-
-		/*switch ( personality )
-		{
-		case GhostPersonality::BLINKY:
-			target = { (uint8_t)( max_x - 2 ), 0 };
-			break;
-		case GhostPersonality::PINKY:
-			target = { 2, 0 };
-			break;
-		case GhostPersonality::CLYDE:
-			target = { 0, max_y };
-			break;
-		case GhostPersonality::INKY:
-			target = { max_x, max_y };
-			break;
-		}*/
 		break;
 	case GhostState::CHASE:
 		target = personality->get_chase_target();
 		break;
 	}
+}
+
+void GhostMover::set_state( GhostState _state )
+{
+	//  revert move speed
+	if ( state == GhostState::FLEE )
+	{
+		move_time = NORMAL_MOVE_TIME;
+	}
+
+	state = _state;
+
+	//  set flee move speed
+	if ( state == GhostState::FLEE )
+	{
+		move_time = FLEE_MOVE_TIME;
+		current_flee_time = 0.0f;
+		is_flee_ending = false;
+	}
+
+	//  turn backwards
+	try_set_dir( -direction );
 }
 
 Vec2 GhostMover::get_desired_dir()

@@ -14,18 +14,18 @@ enum class GhostState
 	EATEN,
 };
 
-//enum class GhostPersonality
-//{
-//	BLINKY,  //  targets PAC-MAN
-//	PINKY,  //  targets PAC-MAN forward direction by 4 tiles
-//	INKY,  //  targets mirrored position of BLINKY from PAC-MAN
-//	CLYDE,  //  targets PAC-MAN but flee him if within 8 tiles from him
-//};
-
 class GhostMover : public Mover
 {
 private:
 	Vec2 target { Vec2::zero };
+
+	const float FLEE_TIME { 8.0f };
+	const float FLEE_END_TIME { 2.0f };  //  2 seconds before FLEE_TIME
+	const float NORMAL_MOVE_TIME { 0.016f };
+	const float FLEE_MOVE_TIME { 0.018f };
+
+	float current_flee_time { 0.0f };
+	bool is_flee_ending { false };
 public:
 	GhostState state { GhostState::SCATTER };
 	Ghost* personality;
@@ -36,6 +36,8 @@ public:
 
 	void update( float dt ) override;
 	void update_target();
+
+	void set_state( GhostState state );
 
 	Vec2 get_desired_dir() override;
 

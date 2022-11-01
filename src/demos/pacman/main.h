@@ -28,19 +28,19 @@ void run()
 
 	auto blinky = new GhostBlinky( level, pacman );
 	blinky->mover->set_pos( { 14, 11 } );
-	blinky->mover->state = GhostState::CHASE;
+	blinky->mover->set_state( GhostState::FLEE );
 
 	auto pinky = new GhostPinky( level, pacman );
 	pinky->mover->set_pos( { 13, 11 } );
-	pinky->mover->state = GhostState::CHASE;
+	pinky->mover->set_state( GhostState::FLEE );
 
 	auto inky = new GhostInky( level, blinky, pacman );
 	inky->mover->set_pos( { 12, 11 } );
-	inky->mover->state = GhostState::CHASE;
+	inky->mover->set_state( GhostState::FLEE );
 
 	auto clyde = new GhostClyde( level, pacman );
 	clyde->mover->set_pos( { 11, 11 } );
-	clyde->mover->state = GhostState::CHASE;
+	clyde->mover->set_state( GhostState::FLEE );
 
 	//  configure camera
 	auto camera = game.get_camera();

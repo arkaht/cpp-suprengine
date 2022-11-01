@@ -39,7 +39,6 @@ public:
 
 		//  create mover
 		mover = new GhostMover( this, level, pacman, anim );
-		mover->move_time = .016f;
 	}
 
 	virtual Vec2 get_scatter_target() = 0;
