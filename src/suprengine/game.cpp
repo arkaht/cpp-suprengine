@@ -273,6 +273,13 @@ void Game::render()
 	SDL_RenderSetScale( sdl_renderer, camera.zoom, camera.zoom );
 	_render_batch->translate( camera.viewport.get_pos() );
 
+	//  apply camera clipping
+	if ( camera.clip_enabled )
+	{
+		SDL_Rect clip_rect = camera.clip.to_sdl_rect();
+		SDL_RenderSetClipRect( sdl_renderer, &clip_rect );
+	}
+
 	//  render components
 	_render_batch->render();
 

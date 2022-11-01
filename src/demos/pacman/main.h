@@ -47,11 +47,16 @@ void run()
 	float level_width = (float) level->get_width() * Level::TILE_SIZE, level_height = (float) level->get_height() * Level::TILE_SIZE;
 	camera->zoom = floorf( ( camera->viewport.h - 100.0f ) / level_height );
 	camera->translate(
-		Vec2 {
+		{
 			camera->viewport.w / camera->zoom / 2.0f - level_width / 2.0f,
 			camera->viewport.h / camera->zoom / 2.0f - level_height / 2.0f
 		}
 	);
+	camera->clip_enabled = true;
+	camera->clip = { 
+		{ camera->viewport.x, 0.0f },
+		{ level_width, camera->get_viewport().h }
+	};
 
 	/*Entity* ghost_frightened_anim = new Entity();
 	ghost_frightened_anim->transform->pos = { 160.0f + 48.0f, 160.0f + 24.0f };
