@@ -23,7 +23,7 @@ public:
 		auto sprite = new SpriteRenderer( this, Assets::get_texture( TEXTURE_PATH ) );
 		sprite->origin = Vec2::zero;
 
-		new DebugLevelRenderer( this, Color { 127, 127, 0, 88 } );
+		//new DebugLevelRenderer( this, Color { 127, 127, 0, 88 } );
 
 		gen_tiles();
 	}

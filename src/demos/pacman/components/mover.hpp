@@ -12,11 +12,14 @@ using namespace suprengine;
 
 class Mover : public Component
 {
+private:
+	Int2_16b current_pos { 0 }, next_pos { 0 };
 public:
 	Int2_16b direction { Int2_16b::right };
-	float move_time { 0.5f };
+	float move_time { 0.125f };
 	float current_move_time { 0.0f };
 	float rotation { 0.0f };
+	bool rotate_towards_dir { false };
 
 	Level* level { nullptr };
 
@@ -25,39 +28,84 @@ public:
 
 	void update( float dt ) override
 	{
-		if ( ( current_move_time += dt ) >= move_time )
+		if ( owner->transform->pos == next_pos.to_vec2() * Level::TILE_SIZE )
 		{
-			Vec2 new_pos = get_pos().to_vec2() + direction.to_vec2();
-			if ( level->is_wall_tile( new_pos.x, new_pos.y ) ) return;
+			//  set current pos
+			current_pos = next_pos;
 
+			//  try change direction
+			if ( !try_set_dir( get_desired_dir() ) )
+			{
+				//  continue otherwise
+				if ( !try_set_dir( direction ) )
+				{
+					direction.value = 0;
+				}
+			}
+		}
+
+		if ( direction.value != 0 && ( current_move_time += dt ) >= move_time )
+		{
+			//  move
 			Transform2* transf = owner->transform;
-			transf->pos = new_pos * Level::TILE_SIZE;
-			transf->rotation = direction.get_angle();
+			transf->pos = transf->pos.approach( next_pos.to_vec2() * Level::TILE_SIZE, 1.0f );
 
+			//  rotate
+			if ( rotate_towards_dir )
+			{
+				transf->rotation = direction.get_angle();
+			}
+
+			//  reset timer
 			current_move_time = 0.0f;
 		}
 	}
 
 	bool try_set_dir( Int2_16b dir )
 	{
-		Int2_16b pos = get_pos();
-		if ( level->is_wall_tile( pos.get_x() + dir.get_x(), pos.get_y() + dir.get_y() ) ) return false;
+		Int2_16b new_pos = current_pos;
 
+		//  applying direction
+		//  NOTE: it's a workaround due of Int2_16b overflow for up-vector :'(
+		if ( dir.get_y() != 0 )
+		{
+			new_pos = Int2_16b(
+				new_pos.get_x(),
+				new_pos.get_y() + dir.get_y()
+			);
+		}
+		else
+		{
+			new_pos += dir;
+		}
+
+		//  check wall collision
+		if ( level->is_wall_tile( new_pos.get_x(), new_pos.get_y() ) ) return false;
+
+		//  apply direction
+		next_pos = new_pos;
 		direction = dir;
+
+		//printf( "curr_x:%d; curr_y:%d\n", current_pos.get_x(), current_pos.get_y() );
+		//printf( "dir_x:%d; dir_y:%d\n", dir.get_x(), dir.get_y() );
+		//printf( "next_x:%d; next_y:%d\n", next_pos.get_x(), next_pos.get_y() );
+		//printf( "x:%i, y:%i\n", direction.get_x(), direction.get_y() );
 		return true;
 	}
 
 	void set_pos( Int2_16b pos )
 	{
-		owner->transform->pos.x = pos.get_x();
-		owner->transform->pos.y = pos.get_y();
+		owner->transform->pos.x = pos.get_x() * Level::TILE_SIZE;
+		owner->transform->pos.y = pos.get_y() * Level::TILE_SIZE;
+		
+		current_pos = pos, next_pos = pos;
 	}
 
-	Int2_16b get_pos() const
+	Int2_16b get_next_pos() const { return next_pos; }
+	Int2_16b get_pos() const { return current_pos; }
+
+	virtual Int2_16b get_desired_dir() 
 	{
-		return Int2_16b(
-			owner->transform->pos.x / Level::TILE_SIZE,
-			owner->transform->pos.y / Level::TILE_SIZE
-		);
-	}
+		return Int2_16b::right;
+	};
 };

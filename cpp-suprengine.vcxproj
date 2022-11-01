@@ -152,7 +152,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\demos\pacman\components\debug_level_renderer.h" />
+    <ClInclude Include="src\demos\pacman\components\debug_mover_renderer.hpp" />
     <ClInclude Include="src\demos\pacman\components\mover.hpp" />
+    <ClInclude Include="src\demos\pacman\components\player_mover.hpp" />
     <ClInclude Include="src\demos\pacman\entities\level.fwd.h" />
     <ClInclude Include="src\demos\pacman\entities\level.hpp" />
     <ClInclude Include="src\demos\pacman\entities\pacman.hpp" />

@@ -152,6 +152,12 @@
     <ClInclude Include="src\suprengine\math.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="src\demos\pacman\components\player_mover.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\demos\pacman\components\debug_mover_renderer.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
     <ClInclude Include="src\suprengine\camera.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
