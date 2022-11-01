@@ -10,7 +10,7 @@ using namespace suprengine;
 void run()
 {
 	auto& game = Game::instance();
-	if ( !game.initialize( "pac-man" ) ) return;
+	if ( !game.initialize( "pac-man", 844, 844 ) ) return;
 
 	//  set assets path
 	Assets::set_path( "src/demos/pacman/assets/" );
@@ -24,7 +24,7 @@ void run()
 	//  configure camera
 	auto camera = game.get_camera();
 	float level_width = level->get_width() * Level::TILE_SIZE, level_height = level->get_height() * Level::TILE_SIZE;
-	camera->zoom = ( camera->viewport.h - 100.0f ) / level_height;
+	camera->zoom = (int) floorf( ( camera->viewport.h - 100.0f ) / level_height );
 	camera->translate(
 		Vec2 {
 			camera->viewport.w / camera->zoom / 2.0f - level_width / 2.0f,

@@ -220,9 +220,9 @@ void Game::render()
 	_render_batch->begin_render();
 
 	//  draw screen diagonals
-	SDL_SetRenderDrawColor( sdl_renderer, 255, 255, 255, 255 );
+	/*SDL_SetRenderDrawColor( sdl_renderer, 255, 255, 255, 255 );
 	SDL_RenderDrawLine( sdl_renderer, 0, 0, _window->get_width() / camera.zoom, _window->get_height() / camera.zoom );
-	SDL_RenderDrawLine( sdl_renderer, _window->get_width() / camera.zoom, 0, 0, _window->get_height() / camera.zoom );
+	SDL_RenderDrawLine( sdl_renderer, _window->get_width() / camera.zoom, 0, 0, _window->get_height() / camera.zoom );*/
 
 	//  apply camera
 	SDL_RenderSetScale( sdl_renderer, camera.zoom, camera.zoom );
