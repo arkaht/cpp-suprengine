@@ -167,6 +167,7 @@
     <ClInclude Include="src\demos\pacman\entities\level.hpp" />
     <ClInclude Include="src\demos\pacman\entities\pacman.h" />
     <ClInclude Include="src\demos\pacman\main.h" />
+    <ClInclude Include="src\demos\pacman\scenes\game_scene.hpp" />
     <ClInclude Include="src\suprengine\assets.h" />
     <ClInclude Include="src\suprengine\camera.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\collider.fwd.h" />
@@ -175,6 +176,8 @@
     <ClInclude Include="src\suprengine\ecs\components\renderers\anim_sprite_renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\sprite_renderer.hpp" />
     <ClInclude Include="src\suprengine\math.h" />
+    <ClInclude Include="src\suprengine\scene.fwd.h" />
+    <ClInclude Include="src\suprengine\scene.h" />
     <ClInclude Include="src\suprengine\texture.fwd.h" />
     <ClInclude Include="src\suprengine\game.h" />
     <ClInclude Include="src\suprengine\color.h" />

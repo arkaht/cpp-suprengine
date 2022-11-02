@@ -6,9 +6,12 @@
 #include "ecs/entity.fwd.h"
 #include "ecs/components/collider.fwd.h"
 #include "camera.hpp"
+#include "scene.fwd.h"
 
 #include <vector>
 #include <unordered_set>
+
+//#define TIMER( time, code )  Game::timer
 
 namespace suprengine
 {
@@ -39,6 +42,8 @@ namespace suprengine
 		Timer timer {};
 		Camera camera {};
 
+		Scene* scene { nullptr };
+
 		std::map<SDL_Scancode, KeyState> keystates;
 		std::unordered_set<SDL_Scancode> survey_keys;
 	public:
@@ -59,6 +64,9 @@ namespace suprengine
 
 		bool initialize( const char* title = "my-cpp-game", int width = DEFAULT_WINDOW_WIDTH, int height = DEFAULT_WINDOW_HEIGHT );
 		void loop();
+
+		void set_scene( Scene* scene );
+		Scene* get_scene() const { return scene; }
 
 		void add_entity( Entity* entity );
 		void remove_entity( Entity* entity );

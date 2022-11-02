@@ -2,6 +2,7 @@
 #include "ecs/entity.h"
 #include "ecs/components/transform2.hpp"
 #include "ecs/components/collider.h"
+#include "scene.h"
 
 #include <unordered_map>
 
@@ -13,6 +14,12 @@ Game::~Game()
 	while ( !entities.empty() )
 	{
 		delete entities.back();
+	}
+
+	//  release scene
+	if ( scene != nullptr )
+	{
+		delete scene;
 	}
 
 	//  release assets
@@ -60,6 +67,16 @@ void Game::loop()
 		timer.accumulate_seconds( dt );
 		timer.delay_time();
 	}
+}
+
+void Game::set_scene( Scene* _scene )
+{
+	if ( scene != nullptr )
+	{
+		delete scene;
+	}
+
+	scene = _scene;
 }
 
 void Game::add_entity( Entity* entity )
