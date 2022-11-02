@@ -26,29 +26,27 @@ public:
 		auto slow_zone_l = new GhostSlowZone(
 			Rect {
 				0.0f,
-				0.0f,
+				14.0f,
 				6.0f,
 				1.0f,
-			} *Level::TILE_SIZE
-			);
-		slow_zone_l->transform->pos = Vec2 { 0.0f, 14.0f } *Level::TILE_SIZE;
+			} * Level::TILE_SIZE
+		);
 
 		auto slow_zone_r = new GhostSlowZone(
 			Rect {
-				0.0f,
-				0.0f,
+				22.0f,
+				14.0f,
 				6.0f,
 				1.0f,
-			} *Level::TILE_SIZE
-			);
-		slow_zone_r->transform->pos = Vec2 { 22.0f, 14.0f } *Level::TILE_SIZE;
+			} * Level::TILE_SIZE
+		);
 
 
 		auto pacman = new PacMan( level );
-		pacman->mover->set_pos( { 14, 23 } );
+		pacman->mover->set_pos( { 14.0f, 23.0f } );
 
 		auto blinky = new GhostBlinky( level, pacman );
-		blinky->mover->set_pos( { 14, 11 } );
+		blinky->mover->set_pos( { 14.0f, 11.0f } );
 		blinky->mover->set_state( GhostState::CHASE );
 
 		auto pinky = new GhostPinky( level, pacman );
