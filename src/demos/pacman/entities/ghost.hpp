@@ -38,6 +38,7 @@ public:
 		anim->add_clip( "left", AnimClip { 10, 11 } );
 		anim->add_clip( "up", AnimClip { 12, 13 } );
 		anim->add_clip( "down", AnimClip { 14, 15 } );
+		anim->set_current_clip( "flee" );
 
 		//  create mover
 		mover = new GhostMover( this, level, pacman, anim );
