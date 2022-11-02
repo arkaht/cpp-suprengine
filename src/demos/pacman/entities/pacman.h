@@ -6,6 +6,11 @@
 
 class PacMan : public Entity
 {
+private:
+	const float DEATH_WAIT_TIME { 1.0f };
+
+	float death_wait_time { 0.0f };
+	bool is_dying { false }, is_waiting_dying { false };
 public:
 	PlayerMover* mover { nullptr };
 	AnimSpriteRenderer* anim { nullptr };
@@ -15,4 +20,6 @@ public:
 	void update_this( float dt ) override;
 
 	void on_trigger_enter( Collider* other ) override;
+
+	void die();
 };
