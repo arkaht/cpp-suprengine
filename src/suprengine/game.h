@@ -1,17 +1,17 @@
 #pragma once
 
 #include "assets.h"
-#include "timer.h"
+#include "updater.h"
 #include "vec2.h"
 #include "ecs/entity.fwd.h"
 #include "ecs/components/collider.fwd.h"
 #include "camera.hpp"
 #include "scene.fwd.h"
+#include "timer.hpp"
 
 #include <vector>
 #include <unordered_set>
 
-//#define TIMER( time, code )  Game::timer
 
 namespace suprengine
 {
@@ -36,10 +36,12 @@ namespace suprengine
 		std::vector<Entity*> pending_entities, entities, dead_entities;
 		std::vector<Collider*> colliders;
 
+		std::vector<Timer> timers;
+
 		Window* window { nullptr };
 		RenderBatch* render_batch { nullptr };
 		
-		Timer timer {};
+		Updater updater {};
 		Camera camera {};
 
 		Scene* scene { nullptr };
@@ -71,6 +73,8 @@ namespace suprengine
 		void add_entity( Entity* entity );
 		void remove_entity( Entity* entity );
 
+		void add_timer( const Timer& timer );
+
 		void add_collider( Collider* collider );
 		void remove_collider( Collider* collider );
 
@@ -82,7 +86,7 @@ namespace suprengine
 
 		Window* get_window() const { return window; }
 		RenderBatch* get_render_batch() const { return render_batch; }
-		Timer* get_timer() { return &timer; }
+		Updater* get_timer() { return &updater; }
 		Camera* get_camera() { return &camera; }
 	};
 }

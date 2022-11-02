@@ -146,7 +146,7 @@
     <ClCompile Include="src\suprengine\ecs\components\renderers\renderer.cpp" />
     <ClCompile Include="src\suprengine\ecs\entity.cpp" />
     <ClCompile Include="src\suprengine\render_batch.cpp" />
-    <ClCompile Include="src\suprengine\timer.cpp" />
+    <ClCompile Include="src\suprengine\updater.cpp" />
     <ClCompile Include="src\suprengine\vec2.cpp" />
     <ClCompile Include="src\suprengine\window.cpp" />
     <ClCompile Include="src\suprengine\logger.cpp" />
@@ -193,7 +193,8 @@
     <ClInclude Include="src\suprengine\logger.h" />
     <ClInclude Include="src\suprengine\rect.h" />
     <ClInclude Include="src\suprengine\render_batch.h" />
-    <ClInclude Include="src\suprengine\timer.h" />
+    <ClInclude Include="src\suprengine\timer.hpp" />
+    <ClInclude Include="src\suprengine\updater.h" />
     <ClInclude Include="src\suprengine\vec2.h" />
     <ClInclude Include="src\suprengine\window.h" />
     <ClInclude Include="src\suprengine\texture.h" />

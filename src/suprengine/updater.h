@@ -6,15 +6,15 @@ namespace suprengine
 	constexpr unsigned int FRAME_DELAY = 1000 / FPS;
 	constexpr unsigned int MAX_DT = 50;
 
-	class Timer
+	class Updater
 	{
 	private:
 		unsigned int frame_start { 0u }, last_frame { 0u }, frame_time { 0u };
 		float accumulated_seconds { 0.0f };
 	public:
-		Timer() {};
-		Timer( const Timer& ) = delete;
-		Timer& operator=( const Timer& ) = delete;
+		Updater() {};
+		Updater( const Updater& ) = delete;
+		Updater& operator=( const Updater& ) = delete;
 
 		unsigned int compute_dt();
 

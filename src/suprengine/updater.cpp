@@ -1,11 +1,11 @@
-#include "timer.h"
+#include "updater.h"
 
 #include <SDL_timer.h>
 #include <algorithm>
 
 using namespace suprengine;
 
-unsigned int Timer::compute_dt()
+unsigned int Updater::compute_dt()
 {
 	frame_start = SDL_GetTicks();
 	uint32_t dt = frame_start - last_frame;
@@ -14,7 +14,7 @@ unsigned int Timer::compute_dt()
 	return std::min( dt, MAX_DT );
 }
 
-void Timer::delay_time()
+void Updater::delay_time()
 {
 	frame_time = SDL_GetTicks() - frame_start;
 	if ( frame_time < FRAME_DELAY )

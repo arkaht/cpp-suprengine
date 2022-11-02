@@ -49,7 +49,7 @@ bool Game::initialize( const char* title, int width, int height )
 	Assets::set_render_batch( render_batch );
 
 	//  setup camera viewport
-	camera.viewport.w = (float) width, camera.viewport.h = (float) height;
+	camera.reset( width, height );
 
 	return true;
 }
@@ -58,25 +58,31 @@ void Game::loop()
 {
 	while ( _is_running )
 	{
-		float dt = timer.compute_dt() / 1000.0f;
+		float dt = updater.compute_dt() / 1000.0f;
 
 		process_input();
 		update( dt );
 		render();
 
-		timer.accumulate_seconds( dt );
-		timer.delay_time();
+		updater.accumulate_seconds( dt );
+		updater.delay_time();
 	}
 }
 
 void Game::set_scene( Scene* _scene )
 {
+	//  delete previous scene
 	if ( scene != nullptr )
 	{
 		delete scene;
 	}
 
+	//  reset
+	camera.reset( window->get_width(), window->get_height() );
+
+	//  set scene
 	scene = _scene;
+	scene->init();
 }
 
 void Game::add_entity( Entity* entity )
@@ -113,6 +119,11 @@ void Game::remove_entity( Entity* entity )
 		std::iter_swap( itr, pending_entities.end() - 1 );
 		pending_entities.pop_back();
 	}
+}
+
+void Game::add_timer( const Timer& timer )
+{
+	timers.push_back( timer );
 }
 
 void Game::add_collider( Collider* collider )
@@ -280,6 +291,26 @@ void Game::update( float dt )
 			//  checked
 			checked_colliders[collider].emplace( other );
 			checked_colliders[other].emplace( collider );
+		}
+	}
+
+	//  update timer
+	if ( !timers.empty() )
+	{
+		auto itr = timers.begin();
+		while ( itr != timers.end() )
+		{
+			if ( ( itr->time -= dt ) <= 0.0f )
+			{
+				itr->callback();
+
+				//  remove from vector
+				itr = timers.erase( itr );
+			}
+			else
+			{
+				itr++;
+			}
 		}
 	}
 

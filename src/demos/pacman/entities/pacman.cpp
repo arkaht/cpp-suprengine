@@ -1,6 +1,7 @@
 #include "pacman.h"
 
 #include "ghost.hpp"
+#include "../scenes/game_scene.hpp"
 
 PacMan::PacMan( Level* level )
 	: Entity()
@@ -41,6 +42,13 @@ void PacMan::update_this( float dt )
 		else if ( !anim->is_playing )
 		{
 			delete anim;
+
+			TIMER( 
+				DEATH_RESTART_TIME,
+				{
+					game->set_scene( new GameScene() );
+				} 
+			);
 		}
 	}
 	else

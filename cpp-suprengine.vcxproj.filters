@@ -24,7 +24,7 @@
     <ClCompile Include="src\suprengine\render_batch.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\suprengine\timer.cpp">
+    <ClCompile Include="src\suprengine\updater.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\suprengine\vec2.cpp">
@@ -80,7 +80,7 @@
     <ClInclude Include="src\suprengine\render_batch.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\suprengine\timer.h">
+    <ClInclude Include="src\suprengine\updater.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\vec2.h">
@@ -198,6 +198,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\scene.fwd.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\suprengine\timer.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,7 +16,9 @@ using namespace suprengine;
 class GameScene : public Scene
 {
 public:
-	GameScene()
+	GameScene() {}
+
+	void init() override 
 	{
 		//  create entities & components
 		auto level = new Level();

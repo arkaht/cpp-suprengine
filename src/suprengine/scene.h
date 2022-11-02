@@ -14,6 +14,8 @@ namespace suprengine
 		Scene() {}
 		virtual ~Scene() {}
 
+		virtual void init() {};
+
 		Game* get_game() const { return game; }
 	};
 }
