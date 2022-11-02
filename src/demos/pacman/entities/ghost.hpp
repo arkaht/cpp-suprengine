@@ -43,7 +43,7 @@ public:
 		mover = new GhostMover( this, level, pacman, anim );
 
 		//  create collider
-		new RectCollider( this, Rect { 2.0f, 2.0f, 4.0f, 4.0f } );
+		new RectCollider( this, Rect { 0.0f, 0.0f, 8.0f, 8.0f } );
 
 		GhostManager::add_ghost( this );
 	}

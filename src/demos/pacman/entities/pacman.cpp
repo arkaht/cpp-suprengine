@@ -20,7 +20,7 @@ PacMan::PacMan( Level* level )
 	anim->set_current_clip( "default" );
 
 	//  create collider
-	new RectCollider( this, Rect { 2.0f, 2.0f, 4.0f, 4.0f } );
+	new RectCollider( this, Rect { 0.0f, 0.0f, 8.0f, 8.0f } );
 }
 
 void PacMan::update_this( float dt )
