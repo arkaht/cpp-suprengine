@@ -10,11 +10,7 @@ using namespace suprengine;
 
 Game::~Game()
 {
-	//  clear entities
-	while ( !entities.empty() )
-	{
-		delete entities.back();
-	}
+	clear_entities();
 
 	//  release scene
 	if ( scene != nullptr )
@@ -78,6 +74,7 @@ void Game::set_scene( Scene* _scene )
 	}
 
 	//  reset
+	clear_entities();
 	camera.reset( window->get_width(), window->get_height() );
 
 	//  set scene
@@ -118,6 +115,15 @@ void Game::remove_entity( Entity* entity )
 	{
 		std::iter_swap( itr, pending_entities.end() - 1 );
 		pending_entities.pop_back();
+	}
+}
+
+void Game::clear_entities()
+{
+	//  clear entities
+	while ( !entities.empty() )
+	{
+		delete entities.back();
 	}
 }
 

@@ -72,6 +72,7 @@ namespace suprengine
 
 		void add_entity( Entity* entity );
 		void remove_entity( Entity* entity );
+		void clear_entities();
 
 		void add_timer( const Timer& timer );
 
