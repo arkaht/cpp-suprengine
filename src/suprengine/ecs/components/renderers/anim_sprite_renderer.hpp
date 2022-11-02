@@ -6,6 +6,7 @@ namespace suprengine
 	struct AnimClip
 	{
 		int start_frame { 0 }, end_frame { 0 };
+		float time_per_frame { 0.0f };
 	};
 
 	class AnimSpriteRenderer : public SpriteRenderer
@@ -104,7 +105,14 @@ namespace suprengine
 			};
 
 			current_clip = clip_name;
-			set_current_frame( clips[clip_name].start_frame );
+
+			//  update from clip
+			AnimClip& clip = clips[clip_name];
+			if ( clip.time_per_frame > 0.0f )
+			{
+				time_per_frame = clip.time_per_frame;
+			}
+			set_current_frame( clip.start_frame );
 		}
 
 		void add_clip( const std::string& name, const AnimClip& clip )
