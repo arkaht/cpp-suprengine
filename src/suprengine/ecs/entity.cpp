@@ -78,3 +78,8 @@ void Entity::kill()
 	state = EntityState::DEAD;
 }
 
+void Entity::set_state( EntityState _state )
+{
+	state = _state;
+}
+

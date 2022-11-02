@@ -48,6 +48,8 @@ namespace suprengine
 		virtual void on_trigger_exit( Collider* collider ) {};
 
 		Game* get_game() const { return game; }
+
+		void set_state( EntityState state );
 		EntityState get_state() const { return state; }
 	};
 }
