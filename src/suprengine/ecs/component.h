@@ -12,6 +12,8 @@ namespace suprengine
 		Entity* owner;
 		int priority_order;
 	public:
+		bool is_updated { true };
+
 		Component( Entity* owner, int priority_order = 0 );
 		virtual ~Component();
 

@@ -65,6 +65,8 @@ void Entity::update( float dt )
 
 	for ( auto comp : components )
 	{
+		if ( !comp->is_updated ) continue;
+
 		comp->update( dt );
 	}
 
