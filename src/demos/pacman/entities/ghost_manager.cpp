@@ -11,5 +11,6 @@ void GhostManager::delete_all()
 		delete ghost;
 	}
 	ghosts.clear();
-	printf( "delete all ghosts\n" );
+
+	printf( "GhostManager: deleted all ghosts\n" );
 }
