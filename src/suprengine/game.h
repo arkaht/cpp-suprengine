@@ -33,10 +33,10 @@ namespace suprengine
 		std::vector<Entity*> pending_entities, entities, dead_entities;
 		std::vector<Collider*> colliders;
 
-		Window* _window { nullptr };
-		RenderBatch* _render_batch { nullptr };
+		Window* window { nullptr };
+		RenderBatch* render_batch { nullptr };
 		
-		Timer _timer {};
+		Timer timer {};
 		Camera camera {};
 
 		std::map<SDL_Scancode, KeyState> keystates;
@@ -72,9 +72,9 @@ namespace suprengine
 		bool is_key_up( SDL_Scancode code );
 		KeyState get_key_state( SDL_Scancode code );
 
-		Window* get_window() const { return _window; }
-		RenderBatch* get_render_batch() const { return _render_batch; }
-		Timer* get_timer() { return &_timer; }
+		Window* get_window() const { return window; }
+		RenderBatch* get_render_batch() const { return render_batch; }
+		Timer* get_timer() { return &timer; }
 		Camera* get_camera() { return &camera; }
 	};
 }

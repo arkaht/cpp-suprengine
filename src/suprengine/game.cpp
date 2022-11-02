@@ -19,10 +19,10 @@ Game::~Game()
 	Assets::release();
 
 	//  release renderer
-	delete _render_batch;
+	delete render_batch;
 
 	//  release window
-	delete _window;
+	delete window;
 
 	//  quit sdl
 	SDL_Quit();
@@ -31,15 +31,15 @@ Game::~Game()
 bool Game::initialize( const char* title, int width, int height )
 {
 	//  init window
-	_window = new Window( title, width, height );
-	if ( !_window->initialize() ) return false;
+	window = new Window( title, width, height );
+	if ( !window->initialize() ) return false;
 
 	//  init render batch
-	_render_batch = new RenderBatch();
-	if ( !_render_batch->initialize( _window ) ) return false;
+	render_batch = new RenderBatch();
+	if ( !render_batch->initialize( window ) ) return false;
 
 	//  init assets
-	Assets::set_render_batch( _render_batch );
+	Assets::set_render_batch( render_batch );
 
 	//  setup camera viewport
 	camera.viewport.w = (float) width, camera.viewport.h = (float) height;
@@ -51,14 +51,14 @@ void Game::loop()
 {
 	while ( _is_running )
 	{
-		float dt = _timer.compute_dt() / 1000.0f;
+		float dt = timer.compute_dt() / 1000.0f;
 
 		process_input();
 		update( dt );
 		render();
 
-		_timer.accumulate_seconds( dt );
-		_timer.delay_time();
+		timer.accumulate_seconds( dt );
+		timer.delay_time();
 	}
 }
 
@@ -280,8 +280,8 @@ void Game::update( float dt )
 void Game::render()
 {
 	//  start renderering
-	SDL_Renderer* sdl_renderer = _render_batch->get_sdl_renderer();
-	_render_batch->begin_render();
+	SDL_Renderer* sdl_renderer = render_batch->get_sdl_renderer();
+	render_batch->begin_render();
 
 	//  draw screen diagonals
 	/*SDL_SetRenderDrawColor( sdl_renderer, 255, 255, 255, 255 );
@@ -290,7 +290,7 @@ void Game::render()
 
 	//  apply camera
 	SDL_RenderSetScale( sdl_renderer, camera.zoom, camera.zoom );
-	_render_batch->translate( camera.viewport.get_pos() );
+	render_batch->translate( camera.viewport.get_pos() );
 
 	//  apply camera clipping
 	if ( camera.clip_enabled )
@@ -300,22 +300,22 @@ void Game::render()
 	}
 
 	//  render components
-	_render_batch->render();
+	render_batch->render();
 
 	//  debug render entities & components
 	if ( is_debug )
 	{
 		for ( auto ent : entities )
 		{
-			ent->debug_render( _render_batch );
+			ent->debug_render( render_batch );
 
 			for ( auto comp : ent->components )
 			{
-				comp->debug_render( _render_batch );
+				comp->debug_render( render_batch );
 			}
 		}
 	}
 
 	//  show rendering
-	_render_batch->end_render();
+	render_batch->end_render();
 }

@@ -7,16 +7,16 @@ using namespace suprengine;
 
 RenderBatch::~RenderBatch()
 {
-	if ( _sdl_renderer == nullptr ) return;
+	if ( sdl_renderer == nullptr ) return;
 
-	SDL_DestroyRenderer( _sdl_renderer );
+	SDL_DestroyRenderer( sdl_renderer );
 }
 
 bool RenderBatch::initialize( Window* _window )
 {
 	//  create renderer
-	_sdl_renderer = SDL_CreateRenderer( _window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-	if ( _sdl_renderer == nullptr )
+	sdl_renderer = SDL_CreateRenderer( _window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+	if ( sdl_renderer == nullptr )
 	{
 		Logger::error( "failed to create renderer" );
 		return false;
@@ -36,10 +36,10 @@ void RenderBatch::begin_render()
 {
 	translation = Vec2::zero;
 
-	SDL_SetRenderDrawColor( _sdl_renderer, background_color.r, background_color.g, background_color.b, background_color.a );
-	SDL_RenderClear( _sdl_renderer );
+	SDL_SetRenderDrawColor( sdl_renderer, background_color.r, background_color.g, background_color.b, background_color.a );
+	SDL_RenderClear( sdl_renderer );
 
-	SDL_SetRenderDrawBlendMode( _sdl_renderer, SDL_BLENDMODE_BLEND );
+	SDL_SetRenderDrawBlendMode( sdl_renderer, SDL_BLENDMODE_BLEND );
 }
 
 void RenderBatch::render()
@@ -52,12 +52,12 @@ void RenderBatch::render()
 
 void RenderBatch::end_render()
 {
-	SDL_RenderPresent( _sdl_renderer );
+	SDL_RenderPresent( sdl_renderer );
 }
 
 void RenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
 {
-	SDL_SetRenderDrawColor( _sdl_renderer, color.r, color.g, color.b, color.a );
+	SDL_SetRenderDrawColor( sdl_renderer, color.r, color.g, color.b, color.a );
 
 	auto sdl_rect = rect.to_sdl_rect();
 
@@ -67,10 +67,10 @@ void RenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& 
 	switch ( draw_type )
 	{
 	case DrawType::FILL:
-		SDL_RenderFillRect( _sdl_renderer, &sdl_rect );
+		SDL_RenderFillRect( sdl_renderer, &sdl_rect );
 		break;
 	case DrawType::LINE:
-		SDL_RenderDrawRect( _sdl_renderer, &sdl_rect );
+		SDL_RenderDrawRect( sdl_renderer, &sdl_rect );
 		break;
 	}
 }
@@ -97,7 +97,7 @@ void RenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, con
 
 	//  draw texture
 	SDL_RenderCopyEx(
-		_sdl_renderer,
+		sdl_renderer,
 		sdl_texture,
 		&src,
 		&dest,

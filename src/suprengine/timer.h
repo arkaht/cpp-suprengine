@@ -9,8 +9,8 @@ namespace suprengine
 	class Timer
 	{
 	private:
-		unsigned int _frame_start { 0u }, _last_frame { 0u }, _frame_time { 0u };
-		float _accumulated_seconds { 0.0f };
+		unsigned int frame_start { 0u }, last_frame { 0u }, frame_time { 0u };
+		float accumulated_seconds { 0.0f };
 	public:
 		Timer() {};
 		Timer( const Timer& ) = delete;
@@ -20,7 +20,7 @@ namespace suprengine
 
 		void delay_time();
 
-		void accumulate_seconds( float dt ) { _accumulated_seconds += dt; }
-		float get_accumulated_seconds() const { return _accumulated_seconds; }
+		void accumulate_seconds( float dt ) { accumulated_seconds += dt; }
+		float get_accumulated_seconds() const { return accumulated_seconds; }
 	};
 }

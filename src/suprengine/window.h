@@ -11,10 +11,10 @@ namespace suprengine
 	class Window
 	{
 	private:
-		int _width { DEFAULT_WINDOW_WIDTH }, _height { DEFAULT_WINDOW_HEIGHT };
-		const char* _title { "My Suprengine Game" };
+		int width { DEFAULT_WINDOW_WIDTH }, height { DEFAULT_WINDOW_HEIGHT };
+		const char* title { "My Suprengine Game" };
 
-		SDL_Window* _sdl_window { nullptr };
+		SDL_Window* sdl_window { nullptr };
 	public:
 		Window( const char* title );
 		Window( const char* title, const int width, const int height );
@@ -24,9 +24,9 @@ namespace suprengine
 
 		bool initialize();
 
-		SDL_Window* get_sdl_window() const { return _sdl_window; }
-		int get_width() const { return _width; }
-		int get_height() const { return _height; }
+		SDL_Window* get_sdl_window() const { return sdl_window; }
+		int get_width() const { return width; }
+		int get_height() const { return height; }
 	};
 };
 

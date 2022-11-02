@@ -23,7 +23,7 @@ namespace suprengine
 	{
 	private:
 		Vec2 translation { Vec2::zero };
-		SDL_Renderer* _sdl_renderer { nullptr };
+		SDL_Renderer* sdl_renderer { nullptr };
 
 		std::vector<Renderer*> renderers;
 
@@ -50,7 +50,7 @@ namespace suprengine
 
 		void set_background_color( Color color ) { background_color = color; }
 
-		SDL_Renderer* get_sdl_renderer() const { return _sdl_renderer; }
+		SDL_Renderer* get_sdl_renderer() const { return sdl_renderer; }
 	};
 }
 
