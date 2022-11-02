@@ -34,6 +34,7 @@ void PacMan::update_this( float dt )
 				is_waiting_dying = false;
 
 				anim->is_playing = true;
+				GhostManager::delete_all();
 			}
 		}
 		//  remove render on finished
@@ -96,4 +97,10 @@ void PacMan::die()
 
 	//  disable mover
 	mover->is_updated = false;
+
+	//  disable ghosts mover
+	for ( auto ghost : GhostManager::ghosts )
+	{
+		ghost->mover->is_updated = false;
+	}
 }

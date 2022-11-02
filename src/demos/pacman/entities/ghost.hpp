@@ -3,6 +3,8 @@
 #include "../components/ghost_mover.h"
 #include <suprengine/ecs/components/renderers/anim_sprite_renderer.hpp>
 
+#include "ghost_manager.h"
+
 class Ghost : public Entity
 {
 public:
@@ -42,6 +44,8 @@ public:
 
 		//  create collider
 		new RectCollider( this, Rect { 2.0f, 2.0f, 4.0f, 4.0f } );
+
+		GhostManager::add_ghost( this );
 	}
 
 	virtual Vec2 get_scatter_target() = 0;
