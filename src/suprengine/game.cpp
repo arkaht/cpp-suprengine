@@ -305,13 +305,20 @@ void Game::update( float dt )
 	//  update timer
 	if ( !timers.empty() )
 	{
+		for ( auto& timer : timers )
+		{
+			if ( ( timer.time -= dt ) <= 0.0f )
+			{
+				timer.callback();
+			}
+		}
+
+		//  safely-erase expired timers
 		auto itr = timers.begin();
 		while ( itr != timers.end() )
 		{
-			if ( ( itr->time -= dt ) <= 0.0f )
+			if ( itr->time <= 0.0f )
 			{
-				itr->callback();
-
 				//  remove from vector
 				itr = timers.erase( itr );
 			}
