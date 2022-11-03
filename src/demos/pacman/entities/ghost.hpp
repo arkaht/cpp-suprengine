@@ -22,7 +22,7 @@ public:
 		layer = (uint32_t) Layers::GHOSTS;
 
 		//  create animator
-		anim = new AnimSpriteRenderer( this, Assets::get_texture( "atlas.png" ), 6 );
+		anim = new AnimSpriteRenderer( this, Assets::get_texture( "atlas.png" ), 6, Color::white, 1 );
 		anim->dest = { Level::TILE_SIZE / 2, Level::TILE_SIZE / 2, 16.0f, 16.0f };
 		
 		//  gen flee frames & clips
