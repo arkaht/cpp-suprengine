@@ -9,6 +9,8 @@ RenderBatch::~RenderBatch()
 {
 	if ( sdl_renderer == nullptr ) return;
 
+	TTF_Quit();
+
 	SDL_DestroyRenderer( sdl_renderer );
 }
 
@@ -26,6 +28,13 @@ bool RenderBatch::initialize( Window* _window )
 	if ( IMG_Init( IMG_INIT_PNG ) == 0 )
 	{
 		Logger::error( "failed to initialize image library" );
+		return false;
+	}
+
+	//  initialize ttf library
+	if ( TTF_Init() == -1 )
+	{
+		Logger::error( "failed to initialize TTF library" );
 		return false;
 	}
 

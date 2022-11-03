@@ -9,16 +9,16 @@ Texture::~Texture()
 	SDL_DestroyTexture( sdl_texture );
 }
 
-Texture* Texture::load( RenderBatch* render_batch, const std::string& filename )
+Texture* Texture::load( RenderBatch* render_batch, const std::string& path )
 {
 	//  load surface
-	SDL_Surface* surface = load_surface( filename );
+	SDL_Surface* surface = load_surface( path );
 	if ( surface == nullptr ) return nullptr;
 
-	return load_from_surface( render_batch, filename, surface );
+	return load_from_surface( render_batch, path, surface );
 }
 
-Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::string& filename, SDL_Surface* surface )
+Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::string& path, SDL_Surface* surface )
 {
 	//  get width & height
 	Vec2 size { surface->w, surface->h };
@@ -28,19 +28,19 @@ Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::strin
 	SDL_FreeSurface( surface );
 	if ( texture == nullptr )
 	{
-		Logger::error( "failed to create texture from surface from file " + filename );
+		Logger::error( "failed to create texture from surface from file " + path );
 		return nullptr;
 	}
 
-	return new Texture( filename, texture, size );
+	return new Texture( path, texture, size );
 }
 
-SDL_Surface* Texture::load_surface( const std::string& filename )
+SDL_Surface* Texture::load_surface( const std::string& path )
 {
-	SDL_Surface* surface = IMG_Load( filename.c_str() );
+	SDL_Surface* surface = IMG_Load( path.c_str() );
 	if ( surface == nullptr )
 	{
-		Logger::error( "failed to load surface from file " + filename );
+		Logger::error( "failed to load surface from file " + path );
 		return nullptr;
 	};
 

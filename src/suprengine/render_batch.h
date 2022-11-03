@@ -2,11 +2,13 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 #include "window.h"
 #include "rect.h"
 #include "color.h"
 #include "texture.fwd.h"
+#include "font.fwd.h"
 #include <suprengine/ecs/components/renderers/renderer.fwd.h>
 
 #include <vector>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "texture.h"
+#include "font.h"
 #include <map>
 
 namespace suprengine
@@ -9,6 +10,7 @@ namespace suprengine
 	{
 	private:
 		static std::map<std::string, Texture*> textures;
+		static std::map<std::string, Font*> fonts;
 
 		static RenderBatch* render_batch;
 		static std::string path;
@@ -21,6 +23,7 @@ namespace suprengine
 		static std::string get_path() { return path; }
 
 		static Texture* get_texture( const std::string& filename );
+		static Font* get_font( const std::string& filename, int size = 12 );
 		static void release();
 	};
 }
