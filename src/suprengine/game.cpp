@@ -272,20 +272,22 @@ void Game::update( float dt )
 	_is_updating = false;
 
 	//  update colliders
-	std::unordered_map<Collider*, std::unordered_set<Collider*>> checked_colliders;
+	//std::unordered_map<Collider*, std::unordered_set<Collider*>> checked_colliders;
 	for ( auto collider : colliders )
 	{
 		for ( auto other : colliders )
 		{
 			//  ignore self
 			if ( collider == other ) continue;
+			if ( ( collider->mask & other->get_owner()->layer ) == 0 ) continue;
+
 			//  ignore checked colliders
-			if ( checked_colliders.find( other ) != checked_colliders.end() )
+			/*if ( checked_colliders.find( other ) != checked_colliders.end() )
 			{
 				auto& set = checked_colliders[other];
 				if ( set.find( collider ) != set.end() ) 
 					continue;
-			}
+			}*/
 
 			//  collision?
 			bool is_active = collider->intersects( other );
@@ -295,8 +297,8 @@ void Game::update( float dt )
 			other->update_collision_with( collider, is_active );
 		
 			//  checked
-			checked_colliders[collider].emplace( other );
-			checked_colliders[other].emplace( collider );
+			/*checked_colliders[collider].emplace( other );
+			checked_colliders[other].emplace( collider );*/
 		}
 	}
 

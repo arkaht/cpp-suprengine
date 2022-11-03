@@ -23,6 +23,8 @@ namespace suprengine
 		EntityState state { EntityState::ACTIVE };
 		Game* game { &Game::instance() };
 	public:
+		uint32_t layer = 0x1;
+
 		std::vector<Component*> components;
 
 		Transform2* transform { nullptr };

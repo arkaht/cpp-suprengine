@@ -5,6 +5,8 @@
 
 #include "ghost_manager.h"
 
+#include "../layers.hpp"
+
 class Ghost : public Entity
 {
 public:
@@ -17,6 +19,8 @@ public:
 
 	Ghost( Level* level, PacMan* pacman ) : level( level ), pacman( pacman ), Entity()
 	{
+		layer = (uint32_t) Layers::GHOSTS;
+
 		//  create animator
 		anim = new AnimSpriteRenderer( this, Assets::get_texture( "atlas.png" ), 6 );
 		anim->dest = { Level::TILE_SIZE / 2, Level::TILE_SIZE / 2, 16.0f, 16.0f };
@@ -44,6 +48,7 @@ public:
 
 		//  create collider
 		new RectCollider( this, Rect { 0.0f, 0.0f, 8.0f, 8.0f } );
+		collider->mask = (uint32_t) Layers::PACMAN;
 
 		GhostManager::add_ghost( this );
 	}

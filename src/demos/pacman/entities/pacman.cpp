@@ -3,9 +3,13 @@
 #include "ghost.hpp"
 #include "../scenes/game_scene.hpp"
 
+#include "../layers.hpp"
+
 PacMan::PacMan( Level* level )
 	: Entity()
 {
+	layer = (uint32_t) Layers::PACMAN;
+
 	//  create mover
 	mover = new PlayerMover( this, level );
 	mover->move_time = .016f;
@@ -21,6 +25,8 @@ PacMan::PacMan( Level* level )
 
 	//  create collider
 	new RectCollider( this, Rect { 0.0f, 0.0f, 8.0f, 8.0f } );
+	collider->mask = (uint32_t) Layers::GHOSTS 
+				   | (uint32_t) Layers::POWERUP;
 }
 
 void PacMan::update_this( float dt )

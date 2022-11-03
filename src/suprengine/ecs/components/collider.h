@@ -11,8 +11,9 @@ namespace suprengine
 	{
 	protected:
 		std::unordered_set<Collider*> collisions;
-
 	public:
+		uint32_t mask = 0xFFFFFFFF;
+
 		Color debug_color { 0, 255, 0, 127 };
 
 		Collider( Entity* owner, int priority_order = 0 );
