@@ -1,5 +1,6 @@
 #pragma once
 #include "entities/ghost.fwd.h"
+#include "entities/pacman.h"
 
 #include <suprengine/ecs/entity.h>
 
@@ -7,10 +8,10 @@
 
 using namespace suprengine;
 
-class GhostManager : public Entity
+class GameManager : public Entity
 {
 private:
-	static const int TIMER_LENGTH = 7;
+	static const int TIMER_LENGTH { 7 };
 	const float TIMERS[TIMER_LENGTH]
 	{
 		// SCATTER  CHASE
@@ -21,15 +22,21 @@ private:
 	};
 
 	static bool is_in_chase_mode;
+	static float flee_timer;
 
 	int current_timer_id { 0 };
 	float current_timer { 0.0f };
+	bool is_timer_running { true };
 public:
+	static GameManager* instance;
+	static PacMan* pacman;
 	static std::vector<Ghost*> ghosts;
 
-	GhostManager() 
+	GameManager() 
 		: Entity() 
 	{
+		instance = this;
+
 		is_in_chase_mode = false;
 		current_timer = TIMERS[current_timer_id];
 	}

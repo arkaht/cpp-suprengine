@@ -3,7 +3,7 @@
 #include "../components/ghost_mover.h"
 #include <suprengine/ecs/components/renderers/anim_sprite_renderer.hpp>
 
-#include "../ghost_manager.h"
+#include "../game_manager.h"
 
 #include "../layers.hpp"
 
@@ -50,7 +50,7 @@ public:
 		new RectCollider( this, Rect { 0.0f, 0.0f, 8.0f, 8.0f } );
 		collider->mask = (uint32_t) Layers::PACMAN;
 
-		GhostManager::add_ghost( this );
+		GameManager::add_ghost( this );
 	}
 
 	virtual Vec2 get_scatter_target() = 0;

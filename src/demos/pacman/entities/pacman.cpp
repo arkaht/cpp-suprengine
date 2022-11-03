@@ -25,7 +25,7 @@ PacMan::PacMan( Level* level )
 	anim->set_current_clip( "default" );
 
 	//  create collider
-	new RectCollider( this, Rect { 0.0f, 0.0f, 8.0f, 8.0f } );
+	new RectCollider( this, Rect { 2.0f, 2.0f, 4.0f, 4.0f } );
 	collider->mask = (uint32_t) Layers::GHOSTS
 		| (uint32_t) Layers::POWERUP;
 
@@ -61,14 +61,14 @@ void PacMan::on_trigger_enter( Collider* other )
 			break;
 		case GhostState::FLEE:
 			ghost->mover->set_state( GhostState::EATEN );
-			stats.add_score( 100 );
+			stats.add_ghost_score( ghost );
 			break;
 		}
 	}
 	else if ( auto pellet = dynamic_cast<PowerPellet*>( ent ) )
 	{
 		pellet->kill();
-		GhostManager::flee_all();
+		GameManager::flee_all();
 
 		stats.add_score( 50 );
 		if ( --stats.remaining_dots <= 0 )
@@ -104,7 +104,7 @@ void PacMan::die()
 		anim->is_playing = true;
 
 		//  kill ghosts
-		GhostManager::kill_all();
+		GameManager::kill_all();
 
 		auto& clip = anim->clips[anim->current_clip];
 		TIMER( clip.time_per_frame * ( clip.end_frame - clip.start_frame + 1 ), {
@@ -129,7 +129,7 @@ void PacMan::die()
 	mover->is_updated = false;
 
 	//  disable ghosts mover
-	for ( auto ghost : GhostManager::ghosts )
+	for ( auto ghost : GameManager::ghosts )
 	{
 		ghost->mover->is_updated = false;
 	}
@@ -141,14 +141,14 @@ void PacMan::win()
 	state = EntityState::PAUSED;
 
 	//  disable ghosts
-	for ( auto ghost : GhostManager::ghosts )
+	for ( auto ghost : GameManager::ghosts )
 	{
 		ghost->set_state( EntityState::PAUSED );
 	}
 
 	TIMER( 2.0f, {
 		//  kill ghosts
-		GhostManager::kill_all();
+		GameManager::kill_all();
 
 		//  blink level
 		level->blink();

@@ -10,7 +10,7 @@
 
 #include "../entities/hud.hpp"
 #include "../entities/pacman.h"
-#include "../entities/level.hpp"
+#include "../entities/level.h"
 
 using namespace suprengine;
 
@@ -45,11 +45,12 @@ public:
 		auto pacman = new PacMan( level );
 		pacman->mover->set_pos( { 14.0f, 23.0f } );
 
-		new GhostManager();
+		auto manager = new GameManager();
+		manager->pacman = pacman;
 
 		auto blinky = new GhostBlinky( level, pacman );
 		blinky->mover->set_pos( { 14.0f, 11.0f } );
-		blinky->mover->set_state( GhostManager::get_current_state() );
+		blinky->mover->set_state( GameManager::get_current_state() );
 
 		auto pinky = new GhostPinky( level, pacman );
 		pinky->mover->set_pos( level->get_wait_pos( pinky->mover->wait_id ) );

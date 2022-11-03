@@ -26,7 +26,7 @@ void GhostMover::update( float dt )
 		{
 			if ( current_flee_time >= FLEE_TIME )
 			{
-				set_state( GhostManager::get_current_state() );
+				set_state( GameManager::get_current_state() );
 			}
 		}
 		break;
@@ -202,7 +202,7 @@ void GhostMover::on_next_pos_reached()
 			//  at floored door, behave!
 			if ( current_pos == floored_door_pos )
 			{
-				set_state( GhostManager::get_current_state() );
+				set_state( GameManager::get_current_state() );
 				return;
 			}
 			//  at door, fix your pos (so it doesn't offset)

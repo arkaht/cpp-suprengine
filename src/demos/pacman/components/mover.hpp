@@ -5,7 +5,7 @@
 #include <suprengine/ecs/components/transform2.hpp>
 #include <suprengine/vec2.h>
 
-#include "../entities/level.hpp"
+#include "../entities/level.h"
 
 using namespace suprengine;
 

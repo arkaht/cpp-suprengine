@@ -18,14 +18,14 @@ class GhostMover : public Mover
 {
 private:
 	Vec2 target { Vec2::zero };
-
-	const float FLEE_TIME { 8.0f };
-	const float FLEE_END_TIME { 2.0f };  //  2 seconds before FLEE_TIME
 	
 	float current_flee_time { 0.0f };
 	bool is_flee_ending { false };
 	bool is_waiting_finished { false };
 public:
+	const float FLEE_TIME { 8.0f };
+	const float FLEE_END_TIME { 2.0f };  //  2 seconds before FLEE_TIME
+
 	const float WAIT_MOVE_TIME { 0.02f };
 	const float SLOW_MOVE_TIME { 0.03f };
 	const float NORMAL_MOVE_TIME { 0.016f };

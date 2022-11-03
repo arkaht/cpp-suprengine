@@ -135,7 +135,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\demos\pacman\components\ghost_mover.cpp" />
-    <ClCompile Include="src\demos\pacman\ghost_manager.cpp" />
+    <ClCompile Include="src\demos\pacman\entities\level.cpp" />
+    <ClCompile Include="src\demos\pacman\game_manager.cpp" />
     <ClCompile Include="src\suprengine\assets.cpp" />
     <ClCompile Include="src\suprengine\ecs\components\collider.cpp" />
     <ClCompile Include="src\demos\pacman\entities\pacman.cpp" />
@@ -157,8 +158,9 @@
     <ClInclude Include="src\demos\pacman\entities\ghost_clyde.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost_inky.hpp" />
     <ClInclude Include="src\demos\pacman\entities\hud.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\score_notification.hpp" />
     <ClInclude Include="src\demos\pacman\game_stats.hpp" />
-    <ClInclude Include="src\demos\pacman\ghost_manager.h" />
+    <ClInclude Include="src\demos\pacman\game_manager.h" />
     <ClInclude Include="src\demos\pacman\entities\ghost_pinky.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost.fwd.h" />
     <ClInclude Include="src\demos\pacman\entities\ghost_blinky.hpp" />
@@ -167,7 +169,7 @@
     <ClInclude Include="src\demos\pacman\components\player_mover.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost_slow_zone.hpp" />
-    <ClInclude Include="src\demos\pacman\entities\level.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\level.h" />
     <ClInclude Include="src\demos\pacman\entities\pacdot.hpp" />
     <ClInclude Include="src\demos\pacman\entities\pacman.h" />
     <ClInclude Include="src\demos\pacman\entities\power_pellet.hpp" />
