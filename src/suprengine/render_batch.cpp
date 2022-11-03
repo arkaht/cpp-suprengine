@@ -142,6 +142,5 @@ void RenderBatch::remove_renderer( Renderer* renderer )
 	auto itr = std::find( renderers.begin(), renderers.end(), renderer );
 	if ( itr == renderers.end() ) return;
 
-	std::iter_swap( itr, renderers.end() - 1 );
-	renderers.pop_back();
+	renderers.erase( itr );  //  don't swap or you need to sort again!
 }

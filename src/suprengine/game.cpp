@@ -155,8 +155,7 @@ void Game::remove_collider( Collider* collider )
 	auto itr = std::find( colliders.begin(), colliders.end(), collider );
 	if ( itr == colliders.end() ) return;
 
-	std::iter_swap( itr, colliders.end() - 1 );
-	colliders.pop_back();
+	colliders.erase( itr );  //  don't swap or you need to sort again!
 }
 
 bool Game::is_key_pressed( SDL_Scancode code )
