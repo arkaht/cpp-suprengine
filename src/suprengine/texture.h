@@ -16,7 +16,7 @@ namespace suprengine
 		~Texture();
 
 		static Texture* load( RenderBatch* render_batch, const std::string& path );
-		static Texture* load_from_surface( RenderBatch* render_batch, const std::string& path, SDL_Surface* surface );
+		static Texture* load_from_surface( RenderBatch* render_batch, const std::string& path, SDL_Surface* surface, bool should_free_surface = true );
 		static SDL_Surface* load_surface( const std::string& path );
 		
 		static uint32_t get_pixel_at( SDL_Surface* surface, int x, int y );

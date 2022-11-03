@@ -18,14 +18,18 @@ Texture* Texture::load( RenderBatch* render_batch, const std::string& path )
 	return load_from_surface( render_batch, path, surface );
 }
 
-Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::string& path, SDL_Surface* surface )
+Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::string& path, SDL_Surface* surface, bool should_free_surface )
 {
 	//  get width & height
 	Vec2 size { (float) surface->w, (float) surface->h };
 
 	//  load texture
 	SDL_Texture* texture = SDL_CreateTextureFromSurface( render_batch->get_sdl_renderer(), surface );
-	SDL_FreeSurface( surface );
+
+	//  free surface
+	if ( should_free_surface )
+		SDL_FreeSurface( surface );
+
 	if ( texture == nullptr )
 	{
 		Logger::error( "failed to create texture from surface from file " + path );
