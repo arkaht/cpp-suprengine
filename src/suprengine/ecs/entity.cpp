@@ -35,7 +35,7 @@ void Entity::add_component( Component* comp )
 	auto itr = components.begin();
 	for ( ; itr != components.end(); itr++ )
 	{
-		if ( order < (*itr)->get_priority_order() )
+		if ( order >= (*itr)->get_priority_order() )
 		{
 			break;
 		}

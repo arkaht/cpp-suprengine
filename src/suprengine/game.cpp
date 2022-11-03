@@ -141,7 +141,7 @@ void Game::add_collider( Collider* collider )
 	auto itr = colliders.begin();
 	for ( ; itr != colliders.end(); itr++ )
 	{
-		if ( order < (*itr)->get_priority_order() )
+		if ( order >= (*itr)->get_priority_order() )
 		{
 			break;
 		}

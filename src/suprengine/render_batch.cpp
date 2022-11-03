@@ -127,7 +127,7 @@ void RenderBatch::add_renderer( Renderer* renderer )
 	auto itr = renderers.begin();
 	for ( ; itr != renderers.end(); itr++ )
 	{
-		if ( order < (*itr)->get_priority_order() )
+		if ( order >= (*itr)->get_priority_order() )
 		{
 			break;
 		}
