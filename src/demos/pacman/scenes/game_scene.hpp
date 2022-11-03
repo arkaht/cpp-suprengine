@@ -21,6 +21,8 @@ public:
 
 	void init() override 
 	{
+		printf( "\n" );
+
 		//  create entities & components
 		auto level = new Level();
 

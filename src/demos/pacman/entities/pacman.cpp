@@ -17,7 +17,7 @@ PacMan::PacMan( Level* level )
 	mover->rotate_towards_dir = true;
 
 	//  create animator
-	anim = new AnimSpriteRenderer( this, Assets::get_texture( "atlas.png" ) );
+	anim = new AnimSpriteRenderer( this, Assets::get_texture( "atlas.png" ), 6, 10 );
 	anim->gen_frames( Rect { 0.0f, 0.0f, 224.0f, 16.0f }, Vec2 { 16.0f, 16.0f } );
 	anim->dest = { Level::TILE_SIZE / 2.0f, Level::TILE_SIZE / 2.0f, 16.0f, 16.0f };
 	anim->add_clip( "default", AnimClip { 0, 2, 1.0f / 16.0f } );
