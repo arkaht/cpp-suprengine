@@ -172,11 +172,16 @@ public:
 	Texture* blink_texture { nullptr };
 	Texture* normal_texture { nullptr };
 	SpriteRenderer* sprite { nullptr };
+	SpriteRenderer* sprite_door { nullptr };
 
 	Level() : Entity()
 	{
 		sprite = new SpriteRenderer( this, nullptr );
 		sprite->origin = Vec2::zero;
+
+		sprite_door = new SpriteRenderer( this, Assets::get_texture( "door.png" ), 3 );
+		sprite_door->dest.x = 104.0f, sprite_door->dest.y = 100.0f;
+		sprite_door->origin = Vec2::zero;
 
 		gen_tiles();
 	}
@@ -194,6 +199,12 @@ public:
 		{
 			delete normal_texture;
 		}
+	}
+
+	void blink()
+	{
+		is_blinking = true;
+		sprite_door->is_rendered = false;
 	}
 
 	void update_this( float dt ) override
