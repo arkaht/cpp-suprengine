@@ -12,6 +12,7 @@ namespace suprengine
 	protected:
 		RenderBatch* render_batch;
 	public:
+		bool is_rendered { true };
 		Color modulate { Color::white };
 
 		Renderer( Entity* owner, Color modulate = Color::white, int priority_order = 0 );

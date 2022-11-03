@@ -55,6 +55,8 @@ void RenderBatch::render()
 {
 	for ( auto renderer : renderers )
 	{
+		if ( !renderer->is_rendered ) continue;
+
 		renderer->render();
 	}
 }
