@@ -15,7 +15,7 @@ namespace suprengine
 		bool is_rendered { true };
 		Color modulate { Color::white };
 
-		Renderer( Entity* owner, Color modulate = Color::white, int priority_order = 0 );
+		Renderer( Entity* owner, int priority_order = 0 );
 		~Renderer() override;
 
 		virtual void render() {};

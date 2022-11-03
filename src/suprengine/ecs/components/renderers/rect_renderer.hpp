@@ -9,8 +9,8 @@ namespace suprengine
 		Rect rect;
 		DrawType draw_type { DrawType::FILL };
 
-		RectRenderer( Entity* owner, Rect rect, Color modulate = Color::white, int priority_order = 0 )
-			: rect( rect ), Renderer( owner, modulate, priority_order ) {}
+		RectRenderer( Entity* owner, Rect rect, int priority_order = 0 )
+			: rect( rect ), Renderer( owner, priority_order ) {}
 
 		void render() override
 		{

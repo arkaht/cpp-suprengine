@@ -23,8 +23,8 @@ namespace suprengine
 		bool is_looping { true };
 		bool is_playing { true };
 
-		AnimSpriteRenderer( Entity* owner, Texture* texture, int fps = 6, Color modulate = Color::white, int priority_order = 0 )
-			: SpriteRenderer( owner, texture, modulate, priority_order ) 
+		AnimSpriteRenderer( Entity* owner, Texture* texture, int fps = 6, int priority_order = 0 )
+			: SpriteRenderer( owner, texture, priority_order ) 
 		{
 			set_fps( fps );
 		}

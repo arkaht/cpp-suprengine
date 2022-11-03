@@ -12,8 +12,8 @@ namespace suprengine
 		Font* font { nullptr };
 		std::string text { "" };
 
-		TextRenderer( Entity* owner, Font* font, const std::string& text, Color modulate = Color::white, int priority_order = 0 )
-			: font( font ), SpriteRenderer( owner, nullptr, modulate, priority_order ) 
+		TextRenderer( Entity* owner, Font* font, const std::string& text, int priority_order = 0 )
+			: font( font ), SpriteRenderer( owner, nullptr, priority_order ) 
 		{
 			set_text( text );
 		}
