@@ -20,6 +20,12 @@ namespace suprengine
 			};
 		}
 
+		uint32_t to_pixel() const
+		{
+			uint32_t pixel = a << 24 | b << 16 | g << 8 | r;
+			return pixel;
+		}
+
 		bool operator==( const Color& c ) const
 		{
 			return r == c.r && g == c.g && b == c.b && a == c.a;

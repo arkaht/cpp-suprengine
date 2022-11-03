@@ -37,7 +37,8 @@ void PacMan::update_this( float dt )
 				anim->set_current_clip( "death" );
 				anim->is_looping = false;
 				anim->is_playing = true;
-				GhostManager::delete_all();
+
+				GhostManager::kill_all();
 			}
 		}
 		//  remove render on finished
@@ -82,6 +83,15 @@ void PacMan::on_trigger_enter( Collider* other )
 			ghost->mover->set_state( GhostState::EATEN );
 			break;
 		}
+	}
+	else if ( auto pellet = dynamic_cast<PowerPellet*>( ent ) )
+	{
+		pellet->kill();
+		GhostManager::flee_all();
+	}
+	else if ( auto dot = dynamic_cast<PacDot*>( ent ) )
+	{
+		dot->kill();
 	}
 }
 

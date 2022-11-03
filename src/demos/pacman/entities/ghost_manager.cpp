@@ -4,13 +4,23 @@
 
 std::vector<Ghost*> GhostManager::ghosts;
 
-void GhostManager::delete_all()
+void GhostManager::kill_all()
 {
 	for ( auto ghost : ghosts )
 	{
-		delete ghost;
+		ghost->kill();
 	}
 	ghosts.clear();
 
 	printf( "GhostManager: deleted all ghosts\n" );
+}
+
+void GhostManager::flee_all()
+{
+	for ( auto ghost : ghosts )
+	{
+		ghost->mover->set_state( GhostState::FLEE );
+	}
+
+	printf( "GhostManager: fleed all ghosts\n" );
 }

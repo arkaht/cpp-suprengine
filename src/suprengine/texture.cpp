@@ -15,6 +15,11 @@ Texture* Texture::load( RenderBatch* render_batch, const std::string& filename )
 	SDL_Surface* surface = load_surface( filename );
 	if ( surface == nullptr ) return nullptr;
 
+	return load_from_surface( render_batch, filename, surface );
+}
+
+Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::string& filename, SDL_Surface* surface )
+{
 	//  get width & height
 	Vec2 size { surface->w, surface->h };
 

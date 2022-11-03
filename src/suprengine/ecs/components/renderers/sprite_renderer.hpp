@@ -16,6 +16,11 @@ namespace suprengine
 		{
 			if ( texture == nullptr ) return;
 
+			size_to_texture();
+		}
+
+		void size_to_texture()
+		{
 			//  auto-size source & dest rectangles
 			Vec2 size = texture->get_size();
 			source.w = size.x, source.h = size.y;

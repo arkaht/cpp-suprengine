@@ -24,5 +24,7 @@ public:
 		ghosts.pop_back();
 	}
 
-	static void delete_all();
+	static void kill_all();
+
+	static void flee_all();
 };

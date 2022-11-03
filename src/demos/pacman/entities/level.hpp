@@ -1,6 +1,9 @@
 #pragma once
 #include <suprengine/ecs/components/renderers/sprite_renderer.hpp>
 
+#include "power_pellet.hpp"
+#include "pacdot.hpp"
+
 #include <vector>
 
 using namespace suprengine;
@@ -14,6 +17,8 @@ private:
 	std::vector<bool> tiles;
 
 	const std::string TEXTURE_PATH { "level.png" };
+
+	const uint32_t DOT_COLOR_PIXEL { Color { 255, 183, 174 }.to_pixel() };
 
 	Vec2 tunnels_pos[TUNNELS_COUNT]
 	{
@@ -30,12 +35,21 @@ private:
 public:
 	static const int TILE_SIZE { 8 };
 
+	SpriteRenderer* sprite { nullptr };
+
 	Level() : Entity()
 	{
-		auto sprite = new SpriteRenderer( this, Assets::get_texture( TEXTURE_PATH ) );
+		sprite = new SpriteRenderer( this, nullptr );
 		sprite->origin = Vec2::zero;
 
 		gen_tiles();
+	}
+
+	~Level()
+	{
+		if ( sprite->texture == nullptr ) return;
+
+		delete sprite->texture;
 	}
 
 	void gen_tiles()
@@ -47,7 +61,8 @@ public:
 		width = surface->w / TILE_SIZE, height = surface->h / TILE_SIZE;
 		tiles.resize( (size_t)( surface->w * surface->h ), false );
 
-		//  read image pixels
+		//  access image pixels
+		SDL_LockSurface( surface );
 		for ( int ty = 0; ty < height; ty++ )
 		{
 			for ( int tx = 0; tx < width; tx++ )
@@ -62,6 +77,42 @@ public:
 						uint32_t pixel = Texture::get_pixel_at( surface, tx * TILE_SIZE + x, ty * TILE_SIZE + y );
 						if ( pixel != 0 )
 						{
+							if ( pixel == DOT_COLOR_PIXEL )
+							{
+								if ( x == 0 && y == 0 )
+								{
+									Vec2 pos = { 
+										(float) ( tx * TILE_SIZE ), 
+										(float) ( ty * TILE_SIZE ) 
+									};
+									
+									Entity* ent { nullptr };
+									if ( Texture::get_pixel_at( surface, tx * TILE_SIZE + x + 1, ty * TILE_SIZE + y + 1 ) == DOT_COLOR_PIXEL )
+									{
+										ent = new PowerPellet();
+									}
+									else
+									{
+										ent = new PacDot();
+									}
+
+									ent->transform->pos = pos;
+
+									//  remove pixels from image
+									SDL_Rect rect { 
+										(int) pos.x, 
+										(int) pos.y, 
+										TILE_SIZE,
+										TILE_SIZE 
+									};
+									SDL_FillRect( surface, &rect, Color::transparent.to_pixel() );
+
+									//  skip to next tile
+									is_breaking = true;
+									break;
+								}
+							}
+
 							//  mark as a wall
 							tiles[get_tile_id( tx, ty )] = true;
 
@@ -76,9 +127,11 @@ public:
 				}
 			}
 		}
+		SDL_UnlockSurface( surface );
 
-		//  release surface
-		SDL_FreeSurface( surface );
+		//  allocate new texture
+		sprite->texture = Texture::load_from_surface( game->get_render_batch(), TEXTURE_PATH, surface );
+		sprite->size_to_texture();
 	}
 
 	int get_tile_id( int x, int y )
