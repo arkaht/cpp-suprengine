@@ -113,6 +113,9 @@ void PacMan::die()
 			
 			//  restart
 			TIMER( DEATH_RESTART_TIME, {
+				GameStats& stats = GameStats::instance();
+				stats.score = 0;
+
 				game->set_scene( new GameScene() );
 			} );
 		} );

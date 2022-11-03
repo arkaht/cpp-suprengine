@@ -54,7 +54,7 @@ public:
 		//  update highscore text
 		if ( stats->highscore != highscore )
 		{
-			highscore = stats->score;
+			highscore = stats->highscore;
 			text_highscore->set_text( std::to_string( highscore ) );
 		}
 
