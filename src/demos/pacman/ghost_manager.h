@@ -1,5 +1,5 @@
 #pragma once
-#include "ghost.fwd.h"
+#include "entities/ghost.fwd.h"
 
 #include <vector>
 

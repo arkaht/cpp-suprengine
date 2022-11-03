@@ -135,7 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\demos\pacman\components\ghost_mover.cpp" />
-    <ClCompile Include="src\demos\pacman\entities\ghost_manager.cpp" />
+    <ClCompile Include="src\demos\pacman\ghost_manager.cpp" />
     <ClCompile Include="src\suprengine\assets.cpp" />
     <ClCompile Include="src\suprengine\ecs\components\collider.cpp" />
     <ClCompile Include="src\demos\pacman\entities\pacman.cpp" />
@@ -155,7 +155,7 @@
   <ItemGroup>
     <ClInclude Include="src\demos\pacman\entities\ghost_clyde.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost_inky.hpp" />
-    <ClInclude Include="src\demos\pacman\entities\ghost_manager.h" />
+    <ClInclude Include="src\demos\pacman\ghost_manager.h" />
     <ClInclude Include="src\demos\pacman\entities\ghost_pinky.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost.fwd.h" />
     <ClInclude Include="src\demos\pacman\entities\ghost_blinky.hpp" />

@@ -1,6 +1,6 @@
 #include "ghost_manager.h"
 
-#include "ghost.hpp"
+#include "entities/ghost.hpp"
 
 std::vector<Ghost*> GhostManager::ghosts;
 

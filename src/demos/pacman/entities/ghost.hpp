@@ -3,7 +3,7 @@
 #include "../components/ghost_mover.h"
 #include <suprengine/ecs/components/renderers/anim_sprite_renderer.hpp>
 
-#include "ghost_manager.h"
+#include "../ghost_manager.h"
 
 #include "../layers.hpp"
 
