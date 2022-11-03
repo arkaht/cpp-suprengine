@@ -29,7 +29,7 @@ public:
 	const float WAIT_MOVE_TIME { 0.02f };
 	const float SLOW_MOVE_TIME { 0.03f };
 	const float NORMAL_MOVE_TIME { 0.016f };
-	const float FLEE_MOVE_TIME { 0.018f };
+	const float FLEE_MOVE_TIME { 0.03f };
 	const float EATEN_MOVE_TIME { 0.01f };
 
 	int wait_id = 0;
