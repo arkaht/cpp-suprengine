@@ -4,6 +4,7 @@
 #include "../scenes/game_scene.hpp"
 
 #include "../layers.hpp"
+#include "../game_stats.hpp"
 
 PacMan::PacMan( Level* level )
 	: Entity()
@@ -77,6 +78,7 @@ void PacMan::on_trigger_enter( Collider* other )
 {
 	Entity* ent = other->get_owner();
 
+	GameStats& stats = GameStats::instance();
 	if ( auto ghost = dynamic_cast<Ghost*>( ent ) )
 	{
 		switch ( ghost->mover->state )
@@ -87,6 +89,7 @@ void PacMan::on_trigger_enter( Collider* other )
 			break;
 		case GhostState::FLEE:
 			ghost->mover->set_state( GhostState::EATEN );
+			stats.add_score( 100 );
 			break;
 		}
 	}
@@ -94,10 +97,12 @@ void PacMan::on_trigger_enter( Collider* other )
 	{
 		pellet->kill();
 		GhostManager::flee_all();
+		stats.add_score( 50 );
 	}
 	else if ( auto dot = dynamic_cast<PacDot*>( ent ) )
 	{
 		dot->kill();
+		stats.add_score( 10 );
 	}
 }
 

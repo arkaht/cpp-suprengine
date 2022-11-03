@@ -156,6 +156,8 @@
   <ItemGroup>
     <ClInclude Include="src\demos\pacman\entities\ghost_clyde.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost_inky.hpp" />
+    <ClInclude Include="src\demos\pacman\entities\hud.hpp" />
+    <ClInclude Include="src\demos\pacman\game_stats.hpp" />
     <ClInclude Include="src\demos\pacman\ghost_manager.h" />
     <ClInclude Include="src\demos\pacman\entities\ghost_pinky.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost.fwd.h" />

@@ -8,6 +8,7 @@
 #include "../entities/ghost_clyde.hpp"
 #include "../entities/ghost_slow_zone.hpp"
 
+#include "../entities/hud.hpp"
 #include "../entities/pacman.h"
 #include "../entities/level.hpp"
 
@@ -40,7 +41,6 @@ public:
 				1.0f,
 			} * Level::TILE_SIZE
 		);
-
 
 		auto pacman = new PacMan( level );
 		pacman->mover->set_pos( { 14.0f, 23.0f } );
@@ -76,5 +76,7 @@ public:
 			{ camera->viewport.x, 0.0f },
 			{ level_width, camera->get_viewport().h }
 		};
+
+		auto hud = new HUD();
 	}
 };

@@ -5,7 +5,7 @@
 void run()
 {
 	auto& game = Game::instance();
-	if ( !game.initialize( "pac-man", 844, 844 ) ) return;
+	if ( !game.initialize( "pac-man", 844, 844 + 50 ) ) return;
 
 	//  set assets path
 	Assets::set_path( "src/demos/pacman/assets/" );
