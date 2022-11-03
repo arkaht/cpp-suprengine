@@ -49,6 +49,7 @@ public:
 
 	void reset_flee_timer();
 
+	void on_moved() override;
 	void on_next_pos_reached() override;
 	Vec2 get_desired_dir() override;
 

@@ -58,6 +58,8 @@ public:
 				Transform2* transf = owner->transform;
 				transf->pos = transf->pos.approach( next_pos * Level::TILE_SIZE, 1.0f );
 
+				on_moved();
+
 				//  rotate
 				if ( rotate_towards_dir )
 				{
@@ -121,6 +123,7 @@ public:
 	Vec2 get_next_pos() const { return next_pos; }
 	Vec2 get_pos() const { return current_pos; }
 
+	virtual void on_moved() {}
 	virtual void on_next_pos_reached() 
 	{
 		//  try change direction

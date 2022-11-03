@@ -95,6 +95,25 @@ void GhostMover::update( float dt )
 	}
 }
 
+void GhostMover::on_moved()
+{
+	if ( state != GhostState::EATEN ) return;
+
+	//  enter the house
+	if ( owner->transform->pos == target * Level::TILE_SIZE )
+	{
+		next_pos = level->get_ghost_house_pos();
+		direction = ( next_pos - current_pos ).normalize();
+		return;
+	}
+	//  exit state on entered
+	else if ( current_pos == level->get_ghost_house_pos() )
+	{
+		set_state( GhostState::WAIT );
+		return;
+	}
+}
+
 void GhostMover::update_target()
 {
 	switch ( state )
@@ -151,9 +170,7 @@ void GhostMover::reset_flee_timer()
 
 void GhostMover::on_next_pos_reached()
 {
-	switch ( state )
-	{
-	case GhostState::WAIT:
+	if ( state == GhostState::WAIT ) 
 	{
 		if ( !is_waiting_finished )
 		{
@@ -202,23 +219,6 @@ void GhostMover::on_next_pos_reached()
 			direction = ( next_pos - current_pos ).normalize();
 			return;
 		}
-		break;
-	}
-	case GhostState::EATEN:
-		//  enter the house
-		if ( current_pos == target )
-		{
-			next_pos = level->get_ghost_house_pos();
-			direction = ( next_pos - current_pos ).normalize();
-			return;
-		}
-		//  exit state on entered
-		else if ( current_pos == level->get_ghost_house_pos() )
-		{
-			set_state( GhostState::SCATTER );
-			return;
-		}
-		break;
 	}
 
 	Mover::on_next_pos_reached();
