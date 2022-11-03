@@ -124,8 +124,7 @@ void GhostMover::set_state( GhostState _state )
 		break;
 	case GhostState::FLEE:
 		move_time = FLEE_MOVE_TIME;
-		current_flee_time = 0.0f;
-		is_flee_ending = false;
+		reset_flee_timer();
 		break;
 	case GhostState::EATEN:
 		move_time = EATEN_MOVE_TIME;
@@ -136,12 +135,18 @@ void GhostMover::set_state( GhostState _state )
 	}
 
 	//  turn backwards
-	if ( state != GhostState::WAIT && _state != GhostState::WAIT )
+	if ( state == GhostState::CHASE || state == GhostState::SCATTER )
 	{
 		try_set_dir( -direction );
 	}
 
 	state = _state;
+}
+
+void GhostMover::reset_flee_timer()
+{
+	current_flee_time = 0.0f;
+	is_flee_ending = false;
 }
 
 void GhostMover::on_next_pos_reached()

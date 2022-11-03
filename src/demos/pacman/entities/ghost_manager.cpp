@@ -19,7 +19,16 @@ void GhostManager::flee_all()
 {
 	for ( auto ghost : ghosts )
 	{
-		ghost->mover->set_state( GhostState::FLEE );
+		switch ( ghost->mover->state )
+		{
+		case GhostState::CHASE:
+		case GhostState::SCATTER:
+			ghost->mover->set_state( GhostState::FLEE );
+			break;
+		case GhostState::FLEE:
+			ghost->mover->reset_flee_timer();
+			break;
+		}
 	}
 
 	printf( "GhostManager: fleed all ghosts\n" );

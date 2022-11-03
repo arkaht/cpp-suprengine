@@ -22,7 +22,6 @@ private:
 	const float FLEE_TIME { 8.0f };
 	const float FLEE_END_TIME { 2.0f };  //  2 seconds before FLEE_TIME
 	
-
 	float current_flee_time { 0.0f };
 	bool is_flee_ending { false };
 	bool is_waiting_finished { false };
@@ -47,6 +46,8 @@ public:
 	void update_target();
 
 	void set_state( GhostState state );
+
+	void reset_flee_timer();
 
 	void on_next_pos_reached() override;
 	Vec2 get_desired_dir() override;
