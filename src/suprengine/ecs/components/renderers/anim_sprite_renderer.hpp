@@ -13,9 +13,9 @@ namespace suprengine
 	{
 	private:
 		float current_time_per_frame { 0.0f };
-		std::string current_clip { "" };
 	public:
 		std::map<std::string, AnimClip> clips;
+		std::string current_clip { "" };
 
 		std::vector<Rect> frames;
 		int current_frame { 0 };

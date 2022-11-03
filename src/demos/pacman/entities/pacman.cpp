@@ -34,45 +34,15 @@ PacMan::PacMan( Level* level )
 
 void PacMan::update_this( float dt )
 {
-	if ( is_dying )
+	if ( is_dying ) return;
+
+	//  play animation if moving
+	anim->is_playing = !mover->is_blocked;
+
+	//  avoid full circle image when blocked
+	if ( !anim->is_playing && anim->current_frame == 2 )
 	{
-		//  wait some time before playing animation
-		if ( is_waiting_dying )
-		{
-			if ( ( death_wait_time -= dt ) <= 0.0f )
-			{
-				is_waiting_dying = false;
-
-				anim->set_current_clip( "death" );
-				anim->is_looping = false;
-				anim->is_playing = true;
-
-				GhostManager::kill_all();
-			}
-		}
-		//  remove render on finished
-		else if ( !anim->is_playing )
-		{
-			delete anim;
-
-			TIMER( 
-				DEATH_RESTART_TIME,
-				{
-					game->set_scene( new GameScene() );
-				} 
-			);
-		}
-	}
-	else
-	{
-		//  play animation if moving
-		anim->is_playing = !mover->is_blocked;
-
-		//  avoid full circle image when blocked
-		if ( !anim->is_playing && anim->current_frame == 2 )
-		{
-			anim->set_current_frame( 1 );
-		}
+		anim->set_current_frame( 1 );
 	}
 }
 
@@ -121,16 +91,36 @@ void PacMan::die()
 	printf( "u'r dead, not a big surprise\n" );
 
 	//  setup variables
-	is_dying = true, is_waiting_dying = true;
+	is_dying = true;
 
 	//  wait some time for anim
-	death_wait_time = DEATH_WAIT_TIME;
+	TIMER( DEATH_WAIT_TIME, {
+		//  reset rotation
+		transform->rotation = 0.0f;
+
+		//  death animation
+		anim->set_current_clip( "death" );
+		anim->is_looping = false;
+		anim->is_playing = true;
+
+		//  kill ghosts
+		GhostManager::kill_all();
+
+		auto& clip = anim->clips[anim->current_clip];
+		TIMER( clip.time_per_frame * ( clip.end_frame - clip.start_frame + 1 ), {
+			//  disable renderer
+			anim->is_rendered = false;
+			
+			//  restart
+			TIMER( DEATH_RESTART_TIME, {
+				game->set_scene( new GameScene() );
+			} );
+		} );
+	} );
 
 	//  setup anim
 	anim->is_playing = false;
 
-	//  reset rotation
-	transform->rotation = 0.0f;
 
 	//  disable mover
 	mover->is_updated = false;
@@ -158,7 +148,7 @@ void PacMan::win()
 		GhostManager::kill_all();
 
 		//  blink level
-		level->is_blinking = true;
+		level->blink();
 
 		//  reload scene
 		TIMER( 2.0f, { 

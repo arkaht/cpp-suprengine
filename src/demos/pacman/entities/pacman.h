@@ -10,8 +10,7 @@ private:
 	const float DEATH_WAIT_TIME { 1.0f };
 	const float DEATH_RESTART_TIME { 1.0f };
 
-	float death_wait_time { 0.0f };
-	bool is_dying { false }, is_waiting_dying { false };
+	bool is_dying { false };
 public:
 	Level* level;
 
