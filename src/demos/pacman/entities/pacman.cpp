@@ -34,6 +34,8 @@ void PacMan::update_this( float dt )
 			{
 				is_waiting_dying = false;
 
+				anim->set_current_clip( "death" );
+				anim->is_looping = false;
 				anim->is_playing = true;
 				GhostManager::delete_all();
 			}
@@ -96,8 +98,6 @@ void PacMan::die()
 	death_wait_time = DEATH_WAIT_TIME;
 
 	//  setup anim
-	anim->set_current_clip( "death" );
-	anim->is_looping = false;
 	anim->is_playing = false;
 
 	//  reset rotation
