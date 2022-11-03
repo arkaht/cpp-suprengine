@@ -81,6 +81,12 @@ namespace suprengine
 		void add_frame( const Rect& rect )
 		{
 			frames.push_back( rect );
+		
+			//  set as current frame
+			if ( frames.size() == 1 )
+			{
+				set_current_frame( 0 );
+			}
 		}
 
 		void gen_frames( const Rect& region, const Vec2& size )
