@@ -7,7 +7,7 @@
 #include "../game_stats.hpp"
 
 PacMan::PacMan( Level* level )
-	: Entity()
+	: level( level ), Entity()
 {
 	layer = (uint32_t) Layers::PACMAN;
 
@@ -26,8 +26,10 @@ PacMan::PacMan( Level* level )
 
 	//  create collider
 	new RectCollider( this, Rect { 0.0f, 0.0f, 8.0f, 8.0f } );
-	collider->mask = (uint32_t) Layers::GHOSTS 
-				   | (uint32_t) Layers::POWERUP;
+	collider->mask = (uint32_t) Layers::GHOSTS
+		| (uint32_t) Layers::POWERUP;
+
+	//TIMER( 1.0f, win(); );
 }
 
 void PacMan::update_this( float dt )
@@ -97,12 +99,18 @@ void PacMan::on_trigger_enter( Collider* other )
 	{
 		pellet->kill();
 		GhostManager::flee_all();
+
 		stats.add_score( 50 );
+		if ( --stats.remaining_dots <= 0 )
+			win();
 	}
 	else if ( auto dot = dynamic_cast<PacDot*>( ent ) )
 	{
 		dot->kill();
+
 		stats.add_score( 10 );
+		if ( --stats.remaining_dots <= 0 )
+			win();
 	}
 }
 
@@ -132,4 +140,29 @@ void PacMan::die()
 	{
 		ghost->mover->is_updated = false;
 	}
+}
+
+void PacMan::win()
+{
+	//  disable self
+	state = EntityState::PAUSED;
+
+	//  disable ghosts
+	for ( auto ghost : GhostManager::ghosts )
+	{
+		ghost->set_state( EntityState::PAUSED );
+	}
+
+	TIMER( 2.0f, {
+		//  kill ghosts
+		GhostManager::kill_all();
+
+		//  blink level
+		level->is_blinking = true;
+
+		//  reload scene
+		TIMER( 2.0f, { 
+			game->set_scene( new GameScene() ); 
+		} );
+	} );
 }
