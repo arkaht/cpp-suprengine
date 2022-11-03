@@ -45,9 +45,11 @@ public:
 		auto pacman = new PacMan( level );
 		pacman->mover->set_pos( { 14.0f, 23.0f } );
 
+		new GhostManager();
+
 		auto blinky = new GhostBlinky( level, pacman );
 		blinky->mover->set_pos( { 14.0f, 11.0f } );
-		blinky->mover->set_state( GhostState::CHASE );
+		blinky->mover->set_state( GhostManager::get_current_state() );
 
 		auto pinky = new GhostPinky( level, pacman );
 		pinky->mover->set_pos( level->get_wait_pos( pinky->mover->wait_id ) );
