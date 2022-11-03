@@ -279,6 +279,7 @@ void Game::update( float dt )
 		{
 			//  ignore self
 			if ( collider == other ) continue;
+			//  ignore layers not in mask filter
 			if ( ( collider->mask & other->get_owner()->layer ) == 0 ) continue;
 
 			//  ignore checked colliders
