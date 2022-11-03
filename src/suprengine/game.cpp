@@ -45,7 +45,7 @@ bool Game::initialize( const char* title, int width, int height )
 	Assets::set_render_batch( render_batch );
 
 	//  setup camera viewport
-	camera.reset( width, height );
+	camera.reset( (float) width, (float) height );
 
 	return true;
 }
@@ -75,7 +75,7 @@ void Game::set_scene( Scene* _scene )
 
 	//  reset
 	clear_entities();
-	camera.reset( window->get_width(), window->get_height() );
+	camera.reset( (float) window->get_width(), (float) window->get_height() );
 
 	//  set scene
 	scene = _scene;

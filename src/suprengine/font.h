@@ -14,7 +14,6 @@ namespace suprengine
 	public:
 		Font( std::string path, TTF_Font* sdl_font, int size )
 			: path( path ), sdl_font( sdl_font ), size( size ) {}
-		~Font();
 
 		static Font* load( const std::string& path, int size );
 

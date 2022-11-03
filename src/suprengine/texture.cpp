@@ -21,7 +21,7 @@ Texture* Texture::load( RenderBatch* render_batch, const std::string& path )
 Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::string& path, SDL_Surface* surface )
 {
 	//  get width & height
-	Vec2 size { surface->w, surface->h };
+	Vec2 size { (float) surface->w, (float) surface->h };
 
 	//  load texture
 	SDL_Texture* texture = SDL_CreateTextureFromSurface( render_batch->get_sdl_renderer(), surface );
