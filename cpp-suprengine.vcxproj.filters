@@ -21,7 +21,7 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\suprengine\render_batch.cpp">
+    <ClCompile Include="src\suprengine\render-batchs\sdl_render_batch.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\suprengine\updater.cpp">
@@ -72,6 +72,9 @@
     <ClCompile Include="src\demos\pacman\entities\level.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="src\suprengine\render_batch.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\suprengine\color.h">
@@ -83,7 +86,7 @@
     <ClInclude Include="src\suprengine\rect.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\suprengine\render_batch.h">
+    <ClInclude Include="src\suprengine\render-batchs\sdl_render_batch.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\updater.h">
@@ -234,6 +237,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\demos\pacman\entities\score_notification.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\suprengine\render_batch.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

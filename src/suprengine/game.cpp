@@ -6,6 +6,8 @@
 
 #include <unordered_map>
 
+#include <suprengine/render-batchs/sdl_render_batch.h>
+
 using namespace suprengine;
 
 Game::~Game()
@@ -38,7 +40,7 @@ bool Game::initialize( const char* title, int width, int height )
 	if ( !window->initialize() ) return false;
 
 	//  init render batch
-	render_batch = new RenderBatch();
+	render_batch = new SDLRenderBatch();
 	if ( !render_batch->initialize( window ) ) return false;
 
 	//  init assets
@@ -342,8 +344,7 @@ void Game::update( float dt )
 
 void Game::render()
 {
-	//  start renderering
-	SDL_Renderer* sdl_renderer = render_batch->get_sdl_renderer();
+	//  start rendering
 	render_batch->begin_render();
 
 	//  draw screen diagonals
@@ -352,14 +353,13 @@ void Game::render()
 	SDL_RenderDrawLine( sdl_renderer, _window->get_width() / camera.zoom, 0, 0, _window->get_height() / camera.zoom );*/
 
 	//  apply camera
-	SDL_RenderSetScale( sdl_renderer, camera.zoom, camera.zoom );
+	render_batch->scale( camera.zoom );
 	render_batch->translate( camera.viewport.get_pos() );
 
 	//  apply camera clipping
 	if ( camera.clip_enabled )
 	{
-		SDL_Rect clip_rect = camera.clip.to_sdl_rect();
-		SDL_RenderSetClipRect( sdl_renderer, &clip_rect );
+		render_batch->clip( camera.clip );
 	}
 
 	//  render components

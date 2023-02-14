@@ -1,5 +1,7 @@
 #include "texture.h"
 
+#include <suprengine/render-batchs/sdl_render_batch.h>
+
 using namespace suprengine;
 
 Texture::~Texture()
@@ -21,10 +23,14 @@ Texture* Texture::load( RenderBatch* render_batch, const std::string& path )
 Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::string& path, SDL_Surface* surface, bool should_free_surface )
 {
 	//  get width & height
-	Vec2 size { (float) surface->w, (float) surface->h };
+	Vec2 size { 
+		(float) surface->w, 
+		(float) surface->h 
+	};
 
 	//  load texture
-	SDL_Texture* texture = SDL_CreateTextureFromSurface( render_batch->get_sdl_renderer(), surface );
+	//  TODO: abstract it
+	SDL_Texture* texture = render_batch->load_texture_from_surface( surface );
 
 	//  free surface
 	if ( should_free_surface )

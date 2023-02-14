@@ -29,8 +29,9 @@ namespace suprengine
 			if ( font == nullptr ) return;
 
 			//  render text on surface
-			SDL_Surface* sdl_surface = TTF_RenderText_Solid( font->get_sdl_font(), text.c_str(), modulate.to_sdl_color() );
-			SDL_Texture* sdl_texture = SDL_CreateTextureFromSurface( render_batch->get_sdl_renderer(), sdl_surface );
+			//  TODO: abstract it
+			SDL_Surface* sdl_surface = TTF_RenderText_Solid(font->get_sdl_font(), text.c_str(), modulate.to_sdl_color());
+			SDL_Texture* sdl_texture = render_batch->load_texture_from_surface( sdl_surface );
 			
 			//  delete old texture
 			if ( texture != nullptr )

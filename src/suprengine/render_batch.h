@@ -1,14 +1,11 @@
 #pragma once
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+#include <suprengine/window.h>
+#include <suprengine/rect.h>
+#include <suprengine/color.h>
+#include <suprengine/texture.fwd.h>
+#include <suprengine/font.fwd.h>
 
-#include "window.h"
-#include "rect.h"
-#include "color.h"
-#include "texture.fwd.h"
-#include "font.fwd.h"
 #include <suprengine/ecs/components/renderers/renderer.fwd.h>
 
 #include <vector>
@@ -23,36 +20,31 @@ namespace suprengine
 
 	class RenderBatch
 	{
-	private:
-		Vec2 translation { Vec2::zero };
-		SDL_Renderer* sdl_renderer { nullptr };
-
+	protected:
 		std::vector<Renderer*> renderers;
 
+		Vec2 translation { Vec2::zero };
 		Color background_color { Color::black };
 	public:
-		RenderBatch() {};
-		RenderBatch( const RenderBatch& ) = delete;
-		RenderBatch& operator=( const RenderBatch& ) = delete;
-		~RenderBatch();
+		virtual ~RenderBatch() {};
 
-		bool initialize( Window* window );
-
-		void begin_render();
+		virtual bool initialize( Window* window ) = 0;
+		virtual void begin_render() = 0;
 		void render();
-		void end_render();
+		virtual void end_render() = 0;
 
-		void translate( const Vec2& pos ) { translation += pos; }
+		virtual void draw_rect( DrawType draw_type, const Rect& rect, const Color& color ) = 0;
+		virtual void draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color ) = 0;
+	
+		void translate( const Vec2& pos );
+		virtual void scale( float zoom ) = 0;
+		virtual void clip( const Rect& region ) = 0;
 
-		void draw_rect( DrawType draw_type, const Rect& rect, const Color& color );
-		void draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color );
+		virtual SDL_Texture* load_texture_from_surface( SDL_Surface* surface ) = 0;
+
+		void set_background_color( Color color );
 
 		void add_renderer( Renderer* renderer );
 		void remove_renderer( Renderer* renderer );
-
-		void set_background_color( Color color ) { background_color = color; }
-
-		SDL_Renderer* get_sdl_renderer() const { return sdl_renderer; }
 	};
 }
-

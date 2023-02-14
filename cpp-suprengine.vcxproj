@@ -147,6 +147,7 @@
     <ClCompile Include="src\suprengine\color.cpp" />
     <ClCompile Include="src\suprengine\ecs\components\renderers\renderer.cpp" />
     <ClCompile Include="src\suprengine\ecs\entity.cpp" />
+    <ClCompile Include="src\suprengine\render-batchs\sdl_render_batch.cpp" />
     <ClCompile Include="src\suprengine\render_batch.cpp" />
     <ClCompile Include="src\suprengine\updater.cpp" />
     <ClCompile Include="src\suprengine\vec2.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="src\suprengine\font.h" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\sprite_renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\text_renderer.hpp" />
+    <ClInclude Include="src\suprengine\render_batch.h" />
     <ClInclude Include="src\suprengine\math.h" />
     <ClInclude Include="src\suprengine\scene.fwd.h" />
     <ClInclude Include="src\suprengine\scene.h" />
@@ -203,7 +205,7 @@
     <ClInclude Include="src\suprengine\ecs\entity.h" />
     <ClInclude Include="src\suprengine\logger.h" />
     <ClInclude Include="src\suprengine\rect.h" />
-    <ClInclude Include="src\suprengine\render_batch.h" />
+    <ClInclude Include="src\suprengine\render-batchs\sdl_render_batch.h" />
     <ClInclude Include="src\suprengine\timer.hpp" />
     <ClInclude Include="src\suprengine\updater.h" />
     <ClInclude Include="src\suprengine\vec2.h" />
