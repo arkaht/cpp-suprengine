@@ -13,20 +13,34 @@ namespace suprengine
 		OpenGLTexture( rconst_str path, SDL_Surface* surface ) 
 			: Texture( path, Vec2 { (float) surface->w, (float) surface->h } )
 		{
-			uint8_t bpp = surface->format->BytesPerPixel;
-
 			//  get pixel format
 			int format = 0;
 			std::string format_str = "NONE";
-
-
-			if ( bpp == 4 )
+			if ( surface->format->BytesPerPixel == 4 )
 			{
-				format = surface->format->Rmask == 0x000000FF ? GL_RGBA : GL_BGRA;
+				if ( surface->format->Rmask == 0x000000FF )
+				{
+					format = GL_RGBA;
+					format_str = "GL_RGBA";
+				}
+				else
+				{
+					format = GL_BGRA;
+					format_str = "GL_BGRA";
+				}
 			}
 			else
 			{
-				format = surface->format->Rmask == 0x000000FF ? GL_RGB : GL_BGR;
+				if ( surface->format->Rmask == 0x000000FF )
+				{
+					format = GL_RGB;
+					format_str = "GL_RGB";
+				}
+				else
+				{
+					format = GL_BGR;
+					format_str = "GL_BGR";
+				}
 			}
 
 			//  generate textures
@@ -38,11 +52,10 @@ namespace suprengine
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
-
 			Logger::info( 
-				"created texture '" + path + 
-				"' (" + std::to_string( surface->format->format ) + 
-				": " + format_str + ")"
+				"new OpenGLTexture '" + path + 
+				"' (ID: " + std::to_string( texture_id ) + 
+				" | FORMAT: " + format_str + ")"
 			);
 		}
 
