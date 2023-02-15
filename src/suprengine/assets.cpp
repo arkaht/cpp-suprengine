@@ -127,7 +127,7 @@ Shader* Assets::load_shader_from_file( rconst_str vtx_filename, rconst_str frg_f
             << geomShaderFile << "\n"
             << "\n -- --------------------------------------------------- -- "
             << std::endl;
-        Logger::error( LOG_CATEGORY::RENDER, loadError.str() );
+        Logger::error( loadError.str() );
     }
     const GLchar* vShaderCode = vertexCode.c_str();
     const GLchar* fShaderCode = fragmentCode.c_str();

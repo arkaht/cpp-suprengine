@@ -18,6 +18,7 @@ namespace suprengine
 
 		Mtx4 view_projection;
 		Vec3 screen_offset;
+
 	public:
 		OpenGLRenderBatch( Window* window ) : RenderBatch( window ) {};
 		OpenGLRenderBatch( const OpenGLRenderBatch& ) = delete;
@@ -36,8 +37,9 @@ namespace suprengine
 		void clip( const Rect& region ) override;
 
 		Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface ) override;
+
 	private:
-		Mtx4 compute_location_matrix( const Vec3 pos );
+		Mtx4 compute_location_matrix( const Vec3& pos );
 	};
 }
 

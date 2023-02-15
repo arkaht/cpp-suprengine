@@ -41,7 +41,7 @@ bool OpenGLRenderBatch::initialize()
 	glewExperimental = GL_TRUE;
 	if ( glewInit() != GLEW_OK )
 	{
-		Logger::error( LOG_CATEGORY::VIDEO, "Failed to initialize GLEW." );
+		Logger::error( "failed to initialize GLEW." );
 		return false;
 	}
 
@@ -51,14 +51,14 @@ bool OpenGLRenderBatch::initialize()
 	//  init image library
 	if ( IMG_Init( IMG_INIT_PNG ) == 0 )
 	{
-		Logger::error( LOG_CATEGORY::VIDEO, "failed to initialize image library" );
+		Logger::error( "failed to initialize image library" );
 		return false;
 	}
 
 	//  initialize ttf library
 	if ( TTF_Init() == -1 )
 	{
-		Logger::error( LOG_CATEGORY::VIDEO, "failed to initialize TTF library" );
+		Logger::error( "failed to initialize TTF library" );
 		return false;
 	}
 
@@ -128,6 +128,7 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color )
 {
 	texture_shader->activate();
+	texture->activate();
 
 	//  setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
@@ -141,11 +142,8 @@ void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rec
 	texture_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
 	texture_shader->set_vec4( "u_modulate", color );
 
-	texture->activate();
-
 	//  draw
 	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr );
-	//glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
 void OpenGLRenderBatch::scale( float zoom )
@@ -159,7 +157,7 @@ Texture* OpenGLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surf
 	return new OpenGLTexture( path, surface );
 }
 
-Mtx4 OpenGLRenderBatch::compute_location_matrix( const Vec3 pos )
+Mtx4 OpenGLRenderBatch::compute_location_matrix( const Vec3& pos )
 {
 	return Mtx4::create_translation(
 		Vec3 {
