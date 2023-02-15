@@ -132,14 +132,15 @@ void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rec
 
 	//  setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
+	Mtx4 rotation_matrix = Mtx4::create_rotation_z( -rotation * math::DEG2RAD );
 	Mtx4 location_matrix = compute_location_matrix( 
 		Vec3 { 
-			dest_rect.x - origin.x * dest_rect.w, 
-			dest_rect.y - origin.y * dest_rect.h, 
+			dest_rect.x,
+			dest_rect.y,
 			0.0f 
-		} 
+		}
 	);
-	texture_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
+	texture_shader->set_mtx4( "u_world_transform", scale_matrix * rotation_matrix * location_matrix );
 
 	//  set modulate
 	texture_shader->set_vec4( "u_modulate", color );
@@ -152,6 +153,9 @@ void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rec
 		src_rect.w / size.x, 
 		src_rect.h / size.y 
 	);
+
+	//  origin
+	texture_shader->set_vec2( "u_origin", origin );
 
 	//  draw
 	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr );
