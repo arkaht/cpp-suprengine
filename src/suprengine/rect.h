@@ -42,15 +42,8 @@ namespace suprengine
 			};
 		}
 
-		Vec2 get_pos() const
-		{
-			return Vec2 { x, y };
-		}
-
-		Vec2 get_size() const
-		{
-			return Vec2 { w, h };
-		}
+		Vec2 get_pos() const { return Vec2 { x, y }; }
+		Vec2 get_size() const { return Vec2 { w, h }; }
 
 		SDL_Rect to_sdl_rect() const
 		{
@@ -62,9 +55,8 @@ namespace suprengine
 			};
 		}
 
-		void add_pos( const Vec2& v )
-		{
-			x += v.x, y += v.y;
-		}
+		void add_pos( const Vec2& pos ) { x += pos.x, y += pos.y; }
+		void set_pos( const Vec2& pos ) { x = pos.x, y = pos.y; }
+		void set_size( const Vec2& size ) { w = size.x, h = size.y; }
 	};
 }

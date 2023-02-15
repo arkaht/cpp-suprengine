@@ -44,7 +44,7 @@ namespace suprengine
 			SDL_FreeSurface( sdl_surface );
 
 			//  setup
-			dest.w = texture->get_size().x, dest.h = texture->get_size().y;
+			dest.set_size( texture->get_size() );
 			source = { 0.0f, 0.0f, dest.w, dest.h };
 		}
 	};
