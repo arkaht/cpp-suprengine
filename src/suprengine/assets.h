@@ -7,8 +7,6 @@
 
 #include <map>
 
-using rconst_str = const std::string&;
-
 namespace suprengine
 {
 	class Assets

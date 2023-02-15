@@ -4,48 +4,32 @@
 
 using namespace suprengine;
 
-Texture::~Texture()
-{
-	if ( sdl_texture == nullptr ) return;
+//Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::string& path, SDL_Surface* surface, bool should_free_surface )
+//{
+//	//  get width & height
+//	Vec2 size { 
+//		(float) surface->w, 
+//		(float) surface->h 
+//	};
+//
+//	//  load texture
+//	//  TODO: abstract it
+//	SDL_Texture* texture = render_batch->load_texture_from_surface( surface );
+//
+//	//  free surface
+//	if ( should_free_surface )
+//		SDL_FreeSurface( surface );
+//
+//	if ( texture == nullptr )
+//	{
+//		Logger::error( "failed to create texture from surface from file " + path );
+//		return nullptr;
+//	}
+//
+//	return new Texture( path, texture, size );
+//}
 
-	SDL_DestroyTexture( sdl_texture );
-}
-
-Texture* Texture::load( RenderBatch* render_batch, const std::string& path )
-{
-	//  load surface
-	SDL_Surface* surface = load_surface( path );
-	if ( surface == nullptr ) return nullptr;
-
-	return load_from_surface( render_batch, path, surface );
-}
-
-Texture* Texture::load_from_surface( RenderBatch* render_batch, const std::string& path, SDL_Surface* surface, bool should_free_surface )
-{
-	//  get width & height
-	Vec2 size { 
-		(float) surface->w, 
-		(float) surface->h 
-	};
-
-	//  load texture
-	//  TODO: abstract it
-	SDL_Texture* texture = render_batch->load_texture_from_surface( surface );
-
-	//  free surface
-	if ( should_free_surface )
-		SDL_FreeSurface( surface );
-
-	if ( texture == nullptr )
-	{
-		Logger::error( "failed to create texture from surface from file " + path );
-		return nullptr;
-	}
-
-	return new Texture( path, texture, size );
-}
-
-SDL_Surface* Texture::load_surface( const std::string& path )
+SDL_Surface* Texture::load_surface( rconst_str path )
 {
 	SDL_Surface* surface = IMG_Load( path.c_str() );
 	if ( surface == nullptr )

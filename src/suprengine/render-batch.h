@@ -1,5 +1,6 @@
 #pragma once
 
+#include <suprengine/usings.h>
 #include <suprengine/window.h>
 #include <suprengine/rect.h>
 #include <suprengine/color.h>
@@ -42,7 +43,8 @@ namespace suprengine
 		virtual void scale( float zoom ) = 0;
 		virtual void clip( const Rect& region ) = 0;
 
-		virtual SDL_Texture* load_texture_from_surface( SDL_Surface* surface ) = 0;
+		virtual Texture* load_texture( rconst_str path );
+		virtual Texture* load_texture_from_surface( rconst_str filename, SDL_Surface* surface ) = 0;
 
 		void set_background_color( Color color );
 

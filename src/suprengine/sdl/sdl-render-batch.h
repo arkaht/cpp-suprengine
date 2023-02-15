@@ -1,6 +1,8 @@
 #pragma once
 #include <suprengine/render-batch.h>
 
+#include "sdl-texture.hpp"
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -28,7 +30,7 @@ namespace suprengine
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;
 
-		SDL_Texture* load_texture_from_surface( SDL_Surface* surface ) override;
+		Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface ) override;
 
 		SDL_Renderer* get_sdl_renderer() const { return sdl_renderer; }
 	};

@@ -10,7 +10,7 @@ VertexArray::VertexArray( const float* vertices, unsigned int vertices_count, co
 	//  create vbo
 	glGenBuffers( 1, &vbo_id );
 	glBindBuffer( GL_ARRAY_BUFFER, vbo_id );
-	glBufferData( GL_ARRAY_BUFFER, vertices_count * 3 * sizeof( float ), vertices, GL_STATIC_DRAW );
+	glBufferData( GL_ARRAY_BUFFER, vertices_count * 5 * sizeof( float ), vertices, GL_STATIC_DRAW );
 
 	//  create ibo
 	glGenBuffers( 1, &ibo_id );
@@ -19,7 +19,9 @@ VertexArray::VertexArray( const float* vertices, unsigned int vertices_count, co
 
 	//  set vertex attributes
 	glEnableVertexAttribArray( 0 );
-	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof( float ) * 3, 0 );
+	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof( float ) * 5, 0 );
+	glEnableVertexAttribArray( 1 );
+	glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, sizeof( float ) * 5, reinterpret_cast<void*>( sizeof( float ) * 3 ) );
 }
 
 VertexArray::~VertexArray()

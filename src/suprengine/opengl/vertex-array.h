@@ -3,10 +3,18 @@
 #include <gl/glew.h>
 
 constexpr float vertices[] = {
-	0.0f, 0.0f, 0.0f,  //  top-left
-	1.0f, 0.0f, 0.0f,   //  top-right
-	1.0f, -1.0f, 0.0f,  //  bottom-right
-	0.0f, -1.0f, 0.0f  //  bottom-left
+	//  top-left
+	0.0f, 0.0f, 0.0f,  //  position
+		  0.0f, 0.0f,  //  uv
+	//  top-right
+	1.0f, 0.0f, 0.0f,
+		  1.0f, 0.0f,
+	//  bottom-right
+	1.0f, -1.0f, 0.0f,
+		   1.0f, 1.0f,
+	//  bottom-left
+	0.0f, -1.0f, 0.0f,
+		   0.0f, 1.0f
 };
 
 constexpr unsigned int indices[] = {

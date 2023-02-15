@@ -27,14 +27,14 @@ bool SDLRenderBatch::initialize()
 	//  initialize image library
 	if ( IMG_Init( IMG_INIT_PNG ) == 0 )
 	{
-		Logger::error( "failed to initialize image library" );
+		Logger::error( LOG_CATEGORY::VIDEO, "failed to initialize image library" );
 		return false;
 	}
 
 	//  initialize ttf library
 	if ( TTF_Init() == -1 )
 	{
-		Logger::error( "failed to initialize TTF library" );
+		Logger::error( LOG_CATEGORY::VIDEO, "failed to initialize TTF library" );
 		return false;
 	}
 
@@ -119,7 +119,7 @@ void SDLRenderBatch::clip( const Rect& region )
 	SDL_RenderSetClipRect( sdl_renderer, &clip_rect );
 }
 
-SDL_Texture* SDLRenderBatch::load_texture_from_surface( SDL_Surface* surface )
+Texture* SDLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface )
 {
-	return SDL_CreateTextureFromSurface( sdl_renderer, surface );
+	return new SDLTexture( sdl_renderer, path, surface );
 }

@@ -19,6 +19,17 @@ void RenderBatch::translate( const Vec2& pos )
 	translation += pos;
 }
 
+Texture* RenderBatch::load_texture( rconst_str path )
+{
+	SDL_Surface* surface = Texture::load_surface( path );
+	if ( surface == nullptr ) return nullptr;
+
+	Texture* texture = load_texture_from_surface( path, surface );
+	SDL_FreeSurface( surface );
+
+	return texture;
+}
+
 void RenderBatch::set_background_color( Color color )
 {
 	background_color = color;

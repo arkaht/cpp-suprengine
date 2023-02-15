@@ -89,8 +89,9 @@ void Level::gen_tiles()
 	stats.remaining_dots = dots_count;
 
 	//  gen normal texture
-	normal_texture = Texture::load_from_surface( game->get_render_batch(), TEXTURE_PATH, surface, false );
+	normal_texture = game->get_render_batch()->load_texture_from_surface( TEXTURE_PATH, surface );
 	gen_blink_texture( surface );
+	SDL_FreeSurface( surface );
 
 	//  setup sprite renderer
 	sprite->texture = normal_texture;
@@ -124,5 +125,5 @@ void Level::gen_blink_texture( SDL_Surface* surface )
 	}
 	SDL_UnlockSurface( surface );
 
-	blink_texture = Texture::load_from_surface( game->get_render_batch(), TEXTURE_PATH, surface );
+	blink_texture = game->get_render_batch()->load_texture_from_surface( TEXTURE_PATH, surface );
 }

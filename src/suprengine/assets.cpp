@@ -18,7 +18,7 @@ Texture* Assets::get_texture( rconst_str filename )
 	//  load texture if un-found
 	if ( textures.find( filename ) == textures.end() )
 	{
-		textures[filename] = Texture::load( render_batch, path + filename );
+		textures[filename] = render_batch->load_texture( path + filename );
 	}
 
 	//  get from textures

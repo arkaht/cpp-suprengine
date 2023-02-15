@@ -7,7 +7,7 @@
 void run()
 {
 	auto& game = Game::instance();
-	if ( !game.initialize<OpenGLRenderBatch>( "opengl-3d", 1280, 720 ) ) return;
+	if ( !game.initialize<SDLRenderBatch>( "opengl-3d", 1280, 720 ) ) return;
 
 	//  set assets path
 	Assets::set_path( "src/demos/pacman/assets/" );

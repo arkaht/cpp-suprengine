@@ -169,7 +169,7 @@ void Shader::set_vec4( const GLchar* name, GLfloat x, GLfloat y, GLfloat z, GLfl
 }
 void Shader::set_vec4( const GLchar* name, const Color& value )
 {
-	glUniform4f( glGetUniformLocation( id, name ), value.r, value.g, value.b, value.a );
+	glUniform4f( glGetUniformLocation( id, name ), value.r / 255.0f, value.g / 255.0f, value.b / 255.0f, value.a / 255.0f );
 }
 
 void Shader::set_mtx4( const GLchar* name, const Mtx4& matrix )

@@ -14,7 +14,7 @@ namespace suprengine
 		SDL_GLContext gl_context { nullptr };
 	
 		VertexArray* vertex_array { nullptr };
-		Shader* shader { nullptr };
+		Shader* color_shader { nullptr }, *texture_shader { nullptr };
 
 		Mtx4 view_projection;
 		Vec3 screen_offset;
@@ -35,8 +35,7 @@ namespace suprengine
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;
 
-		SDL_Texture* load_texture_from_surface( SDL_Surface* surface ) override;
-
+		Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface ) override;
 	private:
 		Mtx4 compute_location_matrix( const Vec3 pos );
 	};

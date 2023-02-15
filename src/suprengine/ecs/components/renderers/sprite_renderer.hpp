@@ -29,6 +29,8 @@ namespace suprengine
 	
 		void render() override
 		{
+			if ( texture == nullptr ) return;
+
 			Transform2* transf = owner->transform;
 			render_batch->draw_texture( source, transf->get_rect( dest ), transf->rotation, origin, texture, modulate );
 		}
