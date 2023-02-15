@@ -20,7 +20,7 @@ bool Window::initialize()
 		return false;
 	}
 
-	sdl_window = SDL_CreateWindow( title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0 );
+	sdl_window = SDL_CreateWindow( title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL );
 	if ( sdl_window == nullptr )
 	{
 		Logger::error( "unable to create SDL window" );

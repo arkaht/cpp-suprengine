@@ -6,7 +6,8 @@
 
 #include <unordered_map>
 
-#include <suprengine/render-batchs/sdl_render_batch.h>
+#include <suprengine/sdl/sdl-render-batch.h>
+#include <suprengine/opengl/opengl-render-batch.h>
 
 using namespace suprengine;
 
@@ -40,8 +41,8 @@ bool Game::initialize( const char* title, int width, int height )
 	if ( !window->initialize() ) return false;
 
 	//  init render batch
-	render_batch = new SDLRenderBatch();
-	if ( !render_batch->initialize( window ) ) return false;
+	render_batch = new OpenGLRenderBatch( window );
+	if ( !render_batch->initialize() ) return false;
 
 	//  init assets
 	Assets::set_render_batch( render_batch );

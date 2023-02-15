@@ -1,6 +1,6 @@
 #include "texture.h"
 
-#include <suprengine/render-batchs/sdl_render_batch.h>
+#include <suprengine/sdl/sdl-render-batch.h>
 
 using namespace suprengine;
 

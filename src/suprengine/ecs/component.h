@@ -2,7 +2,8 @@
 
 #include "component.fwd.h"
 #include "entity.fwd.h"
-#include <suprengine/render_batch.h>
+
+#include <suprengine/render-batch.h>
 
 namespace suprengine
 {

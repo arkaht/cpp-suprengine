@@ -1,4 +1,4 @@
-#include "sdl_render_batch.h"
+#include "sdl-render-batch.h"
 
 #include <suprengine/texture.h>
 #include <suprengine/ecs/components/renderers/renderer.h>
@@ -14,10 +14,10 @@ SDLRenderBatch::~SDLRenderBatch()
 	SDL_DestroyRenderer( sdl_renderer );
 }
 
-bool SDLRenderBatch::initialize( Window* _window )
+bool SDLRenderBatch::initialize()
 {
 	//  create renderer
-	sdl_renderer = SDL_CreateRenderer( _window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+	sdl_renderer = SDL_CreateRenderer( window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 	if ( sdl_renderer == nullptr )
 	{
 		Logger::error( "failed to create renderer" );

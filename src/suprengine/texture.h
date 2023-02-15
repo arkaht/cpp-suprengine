@@ -1,6 +1,7 @@
 #pragma once
 #include "texture.fwd.h"
-#include "render_batch.h"
+
+#include <suprengine/render-batch.h>
 
 namespace suprengine
 {

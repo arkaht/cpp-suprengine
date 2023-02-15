@@ -1,0 +1,37 @@
+#pragma once
+#include <suprengine/render-batch.h>
+
+#include <SDL_image.h>
+
+#include "vertex-array.h"
+#include "shader.h"
+
+namespace suprengine
+{
+	class OpenGLRenderBatch : public RenderBatch
+	{
+	private:
+		SDL_GLContext gl_context { nullptr };
+	
+		VertexArray* vertex_array { nullptr };
+		Shader* shader { nullptr };
+	public:
+		OpenGLRenderBatch( Window* window ) : RenderBatch( window ) {};
+		OpenGLRenderBatch( const OpenGLRenderBatch& ) = delete;
+		OpenGLRenderBatch& operator=( const OpenGLRenderBatch& ) = delete;
+		~OpenGLRenderBatch();
+
+		bool initialize() override;
+
+		void begin_render() override;
+		void end_render() override;
+
+		void draw_rect( DrawType draw_type, const Rect& rect, const Color& color ) override;
+		void draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color ) override;
+		
+		void scale( float zoom ) override;
+		void clip( const Rect& region ) override;
+		SDL_Texture* load_texture_from_surface( SDL_Surface* surface ) override;
+	};
+}
+

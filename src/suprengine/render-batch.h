@@ -21,14 +21,16 @@ namespace suprengine
 	class RenderBatch
 	{
 	protected:
+		Window* window;
 		std::vector<Renderer*> renderers;
 
 		Vec2 translation { Vec2::zero };
 		Color background_color { Color::black };
 	public:
+		RenderBatch( Window* window ) : window( window ) {}
 		virtual ~RenderBatch() {};
 
-		virtual bool initialize( Window* window ) = 0;
+		virtual bool initialize() = 0;
 		virtual void begin_render() = 0;
 		void render();
 		virtual void end_render() = 0;

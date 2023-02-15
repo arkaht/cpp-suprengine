@@ -1,10 +1,9 @@
 #pragma once
+#include <suprengine/render-batch.h>
 
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-
-#include <suprengine/render_batch.h>
 
 namespace suprengine
 {
@@ -13,12 +12,12 @@ namespace suprengine
 	private:
 		SDL_Renderer* sdl_renderer { nullptr };
 	public:
-		SDLRenderBatch() : RenderBatch() {};
+		SDLRenderBatch( Window* window ) : RenderBatch( window ) {};
 		SDLRenderBatch( const SDLRenderBatch& ) = delete;
 		SDLRenderBatch& operator=( const SDLRenderBatch& ) = delete;
 		~SDLRenderBatch();
 
-		bool initialize( Window* window ) override;
+		bool initialize() override;
 
 		void begin_render() override;
 		void end_render() override;
