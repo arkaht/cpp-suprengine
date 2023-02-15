@@ -140,7 +140,18 @@ void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rec
 		} 
 	);
 	texture_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
+
+	//  set modulate
 	texture_shader->set_vec4( "u_modulate", color );
+
+	//  source rect
+	Vec2 size = texture->get_size();
+	texture_shader->set_vec4( "u_source_rect", 
+		src_rect.x / size.x, 
+		src_rect.y / size.y, 
+		src_rect.w / size.x, 
+		src_rect.h / size.y 
+	);
 
 	//  draw
 	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr );
