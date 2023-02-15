@@ -1,8 +1,11 @@
 #version 330
 
+uniform mat4 world_transform, view_projection;
+
 in vec3 in_position;
 
 void main()
 {
-	gl_Position = vec4( in_position, 1.0f );
+	vec4 pos = vec4( in_position, 1.0f );
+	gl_Position = pos * world_transform * view_projection;
 }

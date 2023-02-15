@@ -12,7 +12,6 @@
 #include <vector>
 #include <unordered_set>
 
-
 namespace suprengine
 {
 	enum class KeyState
@@ -64,7 +63,25 @@ namespace suprengine
 		Game& operator=( Game&& ) = delete;
 		~Game();
 
-		bool initialize( const char* title = "my-cpp-game", int width = DEFAULT_WINDOW_WIDTH, int height = DEFAULT_WINDOW_HEIGHT );
+		template <typename TRenderBatch>
+		bool initialize( const char* title = "my-cpp-game", int width = DEFAULT_WINDOW_WIDTH, int height = DEFAULT_WINDOW_HEIGHT )
+		{
+			//  init window
+			window = new Window( title, width, height );
+			if ( !window->initialize() ) return false;
+
+			//  init render batch
+			render_batch = new TRenderBatch( window );
+			if ( !render_batch->initialize() ) return false;
+
+			//  init assets
+			Assets::set_render_batch( render_batch );
+
+			//  setup camera viewport
+			camera.reset( (float) width, (float) height );
+
+			return true;
+		}
 		void loop();
 
 		void set_scene( Scene* scene );

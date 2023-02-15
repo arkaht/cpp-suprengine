@@ -1,7 +1,7 @@
 #pragma once
 #include "transform2.fwd.h"
-#include "../component.h"
 
+#include <suprengine/ecs/component.h>
 #include <suprengine/rect.h>
 
 namespace suprengine

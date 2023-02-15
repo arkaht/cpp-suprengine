@@ -4,7 +4,9 @@
 #include "component.fwd.h"
 #include "components/collider.fwd.h"
 #include "components/transform2.fwd.h"
-#include "suprengine/game.h"
+
+#include <suprengine/game.h>
+#include <suprengine/mtx4.h>
 
 #include <vector>
 

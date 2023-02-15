@@ -1,8 +1,10 @@
 #version 330
 
+uniform vec4 modulate;
+
 out vec4 out_color;
 
 void main() 
 {
-	out_color = vec4( 0.0f, 0.0f, 1.0f, 1.0f );
+	out_color = modulate;
 }

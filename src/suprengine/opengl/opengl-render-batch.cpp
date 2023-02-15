@@ -4,7 +4,7 @@
 
 using namespace suprengine;
 
-OpenGLRenderBatch::~OpenGLRenderBatch() 
+OpenGLRenderBatch::~OpenGLRenderBatch()
 {
 	SDL_GL_DeleteContext( gl_context );
 	delete vertex_array;
@@ -48,18 +48,26 @@ bool OpenGLRenderBatch::initialize()
 
 	//  create vertex array
 	vertex_array = new VertexArray( vertices, 4, indices, 6 );
-	shader = Assets::load_shader( "base-unlit", 
+	shader = Assets::load_shader( "base-unlit",
 		"src/suprengine/opengl/shaders/transform.vert",
-		"src/suprengine/opengl/shaders/color.frag" 
+		"src/suprengine/opengl/shaders/color.frag"
 	);
 
-    return true;
+	view_projection = Mtx4::create_simple_view_projection( window->get_width(), window->get_height() );
+	screen_offset = Vec3 { -window->get_width() / 2.0f, window->get_height() / 2.0f, 0.0f };
+
+	return true;
 }
 
 void OpenGLRenderBatch::begin_render()
 {
 	//  clear screen
-	glClearColor( background_color.r, background_color.g, background_color.b, background_color.a );
+	glClearColor( 
+		background_color.r / 255.0f, 
+		background_color.g / 255.0f, 
+		background_color.b / 255.0f, 
+		background_color.a / 255.0f 
+	);
 	glClear( GL_COLOR_BUFFER_BIT );
 
 	//  enable transparency
@@ -68,6 +76,7 @@ void OpenGLRenderBatch::begin_render()
 
 	//  activate shader & vertex array
 	shader->activate();
+	shader->set_mtx4( "view_projection", view_projection );
 	vertex_array->activate();
 }
 
@@ -76,21 +85,47 @@ void OpenGLRenderBatch::end_render()
 	SDL_GL_SwapWindow( window->get_sdl_window() );
 }
 
-void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect & rect, const Color & color )
-{}
-
-void OpenGLRenderBatch::draw_texture( const Rect & src_rect, const Rect & dest_rect, const double rotation, const Vec2 & origin, Texture * texture, const Color & color )
+void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
 {
+	//  setup matrices
+	Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
+	Mtx4 location_matrix = compute_location_matrix( Vec3 { rect.x, rect.y, 0.0f } );
+	shader->set_mtx4( "world_transform", scale_matrix * location_matrix );
+	shader->set_vec4( "modulate", color );
+
+	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr );
+}
+
+void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color )
+{
+	//  setup matrices
+	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
+	Mtx4 location_matrix = compute_location_matrix( Vec3 { dest_rect.x, dest_rect.y, 0.0f } );
+	shader->set_mtx4( "world_transform", scale_matrix * location_matrix );
+	shader->set_vec4( "modulate", color );
+	
+	//  draw
 	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr );
 }
 
 void OpenGLRenderBatch::scale( float zoom )
 {}
 
-void OpenGLRenderBatch::clip( const Rect & region )
+void OpenGLRenderBatch::clip( const Rect& region )
 {}
 
-SDL_Texture* OpenGLRenderBatch::load_texture_from_surface( SDL_Surface * surface )
+SDL_Texture* OpenGLRenderBatch::load_texture_from_surface( SDL_Surface* surface )
 {
-    return nullptr;
+	return nullptr;
+}
+
+Mtx4 OpenGLRenderBatch::compute_location_matrix( const Vec3 pos )
+{
+	return Mtx4::create_translation(
+		Vec3 {
+			pos.x + screen_offset.x,
+			-pos.y + screen_offset.y,
+			pos.z
+		}
+	);
 }

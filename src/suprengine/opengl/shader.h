@@ -7,6 +7,7 @@
 #include <string>
 #include <fstream>
 
+#include <suprengine/color.h>
 #include <suprengine/vec2.h>
 #include <suprengine/mtx4.h>
 
@@ -42,10 +43,8 @@ namespace suprengine
 		void set_vec2( const GLchar* name, const Vec2& value );
 		void set_vec3( const GLchar* name, GLfloat x, GLfloat y, GLfloat z );
 		void set_vec3( const GLchar* name, const Vec3& value );
-		/*
-		void setVector4f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-		void setVector4f(const GLchar* name, const Vector4& value);
-		*/
+		void set_vec4( const GLchar* name, GLfloat x, GLfloat y, GLfloat z, GLfloat w );
+		void set_vec4( const GLchar* name, const Color& value );
 		void set_mtx4( const GLchar* name, const Mtx4& matrix );
 
 	private:

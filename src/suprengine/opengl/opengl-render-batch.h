@@ -15,6 +15,9 @@ namespace suprengine
 	
 		VertexArray* vertex_array { nullptr };
 		Shader* shader { nullptr };
+
+		Mtx4 view_projection;
+		Vec3 screen_offset;
 	public:
 		OpenGLRenderBatch( Window* window ) : RenderBatch( window ) {};
 		OpenGLRenderBatch( const OpenGLRenderBatch& ) = delete;
@@ -31,7 +34,11 @@ namespace suprengine
 		
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;
+
 		SDL_Texture* load_texture_from_surface( SDL_Surface* surface ) override;
+
+	private:
+		Mtx4 compute_location_matrix( const Vec3 pos );
 	};
 }
 

@@ -166,6 +166,9 @@
   <ItemGroup>
     <ClInclude Include="src\demos\opengl-3d\scenes\game_scene.hpp" />
     <ClInclude Include="src\demos\opengl-3d\main.h" />
+    <ClInclude Include="src\suprengine\ecs\components\mouse-follower.hpp" />
+    <ClInclude Include="src\suprengine\ecs\components\transform3.fwd.h" />
+    <ClInclude Include="src\suprengine\ecs\components\transform3.hpp" />
     <ClInclude Include="src\suprengine\quaternion.h" />
     <ClInclude Include="src\suprengine\mtx4.h" />
     <ClInclude Include="src\suprengine\opengl\opengl-render-batch.h" />

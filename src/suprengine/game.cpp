@@ -34,25 +34,6 @@ Game::~Game()
 	SDL_Quit();
 }
 
-bool Game::initialize( const char* title, int width, int height )
-{
-	//  init window
-	window = new Window( title, width, height );
-	if ( !window->initialize() ) return false;
-
-	//  init render batch
-	render_batch = new OpenGLRenderBatch( window );
-	if ( !render_batch->initialize() ) return false;
-
-	//  init assets
-	Assets::set_render_batch( render_batch );
-
-	//  setup camera viewport
-	camera.reset( (float) width, (float) height );
-
-	return true;
-}
-
 void Game::loop()
 {
 	while ( _is_running )

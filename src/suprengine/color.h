@@ -20,6 +20,17 @@ namespace suprengine
 			};
 		}
 
+		//  big endian version of Color::from_pixel
+		static Color from_0x( uint32_t hex )
+		{
+			return Color {
+				(uint8_t) ( hex >> 24 ),
+				(uint8_t) ( hex >> 16 ),
+				(uint8_t) ( hex >> 8 ),
+				(uint8_t) hex
+			};
+		}
+
 		uint32_t to_pixel() const
 		{
 			uint32_t pixel = a << 24 | b << 16 | g << 8 | r;
