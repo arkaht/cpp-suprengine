@@ -5,16 +5,20 @@
 constexpr float vertices[] = {
 	//  top-left
 	0.0f, 0.0f, 0.0f,  //  position
+	0.0f, 0.0f, 0.0f,  //  normal
 		  0.0f, 0.0f,  //  uv
 	//  top-right
-	1.0f, 0.0f, 0.0f,
-		  1.0f, 0.0f,
+	1.0f, 0.0f, 0.0f,  //  position
+	0.0f, 0.0f, 0.0f,  //  normal
+		  1.0f, 0.0f,  //  uv
 	//  bottom-right
-	1.0f, 1.0f, 0.0f,
-		   1.0f, 1.0f,
+	1.0f, 1.0f, 0.0f,  //  position
+	0.0f, 0.0f, 0.0f,  //  normal
+		  1.0f, 1.0f,  //  uv
 	//  bottom-left
-	0.0f, 1.0f, 0.0f,
-		   0.0f, 1.0f
+	0.0f, 1.0f, 0.0f,  //  position
+	0.0f, 0.0f, 0.0f,  //  normal
+		  0.0f, 1.0f   //  uv
 };
 
 constexpr unsigned int indices[] = {
