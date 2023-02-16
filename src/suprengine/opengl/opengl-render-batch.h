@@ -1,5 +1,6 @@
 #pragma once
 #include <suprengine/render-batch.h>
+#include <suprengine/camera.h>
 
 #include <SDL_image.h>
 
@@ -13,10 +14,10 @@ namespace suprengine
 	private:
 		SDL_GLContext gl_context { nullptr };
 	
-		VertexArray* vertex_array { nullptr };
+		VertexArray* quad_vertex_array { nullptr };
 		Shader* color_shader { nullptr }, *texture_shader { nullptr };
 
-		Mtx4 view_projection;
+		Camera* camera { nullptr };
 		Vec3 screen_offset;
 
 	public:
@@ -32,6 +33,7 @@ namespace suprengine
 
 		void draw_rect( DrawType draw_type, const Rect& rect, const Color& color ) override;
 		void draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color ) override;
+		void draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id ) override;
 		
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;
@@ -40,6 +42,7 @@ namespace suprengine
 
 	private:
 		Mtx4 compute_location_matrix( float x, float y, float z );
+		void draw_elements( int indices_count );
 	};
 }
 

@@ -168,7 +168,10 @@
     <ClInclude Include="src\demos\opengl-3d\scenes\game-scene.hpp" />
     <ClInclude Include="src\demos\opengl-3d\main.h" />
     <ClInclude Include="src\suprengine\ecs\components\mouse-follower.hpp" />
+    <ClInclude Include="src\suprengine\ecs\components\renderers\mesh-renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\transform.hpp" />
+    <ClInclude Include="src\suprengine\mesh.hpp" />
+    <ClInclude Include="src\suprengine\opengl\opengl-mesh.hpp" />
     <ClInclude Include="src\suprengine\opengl\opengl-texture.hpp" />
     <ClInclude Include="src\suprengine\quaternion.h" />
     <ClInclude Include="src\suprengine\mtx4.h" />

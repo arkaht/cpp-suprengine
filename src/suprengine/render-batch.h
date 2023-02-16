@@ -5,6 +5,7 @@
 #include <suprengine/rect.h>
 #include <suprengine/color.h>
 #include <suprengine/texture.fwd.h>
+#include <suprengine/mesh.hpp>
 #include <suprengine/font.fwd.h>
 
 #include <suprengine/ecs/components/renderers/renderer.fwd.h>
@@ -49,7 +50,8 @@ namespace suprengine
 
 		virtual void draw_rect( DrawType draw_type, const Rect& rect, const Color& color ) = 0;
 		virtual void draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color ) = 0;
-	
+		virtual void draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id = 0 ) = 0;
+
 		void translate( const Vec2& pos );
 		virtual void scale( float zoom ) = 0;
 		virtual void clip( const Rect& region ) = 0;

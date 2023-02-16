@@ -4,16 +4,12 @@
 
 using namespace suprengine;
 
-const Vec3 Vec3::zero( 0.0f, 0.0f, 0.0f );
-const Vec3 Vec3::one( 1.0f, 1.0f, 1.0f );
-const Vec3 Vec3::unitX( 1.0f, 0.0f, 0.0f );
-const Vec3 Vec3::unitY( 0.0f, 1.0f, 0.0f );
-const Vec3 Vec3::unitZ( 0.0f, 0.0f, 1.0f );
-const Vec3 Vec3::negUnitX( -1.0f, 0.0f, 0.0f );
-const Vec3 Vec3::negUnitY( 0.0f, -1.0f, 0.0f );
-const Vec3 Vec3::negUnitZ( 0.0f, 0.0f, -1.0f );
+const Vec3 Vec3::zero( 0.0f, 0.0f, 0.0f ), Vec3::one( 1.0f, 1.0f, 1.0f );
+const Vec3 Vec3::unit_x( 1.0f, 0.0f, 0.0f ), Vec3::unit_y( 0.0f, 1.0f, 0.0f ), Vec3::unit_z( 0.0f, 0.0f, 1.0f );
+const Vec3 Vec3::right( Vec3::unit_x ), Vec3::up( Vec3::unit_y ), Vec3::forward( Vec3::unit_z );
+const Vec3 Vec3::neg_unit_x( -1.0f, 0.0f, 0.0f ), Vec3::neg_unit_y( 0.0f, -1.0f, 0.0f ), Vec3::neg_unit_z( 0.0f, 0.0f, -1.0f );
 const Vec3 Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
-const Vec3 Vec3::negInfinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
+const Vec3 Vec3::neg_infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 
 void Vec3::set( float xP, float yP, float zP )
 {

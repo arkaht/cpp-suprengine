@@ -148,15 +148,10 @@ namespace suprengine
 		// Transform a Vector3 by a quaternion
 		static Vec3 transform( const Vec3& v, const class Quaternion& q );
 
-		static const Vec3 zero;
-		static const Vec3 one;
-		static const Vec3 unitX;
-		static const Vec3 unitY;
-		static const Vec3 unitZ;
-		static const Vec3 negUnitX;
-		static const Vec3 negUnitY;
-		static const Vec3 negUnitZ;
-		static const Vec3 infinity;
-		static const Vec3 negInfinity;
+		static const Vec3 zero, one;
+		static const Vec3 right, up, forward;
+		static const Vec3 unit_x, unit_y, unit_z;
+		static const Vec3 neg_unit_x, neg_unit_y, neg_unit_z;
+		static const Vec3 infinity, neg_infinity;
 	};
 }

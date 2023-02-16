@@ -7,11 +7,17 @@ namespace suprengine
 {
 	class Camera
 	{
-	private:
-		Mtx4 matrix;
-		bool is_matrix_dirty = true;
+	protected:
+		Mtx4 view_matrix;
+		bool is_view_matrix_dirty = true;
+
+		Vec3 location { 0.0f, 0.0f, 0.0f };
 
 	public:
+		const float DEFAULT_ZNEAR { 1.0f }, DEFAULT_ZFAR { 10000.0f };
+
+		Mtx4 projection_matrix;
+
 		Rect viewport { 0, 0, 0, 0 };
 		float zoom { 1.0f };
 
@@ -20,10 +26,18 @@ namespace suprengine
 		
 		Camera() {}
 
+		void setup_simple_projection();
+		void setup_perspective( float fov, float znear, float zfar );
+		void setup_perspective( float fov ) 
+		{ 
+			setup_perspective( fov, DEFAULT_ZNEAR, DEFAULT_ZFAR ); 
+		}
+		void look_at( const Vec3& target );
+
 		void translate( Vec2 pos ) 
 		{ 
 			viewport.add_pos( pos );
-			is_matrix_dirty = true;
+			is_view_matrix_dirty = true;
 		}
 		void reset( float width, float height )
 		{
@@ -33,11 +47,10 @@ namespace suprengine
 			clip = { 0.0f, 0.0f, 0.0f, 0.0f };
 			clip_enabled = false;
 
-			is_matrix_dirty = true;
+			setup_simple_projection();
+			is_view_matrix_dirty = true;
 		}
 
-		const Mtx4& get_matrix();
-
-		Rect& get_viewport() { return viewport; }
+		const Mtx4& get_view_matrix();
 	};
 }

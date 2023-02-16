@@ -2,7 +2,7 @@
 
 #include <gl/glew.h>
 
-constexpr float vertices[] = {
+constexpr float QUAD_VERTICES[] = {
 	//  top-left
 	0.0f, 0.0f, 0.0f,  //  position
 	0.0f, 0.0f, 0.0f,  //  normal
@@ -21,7 +21,7 @@ constexpr float vertices[] = {
 		  0.0f, 1.0f   //  uv
 };
 
-constexpr unsigned int indices[] = {
+constexpr unsigned int QUAD_INDICES[] = {
 	0, 1, 2,
 	2, 3, 0
 };

@@ -17,7 +17,7 @@ namespace demo_opengl3d
 
 		void update( float dt ) override
 		{
-			Quaternion increment = Quaternion( Vec3::unitZ, dt * 5.0f );
+			Quaternion increment = Quaternion( Vec3::forward, dt * 5.0f );
 			Quaternion rotation = Quaternion::concatenate( owner->transform->rotation, increment );
 			owner->transform->set_rotation( rotation );
 		}
@@ -50,7 +50,8 @@ namespace demo_opengl3d
 			//sprite->modulate = Color::from_0x( 0xBFB48FFF );
 
 			auto camera = game->get_camera();
-			camera->translate( -camera->viewport.get_size() );  //  NOTE: wrong opengl renderer offset
+			camera->setup_perspective( 90.0f );
+			//camera->translate( -camera->viewport.get_size() );  //  NOTE: wrong opengl renderer offset
 			//camera->translate( Vec2 { 0, 0 } );
 			//camera->zoom = 2.0f;
 		}

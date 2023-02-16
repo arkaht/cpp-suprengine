@@ -9,7 +9,7 @@ using namespace suprengine;
 OpenGLRenderBatch::~OpenGLRenderBatch()
 {
 	SDL_GL_DeleteContext( gl_context );
-	delete vertex_array;
+	delete quad_vertex_array;
 }
 
 //  https://www.khronos.org/opengl/wiki/OpenGL_Error
@@ -68,7 +68,7 @@ bool OpenGLRenderBatch::initialize()
 	glDebugMessageCallback( _message_callback, 0 );
 
 	//  create vertex array
-	vertex_array = new VertexArray( vertices, 4, indices, 6 );
+	quad_vertex_array = new VertexArray( QUAD_VERTICES, 4, QUAD_INDICES, 6 );
 	color_shader = Assets::load_shader( "color",
 		"src/suprengine/opengl/shaders/transform.vert",
 		"src/suprengine/opengl/shaders/color.frag"
@@ -78,7 +78,7 @@ bool OpenGLRenderBatch::initialize()
 		"src/suprengine/opengl/shaders/texture.frag"
 	);
 
-	view_projection = Mtx4::create_simple_view_projection( (float) window->get_width(), (float) - window->get_height());
+	camera = Game::instance().get_camera();
 	screen_offset = Vec3 { window->get_width() / 2.0f, window->get_height() / 2.0f, 0.0f };
 
 	return true;
@@ -93,19 +93,19 @@ void OpenGLRenderBatch::begin_render()
 		background_color.b / 255.0f,
 		background_color.a / 255.0f
 	);
-	glClear( GL_COLOR_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	//  enable transparency
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
 	//  activate shader & vertex array
-	Mtx4 view_matrix = Game::instance().get_camera()->get_matrix() * view_projection;
+	Mtx4 view_matrix = camera->get_view_matrix() * camera->projection_matrix;
 	color_shader->activate();
 	color_shader->set_mtx4( "u_view_projection", view_matrix );
 	texture_shader->activate();
 	texture_shader->set_mtx4( "u_view_projection", view_matrix );
-	vertex_array->activate();
+	quad_vertex_array->activate();
 }
 
 void OpenGLRenderBatch::end_render()
@@ -124,7 +124,7 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	color_shader->set_vec4( "u_modulate", color );
 
 	//  draw
-	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr );
+	draw_elements( 6 );
 }
 
 void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color )
@@ -154,7 +154,19 @@ void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rec
 	texture_shader->set_vec2( "u_origin", origin );
 
 	//  draw
-	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr );
+	draw_elements( 6 );
+}
+
+void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id )
+{
+	mesh->activate( texture_id );
+
+	//  set matrice
+	Shader* shader = mesh->get_shader();
+	shader->set_mtx4( "u_world_transform", matrix );
+
+	//  draw
+	draw_elements( mesh->get_indices_count() );
 }
 
 void OpenGLRenderBatch::scale( float zoom )
@@ -179,4 +191,9 @@ Mtx4 OpenGLRenderBatch::compute_location_matrix( float x, float y, float z )
 			z
 		}
 	);
+}
+
+void OpenGLRenderBatch::draw_elements( int indices_count )
+{
+	glDrawElements( GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, nullptr );
 }

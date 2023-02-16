@@ -81,7 +81,7 @@ namespace demo_pacman
 			camera->clip_enabled = true;
 			camera->clip = {
 				{ camera->viewport.x, 0.0f },
-				{ level_width, camera->get_viewport().h }
+				{ level_width, camera->viewport.h }
 			};
 
 			auto hud = new HUD();

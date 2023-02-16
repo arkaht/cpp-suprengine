@@ -56,9 +56,9 @@ namespace suprengine
 			mark_dirty(); 
 		}
 
-		Vec3 get_forward() const { return Vec3::transform( Vec3::unitX, rotation ); }
-		Vec3 get_right() const { return Vec3::transform( Vec3::unitZ, rotation ); }
-		Vec3 get_up() const { return Vec3::transform( Vec3::unitY, rotation ); }
+		Vec3 get_forward() const { return Vec3::transform( Vec3::unit_x, rotation ); }
+		Vec3 get_right() const { return Vec3::transform( Vec3::unit_z, rotation ); }
+		Vec3 get_up() const { return Vec3::transform( Vec3::unit_y, rotation ); }
 
 		void mark_dirty() { is_matrix_dirty = true; }
 		const Mtx4& get_matrix()
