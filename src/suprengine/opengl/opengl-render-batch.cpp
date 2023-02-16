@@ -169,9 +169,9 @@ void OpenGLRenderBatch::scale( float zoom )
 void OpenGLRenderBatch::clip( const Rect& region )
 {}
 
-Texture* OpenGLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface )
+Texture* OpenGLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
 {
-	return new OpenGLTexture( path, surface );
+	return new OpenGLTexture( path, surface, params );
 }
 
 Mtx4 OpenGLRenderBatch::compute_location_matrix( const Vec3& pos )

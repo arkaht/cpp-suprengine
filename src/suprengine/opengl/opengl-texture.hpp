@@ -10,7 +10,7 @@ namespace suprengine
 		GLuint texture_id { 0 };
 	
 	public:
-		OpenGLTexture( rconst_str path, SDL_Surface* surface ) 
+		OpenGLTexture( rconst_str path, SDL_Surface* surface, const TextureParams& params )
 			: Texture( path, Vec2 { (float) surface->w, (float) surface->h } )
 		{
 			//  get pixel format
@@ -49,8 +49,9 @@ namespace suprengine
 			glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, format, GL_UNSIGNED_BYTE, surface->pixels );
 
 			//  enable bilinear filtering
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+			int filter = params.filtering == FILTERING::BILINEAR ? GL_LINEAR : GL_NEAREST;
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter );
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter );
 
 			Logger::info( 
 				"new OpenGLTexture '" + path + 

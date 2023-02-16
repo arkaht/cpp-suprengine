@@ -13,12 +13,13 @@ std::map<std::string, Shader*> Assets::shaders;
 RenderBatch* Assets::render_batch { nullptr };
 std::string Assets::path { "" };
 
-Texture* Assets::get_texture( rconst_str filename )
+Texture* Assets::get_texture( rconst_str filename, const TextureParams& params )
 {
+	//  TODO: find a way to take params in account even with existing texture
 	//  load texture if un-found
 	if ( textures.find( filename ) == textures.end() )
 	{
-		textures[filename] = render_batch->load_texture( path + filename );
+		textures[filename] = render_batch->load_texture( path + filename, params );
 	}
 
 	//  get from textures

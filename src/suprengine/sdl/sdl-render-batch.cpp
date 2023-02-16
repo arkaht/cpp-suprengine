@@ -119,7 +119,7 @@ void SDLRenderBatch::clip( const Rect& region )
 	SDL_RenderSetClipRect( sdl_renderer, &clip_rect );
 }
 
-Texture* SDLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface )
+Texture* SDLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
 {
 	return new SDLTexture( sdl_renderer, path, surface );
 }

@@ -26,7 +26,7 @@ namespace suprengine
 		static void set_path( rconst_str _path ) { path = _path; }
 		static std::string get_path() { return path; }
 
-		static Texture* get_texture( rconst_str filename );
+		static Texture* get_texture( rconst_str filename, const TextureParams& params = {} );
 		static Font* get_font( rconst_str filename, int size = 12 );
 
 		static Shader* load_shader( rconst_str name, rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename = "", rconst_str tse_filename = "", rconst_str geo_filename = "" );

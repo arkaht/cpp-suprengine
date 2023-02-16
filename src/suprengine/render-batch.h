@@ -13,6 +13,17 @@
 
 namespace suprengine
 {
+	enum FILTERING
+	{
+		NEAREST,
+		BILINEAR,
+	};
+
+	struct TextureParams
+	{
+		FILTERING filtering = FILTERING::NEAREST;
+	};
+
 	enum class DrawType
 	{
 		FILL,
@@ -43,8 +54,8 @@ namespace suprengine
 		virtual void scale( float zoom ) = 0;
 		virtual void clip( const Rect& region ) = 0;
 
-		virtual Texture* load_texture( rconst_str path );
-		virtual Texture* load_texture_from_surface( rconst_str filename, SDL_Surface* surface ) = 0;
+		virtual Texture* load_texture( rconst_str path, const TextureParams& params = {} );
+		virtual Texture* load_texture_from_surface( rconst_str filename, SDL_Surface* surface, const TextureParams& params = {} ) = 0;
 
 		void set_background_color( Color color );
 

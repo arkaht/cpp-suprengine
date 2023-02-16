@@ -36,7 +36,7 @@ namespace suprengine
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;
 
-		Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface ) override;
+		Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params = {} ) override;
 
 	private:
 		Mtx4 compute_location_matrix( const Vec3& pos );
