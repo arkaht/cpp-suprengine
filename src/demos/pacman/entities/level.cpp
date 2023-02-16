@@ -27,6 +27,11 @@ void Level::gen_tiles()
 
 				for ( int x = 0; x < TILE_SIZE; x++ )
 				{
+					Vec2 pos = {
+						(float) ( tx * TILE_SIZE ),
+						(float) ( ty * TILE_SIZE )
+					};
+
 					//  check pixel color
 					uint32_t pixel = Texture::get_pixel_at( surface, tx * TILE_SIZE + x, ty * TILE_SIZE + y );
 					if ( pixel != 0 )
@@ -35,11 +40,6 @@ void Level::gen_tiles()
 						{
 							if ( x == 0 && y == 0 )
 							{
-								Vec2 pos = {
-									(float) ( tx * TILE_SIZE ),
-									(float) ( ty * TILE_SIZE )
-								};
-
 								Entity* ent { nullptr };
 								if ( Texture::get_pixel_at( surface, tx * TILE_SIZE + x + 1, ty * TILE_SIZE + y + 1 ) == DOT_COLOR_PIXEL )
 								{
@@ -68,6 +68,17 @@ void Level::gen_tiles()
 								is_breaking = true;
 								break;
 							}
+						}
+						else if ( pixel == Color::black.to_pixel() )
+						{
+							//  remove pixels from image
+							SDL_Rect rect {
+								(int) pos.x,
+								(int) pos.y,
+								TILE_SIZE,
+								TILE_SIZE
+							};
+							SDL_FillRect( surface, &rect, Color::transparent.to_pixel() );
 						}
 
 						//  mark as a wall
