@@ -161,7 +161,9 @@ void OpenGLRenderBatch::scale( float zoom )
 {}
 
 void OpenGLRenderBatch::clip( const Rect& region )
-{}
+{
+	//  TODO: support clipping
+}
 
 Texture* OpenGLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
 {

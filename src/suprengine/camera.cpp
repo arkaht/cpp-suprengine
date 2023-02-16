@@ -6,6 +6,7 @@ const Mtx4& Camera::get_matrix()
 {
 	if ( is_matrix_dirty )
 	{
+		//  TODO: fix this
 		matrix = Mtx4::create_translation( viewport.x, viewport.y, 0.0f )//;
 			   * Mtx4::create_scale( zoom, zoom, 1.0f )
 			   * Mtx4::create_translation( viewport.w, viewport.h, 0.0f );
