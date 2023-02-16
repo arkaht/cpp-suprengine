@@ -39,7 +39,7 @@ namespace suprengine
 		Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params = {} ) override;
 
 	private:
-		Mtx4 compute_location_matrix( const Vec3& pos );
+		Mtx4 compute_location_matrix( float x, float y, float z );
 	};
 }
 

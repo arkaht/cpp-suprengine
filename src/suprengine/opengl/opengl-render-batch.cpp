@@ -78,8 +78,8 @@ bool OpenGLRenderBatch::initialize()
 		"src/suprengine/opengl/shaders/texture.frag"
 	);
 
-	view_projection = Mtx4::create_simple_view_projection( window->get_width(), window->get_height() );
-	screen_offset = Vec3 { -window->get_width() / 2.0f, window->get_height() / 2.0f, 0.0f };
+	view_projection = Mtx4::create_simple_view_projection( window->get_width(), -window->get_height() );
+	screen_offset = Vec3 { window->get_width() / 2.0f, window->get_height() / 2.0f, 0.0f };
 
 	return true;
 }
@@ -119,7 +119,7 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 
 	//  setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
-	Mtx4 location_matrix = compute_location_matrix( Vec3 { rect.x, rect.y, 0.0f } );
+	Mtx4 location_matrix = compute_location_matrix( rect.x, rect.y, 0.0f );
 	color_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
 	color_shader->set_vec4( "u_modulate", color );
 
@@ -135,13 +135,7 @@ void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rec
 	//  setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
 	Mtx4 rotation_matrix = Mtx4::create_rotation_z( -rotation * math::DEG2RAD );
-	Mtx4 location_matrix = compute_location_matrix( 
-		Vec3 { 
-			dest_rect.x,
-			dest_rect.y,
-			0.0f 
-		}
-	);
+	Mtx4 location_matrix = compute_location_matrix( dest_rect.x, dest_rect.y, 0.0f );
 	texture_shader->set_mtx4( "u_world_transform", scale_matrix * rotation_matrix * location_matrix );
 
 	//  set modulate
@@ -174,13 +168,13 @@ Texture* OpenGLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surf
 	return new OpenGLTexture( path, surface, params );
 }
 
-Mtx4 OpenGLRenderBatch::compute_location_matrix( const Vec3& pos )
+Mtx4 OpenGLRenderBatch::compute_location_matrix( float x, float y, float z )
 {
 	return Mtx4::create_translation(
 		Vec3 {
-			pos.x + screen_offset.x,
-			-pos.y + screen_offset.y,
-			pos.z
+			x - screen_offset.x,
+			y - screen_offset.y,
+			z
 		}
 	);
 }
