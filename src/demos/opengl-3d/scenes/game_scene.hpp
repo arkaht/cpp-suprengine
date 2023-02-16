@@ -43,9 +43,12 @@ namespace demo_opengl3d
 			( new RectRenderer( ent, Rect { 512.0f, 128.0f, 128.0f, 256.0f } ) )->modulate = Color::blue;
 
 			auto sprite = new SpriteRenderer( ent, Assets::get_texture( "level.png" ) );
-			sprite->origin = Vec2::zero;
+			sprite->origin = Vec2::one;
 			//sprite->dest = { 0.0f, 0.0f, 512.0f, 512.0f };
 			//sprite->modulate = Color::from_0x( 0xBFB48FFF );
+
+			game->get_camera()->translate( Vec2 { 50, 50 } );
+			game->get_camera()->zoom = 2.0f;
 		}
 	};
 }

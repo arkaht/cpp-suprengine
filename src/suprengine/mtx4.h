@@ -231,16 +231,20 @@ namespace suprengine
 			return Mtx4( temp );
 		}
 
-		static Mtx4 create_translation( const Vec3& trans )
+		static Mtx4 create_translation( float x, float y, float z )
 		{
 			float temp[4][4] =
 			{
 				{ 1.0f, 0.0f, 0.0f, 0.0f },
 				{ 0.0f, 1.0f, 0.0f, 0.0f },
 				{ 0.0f, 0.0f, 1.0f, 0.0f },
-				{ trans.x, trans.y, trans.z, 1.0f }
+				{ x, y, z, 1.0f }
 			};
 			return Mtx4( temp );
+		}
+		static Mtx4 create_translation( const Vec3& pos )
+		{
+			return create_translation( pos.x, pos.y, pos.z );
 		}
 
 		static Mtx4 create_simple_view_projection( float width, float height )

@@ -5,7 +5,7 @@
 #include "vec2.h"
 #include "ecs/entity.fwd.h"
 #include "ecs/components/collider.fwd.h"
-#include "camera.hpp"
+#include "camera.h"
 #include "scene.fwd.h"
 #include "timer.hpp"
 

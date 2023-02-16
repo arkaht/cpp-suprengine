@@ -2,6 +2,7 @@
 #include "opengl-texture.hpp"
 
 #include <suprengine/assets.h>
+#include <suprengine/game.h>
 
 using namespace suprengine;
 
@@ -99,10 +100,11 @@ void OpenGLRenderBatch::begin_render()
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
 	//  activate shader & vertex array
+	Mtx4 view_matrix = Game::instance().get_camera()->get_matrix() * view_projection;
 	color_shader->activate();
-	color_shader->set_mtx4( "u_view_projection", view_projection );
+	color_shader->set_mtx4( "u_view_projection", view_matrix );
 	texture_shader->activate();
-	texture_shader->set_mtx4( "u_view_projection", view_projection );
+	texture_shader->set_mtx4( "u_view_projection", view_matrix );
 	vertex_array->activate();
 }
 
