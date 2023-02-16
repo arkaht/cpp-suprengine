@@ -2,7 +2,7 @@
 
 #include <suprengine/opengl/opengl-render-batch.h>
 
-#include "scenes/game_scene.hpp"
+#include "scenes/game-scene.hpp"
 
 void run()
 {

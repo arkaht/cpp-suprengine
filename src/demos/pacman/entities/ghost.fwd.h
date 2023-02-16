@@ -1,5 +1,7 @@
 #pragma once
 
-enum class GhostState;
-
-class Ghost;
+namespace demo_pacman
+{
+	enum class GhostState;
+	class Ghost;
+}

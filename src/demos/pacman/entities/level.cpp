@@ -1,6 +1,8 @@
 #include "level.h"
 
-#include "../game_stats.hpp"
+#include "../game-stats.hpp"
+
+using namespace demo_pacman;
 
 void Level::gen_tiles()
 {

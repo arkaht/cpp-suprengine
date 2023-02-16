@@ -1,28 +1,31 @@
 #pragma once
 
-#include "../components/player_mover.hpp"
-#include <suprengine/ecs/components/renderers/anim_sprite_renderer.hpp>
-#include <suprengine/ecs/components/rect_collider.hpp>
+#include "../components/player-mover.hpp"
+#include <suprengine/ecs/components/renderers/anim-sprite-renderer.hpp>
+#include <suprengine/ecs/components/rect-collider.hpp>
 
-class PacMan : public Entity
+namespace demo_pacman
 {
-private:
-	const float DEATH_WAIT_TIME { 1.0f };
-	const float DEATH_RESTART_TIME { 1.0f };
+	class PacMan : public Entity
+	{
+	private:
+		const float DEATH_WAIT_TIME { 1.0f };
+		const float DEATH_RESTART_TIME { 1.0f };
 
-	bool is_dying { false };
-public:
-	Level* level;
+		bool is_dying { false };
+	public:
+		Level* level;
 
-	PlayerMover* mover { nullptr };
-	AnimSpriteRenderer* anim { nullptr };
+		PlayerMover* mover { nullptr };
+		AnimSpriteRenderer* anim { nullptr };
 
-	PacMan( Level* level );
+		PacMan( Level* level );
 
-	void update_this( float dt ) override;
+		void update_this( float dt ) override;
 
-	void on_trigger_enter( Collider* other ) override;
+		void on_trigger_enter( Collider* other ) override;
 
-	void die();
-	void win();
-};
+		void die();
+		void win();
+	};
+}

@@ -2,9 +2,9 @@
 
 #include <suprengine/scene.h>
 #include <suprengine/ecs/components/mouse-follower.hpp>
-#include <suprengine/ecs/components/renderers/rect_renderer.hpp>
-#include <suprengine/ecs/components/renderers/sprite_renderer.hpp>
-#include <suprengine/ecs/components/renderers/text_renderer.hpp>
+#include <suprengine/ecs/components/renderers/rect-renderer.hpp>
+#include <suprengine/ecs/components/renderers/sprite-renderer.hpp>
+#include <suprengine/ecs/components/renderers/text-renderer.hpp>
 
 using namespace suprengine;
 
@@ -17,7 +17,7 @@ namespace demo_opengl3d
 
 		void update( float dt ) override
 		{
-			owner->transform->rotation += dt * 50.0f;
+			owner->transform->rotation += dt * 50.0;
 		}
 	};
 
@@ -47,8 +47,8 @@ namespace demo_opengl3d
 			//sprite->dest = { 0.0f, 0.0f, 512.0f, 512.0f };
 			//sprite->modulate = Color::from_0x( 0xBFB48FFF );
 
-			game->get_camera()->translate( Vec2 { 50, 50 } );
-			game->get_camera()->zoom = 2.0f;
+			//game->get_camera()->translate( Vec2 { 0, 0 } );
+			//game->get_camera()->zoom = 1.0f;
 		}
 	};
 }

@@ -1,7 +1,9 @@
-#include "game_manager.h"
+#include "game-manager.h"
 
 #include "entities/ghost.hpp"
-#include "game_stats.hpp"
+#include "game-stats.hpp"
+
+using namespace demo_pacman;
 
 bool GameManager::is_in_chase_mode { false };
 float GameManager::flee_timer { 0.0f };

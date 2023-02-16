@@ -1,7 +1,6 @@
 
 #pragma once
-
-#include "sprite_renderer.hpp"
+#include "sprite-renderer.hpp"
 
 #include <suprengine/font.h>
 

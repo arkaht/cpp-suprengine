@@ -1,10 +1,12 @@
 #include "pacman.h"
 
 #include "ghost.hpp"
-#include "../scenes/game_scene.hpp"
+#include "../scenes/game-scene.hpp"
 
 #include "../layers.hpp"
-#include "../game_stats.hpp"
+#include "../game-stats.hpp"
+
+using namespace demo_pacman;
 
 PacMan::PacMan( Level* level )
 	: level( level ), Entity()

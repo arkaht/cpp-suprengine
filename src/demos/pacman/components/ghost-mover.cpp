@@ -1,5 +1,7 @@
-#include "ghost_mover.h"
+#include "ghost-mover.h"
 #include "../entities/ghost.hpp"
+
+using namespace demo_pacman;
 
 GhostMover::GhostMover( Ghost* owner, Level* level, PacMan* pacman, AnimSpriteRenderer* anim, int priority_order )
 	: personality( owner ), anim( anim ), pacman( pacman ), Mover( owner, level, priority_order )

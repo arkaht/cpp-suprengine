@@ -1,7 +1,7 @@
 #pragma once
-#include <suprengine/ecs/components/renderers/sprite_renderer.hpp>
+#include <suprengine/ecs/components/renderers/sprite-renderer.hpp>
 
-#include "power_pellet.hpp"
+#include "power-pellet.hpp"
 #include "pacdot.hpp"
 
 #include <vector>
