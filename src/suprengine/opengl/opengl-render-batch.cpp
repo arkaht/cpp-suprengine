@@ -78,7 +78,7 @@ bool OpenGLRenderBatch::initialize()
 		"src/suprengine/opengl/shaders/texture.frag"
 	);
 
-	view_projection = Mtx4::create_simple_view_projection( window->get_width(), -window->get_height() );
+	view_projection = Mtx4::create_simple_view_projection( (float) window->get_width(), (float) - window->get_height());
 	screen_offset = Vec3 { window->get_width() / 2.0f, window->get_height() / 2.0f, 0.0f };
 
 	return true;
@@ -127,14 +127,14 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr );
 }
 
-void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color )
+void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color )
 {
 	texture_shader->activate();
 	texture->activate();
 
 	//  setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
-	Mtx4 rotation_matrix = Mtx4::create_rotation_z( -rotation * math::DEG2RAD );
+	Mtx4 rotation_matrix = Mtx4::create_rotation_z( rotation );
 	Mtx4 location_matrix = compute_location_matrix( dest_rect.x, dest_rect.y, 0.0f );
 	texture_shader->set_mtx4( "u_world_transform", scale_matrix * rotation_matrix * location_matrix );
 

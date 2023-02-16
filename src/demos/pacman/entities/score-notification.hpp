@@ -29,7 +29,7 @@ namespace demo_pacman
 		ScoreNotification( ComboScore combo ) 
 			: Entity()
 		{
-			transform->pos = GameManager::pacman->mover->get_pos() * Level::TILE_SIZE;
+			transform->location = GameManager::pacman->mover->get_pos() * Level::TILE_SIZE;
 		
 			life_time = LIFE_TIME;
 

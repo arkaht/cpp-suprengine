@@ -1,6 +1,6 @@
 #include "game.h"
 #include "ecs/entity.h"
-#include "ecs/components/transform2.hpp"
+#include "ecs/components/transform.hpp"
 #include "ecs/components/collider.h"
 #include "scene.h"
 

@@ -96,12 +96,6 @@
     <ClCompile Include="src\suprengine\camera.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\suprengine\ecs\entity2d.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\suprengine\ecs\spatial.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\suprengine\color.h">
@@ -125,9 +119,6 @@
     <ClInclude Include="src\suprengine\game.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\components\transform2.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="src\suprengine\ecs\component.fwd.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -138,9 +129,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\ecs\entity.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\components\transform2.fwd.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\ecs\components\renderers\renderer.h">
@@ -272,10 +260,7 @@
     <ClInclude Include="src\suprengine\ecs\components\mouse-follower.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\components\transform3.fwd.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\components\transform3.hpp">
+    <ClInclude Include="src\suprengine\ecs\components\transform.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\opengl\opengl-texture.hpp">
@@ -309,12 +294,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\vec3.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\entity2d.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\spatial.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

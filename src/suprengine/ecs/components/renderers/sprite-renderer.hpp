@@ -31,8 +31,15 @@ namespace suprengine
 		{
 			if ( texture == nullptr ) return;
 
-			Transform2* transf = owner->transform;
-			render_batch->draw_texture( source, transf->get_rect( dest ), transf->rotation, origin, texture, modulate );
+			Transform* transf = owner->transform;
+			render_batch->draw_texture( 
+				source,
+				owner->transform->get_rect( dest ),
+				owner->transform->rotation.get_z_angle(),
+				origin,
+				texture,
+				modulate
+			);
 		}
 	};
 }

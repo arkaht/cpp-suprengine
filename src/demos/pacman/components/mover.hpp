@@ -2,7 +2,7 @@
 #include <suprengine/ecs/component.h>
 
 #include <suprengine/ecs/entity.h>
-#include <suprengine/ecs/components/transform2.hpp>
+#include <suprengine/ecs/components/transform.hpp>
 #include <suprengine/vec2.h>
 
 #include "../entities/level.h"
@@ -34,7 +34,7 @@ namespace demo_pacman
 
 		void update( float dt ) override
 		{
-			if ( owner->transform->pos == next_pos * Level::TILE_SIZE )
+			if ( owner->transform->location == next_pos * Level::TILE_SIZE )
 			{
 				//  tunnel
 				if ( is_in_tunnel )
@@ -58,15 +58,15 @@ namespace demo_pacman
 				while ( current_move_time >= move_time )
 				{
 					//  move
-					Transform2* transf = owner->transform;
-					transf->pos = transf->pos.approach( next_pos * Level::TILE_SIZE, 1.0f );
+					Transform* transform = owner->transform;
+					transform->set_location( Vec2::approach( transform->location, next_pos * Level::TILE_SIZE, 1.0f ) );
 
 					on_moved();
 
 					//  rotate
 					if ( rotate_towards_dir )
 					{
-						transf->rotation = direction.get_angle();
+						transform->set_rotation( Quaternion( Vec3 { 0.0f, 0.0f, direction.get_angle() } ) );
 					}
 
 					//  reset timer
@@ -117,8 +117,12 @@ namespace demo_pacman
 
 		void set_pos( Vec2 pos )
 		{
-			owner->transform->pos.x = pos.x * Level::TILE_SIZE;
-			owner->transform->pos.y = pos.y * Level::TILE_SIZE;
+			owner->transform->set_location(
+				Vec2 {
+					pos.x * Level::TILE_SIZE,
+					pos.y * Level::TILE_SIZE
+				}
+			);
 		
 			current_pos = pos, next_pos = pos;
 		}

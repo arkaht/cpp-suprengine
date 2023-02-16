@@ -3,6 +3,7 @@
 #include "entity.fwd.h"
 #include "component.fwd.h"
 #include "components/collider.fwd.h"
+#include "components/transform.hpp"
 
 #include <suprengine/game.h>
 #include <suprengine/mtx4.h>
@@ -28,6 +29,7 @@ namespace suprengine
 
 		std::vector<Component*> components;
 
+		Transform* transform { nullptr };
 		Collider* collider { nullptr };
 
 		Entity();

@@ -77,14 +77,15 @@ namespace suprengine
 
 		float get_angle() const
 		{
-			return (float) ( atan2( y, x ) * math::RAD2DEG );
+			return (float) atan2( y, x );
 		}
 
-		Vec2& approach( Vec2 target, float delta )
+		static Vec2 approach( const Vec2& current, const Vec2& target, float delta )
 		{
-			x = math::approach( x, target.x, delta );
-			y = math::approach( y, target.y, delta );
-			return *this;
+			return Vec2 {
+				math::approach( current.x, target.x, delta ),
+				math::approach( current.y, target.y, delta )
+			};
 		}
 
 		SDL_Point to_sdl_point() const

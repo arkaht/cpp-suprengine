@@ -1,7 +1,7 @@
 #pragma once
 
 #include <suprengine/ecs/entity.h>
-#include <suprengine/ecs/components/transform2.hpp>
+#include <suprengine/ecs/components/transform.hpp>
 
 namespace suprengine
 {
@@ -15,10 +15,7 @@ namespace suprengine
 			int x, y;
 			SDL_GetMouseState( &x, &y );
 
-			owner->transform->pos = Vec2 { 
-				(float) x,
-				(float) y 
-			};
+			owner->transform->set_location( Vec2 { (float) x, (float) y } );
 			//printf( "%f %f\n", owner->transform->pos.x, owner->transform->pos.y );
 		}
 	};

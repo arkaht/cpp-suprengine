@@ -76,7 +76,7 @@ void SDLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Colo
 	}
 }
 
-void SDLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, const double rotation, const Vec2& origin, Texture* texture, const Color& color )
+void SDLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color )
 {
 	SDL_Texture* sdl_texture = texture->get_sdl_texture();
 	SDL_Rect src = src_rect.to_sdl_rect(), dest = dest_rect.to_sdl_rect();
@@ -102,7 +102,7 @@ void SDLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, 
 		sdl_texture,
 		&src,
 		&dest,
-		rotation,
+		rotation * math::RAD2DEG,
 		&center,
 		SDL_RendererFlip::SDL_FLIP_NONE
 	);

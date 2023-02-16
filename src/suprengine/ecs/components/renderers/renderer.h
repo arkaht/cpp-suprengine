@@ -2,7 +2,7 @@
 #include "renderer.fwd.h"
 
 #include <suprengine/ecs/entity.h>
-#include <suprengine/ecs/components/transform2.hpp>
+#include <suprengine/ecs/components/transform.hpp>
 #include <suprengine/render-batch.h>
 
 namespace suprengine

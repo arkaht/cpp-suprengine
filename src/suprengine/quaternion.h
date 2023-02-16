@@ -26,18 +26,44 @@ namespace suprengine
 		// and the angle is in radians
 		explicit Quaternion( const Vec3& axis, float angle );
 
+		explicit Quaternion( const Vec3& angles );
+
 		void set( float inX, float inY, float inZ, float inW );
 		void conjugate();
 		void normalize();
 
-		float lengthSq() const
+		float get_x_angle()
+		{
+			return math::atan2( 2.0f * ( w * x + y * z ), 1.0f - 2.0f * ( x * x + y * y ) );
+		}
+		float get_y_angle()
+		{
+			return 2.0f * math::atan2(
+				math::sqrt( 1.0f + 2.0f * ( w * y - x * z ) ),
+				math::sqrt( 1.0f - 2.0f * ( w * y - x * z ) )
+			) - math::HALF_PI;
+		}
+		float get_z_angle()
+		{
+			return math::atan2( 2.0f * ( w * z + x * y ), 1.0f - 2.0f * ( y * y + z * z ) );
+		}
+		Vec3 to_euler_angles()
+		{
+			return Vec3 {
+				get_x_angle(),
+				get_y_angle(),
+				get_z_angle()
+			};
+		}
+
+		float length_sqr() const
 		{
 			return ( x * x + y * y + z * z + w * w );
 		}
 
 		float length() const
 		{
-			return math::sqrt( lengthSq() );
+			return math::sqrt( length_sqr() );
 		}
 
 		// Normalize the provided quaternion

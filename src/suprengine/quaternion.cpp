@@ -18,6 +18,21 @@ Quaternion::Quaternion( const Vec3& axis, float angle )
 	w = math::cos( angle / 2.0f );
 }
 
+Quaternion::Quaternion( const Vec3& angles )
+{
+	float cr = math::cos( angles.x * 0.5 );
+	float sr = math::sin( angles.x * 0.5 );
+	float cp = math::cos( angles.y * 0.5 );
+	float sp = math::sin( angles.y * 0.5 );
+	float cy = math::cos( angles.z * 0.5 );
+	float sy = math::sin( angles.z * 0.5 );
+
+	w = cr * cp * cy + sr * sp * sy;
+	x = sr * cp * cy - cr * sp * sy;
+	y = cr * sp * cy + sr * cp * sy;
+	z = cr * cp * sy - sr * sp * cy;
+}
+
 void Quaternion::set( float inX, float inY, float inZ, float inW )
 {
 	x = inX;

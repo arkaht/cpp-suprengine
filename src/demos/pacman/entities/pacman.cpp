@@ -98,7 +98,7 @@ void PacMan::die()
 	//  wait some time for anim
 	TIMER( DEATH_WAIT_TIME, {
 		//  reset rotation
-		transform->rotation = 0.0f;
+		transform->rotation = Quaternion::identity;
 
 		//  death animation
 		anim->set_current_clip( "death" );

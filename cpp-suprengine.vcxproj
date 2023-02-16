@@ -135,8 +135,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\suprengine\camera.cpp" />
-    <ClCompile Include="src\suprengine\ecs\entity2d.cpp" />
-    <ClCompile Include="src\suprengine\ecs\spatial.cpp" />
     <ClCompile Include="src\suprengine\quaternion.cpp" />
     <ClCompile Include="src\suprengine\mtx4.cpp" />
     <ClCompile Include="src\suprengine\opengl\opengl-render-batch.cpp" />
@@ -170,10 +168,7 @@
     <ClInclude Include="src\demos\opengl-3d\scenes\game-scene.hpp" />
     <ClInclude Include="src\demos\opengl-3d\main.h" />
     <ClInclude Include="src\suprengine\ecs\components\mouse-follower.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\transform3.fwd.h" />
-    <ClInclude Include="src\suprengine\ecs\components\transform3.hpp" />
-    <ClInclude Include="src\suprengine\ecs\entity2d.h" />
-    <ClInclude Include="src\suprengine\ecs\spatial.h" />
+    <ClInclude Include="src\suprengine\ecs\components\transform.hpp" />
     <ClInclude Include="src\suprengine\opengl\opengl-texture.hpp" />
     <ClInclude Include="src\suprengine\quaternion.h" />
     <ClInclude Include="src\suprengine\mtx4.h" />
@@ -224,8 +219,6 @@
     <ClInclude Include="src\suprengine\ecs\components\renderers\rect-renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\renderer.fwd.h" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\renderer.h" />
-    <ClInclude Include="src\suprengine\ecs\components\transform2.fwd.h" />
-    <ClInclude Include="src\suprengine\ecs\components\transform2.hpp" />
     <ClInclude Include="src\suprengine\ecs\entity.fwd.h" />
     <ClInclude Include="src\suprengine\ecs\entity.h" />
     <ClInclude Include="src\suprengine\logger.h" />

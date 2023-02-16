@@ -1,19 +1,19 @@
 #pragma once
 
 #include "math.h"
+#include "vec2.h"
 
 namespace suprengine
 {
 	class Vec3
 	{
-
 	public:
 		float x;
 		float y;
 		float z;
 
-		Vec3() : x( 0.0f ), y( 0.0f ), z( 0.0f )
-		{}
+		Vec3() : x( 0.0f ), y( 0.0f ), z( 0.0f ) {}
+		Vec3( const Vec2& vec2 ) : x( vec2.x ), y( vec2.y ), z( 0.0f ) {}
 
 		explicit Vec3( float xP, float yP, float zP )
 			:x( xP ), y( yP ), z( zP )
@@ -86,6 +86,15 @@ namespace suprengine
 			return *this;
 		}
 
+		operator Vec2() { return Vec2 { x, y }; }
+
+		bool operator==( const Vec2& vec2 )
+		{
+			return x == vec2.x
+				&& y == vec2.y
+				&& z == 0.0f;
+		}
+
 		// Normalize the provided vector
 		static Vec3 normalize( const Vec3& vec )
 		{
@@ -120,6 +129,15 @@ namespace suprengine
 		static Vec3 reflect( const Vec3& v, const Vec3& n )
 		{
 			return v - 2.0f * Vec3::dot( v, n ) * n;
+		}
+
+		static Vec3 approach( const Vec3& current, const Vec3& target, float delta )
+		{
+			return Vec3 {
+				math::approach( current.x, target.x, delta ),
+				math::approach( current.y, target.y, delta ),
+				math::approach( current.y, target.y, delta )
+			};
 		}
 
 		static Vec3 transform( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );

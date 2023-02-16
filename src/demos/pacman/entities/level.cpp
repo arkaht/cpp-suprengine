@@ -50,7 +50,7 @@ void Level::gen_tiles()
 									ent = new PacDot();
 								}
 
-								ent->transform->pos = pos;
+								ent->transform->location = pos;
 
 								//  remove pixels from image
 								SDL_Rect rect {

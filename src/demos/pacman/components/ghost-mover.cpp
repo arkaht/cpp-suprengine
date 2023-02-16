@@ -41,7 +41,7 @@ void GhostMover::update( float dt )
 			Vec2 door_pos = level->get_ghost_door_pos();
 
 			//  direct exit if same x
-			if ( owner->transform->pos.x == door_pos.x )
+			if ( owner->transform->location.x == door_pos.x )
 			{
 				next_pos = door_pos;
 			}
@@ -102,7 +102,7 @@ void GhostMover::on_moved()
 	if ( state != GhostState::EATEN ) return;
 
 	//  enter the house
-	if ( owner->transform->pos == target * Level::TILE_SIZE )
+	if ( owner->transform->location == target * Level::TILE_SIZE )
 	{
 		next_pos = level->get_ghost_house_pos();
 		direction = ( next_pos - current_pos ).normalize();

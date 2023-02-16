@@ -5,11 +5,11 @@
 
 namespace suprengine::math
 {
-	constexpr double PI = 3.141592653589793;
-	constexpr double DOUBLE_PI = PI * 2.0;
-	constexpr double HALF_PI = PI / 2.0;
-	constexpr double DEG2RAD = PI / 180.0;
-	constexpr double RAD2DEG = 180.0 / PI;
+	constexpr float PI = 3.141592f;
+	constexpr float DOUBLE_PI = PI * 2.0f;
+	constexpr float HALF_PI = PI / 2.0f;
+	constexpr float DEG2RAD = PI / 180.0f;
+	constexpr float RAD2DEG = 180.0f / PI;
 
 	constexpr float PLUS_INFINITY = std::numeric_limits<float>::infinity();
 	const float NEG_INFINITY = -std::numeric_limits<float>::infinity();

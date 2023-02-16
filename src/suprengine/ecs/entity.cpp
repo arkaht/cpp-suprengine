@@ -1,10 +1,12 @@
 #include "entity.h"
-#include "components/transform2.hpp"
 
 using namespace suprengine;
 
 Entity::Entity()
 {
+	//  assign a transform
+	transform = new Transform( this );
+
 	//  register in game
 	game->add_entity( this );
 }

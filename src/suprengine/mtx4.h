@@ -1,8 +1,8 @@
 #pragma once
 #include <memory.h>
 
-#include "Vec3.h"
-#include "Quaternion.h"
+#include "vec3.h"
+#include "quaternion.h"
 
 namespace suprengine
 {

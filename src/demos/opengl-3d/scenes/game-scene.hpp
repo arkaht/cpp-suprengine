@@ -17,7 +17,9 @@ namespace demo_opengl3d
 
 		void update( float dt ) override
 		{
-			owner->transform->rotation += dt * 50.0;
+			Quaternion increment = Quaternion( Vec3::unitZ, dt * 5.0f );
+			Quaternion rotation = Quaternion::concatenate( owner->transform->rotation, increment );
+			owner->transform->set_rotation( rotation );
 		}
 	};
 
@@ -33,7 +35,7 @@ namespace demo_opengl3d
 			game->get_render_batch()->set_background_color( Color::from_0x( 0x252627FF ) );
 
 			auto ent = new Entity();
-			ent->transform->rotation = 20.0f;
+			ent->transform->rotation = Quaternion( Vec3 { 0.0f, 0.0f, 20.0f } );
 			new MouseFollower( ent );
 			new TimeRotator( ent );
 
