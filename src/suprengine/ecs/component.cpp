@@ -13,6 +13,3 @@ Component::~Component()
 {
 	owner->remove_component( this );
 }
-
-void Component::update( float dt ) {}
-

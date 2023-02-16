@@ -4,7 +4,6 @@
 
 namespace suprengine
 {
-
 	class Vec3
 	{
 
@@ -132,6 +131,7 @@ namespace suprengine
 		static Vec3 transform( const Vec3& v, const class Quaternion& q );
 
 		static const Vec3 zero;
+		static const Vec3 one;
 		static const Vec3 unitX;
 		static const Vec3 unitY;
 		static const Vec3 unitZ;

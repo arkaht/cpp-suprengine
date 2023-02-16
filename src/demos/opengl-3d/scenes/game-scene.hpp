@@ -48,9 +48,9 @@ namespace demo_opengl3d
 			//sprite->modulate = Color::from_0x( 0xBFB48FFF );
 
 			auto camera = game->get_camera();
-			//camera->translate( -camera->viewport.get_size() );  //  NOTE: wrong opengl renderer offset
+			camera->translate( -camera->viewport.get_size() );  //  NOTE: wrong opengl renderer offset
 			//camera->translate( Vec2 { 0, 0 } );
-			camera->zoom = 2.0f;
+			//camera->zoom = 2.0f;
 		}
 	};
 }

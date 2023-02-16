@@ -5,9 +5,6 @@ using namespace suprengine;
 
 Entity::Entity()
 {
-	//  assign a transform
-	transform = new Transform2( this );
-
 	//  register in game
 	game->add_entity( this );
 }

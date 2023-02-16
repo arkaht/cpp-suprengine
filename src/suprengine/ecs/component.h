@@ -22,7 +22,7 @@ namespace suprengine
 		Component( const Component& ) = delete;
 		Component& operator=( const Component& ) = delete;
 
-		virtual void update( float dt );
+		virtual void update( float dt ) {};
 		virtual void debug_render( RenderBatch* render_batch ) {}
 
 		Entity* get_owner() const { return owner; }

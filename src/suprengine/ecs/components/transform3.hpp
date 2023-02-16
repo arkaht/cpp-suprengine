@@ -8,28 +8,38 @@ namespace suprengine
 	class Transform3 : Component
 	{
 	private:
+		Mtx4 matrix;
 		bool is_matrix_dirty { true };
+
 	public:
-		Mtx4 world_transform;
+		Transform3( Spatial* owner, int priority_order = 0 )
+			: Component( owner, priority_order ) {}
+
 		Vec3 location;
 		Quaternion rotation;
-		float scale { 1.0f };
+		Vec3 scale { Vec3::one };
 
-		void update( float dt ) override
-		{
-			if ( is_matrix_dirty )
-				compute_world_transform();
-		}
+		void set_location( const Vec3& vec ) { location = vec; mark_dirty(); }
+		void set_rotation( const Quaternion quat ) { rotation = quat; mark_dirty(); }
+		void set_scale( const Vec3 vec ) { scale = vec; mark_dirty(); }
+
+		Vec3 get_forward() const { return Vec3::transform( Vec3::unitX, rotation ); }
+		Vec3 get_right() const { return Vec3::transform( Vec3::unitZ, rotation ); }
+		Vec3 get_up() const { return Vec3::transform( Vec3::unitY, rotation ); }
 
 		void mark_dirty() { is_matrix_dirty = true; }
-
-		void compute_world_transform()
+		const Mtx4& get_matrix()
 		{
-			world_transform = Mtx4::create_scale( scale ) 
-							* Mtx4::create_from_quaternion( rotation ) 
-							* Mtx4::create_translation( location );
+			if ( is_matrix_dirty )
+			{
+				matrix = Mtx4::create_scale( scale )
+					   * Mtx4::create_from_quaternion( rotation ) 
+					   * Mtx4::create_translation( location );
 
-			is_matrix_dirty = false;
+				is_matrix_dirty = false;
+			}
+
+			return matrix;
 		}
 	};
 }
