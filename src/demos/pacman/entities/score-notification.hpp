@@ -65,13 +65,13 @@ namespace demo_pacman
 			//  active pacman
 			PacMan* pacman = GameManager::pacman;
 			pacman->set_state( state );
-			pacman->anim->is_rendered = is_active;
+			pacman->anim->should_render = is_active;
 
 			//  active ghosts
 			for ( auto ghost : GameManager::ghosts )
 			{
 				ghost->set_state( state );
-				ghost->anim->is_rendered = true;
+				ghost->anim->should_render = true;
 			}
 		}
 

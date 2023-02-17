@@ -29,6 +29,7 @@ namespace suprengine
 		bool initialize() override;
 
 		void begin_render() override;
+		void render() override;
 		void end_render() override;
 
 		void draw_rect( DrawType draw_type, const Rect& rect, const Color& color ) override;

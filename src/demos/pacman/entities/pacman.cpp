@@ -111,7 +111,7 @@ void PacMan::die()
 		auto& clip = anim->clips[anim->current_clip];
 		TIMER( clip.time_per_frame * ( clip.end_frame - clip.start_frame + 1 ), {
 			//  disable renderer
-			anim->is_rendered = false;
+			anim->should_render = false;
 			
 			//  restart
 			TIMER( DEATH_RESTART_TIME, {
@@ -128,12 +128,12 @@ void PacMan::die()
 
 
 	//  disable mover
-	mover->is_updated = false;
+	mover->should_update = false;
 
 	//  disable ghosts mover
 	for ( auto ghost : GameManager::ghosts )
 	{
-		ghost->mover->is_updated = false;
+		ghost->mover->should_update = false;
 	}
 }
 

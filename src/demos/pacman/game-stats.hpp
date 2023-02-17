@@ -53,7 +53,7 @@ namespace demo_pacman
 			auto notif = new ScoreNotification( combo );
 
 			//  disable eaten ghost rendering
-			ghost->anim->is_rendered = false;
+			ghost->anim->should_render = false;
 		}
 	};
 }

@@ -95,10 +95,6 @@ void OpenGLRenderBatch::begin_render()
 	);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	//  enable transparency
-	glEnable( GL_BLEND );
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-
 	//  activate shader & vertex array
 	Mtx4 view_matrix = camera->get_view_matrix() * camera->projection_matrix;
 	color_shader->activate();
@@ -106,6 +102,21 @@ void OpenGLRenderBatch::begin_render()
 	texture_shader->activate();
 	texture_shader->set_mtx4( "u_view_projection", view_matrix );
 	quad_vertex_array->activate();
+}
+
+void OpenGLRenderBatch::render()
+{
+	//  draw meshes
+	glEnable( GL_DEPTH_TEST );
+	render_phase( RenderPhase::MESH );
+	glDisable( GL_DEPTH_TEST );
+
+	//  draw sprites
+	glEnable( GL_BLEND );
+	glBlendEquationSeparate( GL_FUNC_ADD, GL_FUNC_ADD );
+	glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO );
+	render_phase( RenderPhase::SPRITE );
+	glDisable( GL_BLEND );
 }
 
 void OpenGLRenderBatch::end_render()

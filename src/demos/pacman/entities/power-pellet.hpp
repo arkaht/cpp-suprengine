@@ -36,7 +36,7 @@ namespace demo_pacman
 			{
 				blink_time = BLINK_TIME;
 
-				sprite->is_rendered = !sprite->is_rendered;
+				sprite->should_render = !sprite->should_render;
 			}
 		}
 	};

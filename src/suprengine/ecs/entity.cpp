@@ -64,7 +64,15 @@ void Entity::update( float dt )
 
 	for ( auto comp : components )
 	{
-		if ( !comp->is_updated ) continue;
+		//  init
+		if ( !comp->is_initialized )
+		{
+			comp->init();
+			comp->is_initialized = true;
+		}
+
+		//  update
+		if ( !comp->should_update ) continue;
 
 		comp->update( dt );
 	}

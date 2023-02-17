@@ -13,7 +13,8 @@ namespace suprengine
 		Entity* owner;
 		int priority_order;
 	public:
-		bool is_updated { true };
+		bool is_initialized { false };
+		bool should_update { true };
 
 		Component( Entity* owner, int priority_order = 0 );
 		virtual ~Component();
@@ -22,6 +23,7 @@ namespace suprengine
 		Component( const Component& ) = delete;
 		Component& operator=( const Component& ) = delete;
 
+		virtual void init() {};
 		virtual void update( float dt ) {};
 		virtual void debug_render( RenderBatch* render_batch ) {}
 

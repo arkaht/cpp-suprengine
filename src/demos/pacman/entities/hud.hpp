@@ -64,7 +64,7 @@ namespace demo_pacman
 			//  flick 1UP text
 			if ( ( text_1up_flick_time -= dt ) <= 0.0f )
 			{
-				title_1up->is_rendered = !title_1up->is_rendered;
+				title_1up->should_render = !title_1up->should_render;
 				text_1up_flick_time = TEXT_1UP_FLICK_TIME;
 			}
 		}

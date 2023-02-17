@@ -6,9 +6,17 @@ using namespace suprengine;
 
 void RenderBatch::render()
 {
-	for ( auto renderer : renderers )
+	render_phase( RenderPhase::SPRITE );
+}
+
+void RenderBatch::render_phase( const RenderPhase phase )
+{
+	if ( renderers.find( phase ) == renderers.end() ) return;
+
+	auto& list = renderers.at( phase );
+	for ( auto renderer : list )
 	{
-		if ( !renderer->is_rendered ) continue;
+		if ( !renderer->should_render ) continue;
 
 		renderer->render();
 	}
@@ -40,25 +48,33 @@ void RenderBatch::add_renderer( Renderer* renderer )
 	//  get priority order
 	int order = renderer->get_priority_order();
 
+	//  check phase creation
+	RenderPhase phase = renderer->get_render_phase();
+	if ( renderers.find( phase ) == renderers.end() )
+		renderers.insert( std::pair( phase, std::vector<Renderer*>() ) );
+
 	//  search order position
-	auto itr = renderers.begin();
-	for ( ; itr != renderers.end(); itr++ )
-	{
-		if ( order >= ( *itr )->get_priority_order() )
-		{
+	auto& list = renderers.at( phase );
+	auto itr = list.begin();
+	for ( ; itr != list.end(); itr++ )
+		if ( order >= (*itr)->get_priority_order() )
 			break;
-		}
-	}
 
 	//  insert it
-	renderers.insert( itr, renderer );
+	list.insert( itr, renderer );
 }
 
 void RenderBatch::remove_renderer( Renderer* renderer )
 {
-	auto itr = std::find( renderers.begin(), renderers.end(), renderer );
-	if ( itr == renderers.end() ) return;
+	//  check phase
+	RenderPhase phase = renderer->get_render_phase();
+	if ( renderers.find( phase ) == renderers.end() ) return;
 
-	renderers.erase( itr );  //  don't swap or you need to sort again!
+	//  find element in vector
+	auto& list = renderers.at( phase );
+	auto itr = std::find( list.begin(), list.end(), renderer );
+	if ( itr == list.end() ) return;
+
+	list.erase( itr );  //  don't swap or you need to sort again!
 }
 

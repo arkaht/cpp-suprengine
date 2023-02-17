@@ -11,10 +11,11 @@
 #include <suprengine/ecs/components/renderers/renderer.fwd.h>
 
 #include <vector>
+#include <unordered_map>
 
 namespace suprengine
 {
-	enum FILTERING
+	enum class FilteringType
 	{
 		NEAREST,
 		BILINEAR,
@@ -22,7 +23,7 @@ namespace suprengine
 
 	struct TextureParams
 	{
-		FILTERING filtering = FILTERING::NEAREST;
+		FilteringType filtering = FilteringType::NEAREST;
 	};
 
 	enum class DrawType
@@ -31,11 +32,17 @@ namespace suprengine
 		LINE,
 	};
 
+	enum class RenderPhase
+	{
+		MESH,
+		SPRITE,
+	};
+
 	class RenderBatch
 	{
 	protected:
 		Window* window;
-		std::vector<Renderer*> renderers;
+		std::unordered_map<RenderPhase, std::vector<Renderer*>> renderers;
 
 		Vec2 translation { Vec2::zero };
 		Color background_color { Color::black };
@@ -45,7 +52,8 @@ namespace suprengine
 
 		virtual bool initialize() = 0;
 		virtual void begin_render() = 0;
-		void render();
+		virtual void render();
+		virtual void render_phase( const RenderPhase phase );
 		virtual void end_render() = 0;
 
 		virtual void draw_rect( DrawType draw_type, const Rect& rect, const Color& color ) = 0;

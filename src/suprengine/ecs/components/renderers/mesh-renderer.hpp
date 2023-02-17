@@ -19,5 +19,7 @@ namespace suprengine
 			if ( mesh == nullptr ) return;
 			render_batch->draw_mesh( owner->transform->get_matrix(), mesh, texture_id );
 		}
+
+		RenderPhase get_render_phase() const override { return RenderPhase::MESH; }
 	};
 }

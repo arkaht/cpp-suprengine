@@ -49,7 +49,7 @@ namespace suprengine
 			glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, format, GL_UNSIGNED_BYTE, surface->pixels );
 
 			//  enable bilinear filtering
-			int filter = params.filtering == FILTERING::BILINEAR ? GL_LINEAR : GL_NEAREST;
+			int filter = params.filtering == FilteringType::BILINEAR ? GL_LINEAR : GL_NEAREST;
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter );
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter );
 

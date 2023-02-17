@@ -12,7 +12,7 @@ namespace suprengine
 		Vec2 origin { 0.5f, 0.5f };
 
 		SpriteRenderer( Entity* owner, Texture* texture, int priority_order = 0 )
-			: texture( texture ), dest( dest ), Renderer( owner, priority_order ) 
+			: texture( texture ), dest( dest ), Renderer( owner, priority_order )
 		{
 			if ( texture == nullptr ) return;
 
@@ -41,5 +41,7 @@ namespace suprengine
 				modulate
 			);
 		}
+
+		RenderPhase get_render_phase() const override { return RenderPhase::SPRITE; }
 	};
 }

@@ -79,7 +79,7 @@ public:
 	void blink()
 	{
 		is_blinking = true;
-		sprite_door->is_rendered = false;
+		sprite_door->should_render = false;
 	}
 
 	void update_this( float dt ) override

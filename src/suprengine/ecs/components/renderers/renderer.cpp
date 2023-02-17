@@ -8,10 +8,14 @@ Renderer::Renderer( Entity* owner, int priority_order )
 	: Component( owner, priority_order )
 {
 	render_batch = owner->get_game()->get_render_batch();
-	render_batch->add_renderer( this );
 }
 
 Renderer::~Renderer()
 {
 	render_batch->remove_renderer( this );
+}
+
+void Renderer::init()
+{
+	render_batch->add_renderer( this );
 }
