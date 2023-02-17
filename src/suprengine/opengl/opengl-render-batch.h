@@ -20,6 +20,8 @@ namespace suprengine
 		Camera* camera { nullptr };
 		Vec3 screen_offset;
 
+		Mtx4 view_matrix;
+
 	public:
 		OpenGLRenderBatch( Window* window ) : RenderBatch( window ) {};
 		OpenGLRenderBatch( const OpenGLRenderBatch& ) = delete;

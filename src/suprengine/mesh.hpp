@@ -12,7 +12,7 @@ namespace suprengine
 		std::vector<Texture*> textures;
 
 	public:
-		Mesh() = delete;
+		Mesh() {}
 		Mesh( const Mesh& mesh ) = delete;
 		void operator=( const Mesh& mesh ) = delete;
 

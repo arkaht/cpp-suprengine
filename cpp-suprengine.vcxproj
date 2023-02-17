@@ -238,6 +238,8 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="src\suprengine\opengl\shaders\color.frag" />
+    <None Include="src\suprengine\opengl\shaders\simple-mesh.frag" />
+    <None Include="src\suprengine\opengl\shaders\simple-mesh.vert" />
     <None Include="src\suprengine\opengl\shaders\texture.frag" />
     <None Include="src\suprengine\opengl\shaders\texture.vert" />
     <None Include="src\suprengine\opengl\shaders\transform.vert" />

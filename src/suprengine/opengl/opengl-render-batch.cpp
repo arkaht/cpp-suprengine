@@ -69,6 +69,8 @@ bool OpenGLRenderBatch::initialize()
 
 	//  create vertex array
 	quad_vertex_array = new VertexArray( QUAD_VERTICES, 4, QUAD_INDICES, 6 );
+
+	//  load shaders
 	color_shader = Assets::load_shader( "color",
 		"src/suprengine/opengl/shaders/transform.vert",
 		"src/suprengine/opengl/shaders/color.frag"
@@ -76,6 +78,10 @@ bool OpenGLRenderBatch::initialize()
 	texture_shader = Assets::load_shader( "texture",
 		"src/suprengine/opengl/shaders/texture.vert",
 		"src/suprengine/opengl/shaders/texture.frag"
+	);
+	Assets::load_shader( "simple-mesh",
+		"src/suprengine/opengl/shaders/simple-mesh.vert",
+		"src/suprengine/opengl/shaders/simple-mesh.frag"
 	);
 
 	camera = Game::instance().get_camera();
@@ -96,12 +102,11 @@ void OpenGLRenderBatch::begin_render()
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	//  activate shader & vertex array
-	Mtx4 view_matrix = camera->get_view_matrix() * camera->projection_matrix;
+	view_matrix = camera->get_view_matrix() * camera->projection_matrix;
 	color_shader->activate();
 	color_shader->set_mtx4( "u_view_projection", view_matrix );
 	texture_shader->activate();
 	texture_shader->set_mtx4( "u_view_projection", view_matrix );
-	quad_vertex_array->activate();
 }
 
 void OpenGLRenderBatch::render()
@@ -126,6 +131,7 @@ void OpenGLRenderBatch::end_render()
 
 void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
 {
+	quad_vertex_array->activate();
 	color_shader->activate();
 
 	//  setup matrices
@@ -140,6 +146,7 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 
 void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color )
 {
+	quad_vertex_array->activate();
 	texture_shader->activate();
 	texture->activate();
 
@@ -171,6 +178,7 @@ void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rec
 void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id )
 {
 	mesh->activate( texture_id );
+	mesh->get_shader()->set_mtx4( "u_view_projection", view_matrix );  //  TODO: pass this matrix only once
 
 	//  set matrice
 	Shader* shader = mesh->get_shader();
