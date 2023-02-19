@@ -36,7 +36,7 @@ namespace suprengine
 
 		void draw_rect( DrawType draw_type, const Rect& rect, const Color& color ) override;
 		void draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color ) override;
-		void draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id ) override;
+		void draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color ) override;
 		
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;

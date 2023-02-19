@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\suprengine\camera.cpp" />
+    <ClCompile Include="src\suprengine\mesh.cpp" />
     <ClCompile Include="src\suprengine\quaternion.cpp" />
     <ClCompile Include="src\suprengine\mtx4.cpp" />
     <ClCompile Include="src\suprengine\opengl\opengl-render-batch.cpp" />
@@ -170,7 +171,7 @@
     <ClInclude Include="src\suprengine\ecs\components\mouse-follower.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\mesh-renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\transform.hpp" />
-    <ClInclude Include="src\suprengine\mesh.hpp" />
+    <ClInclude Include="src\suprengine\mesh.h" />
     <ClInclude Include="src\suprengine\opengl\opengl-mesh.hpp" />
     <ClInclude Include="src\suprengine\opengl\opengl-texture.hpp" />
     <ClInclude Include="src\suprengine\quaternion.h" />
@@ -237,6 +238,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="src\suprengine\assets\meshes\primitives\cube.gpmesh" />
+    <None Include="src\suprengine\assets\meshes\primitives\sphere.gpmesh" />
     <None Include="src\suprengine\opengl\shaders\color.frag" />
     <None Include="src\suprengine\opengl\shaders\simple-mesh.frag" />
     <None Include="src\suprengine\opengl\shaders\simple-mesh.vert" />

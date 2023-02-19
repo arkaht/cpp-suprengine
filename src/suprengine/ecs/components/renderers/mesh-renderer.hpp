@@ -1,7 +1,7 @@
 #pragma once
 #include <suprengine/ecs/components/renderers/renderer.h>
 
-#include <suprengine/mesh.hpp>
+#include <suprengine/mesh.h>
 
 namespace suprengine
 {
@@ -11,13 +11,13 @@ namespace suprengine
 		Mesh* mesh { nullptr };
 		int texture_id { 0 };
 
-		MeshRenderer( Entity* owner, int priority_order = 0 )
-			: Renderer( owner, priority_order ) {}
+		MeshRenderer( Entity* owner, Mesh* mesh, int priority_order = 0 )
+			: mesh( mesh ), Renderer( owner, priority_order ) {}
 
 		void render() override
 		{
 			if ( mesh == nullptr ) return;
-			render_batch->draw_mesh( owner->transform->get_matrix(), mesh, texture_id );
+			render_batch->draw_mesh( owner->transform->get_matrix(), mesh, texture_id, modulate );
 		}
 
 		RenderPhase get_render_phase() const override { return RenderPhase::MESH; }

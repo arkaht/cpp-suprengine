@@ -15,6 +15,7 @@ void Camera::setup_perspective( float fov, float znear, float zfar )
 void Camera::look_at( const Vec3& target )
 {
 	view_matrix = Mtx4::create_look_at( location, target, Vec3::up );
+	is_view_matrix_dirty = false;
 }
 
 const Mtx4& Camera::get_view_matrix()
@@ -25,6 +26,7 @@ const Mtx4& Camera::get_view_matrix()
 		view_matrix = Mtx4::create_translation( viewport.x, viewport.y, 0.0f )//;
 					* Mtx4::create_scale( zoom, zoom, 1.0f )
 					* Mtx4::create_translation( viewport.w, viewport.h, 0.0f );
+		//view_matrix = Mtx4::create_look_at( location, , Vec3::up );
 
 		printf( "hello %f x:%f y:%f\n", zoom, viewport.x, viewport.y );
 		is_view_matrix_dirty = false;

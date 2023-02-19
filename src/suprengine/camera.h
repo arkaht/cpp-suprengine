@@ -14,7 +14,7 @@ namespace suprengine
 		Vec3 location { 0.0f, 0.0f, 0.0f };
 
 	public:
-		const float DEFAULT_ZNEAR { 1.0f }, DEFAULT_ZFAR { 10000.0f };
+		const float DEFAULT_ZNEAR { 0.01f }, DEFAULT_ZFAR { 10000.0f };
 
 		Mtx4 projection_matrix;
 

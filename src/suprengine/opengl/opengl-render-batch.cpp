@@ -175,14 +175,15 @@ void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rec
 	draw_elements( 6 );
 }
 
-void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id )
+void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color )
 {
 	mesh->activate( texture_id );
-	mesh->get_shader()->set_mtx4( "u_view_projection", view_matrix );  //  TODO: pass this matrix only once
 
 	//  set matrice
 	Shader* shader = mesh->get_shader();
+	shader->set_mtx4( "u_view_projection", view_matrix );  //  TODO: pass this matrix only once
 	shader->set_mtx4( "u_world_transform", matrix );
+	shader->set_vec4( "u_modulate", color );
 
 	//  draw
 	draw_elements( mesh->get_indices_count() );

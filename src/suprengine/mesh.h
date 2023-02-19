@@ -1,6 +1,9 @@
 #pragma once
 
 #include <suprengine/opengl/shader.h>
+#include <suprengine/texture.fwd.h>
+
+#include <suprengine/usings.h>
 
 #include <vector>
 
@@ -12,7 +15,10 @@ namespace suprengine
 		std::vector<Texture*> textures;
 
 	public:
+		std::string shader_name { "simple-mesh" };
+
 		Mesh() {}
+		Mesh( rconst_str shader_name ) : shader_name( shader_name ) {}
 		Mesh( const Mesh& mesh ) = delete;
 		void operator=( const Mesh& mesh ) = delete;
 
@@ -27,7 +33,7 @@ namespace suprengine
 			return textures[id];
 		}
 
-		virtual Shader* get_shader() { return nullptr; }
+		virtual Shader* get_shader();
 		virtual int get_indices_count() { return 0; }
 
 		virtual void activate( int texture_id = 0 ) {};
