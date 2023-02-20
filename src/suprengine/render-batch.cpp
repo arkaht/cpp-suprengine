@@ -1,8 +1,15 @@
 #include "render-batch.h"
 
+#include <suprengine/game.h>
 #include <suprengine/ecs/components/renderers/renderer.h>
 
 using namespace suprengine;
+
+RenderBatch::RenderBatch( Window* window )
+	: window( window )
+{
+	game = &Game::instance();
+}
 
 void RenderBatch::render()
 {

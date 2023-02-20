@@ -36,6 +36,12 @@ void Vec3::normalize()
 	z /= len;
 }
 
+Vec3 Vec3::normalized() const
+{
+	float mag = length();
+	return Vec3( x / mag, y / mag, z / mag );
+}
+
 Vec3 Vec3::transform( const Vec3& vec, const Mtx4& mat, float w )
 {
 	Vec3 retVal;

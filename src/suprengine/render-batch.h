@@ -1,4 +1,5 @@
 #pragma once
+#include <suprengine/game.fwd.h>
 
 #include <suprengine/usings.h>
 #include <suprengine/window.h>
@@ -46,8 +47,9 @@ namespace suprengine
 
 		Vec2 translation { Vec2::zero };
 		Color background_color { Color::black };
+		Game* game { nullptr };
 	public:
-		RenderBatch( Window* window ) : window( window ) {}
+		RenderBatch( Window* window );
 		virtual ~RenderBatch() {};
 
 		virtual bool initialize() = 0;

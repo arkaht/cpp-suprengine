@@ -134,7 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\suprengine\camera.cpp" />
+    <ClCompile Include="src\suprengine\ecs\components\camera.cpp" />
     <ClCompile Include="src\suprengine\mesh.cpp" />
     <ClCompile Include="src\suprengine\quaternion.cpp" />
     <ClCompile Include="src\suprengine\mtx4.cpp" />
@@ -166,6 +166,9 @@
     <ClCompile Include="src\suprengine\vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\suprengine\ecs\components\mover.hpp" />
+    <ClInclude Include="src\suprengine\ecs\components\transform.fwd.h" />
+    <ClInclude Include="src\suprengine\game.fwd.h" />
     <ClInclude Include="src\demos\opengl-3d\scenes\game-scene.hpp" />
     <ClInclude Include="src\demos\opengl-3d\main.h" />
     <ClInclude Include="src\suprengine\ecs\components\mouse-follower.hpp" />
@@ -199,7 +202,7 @@
     <ClInclude Include="src\demos\pacman\main.h" />
     <ClInclude Include="src\demos\pacman\scenes\game-scene.hpp" />
     <ClInclude Include="src\suprengine\assets.h" />
-    <ClInclude Include="src\suprengine\camera.h" />
+    <ClInclude Include="src\suprengine\ecs\components\camera.h" />
     <ClInclude Include="src\suprengine\ecs\components\collider.fwd.h" />
     <ClInclude Include="src\suprengine\ecs\components\collider.h" />
     <ClInclude Include="src\suprengine\ecs\components\rect-collider.hpp" />

@@ -69,15 +69,12 @@ namespace demo_pacman
 			clyde->mover->set_state( GhostState::WAIT );
 
 			//  configure camera
-			auto camera = game->get_camera();
+			auto camera_owner = new Entity();
+			auto camera = new Camera( camera_owner );
 			float level_width = (float) level->get_width() * Level::TILE_SIZE, level_height = (float) level->get_height() * Level::TILE_SIZE;
 			camera->zoom = floorf( ( camera->viewport.h - 100.0f ) / level_height );
-			camera->translate(
-				{
-					camera->viewport.w / camera->zoom / 2.0f - level_width / 2.0f,
-					camera->viewport.h / camera->zoom / 2.0f - level_height / 2.0f
-				}
-			);
+			camera->transform->location.x = camera->viewport.w / camera->zoom / 2.0f - level_width / 2.0f;
+			camera->transform->location.y = camera->viewport.h / camera->zoom / 2.0f - level_height / 2.0f;
 			camera->clip_enabled = true;
 			camera->clip = {
 				{ camera->viewport.x, 0.0f },

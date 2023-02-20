@@ -59,7 +59,6 @@ void Game::set_scene( Scene* _scene )
 
 	//  reset
 	clear_entities();
-	camera.reset( (float) window->get_width(), (float) window->get_height() );
 
 	//  set scene
 	scene = _scene;
@@ -335,13 +334,13 @@ void Game::render()
 	SDL_RenderDrawLine( sdl_renderer, _window->get_width() / camera.zoom, 0, 0, _window->get_height() / camera.zoom );*/
 
 	//  apply camera
-	render_batch->scale( camera.zoom );
-	render_batch->translate( camera.viewport.get_pos() );
+	render_batch->scale( camera->zoom );
+	render_batch->translate( camera->viewport.get_pos() );
 
 	//  apply camera clipping
-	if ( camera.clip_enabled )
+	if ( camera->clip_enabled )
 	{
-		render_batch->clip( camera.clip );
+		render_batch->clip( camera->clip );
 	}
 
 	//  render components

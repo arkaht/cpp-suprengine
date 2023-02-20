@@ -1,4 +1,5 @@
 #pragma once
+#include "transform.fwd.h"
 
 #include <suprengine/ecs/component.h>
 #include <suprengine/mtx4.h>
@@ -9,9 +10,10 @@ namespace suprengine
 	{
 	private:
 		Mtx4 matrix;
-		bool is_matrix_dirty { true };
 
 	public:
+		bool is_matrix_dirty { true };
+
 		Transform( Entity* owner ) : Component( owner ) {}
 
 		Vec3 location;
@@ -31,36 +33,47 @@ namespace suprengine
 		void set_location( const Vec2& vec )
 		{
 			location.x = vec.x, location.y = vec.y, location.z = 0.0f;
-			mark_dirty();
+			is_matrix_dirty = true;
 		}
 		void set_location( const Vec3& vec )
 		{
 			location = vec;
-			mark_dirty();
+			is_matrix_dirty = true;
 		}
 
 		void set_rotation( const Quaternion& quat )
 		{
 			rotation = quat;
-			mark_dirty();
+			is_matrix_dirty = true;
 		}
 
 		void set_scale( const Vec2& vec )
 		{
 			scale.x = vec.x, scale.y = vec.y, scale.z = 1.0f;
-			mark_dirty();
+			is_matrix_dirty = true;
 		}
 		void set_scale( const Vec3& vec ) 
 		{ 
 			scale = vec; 
-			mark_dirty(); 
+			is_matrix_dirty = true;
 		}
 
-		Vec3 get_forward() const { return Vec3::transform( Vec3::unit_x, rotation ); }
-		Vec3 get_right() const { return Vec3::transform( Vec3::unit_z, rotation ); }
-		Vec3 get_up() const { return Vec3::transform( Vec3::unit_y, rotation ); }
+		void look_at( const Vec3& target )
+		{
+			set_rotation(
+				Quaternion::look_at(
+					location,
+					target,
+					Vec3::forward,
+					Vec3::up
+				)
+			);
+		}
 
-		void mark_dirty() { is_matrix_dirty = true; }
+		Vec3 get_forward() const { return Vec3::transform( Vec3::forward, rotation ); }
+		Vec3 get_right() const { return Vec3::transform( Vec3::right, rotation ); }
+		Vec3 get_up() const { return Vec3::transform( Vec3::up, rotation ); }
+
 		const Mtx4& get_matrix()
 		{
 			if ( is_matrix_dirty )

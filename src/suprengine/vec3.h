@@ -24,6 +24,8 @@ namespace suprengine
 		float length() const;
 		void normalize();
 
+		Vec3 normalized() const;
+
 		const float* getAsFloatPtr() const
 		{
 			return reinterpret_cast<const float*>( &x );
@@ -93,6 +95,13 @@ namespace suprengine
 			return x == vec2.x
 				&& y == vec2.y
 				&& z == 0.0f;
+		}
+
+		bool operator==( const Vec3& vec3 )
+		{
+			return x == vec3.x
+				&& y == vec3.y
+				&& z == vec3.z;
 		}
 
 		// Normalize the provided vector

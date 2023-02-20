@@ -25,11 +25,12 @@ namespace demo_pacman
 
 		HUD() : Entity()
 		{
-			auto camera = game->get_camera();
+			auto camera = game->camera;
 			auto font = Assets::get_font( "PressStart2P.ttf", 8 );
 
 			auto title_highscore = new TextRenderer( this, font, "HIGH SCORE" );
-			title_highscore->dest.x = camera->viewport.w / camera->zoom / 2.0f - title_highscore->dest.w / 4.0f;
+			//  TODO: replace obsolete camera code
+			title_highscore->dest.x = camera->viewport.w / camera->zoom / 2.0f - title_highscore->dest.w / 4.0f;  
 			title_highscore->dest.y = -20.0f;
 
 			title_1up = new TextRenderer( this, font, "1UP" );

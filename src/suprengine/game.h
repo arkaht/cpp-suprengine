@@ -1,13 +1,15 @@
 #pragma once
+#include "game.fwd.h"
 
 #include "assets.h"
 #include "updater.h"
 #include "vec2.h"
 #include "ecs/entity.fwd.h"
 #include "ecs/components/collider.fwd.h"
-#include "camera.h"
 #include "scene.fwd.h"
 #include "timer.hpp"
+
+#include <suprengine/ecs/components/camera.h>
 
 #include <vector>
 #include <unordered_set>
@@ -41,13 +43,13 @@ namespace suprengine
 		RenderBatch* render_batch { nullptr };
 		
 		Updater updater {};
-		Camera camera {};
 
 		Scene* scene { nullptr };
 
 		std::map<SDL_Scancode, KeyState> keystates;
 		std::unordered_set<SDL_Scancode> survey_keys;
 	public:
+		Camera* camera { nullptr };
 		bool is_debug { false };
 
 		//  ensure singleton
@@ -77,9 +79,6 @@ namespace suprengine
 			//  init assets
 			Assets::set_render_batch( render_batch );
 
-			//  setup camera viewport
-			camera.reset( (float) width, (float) height );
-
 			return true;
 		}
 		void loop();
@@ -105,6 +104,5 @@ namespace suprengine
 		Window* get_window() const { return window; }
 		RenderBatch* get_render_batch() const { return render_batch; }
 		Updater* get_timer() { return &updater; }
-		Camera* get_camera() { return &camera; }
 	};
 }

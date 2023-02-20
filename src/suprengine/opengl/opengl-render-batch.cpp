@@ -84,7 +84,6 @@ bool OpenGLRenderBatch::initialize()
 		"src/suprengine/opengl/shaders/simple-mesh.frag"
 	);
 
-	camera = Game::instance().get_camera();
 	screen_offset = Vec3 { window->get_width() / 2.0f, window->get_height() / 2.0f, 0.0f };
 
 	return true;
@@ -92,6 +91,13 @@ bool OpenGLRenderBatch::initialize()
 
 void OpenGLRenderBatch::begin_render()
 {
+	camera = game->camera;
+	if ( camera == nullptr )
+	{
+		Logger::error( "no main camera, rendering aborted!" );
+		return;
+	}
+
 	//  clear screen
 	glClearColor(
 		background_color.r / 255.0f,

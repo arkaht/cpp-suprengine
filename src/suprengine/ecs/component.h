@@ -2,6 +2,7 @@
 
 #include "component.fwd.h"
 #include "entity.fwd.h"
+#include "components/transform.fwd.h"
 
 #include <suprengine/render-batch.h>
 
@@ -10,11 +11,13 @@ namespace suprengine
 	class Component
 	{
 	protected:
-		Entity* owner;
+		Entity* owner { nullptr };
 		int priority_order;
 	public:
 		bool is_initialized { false };
 		bool should_update { true };
+
+		Transform* transform { nullptr };
 
 		Component( Entity* owner, int priority_order = 0 );
 		virtual ~Component();

@@ -6,6 +6,7 @@
 #include <suprengine/ecs/components/renderers/sprite-renderer.hpp>
 #include <suprengine/ecs/components/renderers/text-renderer.hpp>
 #include <suprengine/ecs/components/renderers/mesh-renderer.hpp>
+#include <suprengine/ecs/components/mover.hpp>
 
 using namespace suprengine;
 
@@ -35,15 +36,17 @@ namespace demo_opengl3d
 
 			game->get_render_batch()->set_background_color( Color::from_0x( 0x252627FF ) );
 
+			auto sphere = new Entity();
+			sphere->transform->location = Vec3 { 10.0f, 5.0f, 25.0f };
+			new MeshRenderer( sphere, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/sphere.gpmesh", false ) );
+
 			auto cube = new Entity();
 			cube->transform->location = Vec3 { 0.0f, 0.0f, 10.0f };
 			cube->transform->rotation = Quaternion( Vec3 { 45.0f, 45.0f, 45.0f } );
+			cube->transform->look_at( sphere->transform->location );
 			new MeshRenderer( cube, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/cube.gpmesh", false ) );
-			new TimeRotator( cube );
+			//new TimeRotator( cube );
 
-			auto sphere = new Entity();
-			sphere->transform->location = Vec3 { 0.0f, 10.0f, 20.0f };
-			new MeshRenderer( sphere, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/sphere.gpmesh", false ) );
 			/*new MouseFollower( ent );
 			new TimeRotator( ent );
 
@@ -57,13 +60,17 @@ namespace demo_opengl3d
 			//sprite->dest = { 0.0f, 0.0f, 512.0f, 512.0f };
 			//sprite->modulate = Color::from_0x( 0xBFB48FFF );
 
-			auto camera = game->get_camera();
-			//camera->setup_perspective( 90.0f );
-			camera->setup_perspective( 77.7f );
-			camera->look_at( cube->transform->location );
-			//camera->translate( -camera->viewport.get_size() );  //  NOTE: wrong opengl renderer offset
-			//camera->translate( Vec2 { 0, 0 } );
-			//camera->zoom = 2.0f;
+			auto text = new Entity();
+			text->transform->location = Vec3 { 0.0f, 0.0f, 5.0f };
+			new TextRenderer( text, Assets::get_font( "PressStart2P.ttf" ), "3D?" );
+			new TimeRotator( text );
+
+			auto camera_owner = new Entity();
+			new Mover( camera_owner );
+			auto camera = new Camera( camera_owner, 77.7f );
+			camera->transform->location = Vec3 { 5.0f, 5.0f, 0.0f };
+			//camera->look_at( cube->transform->location );
+			//new TimeRotator( camera_owner );
 		}
 	};
 }
