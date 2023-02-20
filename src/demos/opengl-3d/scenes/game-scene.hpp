@@ -37,13 +37,13 @@ namespace demo_opengl3d
 			game->get_render_batch()->set_background_color( Color::from_0x( 0x252627FF ) );
 
 			auto sphere = new Entity();
-			sphere->transform->location = Vec3 { 10.0f, 5.0f, 25.0f };
+			sphere->transform->location = Vec3 { 0.0f, 5.0f, 25.0f };
 			new MeshRenderer( sphere, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/sphere.gpmesh", false ) );
 
 			auto cube = new Entity();
-			cube->transform->location = Vec3 { 0.0f, 0.0f, 10.0f };
-			cube->transform->rotation = Quaternion( Vec3 { 45.0f, 45.0f, 45.0f } );
-			cube->transform->look_at( sphere->transform->location );
+			cube->transform->location = Vec3 { 0.0f, 0.0f, -10.0f };
+			//cube->transform->rotation = Quaternion( Vec3 { 45.0f, 45.0f, 45.0f } * math::DEG2RAD );
+			//cube->transform->look_at( sphere->transform->location );
 			new MeshRenderer( cube, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/cube.gpmesh", false ) );
 			//new TimeRotator( cube );
 
@@ -68,7 +68,8 @@ namespace demo_opengl3d
 			auto camera_owner = new Entity();
 			new Mover( camera_owner );
 			auto camera = new Camera( camera_owner, 77.7f );
-			camera->transform->location = Vec3 { 5.0f, 5.0f, 0.0f };
+			camera->transform->rotation = Quaternion( Vec3 { 0.0f, 30.0f, 0.0f } * math::DEG2RAD );
+			//camera->transform->location = Vec3 { 5.0f, 5.0f, 0.0f };
 			//camera->look_at( cube->transform->location );
 			//new TimeRotator( camera_owner );
 		}
