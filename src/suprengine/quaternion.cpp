@@ -11,11 +11,14 @@ Quaternion::Quaternion( float xP, float yP, float zP, float wP )
 
 Quaternion::Quaternion( const Vec3& axis, float angle )
 {
-	float scalar = math::sin( angle / 2.0f );
-	x = axis.x * scalar;
-	y = axis.y * scalar;
-	z = axis.z * scalar;
-	w = math::cos( angle / 2.0f );
+	float half_angle = angle / 2.0f;
+	float scale = math::sin( half_angle );
+	Vec3 dir = axis.normalized();
+
+	x = dir.x * scale;
+	y = dir.y * scale;
+	z = dir.z * scale;
+	w = math::cos( half_angle );
 }
 
 Quaternion::Quaternion( const Vec3& angles )
@@ -67,22 +70,8 @@ Quaternion Quaternion::look_at( const Vec3& origin, const Vec3& target, const Ve
 		axis = up;
 
 	//  find the angle around rotation axis
-	float dot = Vec3::dot( Vec3::forward, dir );
+	float dot = Vec3::dot( forward, dir );
 	float angle = std::acosf( dot );
 
 	return Quaternion( axis, angle );
-}
-
-Quaternion Quaternion::angle_axis( const Vec3& axis, const float angle )
-{
-	float half_angle = angle / 2.0f;
-	float scale = math::sin( half_angle );
-	Vec3 dir = axis.normalized();
-
-	return Quaternion(
-		dir.x * scale,
-		dir.y * scale,
-		dir.z * scale,
-		math::cos( half_angle )
-	);
 }

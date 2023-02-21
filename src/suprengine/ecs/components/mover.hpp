@@ -37,7 +37,7 @@ namespace suprengine
 
 			if ( dir == Vec3::zero ) return;
 
-			printf( "%f/%f/%f\n", dir.x, dir.y, dir.z );
+			//printf( "%f/%f/%f\n", dir.x, dir.y, dir.z );
 
 			float speed = ( game->is_key_down( SDL_SCANCODE_LSHIFT ) ? sprint_speed : move_speed ) * dt;
 			Vec3 move_dir = dir.normalized() * speed;

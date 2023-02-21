@@ -94,16 +94,16 @@ namespace suprengine
 
 		bool operator==( const Vec2& vec2 )
 		{
-			return x == vec2.x
-				&& y == vec2.y
-				&& z == 0.0f;
+			return math::near( x, vec2.x ) 
+				&& math::near( y, vec2.y )
+				&& math::near( z, 0.0f );
 		}
 
 		bool operator==( const Vec3& vec3 )
 		{
-			return x == vec3.x
-				&& y == vec3.y
-				&& z == vec3.z;
+			return math::near( x, vec3.x )
+				&& math::near( y, vec3.y )
+				&& math::near( z, vec3.z );
 		}
 
 		// Normalize the provided vector

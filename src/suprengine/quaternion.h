@@ -156,7 +156,6 @@ namespace suprengine
 		}
 
 		static Quaternion look_at( const Vec3& origin, const Vec3& target, const Vec3& forward, const Vec3& up );
-		static Quaternion angle_axis( const Vec3& axis, const float angle );
 
 		static const Quaternion identity;
 	};

@@ -12,7 +12,9 @@ namespace suprengine::math
 	constexpr float RAD2DEG = 180.0f / PI;
 
 	constexpr float PLUS_INFINITY = std::numeric_limits<float>::infinity();
-	const float NEG_INFINITY = -std::numeric_limits<float>::infinity();
+	constexpr float NEG_INFINITY = -std::numeric_limits<float>::infinity();
+
+	constexpr float EPSILON = 0.001f;
 
 	static float approach( float current, float target, float delta )
 	{
@@ -26,16 +28,15 @@ namespace suprengine::math
 		return target;
 	}
 
-	inline bool near_zero( float val, float epsilon = 0.001f )
+	static bool near_zero( float val, float epsilon = EPSILON )
 	{
-		if ( fabs( val ) <= epsilon )
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return fabs( val ) <= epsilon;
+	}
+
+	static bool near( float value, float target, float epsilon = EPSILON )
+	{
+		float diff = abs( value - target );
+		return diff <= epsilon;
 	}
 
 	template <typename T>
