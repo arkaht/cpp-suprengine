@@ -2,7 +2,7 @@
 #include <suprengine/ecs/component.h>
 
 #include <suprengine/ecs/entity.h>
-#include <suprengine/ecs/components/transform.hpp>
+#include <suprengine/ecs/components/transform.h>
 
 namespace suprengine
 {
@@ -21,7 +21,7 @@ namespace suprengine
 
 			//  forward/backward
 			if ( game->is_key_down( SDL_SCANCODE_W ) || game->is_key_down( SDL_SCANCODE_UP ) )
-				dir += transform->get_forward();	
+				dir += transform->get_forward();
 			if ( game->is_key_down( SDL_SCANCODE_S ) || game->is_key_down( SDL_SCANCODE_DOWN ) )
 				dir -= transform->get_forward();
 			//  right/left
@@ -35,11 +35,14 @@ namespace suprengine
 			if ( game->is_key_down( SDL_SCANCODE_Q ) )
 				dir -= transform->get_up();
 
-			if ( dir == Vec3::zero )
-				return;
+			if ( dir == Vec3::zero ) return;
+
+			printf( "%f/%f/%f\n", dir.x, dir.y, dir.z );
 
 			float speed = ( game->is_key_down( SDL_SCANCODE_LSHIFT ) ? sprint_speed : move_speed ) * dt;
-			transform->set_location( transform->location - dir.normalized() * speed );
+			Vec3 move_dir = dir.normalized() * speed;
+			printf( "%f/%f/%f\n", move_dir.x, move_dir.y, move_dir.z );
+			transform->set_location( transform->location + move_dir );
 		}
 	};
 }

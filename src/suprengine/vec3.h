@@ -90,6 +90,8 @@ namespace suprengine
 
 		operator Vec2() { return Vec2 { x, y }; }
 
+		Vec3 operator-() const { return Vec3 { -x, -y, -z }; }
+
 		bool operator==( const Vec2& vec2 )
 		{
 			return x == vec2.x

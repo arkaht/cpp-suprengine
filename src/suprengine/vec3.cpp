@@ -6,7 +6,7 @@ using namespace suprengine;
 
 const Vec3 Vec3::zero( 0.0f, 0.0f, 0.0f ), Vec3::one( 1.0f, 1.0f, 1.0f );
 const Vec3 Vec3::unit_x( 1.0f, 0.0f, 0.0f ), Vec3::unit_y( 0.0f, 1.0f, 0.0f ), Vec3::unit_z( 0.0f, 0.0f, 1.0f );
-const Vec3 Vec3::right( Vec3::unit_x ), Vec3::up( Vec3::unit_y ), Vec3::forward( Vec3::unit_z );
+const Vec3 Vec3::right( -1.0f, 0.0f, 0.0f ), Vec3::up( 0.0f, 1.0f, 0.0f ), Vec3::forward( 0.0f, 0.0f, -1.0f );
 const Vec3 Vec3::neg_unit_x( -1.0f, 0.0f, 0.0f ), Vec3::neg_unit_y( 0.0f, -1.0f, 0.0f ), Vec3::neg_unit_z( 0.0f, 0.0f, -1.0f );
 const Vec3 Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 const Vec3 Vec3::neg_infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
@@ -20,17 +20,22 @@ void Vec3::set( float xP, float yP, float zP )
 
 float Vec3::length_sqr() const
 {
-	return ( x * x + y * y + z * z );
+	return x * x + y * y + z * z;
 }
 
 float Vec3::length() const
 {
-	return ( math::sqrt( length_sqr() ) );
+	float len = length_sqr();
+	if ( len == 0.0f ) return 0.0f;
+
+	return math::sqrt( len );
 }
 
 void Vec3::normalize()
 {
 	float len = length();
+	if ( len == 0.0f ) return;
+
 	x /= len;
 	y /= len;
 	z /= len;
@@ -38,8 +43,9 @@ void Vec3::normalize()
 
 Vec3 Vec3::normalized() const
 {
-	float mag = length();
-	return Vec3( x / mag, y / mag, z / mag );
+	Vec3 v( x, y, z );
+	v.normalize();
+	return v;
 }
 
 Vec3 Vec3::transform( const Vec3& vec, const Mtx4& mat, float w )

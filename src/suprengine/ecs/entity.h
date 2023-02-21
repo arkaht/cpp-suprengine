@@ -3,7 +3,7 @@
 #include "entity.fwd.h"
 #include "component.fwd.h"
 #include "components/collider.fwd.h"
-#include "components/transform.hpp"
+#include "components/transform.h"
 
 #include <suprengine/game.h>
 #include <suprengine/mtx4.h>

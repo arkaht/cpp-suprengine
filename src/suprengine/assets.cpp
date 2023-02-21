@@ -265,7 +265,7 @@ Mesh* Assets::load_mesh_from_file( rconst_str path, bool append_resources_path )
 	}
 
 	std::vector<unsigned int> indices;
-	indices.reserve( indJson.Size() * 3.0 );
+	indices.reserve( (size_t) ( indJson.Size() * 3.0f ) );
 	for ( rapidjson::SizeType i = 0; i < indJson.Size(); i++ )
 	{
 		const rapidjson::Value& ind = indJson[i];

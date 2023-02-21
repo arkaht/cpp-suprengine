@@ -99,6 +99,9 @@
     <ClCompile Include="src\suprengine\mesh.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="src\suprengine\ecs\components\transform.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\suprengine\color.h">
@@ -263,7 +266,7 @@
     <ClInclude Include="src\suprengine\ecs\components\mouse-follower.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\suprengine\ecs\components\transform.hpp">
+    <ClInclude Include="src\suprengine\ecs\components\transform.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\suprengine\opengl\opengl-texture.hpp">

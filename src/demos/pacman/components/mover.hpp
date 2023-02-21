@@ -2,7 +2,7 @@
 #include <suprengine/ecs/component.h>
 
 #include <suprengine/ecs/entity.h>
-#include <suprengine/ecs/components/transform.hpp>
+#include <suprengine/ecs/components/transform.h>
 #include <suprengine/vec2.h>
 
 #include "../entities/level.h"

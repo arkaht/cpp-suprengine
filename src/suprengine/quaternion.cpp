@@ -59,7 +59,7 @@ void Quaternion::normalize()
 
 Quaternion Quaternion::look_at( const Vec3& origin, const Vec3& target, const Vec3& forward, const Vec3& up )
 {
-	Vec3 dir = ( origin - target ).normalized();
+	Vec3 dir = -( origin - target ).normalized();
 
 	//  compute rotation axis
 	Vec3 axis = Vec3::cross( forward, dir ).normalized();

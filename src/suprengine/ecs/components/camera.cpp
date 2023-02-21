@@ -88,11 +88,12 @@ const Mtx4& Camera::get_view_matrix()
 	if ( is_view_matrix_dirty || transform->is_matrix_dirty )
 	{
 		//  TODO: fix this for 2D
-		view_matrix = Mtx4::create_from_quaternion( transform->rotation )
-			* Mtx4::create_translation( transform->location + offset );
+		Vec3 origin = transform->location + offset;
+		view_matrix = Mtx4::create_look_at( origin, origin + transform->get_forward(), Vec3::up );
 
-		printf( "hello %f x:%f y:%f\n", zoom, viewport.x, viewport.y );
 		is_view_matrix_dirty = false;
+
+		//  compute transform for external uses
 		transform->get_matrix();
 	}
 
