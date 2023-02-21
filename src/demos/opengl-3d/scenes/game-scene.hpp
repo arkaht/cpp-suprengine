@@ -81,7 +81,7 @@ namespace demo_opengl3d
 			auto camera_owner = new Entity();
 			new Mover( camera_owner );
 			auto camera = new Camera( camera_owner, 77.7f );
-			camera->transform->rotation = Quaternion( Vec3 { 0.0f, 30.0f, 0.0f } * math::DEG2RAD );
+			//camera->transform->rotation = Quaternion( Vec3 { 0.0f, 30.0f, 0.0f } * math::DEG2RAD );
 			//camera->transform->location = Vec3 { 5.0f, 5.0f, 0.0f };
 			//camera->transform->look_at( cube->transform->location );
 			new TargetRotator( camera_owner, cube->transform );

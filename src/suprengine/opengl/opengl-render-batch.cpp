@@ -152,26 +152,31 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 
 void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color )
 {
-	quad_vertex_array->activate();
-	texture_shader->activate();
-	texture->activate();
-
 	//  setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
 	Mtx4 rotation_matrix = Mtx4::create_rotation_z( rotation );
 	Mtx4 location_matrix = compute_location_matrix( dest_rect.x, dest_rect.y, 0.0f );
-	texture_shader->set_mtx4( "u_world_transform", scale_matrix * rotation_matrix * location_matrix );
+	draw_texture( scale_matrix * rotation_matrix * location_matrix, texture, origin, src_rect, color );
+}
+
+void OpenGLRenderBatch::draw_texture( const Mtx4& matrix, Texture* texture, const Vec2& origin, const Rect& src_rect, const Color& color )
+{
+	quad_vertex_array->activate();
+	texture_shader->activate();
+	texture->activate();
+
+	texture_shader->set_mtx4( "u_world_transform", matrix );
 
 	//  set modulate
 	texture_shader->set_vec4( "u_modulate", color );
 
 	//  source rect
 	Vec2 size = texture->get_size();
-	texture_shader->set_vec4( "u_source_rect", 
-		src_rect.x / size.x, 
-		src_rect.y / size.y, 
-		src_rect.w / size.x, 
-		src_rect.h / size.y 
+	texture_shader->set_vec4( "u_source_rect",
+		src_rect.x / size.x,
+		src_rect.y / size.y,
+		src_rect.w / size.x,
+		src_rect.h / size.y
 	);
 
 	//  origin
