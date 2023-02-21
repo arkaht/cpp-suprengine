@@ -58,8 +58,7 @@ void Camera::look_at( const Vec3& target )
 	transform->set_rotation( 
 		Quaternion::look_at(
 			transform->location + offset, 
-			target, 
-			Vec3::forward,
+			target,
 			Vec3::up
 		) 
 	);

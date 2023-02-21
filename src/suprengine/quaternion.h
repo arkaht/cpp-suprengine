@@ -155,7 +155,11 @@ namespace suprengine
 			return retVal;
 		}
 
-		static Quaternion look_at( const Vec3& origin, const Vec3& target, const Vec3& forward, const Vec3& up );
+		static Quaternion look_at( const Vec3& forward, const Vec3& up );
+		static Quaternion look_at( const Vec3& origin, const Vec3& target, const Vec3& up )
+		{
+			return look_at( target - origin, up );
+		}
 
 		static const Quaternion identity;
 	};

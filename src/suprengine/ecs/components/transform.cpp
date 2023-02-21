@@ -47,7 +47,6 @@ void Transform::look_at( const Vec3& target )
 	rotation = Quaternion::look_at(
 		location,
 		target,
-		Vec3::forward,
 		Vec3::up
 	);
 	printf( "%f | %f | %f | %f\n", rotation.x, rotation.y, rotation.z, rotation.w );

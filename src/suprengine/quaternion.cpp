@@ -60,18 +60,60 @@ void Quaternion::normalize()
 	w /= len;
 }
 
-Quaternion Quaternion::look_at( const Vec3& origin, const Vec3& target, const Vec3& forward, const Vec3& up )
+//  https://answers.unity.com/questions/467614/what-is-the-source-code-of-quaternionlookrotation.html
+Quaternion Quaternion::look_at( const Vec3& forward, const Vec3& up )
 {
-	Vec3 dir = -( origin - target ).normalized();
+    Vec3 dir = forward.normalized();
+    Vec3 axis = Vec3::cross( up, dir ).normalized();
+    Vec3 vector3 = Vec3::cross( dir, axis );
+    float m00 = axis.x;
+    float m01 = axis.y;
+    float m02 = axis.z;
+    float m10 = vector3.x;
+    float m11 = vector3.y;
+    float m12 = vector3.z;
+    float m20 = dir.x;
+    float m21 = dir.y;
+    float m22 = dir.z;
 
-	//  compute rotation axis
-	Vec3 axis = Vec3::cross( forward, dir ).normalized();
-	if ( axis == Vec3::zero )
-		axis = up;
 
-	//  find the angle around rotation axis
-	float dot = Vec3::dot( forward, dir );
-	float angle = std::acosf( dot );
-
-	return Quaternion( axis, angle );
+    float num8 = ( m00 + m11 ) + m22;
+    Quaternion quaternion;
+    if ( num8 > 0.0f )
+    {
+        float num = math::sqrt( num8 + 1.0f );
+        quaternion.w = num * 0.5f;
+        num = 0.5f / num;
+        quaternion.x = ( m12 - m21 ) * num;
+        quaternion.y = ( m20 - m02 ) * num;
+        quaternion.z = ( m01 - m10 ) * num;
+        return quaternion;
+    }
+    if ( ( m00 >= m11 ) && ( m00 >= m22 ) )
+    {
+        float num7 = math::sqrt( ( ( 1.0f + m00 ) - m11 ) - m22 );
+        float num4 = 0.5f / num7;
+        quaternion.x = 0.5f * num7;
+        quaternion.y = ( m01 + m10 ) * num4;
+        quaternion.z = ( m02 + m20 ) * num4;
+        quaternion.w = ( m12 - m21 ) * num4;
+        return quaternion;
+    }
+    if ( m11 > m22 )
+    {
+        float num6 = math::sqrt( ( ( 1.0f + m11 ) - m00 ) - m22 );
+        float num3 = 0.5f / num6;
+        quaternion.x = ( m10 + m01 ) * num3;
+        quaternion.y = 0.5f * num6;
+        quaternion.z = ( m21 + m12 ) * num3;
+        quaternion.w = ( m20 - m02 ) * num3;
+        return quaternion;
+    }
+    float num5 = math::sqrt( ( ( 1.0f + m22 ) - m00 ) - m11 );
+    float num2 = 0.5f / num5;
+    quaternion.x = ( m20 + m02 ) * num2;
+    quaternion.y = ( m21 + m12 ) * num2;
+    quaternion.z = 0.5f * num5;
+    quaternion.w = ( m01 - m10 ) * num2;
+    return quaternion;
 }
