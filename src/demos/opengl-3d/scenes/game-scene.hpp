@@ -7,6 +7,7 @@
 #include <suprengine/ecs/components/renderers/text-renderer.hpp>
 #include <suprengine/ecs/components/renderers/mesh-renderer.hpp>
 #include <suprengine/ecs/components/mover.hpp>
+#include <suprengine/ecs/components/mouse-looker.hpp>
 
 using namespace suprengine;
 
@@ -54,6 +55,7 @@ namespace demo_opengl3d
 		{
 			printf( "\n" );
 
+			game->get_inputs()->set_relative_mouse_mode( true );
 			game->get_render_batch()->set_background_color( Color::from_0x( 0x252627FF ) );
 
 			auto sphere = new Entity();
@@ -87,11 +89,12 @@ namespace demo_opengl3d
 
 			auto camera_owner = new Entity();
 			new Mover( camera_owner );
+			new MouseLooker( camera_owner );
+			//new TargetRotator( camera_owner, cube->transform );
 			auto camera = new Camera( camera_owner, 77.7f );
 			//camera->transform->rotation = Quaternion( Vec3 { 0.0f, 30.0f, 0.0f } * math::DEG2RAD );
 			camera->transform->location = Vec3 { 0.9f, 0.0f, 0.1f };
 			//camera->transform->look_at( cube->transform->location );
-			new TargetRotator( camera_owner, cube->transform );
 			//new TimeRotator( camera_owner );
 		}
 	};

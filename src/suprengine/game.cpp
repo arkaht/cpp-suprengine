@@ -24,11 +24,10 @@ Game::~Game()
 	//  release assets
 	Assets::release();
 
-	//  release renderer
+	//  free dependencies
 	delete render_batch;
-
-	//  release window
 	delete window;
+	delete inputs;
 
 	//  quit sdl
 	SDL_Quit();
@@ -141,56 +140,8 @@ void Game::remove_collider( Collider* collider )
 	colliders.erase( itr );  //  don't swap or you need to sort again!
 }
 
-bool Game::is_key_pressed( SDL_Scancode code )
-{
-	return get_key_state( code ) == KeyState::PRESSED;
-}
-
-bool Game::is_key_released( SDL_Scancode code )
-{
-	return get_key_state( code ) == KeyState::RELEASED;
-}
-
-bool Game::is_key_down( SDL_Scancode code )
-{
-	KeyState state = get_key_state( code );
-	return state == KeyState::DOWN || state == KeyState::PRESSED;
-}
-
-bool Game::is_key_up( SDL_Scancode code )
-{
-	KeyState state = get_key_state( code );
-	return state == KeyState::UP || state == KeyState::RELEASED;
-}
-
-KeyState Game::get_key_state( SDL_Scancode code )
-{
-	if ( keystates.find( code ) == keystates.end() ) return KeyState::UP;
-	return keystates[code];
-}
-
 void Game::process_input()
 {
-	//  survey keystates
-	//  NOTE: subject to key repeat :(
-	if ( !survey_keys.empty() )
-	{
-		for ( auto itr = survey_keys.begin(); itr != survey_keys.end(); itr++ )
-		{
-			SDL_Scancode code = *itr;
-			switch ( get_key_state( code ) )
-			{
-			case KeyState::PRESSED:
-				keystates[code] = KeyState::DOWN;
-				break;
-			case KeyState::RELEASED:
-				keystates[code] = KeyState::UP;
-				break;
-			}
-		}
-		survey_keys.clear();
-	}
-
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
 	{
@@ -198,16 +149,6 @@ void Game::process_input()
 
 		switch ( event.type )
 		{
-		case SDL_KEYUP:
-			code = event.key.keysym.scancode;
-			keystates[code] = KeyState::RELEASED;
-			survey_keys.insert( code );
-			break;
-		case SDL_KEYDOWN:
-			code = event.key.keysym.scancode;
-			keystates[code] = KeyState::PRESSED;
-			survey_keys.insert( code );
-			break;
 		//  quit game
 		case SDL_QUIT:
 			_is_running = false;
@@ -216,12 +157,12 @@ void Game::process_input()
 	}
 	
 	//  quit
-	if ( is_key_pressed( SDL_SCANCODE_ESCAPE ) )
+	if ( inputs->is_key_pressed( SDL_SCANCODE_ESCAPE ) )
 	{
 		_is_running = false;
 	}
 	//  toggle debug
-	if ( is_key_pressed( SDL_SCANCODE_COMMA ) )
+	if ( inputs->is_key_pressed( SDL_SCANCODE_COMMA ) )
 	{
 		is_debug = !is_debug;
 	}
@@ -229,6 +170,8 @@ void Game::process_input()
 
 void Game::update( float dt )
 {
+	inputs->update();
+
 	//  add pending entities to active
 	if ( !pending_entities.empty() )
 	{

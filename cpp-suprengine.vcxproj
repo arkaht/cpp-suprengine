@@ -135,6 +135,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\suprengine\ecs\components\camera.cpp" />
+    <ClCompile Include="src\suprengine\ecs\components\mouse-looker.hpp">
+      <FileType>CppHeader</FileType>
+    </ClCompile>
     <ClCompile Include="src\suprengine\ecs\components\transform.cpp" />
     <ClCompile Include="src\suprengine\mesh.cpp" />
     <ClCompile Include="src\suprengine\quaternion.cpp" />
@@ -175,6 +178,7 @@
     <ClInclude Include="src\suprengine\ecs\components\mouse-follower.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\renderers\mesh-renderer.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\transform.h" />
+    <ClInclude Include="src\suprengine\input-manager.h" />
     <ClInclude Include="src\suprengine\mesh.h" />
     <ClInclude Include="src\suprengine\opengl\opengl-mesh.hpp" />
     <ClInclude Include="src\suprengine\opengl\opengl-texture.hpp" />

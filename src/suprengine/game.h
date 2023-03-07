@@ -8,22 +8,14 @@
 #include "ecs/components/collider.fwd.h"
 #include "scene.fwd.h"
 #include "timer.hpp"
+#include "input-manager.h"
 
 #include <suprengine/ecs/components/camera.h>
 
 #include <vector>
-#include <unordered_set>
 
 namespace suprengine
 {
-	enum class KeyState
-	{
-		UP,
-		DOWN,
-		PRESSED,
-		RELEASED,
-	};
-
 	class Game
 	{
 	private:
@@ -41,13 +33,12 @@ namespace suprengine
 
 		Window* window { nullptr };
 		RenderBatch* render_batch { nullptr };
-		
+		InputManager* inputs { nullptr };
+
 		Updater updater {};
 
 		Scene* scene { nullptr };
 
-		std::map<SDL_Scancode, KeyState> keystates;
-		std::unordered_set<SDL_Scancode> survey_keys;
 	public:
 		Camera* camera { nullptr };
 		bool is_debug { false };
@@ -79,6 +70,9 @@ namespace suprengine
 			//  init assets
 			Assets::set_render_batch( render_batch );
 
+			//  init input manager
+			inputs = new InputManager();
+
 			return true;
 		}
 		void loop();
@@ -95,14 +89,9 @@ namespace suprengine
 		void add_collider( Collider* collider );
 		void remove_collider( Collider* collider );
 
-		bool is_key_pressed( SDL_Scancode code );
-		bool is_key_released( SDL_Scancode code );
-		bool is_key_down( SDL_Scancode code );
-		bool is_key_up( SDL_Scancode code );
-		KeyState get_key_state( SDL_Scancode code );
-
 		Window* get_window() const { return window; }
 		RenderBatch* get_render_batch() const { return render_batch; }
 		Updater* get_timer() { return &updater; }
+		InputManager* get_inputs() { return inputs; }
 	};
 }

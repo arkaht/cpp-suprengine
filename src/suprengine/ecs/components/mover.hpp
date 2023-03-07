@@ -16,31 +16,31 @@ namespace suprengine
 
 		void update( float dt ) override
 		{
-			Game* game = owner->get_game();
+			InputManager* inputs = owner->get_game()->get_inputs();
 			Vec3 dir {};
 
 			//  forward/backward
-			if ( game->is_key_down( SDL_SCANCODE_W ) || game->is_key_down( SDL_SCANCODE_UP ) )
+			if ( inputs->is_key_down( SDL_SCANCODE_W ) || inputs->is_key_down( SDL_SCANCODE_UP ) )
 				dir += transform->get_forward();
-			if ( game->is_key_down( SDL_SCANCODE_S ) || game->is_key_down( SDL_SCANCODE_DOWN ) )
+			if ( inputs->is_key_down( SDL_SCANCODE_S ) || inputs->is_key_down( SDL_SCANCODE_DOWN ) )
 				dir -= transform->get_forward();
 
 			//  right/left
-			if ( game->is_key_down( SDL_SCANCODE_D ) || game->is_key_down( SDL_SCANCODE_RIGHT ) )
+			if ( inputs->is_key_down( SDL_SCANCODE_D ) || inputs->is_key_down( SDL_SCANCODE_RIGHT ) )
 				dir += transform->get_right();
-			if ( game->is_key_down( SDL_SCANCODE_A ) || game->is_key_down( SDL_SCANCODE_LEFT ) )
+			if ( inputs->is_key_down( SDL_SCANCODE_A ) || inputs->is_key_down( SDL_SCANCODE_LEFT ) )
 				dir -= transform->get_right();
 
 			//  up/down
-			if ( game->is_key_down( SDL_SCANCODE_E ) )
+			if ( inputs->is_key_down( SDL_SCANCODE_E ) )
 				dir += transform->get_up();
-			if ( game->is_key_down( SDL_SCANCODE_Q ) )
+			if ( inputs->is_key_down( SDL_SCANCODE_Q ) )
 				dir -= transform->get_up();
 
 			if ( dir == Vec3::zero ) return;
 
 			//  apply movement
-			float speed = ( game->is_key_down( SDL_SCANCODE_LSHIFT ) ? sprint_speed : move_speed ) * dt;
+			float speed = ( inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? sprint_speed : move_speed ) * dt;
 			Vec3 move_dir = dir.normalized() * speed;
 			transform->set_location( transform->location + move_dir );
 		}
