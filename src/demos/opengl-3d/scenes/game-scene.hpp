@@ -15,11 +15,13 @@ namespace demo_opengl3d
 	class TimeRotator : public Component
 	{
 	public:
-		TimeRotator( Entity* owner ) : Component( owner ) {}
+		Vec3 axis;
+
+		TimeRotator( Entity* owner, const Vec3& axis ) : axis( axis ), Component( owner ) {}
 
 		void update( float dt ) override
 		{
-			Quaternion increment = Quaternion( Vec3::forward, dt  );
+			Quaternion increment = Quaternion( axis, dt );
 			Quaternion rotation = Quaternion::concatenate( owner->transform->rotation, increment );
 			transform->set_rotation( rotation );
 		}
@@ -63,7 +65,7 @@ namespace demo_opengl3d
 			//cube->transform->rotation = Quaternion( Vec3 { 45.0f, 45.0f, 45.0f } * math::DEG2RAD );
 			cube->transform->look_at( sphere->transform->location );
 			new MeshRenderer( cube, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/cube.gpmesh", false ) );
-			//new TimeRotator( cube );
+			new TimeRotator( cube, Vec3::one );
 
 			/*new MouseFollower( ent );
 			new TimeRotator( ent );
@@ -81,7 +83,7 @@ namespace demo_opengl3d
 			auto text = new Entity();
 			text->transform->location = Vec3 { 0.0f, 0.0f, 5.0f };
 			new TextRenderer( text, Assets::get_font( "PressStart2P.ttf" ), "3D?" );
-			new TimeRotator( text );
+			//new TimeRotator( text, Vec3::one );
 
 			auto camera_owner = new Entity();
 			new Mover( camera_owner );

@@ -63,7 +63,7 @@ void Quaternion::normalize()
 //  https://answers.unity.com/questions/467614/what-is-the-source-code-of-quaternionlookrotation.html
 Quaternion Quaternion::look_at( const Vec3& forward, const Vec3& up )
 {
-    Vec3 dir = forward.normalized();
+    Vec3 dir = -forward.normalized();
     Vec3 axis = Vec3::cross( up, dir ).normalized();
     Vec3 vector3 = Vec3::cross( dir, axis );
     float m00 = axis.x;

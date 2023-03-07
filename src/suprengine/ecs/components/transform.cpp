@@ -49,7 +49,7 @@ void Transform::look_at( const Vec3& target )
 		target,
 		Vec3::up
 	);
-	printf( "%f | %f | %f | %f\n", rotation.x, rotation.y, rotation.z, rotation.w );
+
 	is_matrix_dirty = true;
 }
 
