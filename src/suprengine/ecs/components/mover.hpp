@@ -33,9 +33,9 @@ namespace suprengine
 
 			//  up/down
 			if ( inputs->is_key_down( SDL_SCANCODE_E ) )
-				dir += transform->get_up();
+				dir += Vec3::up;
 			if ( inputs->is_key_down( SDL_SCANCODE_Q ) )
-				dir -= transform->get_up();
+				dir -= Vec3::up;
 
 			if ( dir == Vec3::zero ) return;
 
