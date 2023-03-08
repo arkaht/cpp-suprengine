@@ -17,12 +17,14 @@ namespace demo_opengl3d
 	{
 	public:
 		Vec3 axis;
+		float speed;
 
-		TimeRotator( Entity* owner, const Vec3& axis ) : axis( axis ), Component( owner ) {}
+		TimeRotator( Entity* owner, const Vec3& axis, float speed = 1.0f ) 
+			: axis( axis ), speed( speed ), Component( owner ) {}
 
 		void update( float dt ) override
 		{
-			Quaternion increment = Quaternion( axis, dt );
+			Quaternion increment = Quaternion( axis, speed * dt );
 			Quaternion rotation = Quaternion::concatenate( owner->transform->rotation, increment );
 			transform->set_rotation( rotation );
 		}
@@ -61,6 +63,7 @@ namespace demo_opengl3d
 			auto sphere = new Entity();
 			sphere->transform->location = Vec3 { 0.0f, 10.0f, 25.0f };
 			new MeshRenderer( sphere, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/sphere.gpmesh", false ) );
+			new TimeRotator( sphere, Vec3::one, 0.5f );
 
 			auto cube = new Entity();
 			cube->transform->location = Vec3 { 0.0f, 00.0f, -10.0f };
@@ -93,7 +96,7 @@ namespace demo_opengl3d
 			//new TargetRotator( camera_owner, cube->transform );
 			auto camera = new Camera( camera_owner, 77.7f );
 			//camera->transform->rotation = Quaternion( Vec3 { 0.0f, 30.0f, 0.0f } * math::DEG2RAD );
-			camera->transform->location = Vec3 { 0.9f, 0.0f, 0.1f };
+			//camera->transform->location = Vec3 { 0.9f, 0.0f, 0.1f };
 			//camera->transform->look_at( cube->transform->location );
 			//new TimeRotator( camera_owner );
 		}

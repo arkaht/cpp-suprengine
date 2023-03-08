@@ -142,13 +142,16 @@ void Game::remove_collider( Collider* collider )
 
 void Game::process_input()
 {
+	inputs->mouse_delta = Vec2::zero;
+
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
 	{
-		SDL_Scancode code;
-
 		switch ( event.type )
 		{
+		case SDL_MOUSEMOTION:
+			inputs->mouse_delta = { (float) event.motion.xrel, (float) event.motion.yrel };
+			break;
 		//  quit game
 		case SDL_QUIT:
 			_is_running = false;

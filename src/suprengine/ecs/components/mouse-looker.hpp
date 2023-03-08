@@ -16,7 +16,7 @@ namespace suprengine
 		void update( float dt ) override
 		{
 			InputManager* inputs = owner->get_game()->get_inputs();
-			Vec2 delta = inputs->get_mouse_delta();
+			Vec2 delta = inputs->mouse_delta;
 
 			Quaternion new_rotation = transform->rotation;
 			new_rotation = Quaternion::concatenate( new_rotation, Quaternion( Vec3::up, delta.x * sensitivity * dt ) );

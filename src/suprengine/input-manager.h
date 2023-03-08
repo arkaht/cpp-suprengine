@@ -19,9 +19,11 @@ namespace suprengine
 		const uint8_t* current_states;
 
 		uint32_t last_mouse_state, current_mouse_state;
-		Vec2 last_mouse_pos {}, 
-			 current_mouse_pos {};
+		Vec2 last_mouse_pos{},
+			 current_mouse_pos{};
 	public:
+		Vec2 mouse_delta {};
+
 		InputManager()
 		{
 			SDL_memset( previous_states, 0, SDL_NUM_SCANCODES );  //  init everything to 0
@@ -73,7 +75,6 @@ namespace suprengine
 		bool is_key_up( SDL_Scancode key ) { return get_key_state( key ) == KeyState::UP; }
 		bool is_key_down( SDL_Scancode key ) { return get_key_state( key ) == KeyState::DOWN; }
 
-		Vec2 get_mouse_delta() { return current_mouse_pos - last_mouse_pos; }
 		void set_relative_mouse_mode( bool value ) { SDL_SetRelativeMouseMode( value ? SDL_TRUE : SDL_FALSE ); }
 	};
 }
