@@ -39,6 +39,19 @@ namespace suprengine::math
 		return diff <= epsilon;
 	}
 
+	static float modulo( float value, float div )
+	{
+		if ( value >= 0 )
+			return fmodf( value, div );
+		
+		return value - floor( value / div ) * div;
+	}
+
+	static float normalize_angle( float ang )
+	{
+		return modulo( ang + math::PI, math::DOUBLE_PI ) - math::PI;
+	}
+
 	template <typename T>
 	T max( const T& a, const T& b )
 	{

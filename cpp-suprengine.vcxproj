@@ -135,9 +135,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\suprengine\ecs\components\camera.cpp" />
-    <ClCompile Include="src\suprengine\ecs\components\mouse-looker.hpp">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
     <ClCompile Include="src\suprengine\ecs\components\transform.cpp" />
     <ClCompile Include="src\suprengine\mesh.cpp" />
     <ClCompile Include="src\suprengine\quaternion.cpp" />
@@ -170,6 +167,7 @@
     <ClCompile Include="src\suprengine\vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\suprengine\ecs\components\mouse-looker.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\mover.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\transform.fwd.h" />
     <ClInclude Include="src\suprengine\game.fwd.h" />
