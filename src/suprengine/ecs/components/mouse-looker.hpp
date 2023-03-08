@@ -20,7 +20,7 @@ namespace suprengine
 
 			Quaternion new_rotation = transform->rotation;
 			new_rotation = Quaternion::concatenate( new_rotation, Quaternion( Vec3::up, delta.x * sensitivity * dt ) );
-			new_rotation = Quaternion::concatenate( new_rotation, Quaternion( Vec3::right, -delta.y * sensitivity * dt ) );
+			new_rotation = Quaternion::concatenate( new_rotation, Quaternion( transform->get_right(), delta.y * sensitivity * dt ) );
 			transform->set_rotation( new_rotation );
 		}
 	};
