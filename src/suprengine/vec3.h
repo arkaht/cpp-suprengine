@@ -151,6 +151,15 @@ namespace suprengine
 			};
 		}
 
+		static Vec3 sqrt( const Vec3& current )
+		{
+			return Vec3 {
+				math::sqrt( current.x ),
+				math::sqrt( current.y ),
+				math::sqrt( current.z )
+			};
+		}
+
 		static Vec3 transform( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );
 
 		// This will transform the vector and renormalize the w component

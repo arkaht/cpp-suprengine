@@ -20,6 +20,9 @@ namespace suprengine
 		static RenderBatch* render_batch;
 		static std::string resources_path;
 	public:
+		static const std::string PRIMITIVE_CUBE_PATH;
+		static const std::string PRIMITIVE_SPHERE_PATH;
+
 		Assets() = delete;
 
 		static void set_render_batch( RenderBatch* _render_batch ) { render_batch = _render_batch; }

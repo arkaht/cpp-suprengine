@@ -1,12 +1,14 @@
 #pragma once
 
 #include <suprengine/scene.h>
-#include <suprengine/ecs/components/mouse-follower.hpp>
 #include <suprengine/ecs/components/renderers/rect-renderer.hpp>
 #include <suprengine/ecs/components/renderers/sprite-renderer.hpp>
 #include <suprengine/ecs/components/renderers/text-renderer.hpp>
 #include <suprengine/ecs/components/renderers/mesh-renderer.hpp>
+#include <suprengine/ecs/components/box-collider.hpp>
+#include <suprengine/ecs/components/sphere-collider.hpp>
 #include <suprengine/ecs/components/mover.hpp>
+#include <suprengine/ecs/components/mouse-follower.hpp>
 #include <suprengine/ecs/components/mouse-looker.hpp>
 #include <suprengine/event.hpp>
 
@@ -35,9 +37,9 @@ namespace demo_opengl3d
 	class TargetRotator : public Component
 	{
 	private:
-		Vec3 last_pos{};
+		Vec3 last_pos {};
 	public:
-		Transform* target{ nullptr };
+		Transform* target { nullptr };
 
 		TargetRotator( Entity* owner, Transform* target ) : target( target ), Component( owner )
 		{}
@@ -48,6 +50,32 @@ namespace demo_opengl3d
 
 			transform->look_at( target->location );
 			//last_pos = transform->location;
+		}
+	};
+
+	class Raycaster : public Component
+	{
+	private:
+	public:
+		Vec3 local_dir;
+
+		Raycaster( Entity* owner, Vec3 local_dir = Vec3::forward ) : local_dir( local_dir ), Component( owner ) {}
+
+		void update( float dt ) override
+		{
+			/*
+			Physics* physics = owner->get_game()->get_physics();
+
+			RayHit hit;
+			if ( physics->raycast( ray, &hit ) ) 
+			{
+				printf( "hit at %f %f %f on %p\n", hit->point.x, hit->point.y, hit->point.z, hit->collider );
+			}
+			else 
+			{
+				printf( "no hit\n" ); 
+			}
+			*/
 		}
 	};
 
@@ -110,12 +138,14 @@ namespace demo_opengl3d
 
 			auto sphere = new Entity();
 			sphere->transform->location = Vec3 { 0.0f, 10.0f, 25.0f };
-			new MeshRenderer( sphere, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/sphere.gpmesh", false ) );
+			new MeshRenderer( sphere, Assets::get_mesh( Assets::PRIMITIVE_SPHERE_PATH, false ) );
+			new SphereCollider( sphere, 10.0f );
 			//new TimeRotator( sphere, Vec3::one, 0.5f );
 
 			auto cube = new Entity();
-			cube->transform->location = Vec3 { 0.0f, 00.0f, -10.0f };
+			cube->transform->location = Vec3 { 0.0f, 0.0f, -10.0f };
 
+			//  observer pattern usage (but function-based)
 			AchievementManager* achievement_manager = new AchievementManager();
 			JumpTester* jumper = new JumpTester( cube );
 			jumper->on_jump.listen( "lambda",
@@ -133,7 +163,13 @@ namespace demo_opengl3d
 			//new MouseLooker( cube, 1.0f );
 			//cube->transform->rotation = Quaternion( Vec3 { 45.0f, 45.0f, 45.0f } * math::DEG2RAD );
 			cube->transform->look_at( sphere->transform->location );
-			new MeshRenderer( cube, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/cube.gpmesh", false ) );
+			new MeshRenderer( cube, Assets::get_mesh( Assets::PRIMITIVE_CUBE_PATH, false ) );
+			new BoxCollider( cube, 
+				Box { 
+					Vec3 { -1.0f, 0.0f, 0.0f }, 
+					Vec3 { 1.0f, 0.0f, 0.0f } 
+				} 
+			);
 			//new TimeRotator( cube, Vec3::one );
 
 			/*new MouseFollower( ent );

@@ -1,6 +1,6 @@
 #pragma once
-
 #include "collider.h"
+
 #include <suprengine/ecs/entity.h>
 #include <suprengine/ecs/components/transform.h>
 
@@ -28,6 +28,7 @@ namespace suprengine
 
 			return false;
 		}
+		bool raycast( const Ray& ray, RayHit* hit ) override { return false; }
 
 		void debug_render( RenderBatch* render_batch ) override
 		{
