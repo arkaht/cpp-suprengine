@@ -8,6 +8,7 @@
 #include <suprengine/ecs/components/renderers/mesh-renderer.hpp>
 #include <suprengine/ecs/components/mover.hpp>
 #include <suprengine/ecs/components/mouse-looker.hpp>
+#include <suprengine/event.hpp>
 
 using namespace suprengine;
 
@@ -19,8 +20,9 @@ namespace demo_opengl3d
 		Vec3 axis;
 		float speed;
 
-		TimeRotator( Entity* owner, const Vec3& axis, float speed = 1.0f ) 
-			: axis( axis ), speed( speed ), Component( owner ) {}
+		TimeRotator( Entity* owner, const Vec3& axis, float speed = 1.0f )
+			: axis( axis ), speed( speed ), Component( owner )
+		{}
 
 		void update( float dt ) override
 		{
@@ -33,11 +35,12 @@ namespace demo_opengl3d
 	class TargetRotator : public Component
 	{
 	private:
-		Vec3 last_pos {};
+		Vec3 last_pos{};
 	public:
-		Transform* target { nullptr };
+		Transform* target{ nullptr };
 
-		TargetRotator( Entity* owner, Transform* target ) : target( target ), Component( owner ) {}
+		TargetRotator( Entity* owner, Transform* target ) : target( target ), Component( owner )
+		{}
 
 		void update( float dt ) override
 		{
@@ -47,6 +50,51 @@ namespace demo_opengl3d
 			//last_pos = transform->location;
 		}
 	};
+
+	class JumpTester : public Component
+	{
+	public:
+		Event<JumpTester*, bool> on_jump;
+
+		JumpTester( Entity* owner )
+			: Component( owner ) {}
+
+		void update( float dt ) override
+		{
+			InputManager* inputs = owner->get_game()->get_inputs();
+			if ( inputs->is_key_pressed( SDL_SCANCODE_SPACE ) ) 
+			{
+				transform->set_location( transform->location + Vec3::up * 1.0f );
+
+				on_jump.invoke( this, inputs->is_key_down( SDL_SCANCODE_LSHIFT ) );
+			}
+		}
+	};
+
+	class AchievementManager
+	{
+	private:
+		int jump_count { 0 },
+			unlock_jump_count { 100 };
+	public:
+		void handle_event_jump( JumpTester* jumper, bool is_lshifting )
+		{
+			if ( ++jump_count == unlock_jump_count )
+			{
+				printf( "[Achievement Unlocked] 'No Gravity': 'You pressed the jump button %d times, maybe we will get physics one day?'", unlock_jump_count );
+			}
+			else if ( jump_count == 50 )
+			{
+				jumper->on_jump.unlisten( "test_on_jump" );
+			}
+			printf( "%d/%d\n", jump_count, unlock_jump_count );
+		}
+	};
+
+	void test_on_jump( JumpTester* jumper, bool is_lshifting )
+	{
+		printf( "test_on_jump()\n" );
+	}
 
 	class GameScene : public Scene
 	{
@@ -67,8 +115,22 @@ namespace demo_opengl3d
 
 			auto cube = new Entity();
 			cube->transform->location = Vec3 { 0.0f, 00.0f, -10.0f };
-			new Mover( cube );
-			new MouseLooker( cube, 1.0f );
+
+			AchievementManager* achievement_manager = new AchievementManager();
+			JumpTester* jumper = new JumpTester( cube );
+			jumper->on_jump.listen( "lambda",
+				[]( JumpTester* jumper, bool is_lshifting )
+				{
+					printf( "jump %p %d\n", jumper, is_lshifting );
+				} 
+			);
+			jumper->on_jump.listen( "achievement",
+				std::bind( &AchievementManager::handle_event_jump, achievement_manager, std::placeholders::_1, std::placeholders::_2 )
+			);
+			jumper->on_jump.listen( "test_on_jump", test_on_jump );
+
+			//new Mover( cube );
+			//new MouseLooker( cube, 1.0f );
 			//cube->transform->rotation = Quaternion( Vec3 { 45.0f, 45.0f, 45.0f } * math::DEG2RAD );
 			cube->transform->look_at( sphere->transform->location );
 			new MeshRenderer( cube, Assets::get_mesh( "src/suprengine/assets/meshes/primitives/cube.gpmesh", false ) );

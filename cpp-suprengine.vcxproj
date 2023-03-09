@@ -178,6 +178,7 @@
     <ClInclude Include="src\suprengine\ecs\components\transform.h" />
     <ClInclude Include="src\suprengine\input-manager.h" />
     <ClInclude Include="src\suprengine\mesh.h" />
+    <ClInclude Include="src\suprengine\event.hpp" />
     <ClInclude Include="src\suprengine\opengl\opengl-mesh.hpp" />
     <ClInclude Include="src\suprengine\opengl\opengl-texture.hpp" />
     <ClInclude Include="src\suprengine\quaternion.h" />
