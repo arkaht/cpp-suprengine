@@ -38,7 +38,13 @@ namespace demo_opengl3d
 			mouse_looker = new MouseLooker( this, 1.0f );
 			target_rotator = new TargetRotator( this, player->transform );
 
-			set_mode( current_mode );
+			//  disable all modes
+			_disable_mode( CameraMode::FPS );
+			_disable_mode( CameraMode::TPS );
+			_disable_mode( CameraMode::STATIC );
+
+			//  enable current mode
+			_enable_mode( current_mode );
 		}
 
 		void set_mode( CameraMode mode )
