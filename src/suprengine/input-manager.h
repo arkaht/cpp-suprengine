@@ -60,8 +60,8 @@ namespace suprengine
 
 			return KeyState::UP;
 		}
-		bool is_key_just_pressed( SDL_Scancode key ) { return get_key_state( key ) == KeyState::PRESSED; }
-		bool is_key_just_released( SDL_Scancode key ) { return get_key_state( key ) == KeyState::RELEASED; }
+		bool is_key_just_pressed( SDL_Scancode key ) { return get_key_state( key ) == KeyState::PRESSED; }  //  TODO: fix it, doesn't work
+		bool is_key_just_released( SDL_Scancode key ) { return get_key_state( key ) == KeyState::RELEASED; }  //  TODO: fix it, doesn't work
 		bool is_key_pressed( SDL_Scancode key ) 
 		{
 			KeyState state = get_key_state( key ); 
