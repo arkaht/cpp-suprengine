@@ -5,7 +5,7 @@
 
 namespace suprengine
 {
-	class MouseLooker : Component
+	class MouseLooker : public Component
 	{
 	public:
 		float yaw { 0.0f }, pitch { 0.0f };

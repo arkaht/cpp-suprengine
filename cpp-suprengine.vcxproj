@@ -168,12 +168,14 @@
     <ClCompile Include="src\suprengine\vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\demos\opengl-3d\camera-demo.hpp" />
     <ClInclude Include="src\suprengine\box.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\box-collider.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\mouse-looker.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\mover.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\sphere-collider.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\spring-arm.hpp" />
+    <ClInclude Include="src\suprengine\ecs\components\target-rotator.h" />
     <ClInclude Include="src\suprengine\ecs\components\transform.fwd.h" />
     <ClInclude Include="src\suprengine\game.fwd.h" />
     <ClInclude Include="src\demos\opengl-3d\scenes\game-scene.hpp" />
