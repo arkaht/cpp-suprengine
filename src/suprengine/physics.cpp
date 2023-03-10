@@ -39,10 +39,10 @@ void Physics::update()
 	}
 }
 
-bool Physics::raycast( const Ray& ray, RayHit* hit )
+bool Physics::raycast( _RAYCAST_FUNC_PARAMS )
 {
 	for ( Collider * collider : colliders )
-		if ( collider->raycast( ray, hit ) )
+		if ( collider->raycast( ray, hit, params ) )
 			return true;
 
 	return false;

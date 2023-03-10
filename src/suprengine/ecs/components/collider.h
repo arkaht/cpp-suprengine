@@ -21,7 +21,7 @@ namespace suprengine
 		~Collider() override;
 
 		virtual bool intersects( Collider* other ) = 0;
-		virtual bool raycast( const Ray& ray, RayHit* hit ) = 0;
+		virtual bool raycast( _RAYCAST_FUNC_PARAMS ) = 0;
 
 		void update_collision_with( Collider* other, bool active );
 	};

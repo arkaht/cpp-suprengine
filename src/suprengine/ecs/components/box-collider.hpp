@@ -24,7 +24,7 @@ namespace suprengine
 		bool intersects( Collider* other ) override { return false; }  //  TODO: implement this
 
 		//  source: https://subscription.packtpub.com/book/game+development/9781787123663/14/ch14lvl1sec135/raycast-bounding-box
-		bool raycast( const Ray& ray, RayHit* hit )
+		bool raycast( _RAYCAST_FUNC_PARAMS )
 		{
 			//  get bounds
 			Vec3 min = transform->location + shape.min * transform->scale,  //  TODO: handle rotation (https://answers.unity.com/questions/532297/rotate-a-vector-around-a-certain-point.html)
@@ -57,10 +57,19 @@ namespace suprengine
 			);
 
 			//  check intersection
-			if ( max_t < 0 || min_t > max_t ) 
+			if ( max_t < 0.0f || min_t > max_t ) 
 				return false;
 
-			float result_t = min_t < 0.0f ? max_t : min_t;
+			float result_t = min_t;
+			//  check origin in box
+			if ( min_t <= 0.0f )
+			{
+				if ( !params.can_hit_from_origin )
+					return false;
+
+				result_t = max_t;
+			}
+
 			//  check max distance
 			if ( result_t >= ray.distance ) 
 				return false;

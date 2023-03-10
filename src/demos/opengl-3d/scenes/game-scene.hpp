@@ -7,6 +7,7 @@
 #include <suprengine/ecs/components/renderers/mesh-renderer.hpp>
 #include <suprengine/ecs/components/box-collider.hpp>
 #include <suprengine/ecs/components/sphere-collider.hpp>
+#include <suprengine/ecs/components/spring-arm.hpp>
 #include <suprengine/ecs/components/mover.hpp>
 #include <suprengine/ecs/components/mouse-follower.hpp>
 #include <suprengine/ecs/components/mouse-looker.hpp>
@@ -53,36 +54,6 @@ namespace demo_opengl3d
 		}
 	};
 
-	class Raycaster : public Component
-	{
-	private:
-	public:
-		Vec3 local_dir;
-		float distance = 100.0f;
-
-		Raycaster( Entity* owner, Vec3 local_dir = Vec3::forward ) : local_dir( local_dir ), Component( owner ) {}
-
-		void update( float dt ) override
-		{
-			Physics* physics = owner->get_game()->get_physics();
-
-			Ray ray(
-				transform->location,
-				Vec3::transform( local_dir, transform->rotation ),
-				distance
-			);
-			RayHit hit;
-			if ( physics->raycast( ray, &hit ) )
-			{
-				printf( "hit at %f %f %f on %p\n", hit.point.x, hit.point.y, hit.point.z, hit.collider );
-			}
-			else 
-			{
-				printf( "no hit\n" ); 
-			}
-		}
-	};
-
 	class JumpTester : public Component
 	{
 	public:
@@ -96,7 +67,7 @@ namespace demo_opengl3d
 			InputManager* inputs = owner->get_game()->get_inputs();
 			if ( inputs->is_key_pressed( SDL_SCANCODE_SPACE ) ) 
 			{
-				transform->set_location( transform->location + Vec3::up * 1.0f );
+				transform->set_location( transform->location + Vec3::up * dt * 5.0f );
 
 				on_jump.invoke( this, inputs->is_key_down( SDL_SCANCODE_LSHIFT ) );
 			}
@@ -113,6 +84,7 @@ namespace demo_opengl3d
 		{
 			if ( ++jump_count == unlock_jump_count )
 			{
+				//jumper->on_jump.unlisten( "achievement" );
 				printf( "[Achievement Unlocked] 'No Gravity': 'You pressed the jump button %d times, maybe we will get physics one day?'", unlock_jump_count );
 			}
 			else if ( jump_count == 50 )
@@ -140,14 +112,36 @@ namespace demo_opengl3d
 			game->get_inputs()->set_relative_mouse_mode( true );
 			game->get_render_batch()->set_background_color( Color::from_0x( 0x252627FF ) );
 
+			Mesh* mesh_cube = Assets::get_mesh( Assets::PRIMITIVE_CUBE_PATH, false );
+
 			auto sphere = new Entity();
-			sphere->transform->location = Vec3 { 0.0f, 10.0f, 25.0f };
+			sphere->transform->location = Vec3 { 0.0f, 5.0f, -10.0f };
+			sphere->transform->scale = Vec3 { 0.25f, 0.25f, 0.25f };
 			new MeshRenderer( sphere, Assets::get_mesh( Assets::PRIMITIVE_SPHERE_PATH, false ) );
-			new SphereCollider( sphere, 10.0f );
+			new SphereCollider( sphere, 12.5f );
 			//new TimeRotator( sphere, Vec3::one, 0.5f );
 
+			auto ground = new Entity();
+			ground->transform->scale = Vec3 { 100.0f, 1.0f, 100.0f };
+			new MeshRenderer( ground, mesh_cube );
+			new BoxCollider( ground,
+				Box {
+					Vec3 { -0.5f, -0.5f, -0.5f },
+					Vec3 { 0.5f, 0.5f, 0.5f }
+				}
+			);
+
 			auto cube = new Entity();
-			cube->transform->location = Vec3 { 0.0f, 0.0f, -10.0f };
+			cube->transform->location = Vec3 { 0.0f, 5.0f, 10.0f };
+			new Mover( cube );
+			new MouseLooker( cube, 1.0f );
+			new MeshRenderer( cube, mesh_cube );
+			new BoxCollider( cube,
+				Box {
+					Vec3 { -0.5f, -0.5f, -0.5f },
+					Vec3 { 0.5f, 0.5f, 0.5f }
+				}
+			);
 
 			//  observer pattern usage (but function-based)
 			AchievementManager* achievement_manager = new AchievementManager();
@@ -163,31 +157,6 @@ namespace demo_opengl3d
 			);
 			jumper->on_jump.listen( "test_on_jump", test_on_jump );
 
-			//new Mover( cube );
-			//new MouseLooker( cube, 1.0f );
-			//cube->transform->rotation = Quaternion( Vec3 { 45.0f, 45.0f, 45.0f } * math::DEG2RAD );
-			cube->transform->look_at( sphere->transform->location );
-			new MeshRenderer( cube, Assets::get_mesh( Assets::PRIMITIVE_CUBE_PATH, false ) );
-			new BoxCollider( cube, 
-				Box { 
-					Vec3 { -1.0f, 0.0f, 0.0f }, 
-					Vec3 { 1.0f, 0.0f, 0.0f } 
-				} 
-			);
-			//new TimeRotator( cube, Vec3::one );
-
-			/*new MouseFollower( ent );
-			new TimeRotator( ent );
-
-			( new TextRenderer( ent, Assets::get_font( "PressStart2P.ttf" ), "Hello!" ) )->modulate = Color::green;
-			( new RectRenderer( ent, Rect { 0.0f, 0.0f, 256.0f, 128.0f } ) )->modulate = Color::from_0x( 0xFF000022 );
-			( new RectRenderer( ent, Rect { 1024.0f, 512.0f, 128.0f, 512.0f } ) )->modulate = Color::green;
-			( new RectRenderer( ent, Rect { 512.0f, 128.0f, 128.0f, 256.0f } ) )->modulate = Color::blue;*/
-
-			//auto sprite = new SpriteRenderer( ent, Assets::get_texture( "level.png" ) );
-			//sprite->origin = Vec2::one;
-			//sprite->dest = { 0.0f, 0.0f, 512.0f, 512.0f };
-			//sprite->modulate = Color::from_0x( 0xBFB48FFF );
 
 			auto text = new Entity();
 			text->transform->location = Vec3 { 0.0f, 0.0f, 5.0f };
@@ -195,9 +164,9 @@ namespace demo_opengl3d
 			//new TimeRotator( text, Vec3::one );
 
 			auto camera_owner = new Entity();
-			new Mover( camera_owner );
-			new MouseLooker( camera_owner, 1.0f );
-			new Raycaster( camera_owner );
+			//new Mover( camera_owner );
+			//new MouseLooker( camera_owner, 1.0f );
+			new SpringArm( camera_owner, cube->transform );
 			//new TargetRotator( camera_owner, cube->transform );
 			auto camera = new Camera( camera_owner, 77.7f );
 			//camera->transform->rotation = Quaternion( Vec3 { 0.0f, 30.0f, 0.0f } * math::DEG2RAD );

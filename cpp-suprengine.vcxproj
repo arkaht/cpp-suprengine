@@ -173,6 +173,7 @@
     <ClInclude Include="src\suprengine\ecs\components\mouse-looker.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\mover.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\sphere-collider.hpp" />
+    <ClInclude Include="src\suprengine\ecs\components\spring-arm.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\transform.fwd.h" />
     <ClInclude Include="src\suprengine\game.fwd.h" />
     <ClInclude Include="src\demos\opengl-3d\scenes\game-scene.hpp" />

@@ -28,7 +28,7 @@ namespace suprengine
 
 			return false;
 		}
-		bool raycast( const Ray& ray, RayHit* hit ) override { return false; }
+		bool raycast( _RAYCAST_FUNC_PARAMS ) override { return false; }
 
 		void debug_render( RenderBatch* render_batch ) override
 		{
