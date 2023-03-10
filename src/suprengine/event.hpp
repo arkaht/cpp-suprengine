@@ -25,7 +25,7 @@ namespace suprengine
 			auto itr = observers.find( key );
 			if ( itr == observers.end() ) return;
 
-			observers.erase( itr );  //  TODO: check if erasing during 'invoke()' makes issues
+			observers.erase( itr );  //  TODO: check if erasing during 'invoke()' makes issues  //  yes it does..
 		}
 
 		void invoke( TVarargs ...args )
