@@ -137,6 +137,7 @@
     <ClCompile Include="src\suprengine\ecs\components\camera.cpp" />
     <ClCompile Include="src\suprengine\ecs\components\transform.cpp" />
     <ClCompile Include="src\suprengine\mesh.cpp" />
+    <ClCompile Include="src\suprengine\physics.cpp" />
     <ClCompile Include="src\suprengine\quaternion.cpp" />
     <ClCompile Include="src\suprengine\mtx4.cpp" />
     <ClCompile Include="src\suprengine\opengl\opengl-render-batch.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="src\suprengine\event.hpp" />
     <ClInclude Include="src\suprengine\opengl\opengl-mesh.hpp" />
     <ClInclude Include="src\suprengine\opengl\opengl-texture.hpp" />
+    <ClInclude Include="src\suprengine\physics.h" />
     <ClInclude Include="src\suprengine\quaternion.h" />
     <ClInclude Include="src\suprengine\mtx4.h" />
     <ClInclude Include="src\suprengine\opengl\opengl-render-batch.h" />

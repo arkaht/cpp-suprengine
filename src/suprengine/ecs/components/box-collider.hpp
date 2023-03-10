@@ -61,9 +61,9 @@ namespace suprengine
 				return false;
 
 			float result_t = min_t < 0.0f ? max_t : min_t;
-			//  TODO: check max distance
-			//if ( result_t >= ray.distance ) 
-			//	return false;
+			//  check max distance
+			if ( result_t >= ray.distance ) 
+				return false;
 
 			//  hit result
 			hit->collider = this;

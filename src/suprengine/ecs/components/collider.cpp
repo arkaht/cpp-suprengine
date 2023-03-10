@@ -7,12 +7,12 @@ Collider::Collider( Entity* owner, int priority_order )
 	: Component( owner, priority_order )
 {
 	owner->collider = this;
-	owner->get_game()->add_collider( this );
+	owner->get_game()->get_physics()->add_collider( this );
 }
 
 Collider::~Collider()
 {
-	owner->get_game()->remove_collider( this );
+	owner->get_game()->get_physics()->remove_collider( this );
 }
 
 void Collider::update_collision_with( Collider* other, bool is_active )

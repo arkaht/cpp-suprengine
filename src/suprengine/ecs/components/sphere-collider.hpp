@@ -34,9 +34,10 @@ namespace suprengine
 
 			float f = math::sqrt( f_sqr );
 			float result_t = a - f;
-			//  TODO: check max distance
-			//if ( result_t >= ray.distance ) 
-			//	return false;
+
+			//  check max distance
+			if ( result_t >= ray.distance ) 
+				return false;
 
 			//  hit result
 			hit->collider = this;

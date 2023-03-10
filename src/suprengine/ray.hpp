@@ -10,6 +10,9 @@ namespace suprengine
 		Vec3 origin;
 		Vec3 direction;
 		float distance;
+
+		Ray( Vec3 origin, Vec3 direction, float distance )
+			: origin( origin ), direction( direction ), distance( distance ) {}
 	};
 
 	struct RayHit

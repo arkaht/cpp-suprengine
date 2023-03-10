@@ -9,6 +9,7 @@
 #include "scene.fwd.h"
 #include "timer.hpp"
 #include "input-manager.h"
+#include "physics.h"
 
 #include <suprengine/ecs/components/camera.h>
 
@@ -27,13 +28,13 @@ namespace suprengine
 
 		bool _is_running { true }, _is_updating { false };
 		std::vector<Entity*> pending_entities, entities, dead_entities;
-		std::vector<Collider*> colliders;
 
 		std::vector<Timer> timers;
 
 		Window* window { nullptr };
 		RenderBatch* render_batch { nullptr };
 		InputManager* inputs { nullptr };
+		Physics* physics { nullptr };
 
 		Updater updater {};
 
@@ -70,8 +71,9 @@ namespace suprengine
 			//  init assets
 			Assets::set_render_batch( render_batch );
 
-			//  init input manager
+			//  init managers
 			inputs = new InputManager();
+			physics = new Physics();
 
 			return true;
 		}
@@ -86,12 +88,10 @@ namespace suprengine
 
 		void add_timer( const Timer& timer );
 
-		void add_collider( Collider* collider );
-		void remove_collider( Collider* collider );
-
 		Window* get_window() const { return window; }
 		RenderBatch* get_render_batch() const { return render_batch; }
 		Updater* get_timer() { return &updater; }
 		InputManager* get_inputs() { return inputs; }
+		Physics* get_physics() { return physics; }
 	};
 }

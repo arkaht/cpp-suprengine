@@ -58,24 +58,28 @@ namespace demo_opengl3d
 	private:
 	public:
 		Vec3 local_dir;
+		float distance = 100.0f;
 
 		Raycaster( Entity* owner, Vec3 local_dir = Vec3::forward ) : local_dir( local_dir ), Component( owner ) {}
 
 		void update( float dt ) override
 		{
-			/*
 			Physics* physics = owner->get_game()->get_physics();
 
+			Ray ray(
+				transform->location,
+				Vec3::transform( local_dir, transform->rotation ),
+				distance
+			);
 			RayHit hit;
-			if ( physics->raycast( ray, &hit ) ) 
+			if ( physics->raycast( ray, &hit ) )
 			{
-				printf( "hit at %f %f %f on %p\n", hit->point.x, hit->point.y, hit->point.z, hit->collider );
+				printf( "hit at %f %f %f on %p\n", hit.point.x, hit.point.y, hit.point.z, hit.collider );
 			}
 			else 
 			{
 				printf( "no hit\n" ); 
 			}
-			*/
 		}
 	};
 
@@ -193,6 +197,7 @@ namespace demo_opengl3d
 			auto camera_owner = new Entity();
 			new Mover( camera_owner );
 			new MouseLooker( camera_owner, 1.0f );
+			new Raycaster( camera_owner );
 			//new TargetRotator( camera_owner, cube->transform );
 			auto camera = new Camera( camera_owner, 77.7f );
 			//camera->transform->rotation = Quaternion( Vec3 { 0.0f, 30.0f, 0.0f } * math::DEG2RAD );
