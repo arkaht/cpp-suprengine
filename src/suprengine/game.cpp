@@ -5,6 +5,7 @@
 #include "scene.h"
 
 #include <unordered_map>
+#include <algorithm>
 
 #include <suprengine/sdl/sdl-render-batch.h>
 #include <suprengine/opengl/opengl-render-batch.h>

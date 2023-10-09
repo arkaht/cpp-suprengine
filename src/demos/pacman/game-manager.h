@@ -5,6 +5,7 @@
 #include <suprengine/ecs/entity.h>
 
 #include <vector>
+#include <algorithm>
 
 using namespace suprengine;
 

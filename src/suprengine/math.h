@@ -49,7 +49,7 @@ namespace suprengine::math
 
 	static float normalize_angle( float ang )
 	{
-		return modulo( ang + math::PI, math::DOUBLE_PI ) - math::PI;
+		return modulo( ang + PI, DOUBLE_PI ) - PI;
 	}
 
 	template <typename T>
