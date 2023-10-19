@@ -148,6 +148,7 @@ namespace demo_opengl3d
 
 			auto camera_owner = new CameraDemo( cube );
 			auto camera = new Camera( camera_owner, 77.7f );
+			camera->activate();
 		}
 	};
 }

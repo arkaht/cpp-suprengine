@@ -43,6 +43,8 @@ namespace suprengine
 		Vec3 get_offset() const { return offset; }
 		void reset( float width, float height );
 
+		void activate();
+
 		const Mtx4& get_view_matrix();
 	};
 }

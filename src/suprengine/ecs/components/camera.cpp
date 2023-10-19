@@ -29,7 +29,7 @@ Camera::Camera( Entity* owner )
 {
 	setup_vars();
 	setup_simple_projection();
-	try_register();
+	//try_register();
 }
 
 Camera::Camera( Entity* owner, float fov, float znear, float zfar )
@@ -37,7 +37,7 @@ Camera::Camera( Entity* owner, float fov, float znear, float zfar )
 {
 	setup_vars();
 	setup_perspective( fov, znear, zfar );
-	try_register();
+	//try_register();
 }
 
 void Camera::setup_simple_projection()
@@ -80,6 +80,12 @@ void Camera::reset( float width, float height )
 
 	clip = { 0.0f, 0.0f, 0.0f, 0.0f };
 	clip_enabled = false;
+}
+
+void Camera::activate()
+{
+	Game* game = owner->get_game();
+	game->camera = this;
 }
 
 const Mtx4& Camera::get_view_matrix() 
