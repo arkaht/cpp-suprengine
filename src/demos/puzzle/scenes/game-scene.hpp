@@ -6,11 +6,9 @@
 #include <suprengine/ecs/components/mouse-looker.hpp>
 #include <suprengine/ecs/components/renderers/mesh-renderer.hpp>
 
-#include <demos/opengl-3d/camera-demo.hpp>
-
 using namespace suprengine;
 
-namespace suprkraft 
+namespace puzzle 
 {
 	class GameScene : public Scene
 	{

@@ -135,66 +135,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\suprengine\ecs\components\camera.cpp" />
-    <ClCompile Include="src\suprengine\ecs\components\transform.cpp" />
-    <ClCompile Include="src\suprengine\mesh.cpp" />
-    <ClCompile Include="src\suprengine\physics.cpp" />
-    <ClCompile Include="src\suprengine\quaternion.cpp" />
-    <ClCompile Include="src\suprengine\mtx4.cpp" />
-    <ClCompile Include="src\suprengine\opengl\opengl-render-batch.cpp" />
     <ClCompile Include="src\demos\pacman\components\ghost-mover.cpp" />
     <ClCompile Include="src\demos\pacman\entities\level.cpp" />
     <ClCompile Include="src\demos\pacman\game-manager.cpp" />
-    <ClCompile Include="src\suprengine\assets.cpp" />
-    <ClCompile Include="src\suprengine\ecs\components\collider.cpp" />
     <ClCompile Include="src\demos\pacman\entities\pacman.cpp" />
-    <ClCompile Include="src\suprengine\font.cpp" />
-    <ClCompile Include="src\suprengine\game.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\suprengine\ecs\component.cpp" />
-    <ClCompile Include="src\suprengine\color.cpp" />
-    <ClCompile Include="src\suprengine\ecs\components\renderers\renderer.cpp" />
-    <ClCompile Include="src\suprengine\ecs\entity.cpp" />
-    <ClCompile Include="src\suprengine\opengl\shader.cpp" />
-    <ClCompile Include="src\suprengine\sdl\sdl-render-batch.cpp" />
-    <ClCompile Include="src\suprengine\opengl\vertex-array.cpp" />
-    <ClCompile Include="src\suprengine\render-batch.cpp" />
-    <ClCompile Include="src\suprengine\updater.cpp" />
-    <ClCompile Include="src\suprengine\vec2.cpp" />
-    <ClCompile Include="src\suprengine\window.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="src\suprengine\logger.cpp" />
-    <ClCompile Include="src\suprengine\texture.cpp" />
-    <ClCompile Include="src\suprengine\vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\demos\opengl-3d\camera-demo.hpp" />
     <ClInclude Include="src\demos\suprkraft\main.h" />
-    <ClInclude Include="src\demos\suprkraft\scenes\game-scene.hpp" />
-    <ClInclude Include="src\suprengine\box.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\box-collider.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\mouse-looker.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\mover.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\sphere-collider.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\spring-arm.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\target-rotator.h" />
-    <ClInclude Include="src\suprengine\ecs\components\transform.fwd.h" />
-    <ClInclude Include="src\suprengine\game.fwd.h" />
     <ClInclude Include="src\demos\opengl-3d\scenes\game-scene.hpp" />
     <ClInclude Include="src\demos\opengl-3d\main.h" />
-    <ClInclude Include="src\suprengine\ecs\components\mouse-follower.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\renderers\mesh-renderer.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\transform.h" />
-    <ClInclude Include="src\suprengine\input-manager.h" />
-    <ClInclude Include="src\suprengine\mesh.h" />
-    <ClInclude Include="src\suprengine\event.hpp" />
-    <ClInclude Include="src\suprengine\opengl\opengl-mesh.hpp" />
-    <ClInclude Include="src\suprengine\opengl\opengl-texture.hpp" />
-    <ClInclude Include="src\suprengine\physics.h" />
-    <ClInclude Include="src\suprengine\quaternion.h" />
-    <ClInclude Include="src\suprengine\mtx4.h" />
-    <ClInclude Include="src\suprengine\opengl\opengl-render-batch.h" />
     <ClInclude Include="src\demos\pacman\entities\ghost-clyde.hpp" />
     <ClInclude Include="src\demos\pacman\entities\ghost-inky.hpp" />
     <ClInclude Include="src\demos\pacman\entities\hud.hpp" />
@@ -216,55 +167,14 @@
     <ClInclude Include="src\demos\pacman\layers.hpp" />
     <ClInclude Include="src\demos\pacman\main.h" />
     <ClInclude Include="src\demos\pacman\scenes\game-scene.hpp" />
-    <ClInclude Include="src\suprengine\assets.h" />
-    <ClInclude Include="src\suprengine\ecs\components\camera.h" />
-    <ClInclude Include="src\suprengine\ecs\components\collider.fwd.h" />
-    <ClInclude Include="src\suprengine\ecs\components\collider.h" />
-    <ClInclude Include="src\suprengine\ecs\components\rect-collider.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\renderers\anim-sprite-renderer.hpp" />
-    <ClInclude Include="src\suprengine\font.fwd.h" />
-    <ClInclude Include="src\suprengine\font.h" />
-    <ClInclude Include="src\suprengine\ecs\components\renderers\sprite-renderer.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\renderers\text-renderer.hpp" />
-    <ClInclude Include="src\suprengine\opengl\shader.h" />
-    <ClInclude Include="src\suprengine\opengl\vertex-array.h" />
-    <ClInclude Include="src\suprengine\ray.hpp" />
-    <ClInclude Include="src\suprengine\render-batch.h" />
-    <ClInclude Include="src\suprengine\math.h" />
-    <ClInclude Include="src\suprengine\scene.fwd.h" />
-    <ClInclude Include="src\suprengine\scene.h" />
-    <ClInclude Include="src\suprengine\sdl\sdl-texture.hpp" />
-    <ClInclude Include="src\suprengine\texture.fwd.h" />
-    <ClInclude Include="src\suprengine\game.h" />
-    <ClInclude Include="src\suprengine\color.h" />
-    <ClInclude Include="src\suprengine\ecs\component.fwd.h" />
-    <ClInclude Include="src\suprengine\ecs\component.h" />
-    <ClInclude Include="src\suprengine\ecs\components\renderers\rect-renderer.hpp" />
-    <ClInclude Include="src\suprengine\ecs\components\renderers\renderer.fwd.h" />
-    <ClInclude Include="src\suprengine\ecs\components\renderers\renderer.h" />
-    <ClInclude Include="src\suprengine\ecs\entity.fwd.h" />
-    <ClInclude Include="src\suprengine\ecs\entity.h" />
-    <ClInclude Include="src\suprengine\logger.h" />
-    <ClInclude Include="src\suprengine\rect.h" />
-    <ClInclude Include="src\suprengine\sdl\sdl-render-batch.h" />
-    <ClInclude Include="src\suprengine\timer.hpp" />
-    <ClInclude Include="src\suprengine\updater.h" />
-    <ClInclude Include="src\suprengine\usings.h" />
-    <ClInclude Include="src\suprengine\vec2.h" />
-    <ClInclude Include="src\suprengine\window.h" />
-    <ClInclude Include="src\suprengine\texture.h" />
-    <ClInclude Include="src\suprengine\vec3.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="src\suprengine\assets\meshes\primitives\cube.gpmesh" />
-    <None Include="src\suprengine\assets\meshes\primitives\sphere.gpmesh" />
-    <None Include="src\suprengine\opengl\shaders\color.frag" />
-    <None Include="src\suprengine\opengl\shaders\simple-mesh.frag" />
-    <None Include="src\suprengine\opengl\shaders\simple-mesh.vert" />
-    <None Include="src\suprengine\opengl\shaders\texture.frag" />
-    <None Include="src\suprengine\opengl\shaders\texture.vert" />
-    <None Include="src\suprengine\opengl\shaders\transform.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="src\suprengine\engine.vcxproj">
+      <Project>{92f36a71-0e80-4cb3-bbe1-8b00ba311551}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
