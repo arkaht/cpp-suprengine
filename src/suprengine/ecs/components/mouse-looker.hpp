@@ -19,7 +19,11 @@ namespace suprengine
 		Vec2 pitch_range = Vec2 { -60.0f, 60.0f } * math::DEG2RAD;
 
 		MouseLooker( Entity* owner, float sensitivity = 0.25f, int priority_order = 0 )
-			: sensitivity( sensitivity ), Component( owner, priority_order ) {}
+			: sensitivity( sensitivity ), Component( owner, priority_order ) 
+		{
+			yaw = owner->transform->rotation.get_y_angle();
+			//pitch = owner->transform->rotation.get_x_angle();
+		}
 
 		void update( float dt ) override
 		{
