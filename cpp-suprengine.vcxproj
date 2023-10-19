@@ -170,6 +170,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\demos\opengl-3d\camera-demo.hpp" />
+    <ClInclude Include="src\demos\suprkraft\main.h" />
+    <ClInclude Include="src\demos\suprkraft\scenes\game-scene.hpp" />
     <ClInclude Include="src\suprengine\box.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\box-collider.hpp" />
     <ClInclude Include="src\suprengine\ecs\components\mouse-looker.hpp" />
