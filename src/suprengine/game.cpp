@@ -228,13 +228,17 @@ void Game::render()
 	SDL_RenderDrawLine( sdl_renderer, _window->get_width() / camera.zoom, 0, 0, _window->get_height() / camera.zoom );*/
 
 	//  apply camera
-	render_batch->scale( camera->zoom );
-	render_batch->translate( camera->viewport.get_pos() );
-
-	//  apply camera clipping
-	if ( camera->clip_enabled )
+	if ( camera != nullptr ) 
 	{
-		render_batch->clip( camera->clip );
+		//  transform
+		render_batch->scale( camera->zoom );
+		render_batch->translate( camera->viewport.get_pos() );
+
+		//  clipping
+		if ( camera->clip_enabled )
+		{
+			render_batch->clip( camera->clip );
+		}
 	}
 
 	//  render components
