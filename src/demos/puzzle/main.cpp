@@ -8,7 +8,7 @@ int main( int arg_count, char** args )
 	if ( !game.initialize<OpenGLRenderBatch>( "Suprkraft", 1280, 720 ) ) return EXIT_FAILURE;
 
 	//  set assets path
-	Assets::set_path( "src/demos/pacman/assets/" );
+	Assets::set_path( "../../../" );
 
 	//  load scene
 	game.set_scene( new puzzle::GameScene() );

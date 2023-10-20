@@ -20,7 +20,7 @@ namespace puzzle
 			game->get_inputs()->set_relative_mouse_mode( true );
 			game->get_render_batch()->set_background_color( Color::from_0x( 0x252627FF ) );
 
-			Mesh* mesh_cube = Assets::get_mesh( Assets::PRIMITIVE_CUBE_PATH, false );
+			Mesh* mesh_cube = Assets::get_mesh( Assets::PRIMITIVE_CUBE_PATH, true );
 
 			//  setup ground
 			auto ground = new Entity();

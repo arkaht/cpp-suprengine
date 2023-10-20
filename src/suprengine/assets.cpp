@@ -181,6 +181,7 @@ Mesh* Assets::load_mesh_from_file( rconst_str path, bool append_resources_path )
 	if ( !file.is_open() )
 	{
 		Logger::error( "File not found: Mesh " + path );
+		return nullptr;
 	}
 
 	std::stringstream fileStream;
@@ -195,6 +196,7 @@ Mesh* Assets::load_mesh_from_file( rconst_str path, bool append_resources_path )
 		std::ostringstream s;
 		s << "Mesh " << path << " is not valid json";
 		Logger::error( s.str() );
+		return nullptr;
 	}
 
 	OpenGLMesh* mesh = new OpenGLMesh();
