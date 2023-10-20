@@ -2,7 +2,7 @@
 
 #include "scenes/game-scene.hpp"
 
-int main()
+int main( int arg_count, char** args )
 {
     auto& game = Game::instance();
 	if ( !game.initialize<OpenGLRenderBatch>( "Suprkraft", 1280, 720 ) ) return EXIT_FAILURE;
