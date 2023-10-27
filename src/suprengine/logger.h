@@ -26,7 +26,8 @@ namespace suprengine
 		Logger& operator=( const Logger& ) = delete;
 
 		static void info( const std::string& message );
-		static void error( LOG_CATEGORY category, const std::string& message );
 		static void error( const std::string& message );
+
+		static void sdl_error( LOG_CATEGORY category, const std::string& message );
 	};
 };

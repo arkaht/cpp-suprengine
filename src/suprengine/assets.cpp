@@ -106,7 +106,17 @@ Shader* Assets::load_shader_from_file( rconst_str vtx_filename, rconst_str frg_f
 	{
 		// Open files
 		std::ifstream vertexShaderFile( vtx_filename );
+		if ( !vertexShaderFile.is_open() )
+		{
+			throw std::exception( "vertex file not found!" );
+		}
+
 		std::ifstream fragmentShaderFile( frg_filename );
+		if ( !fragmentShaderFile.is_open() )
+		{
+			throw std::exception( "fragment file not found!" );
+		}
+		
 		std::stringstream vShaderStream, fShaderStream;
 		// Read file's buffer contents into streams
 		vShaderStream << vertexShaderFile.rdbuf();
@@ -147,16 +157,8 @@ Shader* Assets::load_shader_from_file( rconst_str vtx_filename, rconst_str frg_f
 	}
 	catch ( std::exception e )
 	{
-		std::ostringstream loadError;
-		std::string geomShaderFile = "";
-		if ( geo_filename != "" )
-			geomShaderFile = geo_filename;
-
-		loadError << "ERROR::SHADER: Failed to read shader files " << vtx_filename << " " << frg_filename << " "
-			<< geomShaderFile << "\n"
-			<< "\n -- --------------------------------------------------- -- "
-			<< std::endl;
-		Logger::error( loadError.str() );
+		Logger::error( "SHADER: failed to read shader files (vertex: '" + vtx_filename + "'; fragment: '" + frg_filename + "'): '" + e.what() + "'\n" );
+		return nullptr;
 	}
 	const GLchar* vShaderCode = vertexCode.c_str();
 	const GLchar* fShaderCode = fragmentCode.c_str();
@@ -165,6 +167,7 @@ Shader* Assets::load_shader_from_file( rconst_str vtx_filename, rconst_str frg_f
 	const GLchar* gShaderCode = geometryCode.c_str();
 
 	// 2. Now create shader object from source code
+	Logger::info( "compiling shaders (vertex: '" + vtx_filename + "'; fragment: '" + frg_filename + "')" );
 	Shader* shader = new Shader();
 	shader->compile( vShaderCode, fShaderCode,
 		tsc_filename != "" ? tcShaderCode : nullptr,

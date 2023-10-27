@@ -4,6 +4,8 @@
 #include <suprengine/assets.h>
 #include <suprengine/game.h>
 
+#include <filesystem>
+
 using namespace suprengine;
 
 OpenGLRenderBatch::~OpenGLRenderBatch()
@@ -72,16 +74,16 @@ bool OpenGLRenderBatch::initialize()
 
 	//  load shaders
 	color_shader = Assets::load_shader( "color",
-		"src/suprengine/opengl/shaders/transform.vert",
-		"src/suprengine/opengl/shaders/color.frag"
+		"src/suprengine/assets/shaders/transform.vert",
+		"src/suprengine/assets/shaders/color.frag"
 	);
 	texture_shader = Assets::load_shader( "texture",
-		"src/suprengine/opengl/shaders/texture.vert",
-		"src/suprengine/opengl/shaders/texture.frag"
+		"src/suprengine/assets/shaders/texture.vert",
+		"src/suprengine/assets/shaders/texture.frag"
 	);
 	Assets::load_shader( "simple-mesh",
-		"src/suprengine/opengl/shaders/simple-mesh.vert",
-		"src/suprengine/opengl/shaders/simple-mesh.frag"
+		"src/suprengine/assets/shaders/simple-mesh.vert",
+		"src/suprengine/assets/shaders/simple-mesh.frag"
 	);
 
 	screen_offset = Vec3 { window->get_width() / 2.0f, window->get_height() / 2.0f, 0.0f };
@@ -109,10 +111,16 @@ void OpenGLRenderBatch::begin_render()
 
 	//  activate shader & vertex array
 	view_matrix = camera->get_view_matrix() * camera->projection_matrix;
-	color_shader->activate();
-	color_shader->set_mtx4( "u_view_projection", view_matrix );
-	texture_shader->activate();
-	texture_shader->set_mtx4( "u_view_projection", view_matrix );
+	if ( color_shader != nullptr )
+	{
+		color_shader->activate();
+		color_shader->set_mtx4( "u_view_projection", view_matrix );
+	}
+	if ( texture_shader != nullptr )
+	{
+		texture_shader->activate();
+		texture_shader->set_mtx4( "u_view_projection", view_matrix );
+	}
 }
 
 void OpenGLRenderBatch::render()
@@ -192,9 +200,12 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 
 	//  set matrice
 	Shader* shader = mesh->get_shader();
-	shader->set_mtx4( "u_view_projection", view_matrix );  //  TODO: pass this matrix only once
-	shader->set_mtx4( "u_world_transform", matrix );
-	shader->set_vec4( "u_modulate", color );
+	if ( shader != nullptr )
+	{
+		shader->set_mtx4( "u_view_projection", view_matrix );  //  TODO: pass this matrix only once
+		shader->set_mtx4( "u_world_transform", matrix );
+		shader->set_vec4( "u_modulate", color );
+	}
 
 	//  draw
 	draw_elements( mesh->get_indices_count() );

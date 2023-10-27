@@ -21,6 +21,17 @@ void Shader::activate()
 void Shader::compile( const GLchar* vertexSource, const GLchar* fragmentSource,
 	const GLchar* tessControlSource, const GLchar* tessEvalSource, const GLchar* geometrySource )
 {
+	if ( strlen( vertexSource ) == 0 )
+	{
+		Logger::error( "vertex shader code is empty!" );
+		return;
+	}
+	if ( strlen( fragmentSource ) == 0 )
+	{
+		Logger::error( "fragment shader code is empty!" );
+		return;
+	}
+
 	compile_vertex_shader( vertexSource );
 	bool tessExists = compile_tess_control_shader( tessControlSource );
 	tessExists &= compile_tess_eval_shader( tessEvalSource );
