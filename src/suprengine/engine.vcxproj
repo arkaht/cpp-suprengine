@@ -277,23 +277,12 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/suprengine/" /Y /I /E</Comma
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\meshes\primitives\cube.gpmesh">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="assets\meshes\primitives\sphere.gpmesh">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="opengl\shaders\color.frag" />
     <None Include="opengl\shaders\simple-mesh.frag" />
     <None Include="opengl\shaders\simple-mesh.vert" />
     <None Include="opengl\shaders\texture.frag" />
     <None Include="opengl\shaders\texture.vert" />
     <None Include="opengl\shaders\transform.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\textures\cat.png">
-      <DeploymentContent>true</DeploymentContent>
-    </Image>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

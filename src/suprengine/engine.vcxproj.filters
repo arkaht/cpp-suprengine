@@ -280,9 +280,4 @@
     <None Include="assets\meshes\primitives\cube.gpmesh" />
     <None Include="assets\meshes\primitives\sphere.gpmesh" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\textures\cat.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
 </Project>
