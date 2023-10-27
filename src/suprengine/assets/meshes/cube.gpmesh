@@ -3,7 +3,7 @@
 	"vertexformat": "PosNormTex",
 	"shader": "simple-mesh",
 	"textures": [
-		"src/suprengine/assets/textures/cat.png"
+		"assets/suprengine/textures/cat.png"
 	],
 	"specularPower": 100.0,
 	"vertices": [

@@ -18,8 +18,8 @@ std::map<std::string, Mesh*> Assets::meshes;
 RenderBatch* Assets::render_batch { nullptr };
 std::string Assets::resources_path { "" };
 
-const std::string Assets::PRIMITIVE_CUBE_PATH { "src/suprengine/assets/meshes/primitives/cube.gpmesh" };
-const std::string Assets::PRIMITIVE_SPHERE_PATH { "src/suprengine/assets/meshes/primitives/sphere.gpmesh" };
+const std::string Assets::PRIMITIVE_CUBE_PATH { "assets/suprengine/meshes/cube.gpmesh" };
+const std::string Assets::PRIMITIVE_SPHERE_PATH { "assets/suprengine/meshes/sphere.gpmesh" };
 
 Texture* Assets::get_texture( rconst_str path, const TextureParams& params, bool append_resources_path )
 {

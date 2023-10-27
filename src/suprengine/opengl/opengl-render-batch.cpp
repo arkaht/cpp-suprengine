@@ -74,16 +74,16 @@ bool OpenGLRenderBatch::initialize()
 
 	//  load shaders
 	color_shader = Assets::load_shader( "color",
-		"src/suprengine/assets/shaders/transform.vert",
-		"src/suprengine/assets/shaders/color.frag"
+		"assets/suprengine/shaders/transform.vert",
+		"assets/suprengine/shaders/color.frag"
 	);
 	texture_shader = Assets::load_shader( "texture",
-		"src/suprengine/assets/shaders/texture.vert",
-		"src/suprengine/assets/shaders/texture.frag"
+		"assets/suprengine/shaders/texture.vert",
+		"assets/suprengine/shaders/texture.frag"
 	);
 	Assets::load_shader( "simple-mesh",
-		"src/suprengine/assets/shaders/simple-mesh.vert",
-		"src/suprengine/assets/shaders/simple-mesh.frag"
+		"assets/suprengine/shaders/simple-mesh.vert",
+		"assets/suprengine/shaders/simple-mesh.frag"
 	);
 
 	screen_offset = Vec3 { window->get_width() / 2.0f, window->get_height() / 2.0f, 0.0f };
