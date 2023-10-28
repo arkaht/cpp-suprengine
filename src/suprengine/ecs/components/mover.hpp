@@ -9,8 +9,9 @@ namespace suprengine
 	class Mover : public Component
 	{
 	public:
-		float move_speed = 10.0f, 
-			  sprint_speed = 25.0f;
+		float move_speed = 10.0f; 
+		float sprint_speed = 25.0f;
+		bool should_collide = true;
 
 		Mover( Entity* owner ) : Component( owner ) {}
 
@@ -39,10 +40,31 @@ namespace suprengine
 
 			if ( dir == Vec3::zero ) return;
 
-			//  apply movement
+			//  get movement
 			float speed = ( inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? sprint_speed : move_speed ) * dt;
 			Vec3 move_dir = dir.normalized() * speed;
-			transform->set_location( transform->location + move_dir );
+			Vec3 pos = transform->location + move_dir;
+
+			//  check collisions
+			if ( should_collide )
+			{
+				Physics* physics = owner->get_game()->get_physics();
+				
+				//  setup raycast
+				Ray ray( transform->location, move_dir );
+				RayParams params;
+				params.can_hit_from_origin = true;
+
+				//  correct position from raycast
+				RayHit hit;
+				if ( physics->raycast( ray, &hit, params ) )
+				{
+					pos = hit.point + hit.normal * 0.01f;
+				}
+			}
+
+			//  apply movement
+			transform->set_location( pos );
 		}
 	};
 }

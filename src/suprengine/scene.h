@@ -8,8 +8,6 @@ namespace suprengine
 {
 	class Scene
 	{
-	protected:
-		Game* game { &Game::instance() };
 	public:
 		Scene() {}
 		virtual ~Scene() {}
@@ -17,5 +15,8 @@ namespace suprengine
 		virtual void init() {};
 
 		Game* get_game() const { return game; }
+	
+	protected:
+		Game* game { &Game::instance() };
 	};
 }

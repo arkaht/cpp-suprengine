@@ -3,7 +3,7 @@
 
 #include "transform.h"
 
-#include <suprengine/box.hpp>
+#include <suprengine/box.h>
 
 namespace suprengine
 {

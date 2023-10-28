@@ -21,9 +21,6 @@ namespace suprengine
 
 	class Entity
 	{
-	protected:
-		EntityState state { EntityState::ACTIVE };
-		Game* game { &Game::instance() };
 	public:
 		uint32_t layer = 0x1;
 
@@ -36,7 +33,15 @@ namespace suprengine
 		virtual ~Entity();
 		Entity( const Entity& ) = delete;
 		Entity& operator=( const Entity& ) = delete;
-
+		
+		template <typename T, typename... Args>
+		T* create_component( Args&&... args )
+		{
+			static_assert( std::is_base_of<Component, T>::value, "Entity::create_component: used for a non-Component class!" );
+			
+			T* component = new T( this, args... );
+			return component;
+		}
 		void add_component( Component* comp );
 		void remove_component( Component* comp );
 		std::vector<Component*>::iterator get_component_iterator( Component* comp );
@@ -55,6 +60,10 @@ namespace suprengine
 
 		void set_state( EntityState state );
 		EntityState get_state() const { return state; }
+
+	protected:
+		EntityState state { EntityState::ACTIVE };
+		Game* game { &Game::instance() };
 	};
 }
 

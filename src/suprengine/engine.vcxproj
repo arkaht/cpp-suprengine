@@ -190,7 +190,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/suprengine/" /Y /I /E</Comma
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="assets.h" />
-    <ClInclude Include="box.hpp" />
+    <ClInclude Include="box.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="ecs\component.fwd.h" />
     <ClInclude Include="ecs\component.h" />
@@ -251,6 +251,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/suprengine/" /Y /I /E</Comma
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="assets.cpp" />
+    <ClCompile Include="box.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="ecs\component.cpp" />
     <ClCompile Include="ecs\components\camera.cpp" />
