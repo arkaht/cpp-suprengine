@@ -22,7 +22,7 @@ void GLAPIENTRY _message_callback( GLenum source, GLenum type, GLuint id, GLenum
 		type, severity, message );
 }
 
-bool OpenGLRenderBatch::initialize()
+bool OpenGLRenderBatch::init()
 {
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );

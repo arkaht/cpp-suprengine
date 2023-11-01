@@ -261,6 +261,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/suprengine/" /Y /I /E</Comma
     <ClCompile Include="ecs\entity.cpp" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="input-manager.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mtx4.cpp" />

@@ -5,7 +5,7 @@
 int main( int arg_count, char** args )
 {
     auto& game = Game::instance();
-	if ( !game.initialize<OpenGLRenderBatch>( "Puzzle", 1280, 720 ) ) return EXIT_FAILURE;
+	if ( !game.init<OpenGLRenderBatch>( "Puzzle", 1280, 720 ) ) return EXIT_FAILURE;
 
 	//  set assets path
 	Assets::set_path( "" );

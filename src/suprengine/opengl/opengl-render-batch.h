@@ -28,7 +28,7 @@ namespace suprengine
 		OpenGLRenderBatch& operator=( const OpenGLRenderBatch& ) = delete;
 		~OpenGLRenderBatch();
 
-		bool initialize() override;
+		bool init() override;
 
 		void begin_render() override;
 		void render() override;

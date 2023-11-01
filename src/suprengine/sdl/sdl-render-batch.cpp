@@ -14,7 +14,7 @@ SDLRenderBatch::~SDLRenderBatch()
 	SDL_DestroyRenderer( sdl_renderer );
 }
 
-bool SDLRenderBatch::initialize()
+bool SDLRenderBatch::init()
 {
 	//  create renderer
 	sdl_renderer = SDL_CreateRenderer( window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );

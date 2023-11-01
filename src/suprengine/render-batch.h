@@ -52,7 +52,7 @@ namespace suprengine
 		RenderBatch( Window* window );
 		virtual ~RenderBatch() {};
 
-		virtual bool initialize() = 0;
+		virtual bool init() = 0;
 		virtual void begin_render() = 0;
 		virtual void render();
 		virtual void render_phase( const RenderPhase phase );
