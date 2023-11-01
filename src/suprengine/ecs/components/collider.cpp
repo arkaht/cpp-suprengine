@@ -6,20 +6,20 @@ using namespace suprengine;
 Collider::Collider( Entity* owner, int priority_order )
 	: Component( owner, priority_order )
 {
-	physics = owner->get_game()->get_physics();
+	_physics = owner->get_game()->get_physics();
 }
 
 void Collider::setup()
 {
 	auto ptr = get_shared_from_this<Collider>();
 	owner->collider = ptr;
-	physics->add_collider( ptr );
+	_physics->add_collider( ptr );
 }
 
 void Collider::unsetup()
 {
 	auto ptr = get_shared_from_this<Collider>();
-	physics->remove_collider( ptr );
+	_physics->remove_collider( ptr );
 }
 
 void Collider::update_collision_with( std::shared_ptr<Collider> other, bool is_active )

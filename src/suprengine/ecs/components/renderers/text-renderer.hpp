@@ -37,7 +37,7 @@ namespace suprengine
 			//  render text on surface
 			SDL_Color white { 255, 255, 255, 255 };
 			SDL_Surface* sdl_surface = TTF_RenderText_Blended( font->get_sdl_font(), text.c_str(), white );
-			texture = render_batch->load_texture_from_surface( "TextRenderer::update_texture", sdl_surface );
+			texture = _render_batch->load_texture_from_surface( "TextRenderer::update_texture", sdl_surface );
 			
 			//  free surface
 			SDL_FreeSurface( sdl_surface );

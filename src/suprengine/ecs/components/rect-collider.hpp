@@ -30,9 +30,9 @@ namespace suprengine
 		}
 		bool raycast( _RAYCAST_FUNC_PARAMS ) override { return false; }
 
-		void debug_render( RenderBatch* render_batch ) override
+		void debug_render( RenderBatch* _render_batch ) override
 		{
-			render_batch->draw_rect( 
+			_render_batch->draw_rect( 
 				DrawType::FILL, 
 				owner->transform->get_rect( shape ), 
 				debug_color

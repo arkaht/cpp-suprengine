@@ -53,16 +53,16 @@ namespace suprengine
 		void kill();
 
 		virtual void update_this( float dt ) {}
-		virtual void debug_render( RenderBatch* render_batch ) {};
+		virtual void debug_render( RenderBatch* _render_batch ) {};
 
 		virtual void on_trigger_enter( std::shared_ptr<Collider> collider ) {};
 		virtual void on_trigger_stay( std::shared_ptr<Collider> collider ) {};
 		virtual void on_trigger_exit( std::shared_ptr<Collider> collider ) {};
 
-		Game* get_game() const { return game; }
+		Game* get_game() const { return _game; }
 
 	protected:
-		Game* game { &Game::instance() };
+		Game* _game { nullptr };
 	};
 }
 

@@ -14,7 +14,7 @@ namespace suprengine
 	private:
 		SDL_Renderer* sdl_renderer { nullptr };
 	public:
-		SDLRenderBatch( Window* window ) : RenderBatch( window ) {};
+		SDLRenderBatch( Window* _window ) : RenderBatch( _window ) {};
 		SDLRenderBatch( const SDLRenderBatch& ) = delete;
 		SDLRenderBatch& operator=( const SDLRenderBatch& ) = delete;
 		~SDLRenderBatch();

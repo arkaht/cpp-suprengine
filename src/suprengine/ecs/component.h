@@ -34,7 +34,7 @@ namespace suprengine
 
 		virtual void init() {}
 		virtual void update( float dt ) {}
-		virtual void debug_render( RenderBatch* render_batch ) {}
+		virtual void debug_render( RenderBatch* _render_batch ) {}
 
 		Entity* get_owner() const { return owner; }
 		int get_priority_order() const { return priority_order; }

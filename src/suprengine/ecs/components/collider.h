@@ -27,7 +27,7 @@ namespace suprengine
 		void update_collision_with( std::shared_ptr<Collider> other, bool active );
 	
 	protected:
-		Physics* physics;
+		Physics* _physics;
 		std::unordered_set<std::shared_ptr<Collider>> collisions;
 	};
 }

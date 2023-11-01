@@ -17,38 +17,38 @@ namespace suprengine
 
 		void update( float dt ) override
 		{
-			InputManager* inputs = owner->get_game()->get_inputs();
+			InputManager* _inputs = owner->get_game()->get_inputs();
 			Vec3 dir {};
 
 			//  forward/backward
-			if ( inputs->is_key_down( SDL_SCANCODE_W ) || inputs->is_key_down( SDL_SCANCODE_UP ) )
+			if ( _inputs->is_key_down( SDL_SCANCODE_W ) || _inputs->is_key_down( SDL_SCANCODE_UP ) )
 				dir += transform->get_forward();
-			if ( inputs->is_key_down( SDL_SCANCODE_S ) || inputs->is_key_down( SDL_SCANCODE_DOWN ) )
+			if ( _inputs->is_key_down( SDL_SCANCODE_S ) || _inputs->is_key_down( SDL_SCANCODE_DOWN ) )
 				dir -= transform->get_forward();
 
 			//  right/left
-			if ( inputs->is_key_down( SDL_SCANCODE_D ) || inputs->is_key_down( SDL_SCANCODE_RIGHT ) )
+			if ( _inputs->is_key_down( SDL_SCANCODE_D ) || _inputs->is_key_down( SDL_SCANCODE_RIGHT ) )
 				dir += transform->get_right();
-			if ( inputs->is_key_down( SDL_SCANCODE_A ) || inputs->is_key_down( SDL_SCANCODE_LEFT ) )
+			if ( _inputs->is_key_down( SDL_SCANCODE_A ) || _inputs->is_key_down( SDL_SCANCODE_LEFT ) )
 				dir -= transform->get_right();
 
 			//  up/down
-			if ( inputs->is_key_down( SDL_SCANCODE_E ) )
+			if ( _inputs->is_key_down( SDL_SCANCODE_E ) )
 				dir += Vec3::up;
-			if ( inputs->is_key_down( SDL_SCANCODE_Q ) )
+			if ( _inputs->is_key_down( SDL_SCANCODE_Q ) )
 				dir -= Vec3::up;
 
 			if ( dir == Vec3::zero ) return;
 
 			//  get movement
-			float speed = ( inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? sprint_speed : move_speed ) * dt;
+			float speed = ( _inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? sprint_speed : move_speed ) * dt;
 			Vec3 move_dir = dir.normalized() * speed;
 			Vec3 pos = transform->location + move_dir;
 
 			//  check collisions
 			if ( should_collide )
 			{
-				Physics* physics = owner->get_game()->get_physics();
+				Physics* _physics = owner->get_game()->get_physics();
 				
 				//  setup raycast
 				Ray ray( transform->location, move_dir );
@@ -57,7 +57,7 @@ namespace suprengine
 
 				//  correct position from raycast
 				RayHit hit;
-				if ( physics->raycast( ray, &hit, params ) )
+				if ( _physics->raycast( ray, &hit, params ) )
 				{
 					pos = hit.point + hit.normal * 0.01f;
 				}

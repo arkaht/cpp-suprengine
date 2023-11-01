@@ -32,7 +32,7 @@ namespace suprengine
 			if ( texture == nullptr ) return;
 
 			Transform* transf = owner->transform;
-			render_batch->draw_texture( 
+			_render_batch->draw_texture( 
 				source,
 				owner->transform->get_rect( dest ),
 				owner->transform->rotation.get_z_angle(),

@@ -13,12 +13,10 @@ namespace puzzle
 	class GameScene : public Scene
 	{
 	public:
-		GameScene() {}
-
 		void init() override 
 		{
-			game->get_inputs()->set_relative_mouse_mode( true );
-			game->get_render_batch()->set_background_color( Color::from_0x( 0x252627FF ) );
+			_game->get_inputs()->set_relative_mouse_mode( true );
+			_game->get_render_batch()->set_background_color( Color::from_0x( 0x252627FF ) );
 
 			Mesh* mesh_cube = Assets::get_mesh( Assets::PRIMITIVE_CUBE_PATH, false );
 

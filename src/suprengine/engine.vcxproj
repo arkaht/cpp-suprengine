@@ -271,6 +271,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/suprengine/" /Y /I /E</Comma
     <ClCompile Include="physics.cpp" />
     <ClCompile Include="quaternion.cpp" />
     <ClCompile Include="render-batch.cpp" />
+    <ClCompile Include="scene.cpp" />
     <ClCompile Include="sdl\sdl-render-batch.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="updater.cpp" />

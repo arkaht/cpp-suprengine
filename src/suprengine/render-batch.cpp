@@ -5,8 +5,8 @@
 
 using namespace suprengine;
 
-RenderBatch::RenderBatch( Window* window )
-	: window( window )
+RenderBatch::RenderBatch( Window* _window )
+	: _window( _window )
 {
 	game = &Game::instance();
 }

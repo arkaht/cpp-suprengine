@@ -23,6 +23,6 @@ namespace suprengine
 		virtual RenderPhase get_render_phase() const { return RenderPhase::SPRITE; }
 	
 	protected:
-		RenderBatch* render_batch { nullptr };
+		RenderBatch* _render_batch { nullptr };
 	};
 }

@@ -15,7 +15,7 @@ namespace suprengine
 		void render() override
 		{
 			Rect render_rect = owner->transform->get_rect( rect );
-			render_batch->draw_rect( draw_type, render_rect, modulate );
+			_render_batch->draw_rect( draw_type, render_rect, modulate );
 		}
 	};
 }

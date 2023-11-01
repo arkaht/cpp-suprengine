@@ -12,7 +12,7 @@ namespace suprengine
 	class Mesh
 	{
 	protected:
-		std::vector<Texture*> textures;
+		std::vector<Texture*> _textures;
 
 	public:
 		std::string shader_name { "simple-mesh" };
@@ -24,13 +24,13 @@ namespace suprengine
 
 		int add_texture( Texture* texture )
 		{
-			textures.emplace_back( texture );
-			return (int) textures.size() - 1;
+			_textures.emplace_back( texture );
+			return (int) _textures.size() - 1;
 		}
 		Texture* get_texture( int id )
 		{
-			if ( id < 0 || id >= textures.size() ) return nullptr;
-			return textures[id];
+			if ( id < 0 || id >= _textures.size() ) return nullptr;
+			return _textures[id];
 		}
 
 		virtual Shader* get_shader();

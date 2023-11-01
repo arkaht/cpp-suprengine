@@ -89,7 +89,7 @@ namespace suprengine
 			return true;
 		}
 
-		void debug_render( RenderBatch* render_batch ) override  //  TODO: implement this
+		void debug_render( RenderBatch* _render_batch ) override  //  TODO: implement this
 		{
 			//Assets::get_mesh( Assets::PRIMITIVE_CUBE_PATH, false );
 			//render_batch->draw_mesh(  )

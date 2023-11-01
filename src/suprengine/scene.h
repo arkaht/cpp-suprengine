@@ -1,22 +1,21 @@
 #pragma once
 #include "scene.fwd.h"
 
-#include "game.h"
-#include "ecs/entity.h"
+#include "game.fwd.h"
 
 namespace suprengine
 {
 	class Scene
 	{
 	public:
-		Scene() {}
+		Scene();
 		virtual ~Scene() {}
 
 		virtual void init() {};
 
-		Game* get_game() const { return game; }
+		Game* get_game() const { return _game; }
 	
 	protected:
-		Game* game { &Game::instance() };
+		Game* _game { nullptr };
 	};
 }

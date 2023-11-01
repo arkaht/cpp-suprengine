@@ -11,7 +11,7 @@ int main( int arg_count, char** args )
 	Assets::set_path( "" );
 
 	//  load scene
-	game.set_scene( new puzzle::GameScene() );
+	game.create_scene<puzzle::GameScene>();
 
 	//  start the game
 	game.loop();

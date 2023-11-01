@@ -13,8 +13,6 @@ namespace suprengine
 	class Camera : public Component
 	{
 	public:
-		Mtx4 projection_matrix;
-
 		Rect viewport { 0, 0, 0, 0 };
 		float zoom { 1.0f };
 
@@ -24,30 +22,28 @@ namespace suprengine
 		Camera( Entity* owner );
 		Camera( Entity* owner, float fov, float znear = CAMERA_DEFAULT_ZNEAR, float zfar = CAMERA_DEFAULT_ZFAR );
 
-		void init() {}
-		void update( float dt ) {}
-
 		void setup_simple_projection();
 		void setup_perspective( float fov, float znear, float zfar );
 		void setup_perspective( float fov ) { setup_perspective( fov, CAMERA_DEFAULT_ZNEAR, CAMERA_DEFAULT_ZFAR ); }
 		void look_at( const Vec3& target );
 
 		void set_offset( const Vec3& offset );
-		Vec3 get_offset() const { return offset; }
-		void reset( float width, float height );
+		Vec3 get_offset() const { return _offset; }
 
+		void reset( float width, float height );
 		void activate();
 
 		const Mtx4& get_view_matrix();
+		const Mtx4& get_projection_matrix();
 
 	protected:
-		Mtx4 view_matrix;
-		bool is_view_matrix_dirty = true;
+		Mtx4 _projection_matrix;
+		Mtx4 _view_matrix;
+		bool _is_view_matrix_dirty = true;
 
-		Vec3 offset {};
-		Vec2 viewport_size {};
+		Vec3 _offset {};
+		Vec2 _viewport_size {};
 
-		bool try_register();
 		void setup_vars();
 	};
 }

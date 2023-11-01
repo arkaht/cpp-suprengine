@@ -17,10 +17,13 @@ Game::~Game()
 	clear_entities();
 
 	//  release scene
-	if ( scene != nullptr )
-	{
-		delete scene;
-	}
+	_scene.reset( nullptr );
+
+	//  release managers
+	_render_batch.reset( nullptr );
+	_inputs.reset( nullptr );
+	_physics.reset( nullptr );
+	_window.reset( nullptr );
 
 	//  release assets
 	Assets::release();
@@ -33,94 +36,81 @@ void Game::loop()
 {
 	while ( _is_running )
 	{
-		float dt = updater.compute_dt() / 1000.0f;
+		float dt = _updater.compute_dt() / 1000.0f;
 
 		process_input();
 		update( dt );
 		render();
 
-		updater.accumulate_seconds( dt );
-		updater.delay_time();
+		_updater.accumulate_seconds( dt );
+		_updater.delay_time();
 	}
-}
-
-void Game::set_scene( Scene* _scene )
-{
-	//  delete previous scene
-	if ( scene != nullptr )
-	{
-		delete scene;
-	}
-
-	//  reset
-	clear_entities();
-
-	//  set scene
-	scene = _scene;
-	scene->init();
 }
 
 void Game::add_entity( Entity* entity )
 {
 	if ( _is_updating )
 	{
-		if ( std::find( pending_entities.begin(), pending_entities.end(), entity ) != pending_entities.end() ) return;
+		if ( std::find( _pending_entities.begin(), _pending_entities.end(), entity ) != _pending_entities.end() ) return;
 		
-		pending_entities.push_back( entity );
+		_pending_entities.push_back( entity );
 	}
 	else
 	{
-		if ( std::find( entities.begin(), entities.end(), entity ) != entities.end() ) return;
+		if ( std::find( _entities.begin(), _entities.end(), entity ) != _entities.end() ) return;
 
-		entities.push_back( entity );
+		_entities.push_back( entity );
 	}
 }
 
 void Game::remove_entity( Entity* entity )
 {
 	//  remove from actives
-	auto itr = std::find( entities.begin(), entities.end(), entity );
-	if ( itr != entities.end() )
+	auto itr = std::find( _entities.begin(), _entities.end(), entity );
+	if ( itr != _entities.end() )
 	{
-		std::iter_swap( itr, entities.end() - 1 );
-		entities.pop_back();
+		std::iter_swap( itr, _entities.end() - 1 );
+		_entities.pop_back();
 		return;
 	}
 
 	//  remove from pendings
-	itr = std::find( pending_entities.begin(), pending_entities.end(), entity );
-	if ( itr != pending_entities.end() )
+	itr = std::find( _pending_entities.begin(), _pending_entities.end(), entity );
+	if ( itr != _pending_entities.end() )
 	{
-		std::iter_swap( itr, pending_entities.end() - 1 );
-		pending_entities.pop_back();
+		std::iter_swap( itr, _pending_entities.end() - 1 );
+		_pending_entities.pop_back();
 	}
 }
 
 void Game::clear_entities()
 {
 	//  clear entities
-	while ( !entities.empty() )
+	while ( !_entities.empty() )
 	{
-		delete entities.back();
+		delete _entities.back();
 	}
 }
 
 void Game::add_timer( const Timer& timer )
 {
-	timers.push_back( timer );
+	_timers.push_back( timer );
 }
 
 void Game::process_input()
 {
-	inputs->mouse_delta = Vec2::zero;
+	_inputs->mouse_delta = Vec2::zero;
 
+	//  read window events
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
 	{
+		//  TODO?: move this to the Window class
+		//  TODO: remove dependencies with our Event class
 		switch ( event.type )
 		{
 		case SDL_MOUSEMOTION:
-			inputs->mouse_delta = { (float) event.motion.xrel, (float) event.motion.yrel };
+			_inputs->mouse_delta = { (float) event.motion.xrel, (float) event.motion.yrel };
 			break;
 		//  quit game
 		case SDL_QUIT:
@@ -130,12 +120,12 @@ void Game::process_input()
 	}
 	
 	//  quit
-	if ( inputs->is_key_pressed( SDL_SCANCODE_ESCAPE ) )
+	if ( _inputs->is_key_pressed( SDL_SCANCODE_ESCAPE ) )
 	{
 		_is_running = false;
 	}
 	//  toggle debug
-	if ( inputs->is_key_pressed( SDL_SCANCODE_COMMA ) )
+	if ( _inputs->is_key_pressed( SDL_SCANCODE_COMMA ) )
 	{
 		is_debug = !is_debug;
 	}
@@ -143,21 +133,21 @@ void Game::process_input()
 
 void Game::update( float dt )
 {
-	inputs->update();
+	_inputs->update();
 
 	//  add pending entities to active
-	if ( !pending_entities.empty() )
+	if ( !_pending_entities.empty() )
 	{
-		for ( auto entity : pending_entities )
+		for ( auto entity : _pending_entities )
 		{
 			add_entity( entity );
 		}
-		pending_entities.clear();
+		_pending_entities.clear();
 	}
 
 	//  update entities
 	_is_updating = true;
-	for ( auto entity : entities )
+	for ( auto entity : _entities )
 	{
 		if ( entity->state == EntityState::ACTIVE )
 		{
@@ -167,18 +157,18 @@ void Game::update( float dt )
 		//  kill entity
 		if ( entity->state == EntityState::DEAD )
 		{
-			dead_entities.push_back( entity );
+			_dead_entities.push_back( entity );
 		}
 	}
 	_is_updating = false;
 
 	//  update colliders
-	physics->update();
+	_physics->update();
 
 	//  update timer
-	if ( !timers.empty() )
+	if ( !_timers.empty() )
 	{
-		for ( auto& timer : timers )
+		for ( auto& timer : _timers )
 		{
 			if ( ( timer.time -= dt ) <= 0.0f )
 			{
@@ -187,13 +177,13 @@ void Game::update( float dt )
 		}
 
 		//  safely-erase expired timers
-		auto itr = timers.begin();
-		while ( itr != timers.end() )
+		auto itr = _timers.begin();
+		while ( itr != _timers.end() )
 		{
 			if ( itr->time <= 0.0f )
 			{
 				//  remove from vector
-				itr = timers.erase( itr );
+				itr = _timers.erase( itr );
 			}
 			else
 			{
@@ -203,20 +193,20 @@ void Game::update( float dt )
 	}
 
 	//  delete dead entities
-	if ( !dead_entities.empty() )
+	if ( !_dead_entities.empty() )
 	{
-		for ( auto entity : dead_entities )
+		for ( auto entity : _dead_entities )
 		{
 			delete entity;
 		}
-		dead_entities.clear();
+		_dead_entities.clear();
 	}
 }
 
 void Game::render()
 {
 	//  start rendering
-	render_batch->begin_render();
+	_render_batch->begin_render();
 
 	//  draw screen diagonals
 	/*SDL_SetRenderDrawColor( sdl_renderer, 255, 255, 255, 255 );
@@ -227,34 +217,34 @@ void Game::render()
 	if ( camera != nullptr ) 
 	{
 		//  transform
-		render_batch->scale( camera->zoom );
-		render_batch->translate( camera->viewport.get_pos() );
+		_render_batch->scale( camera->zoom );
+		_render_batch->translate( camera->viewport.get_pos() );
 
 		//  clipping
 		if ( camera->clip_enabled )
 		{
-			render_batch->clip( camera->clip );
+			_render_batch->clip( camera->clip );
 		}
 	}
 
 	//  render components
-	render_batch->render();
+	_render_batch->render();
 
 	//  debug render entities & components
 	if ( is_debug )
 	{
-		auto render_batch = get_render_batch();
-		for ( auto ent : entities )
+		auto _render_batch = get_render_batch();
+		for ( auto entity : _entities )
 		{
-			ent->debug_render( render_batch );
+			entity->debug_render( _render_batch );
 
-			for ( auto& comp : ent->components )
+			for ( auto& component : entity->components )
 			{
-				comp->debug_render( render_batch );
+				component->debug_render( _render_batch );
 			}
 		}
 	}
 
 	//  show rendering
-	render_batch->end_render();
+	_render_batch->end_render();
 }

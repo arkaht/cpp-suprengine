@@ -3,18 +3,19 @@
 using namespace suprengine;
 
 Entity::Entity()
+	: _game( &Game::instance() )
 {
 	//  assign a transform
 	transform = create_component<Transform>();
 
 	//  register in game
-	game->add_entity( this );
+	_game->add_entity( this );
 }
 
 Entity::~Entity()
 {
 	//  remove from game
-	game->remove_entity( this );
+	_game->remove_entity( this );
 
 	//  release components
 	while ( !components.empty() )

@@ -17,7 +17,7 @@ SDLRenderBatch::~SDLRenderBatch()
 bool SDLRenderBatch::init()
 {
 	//  create renderer
-	sdl_renderer = SDL_CreateRenderer( window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+	sdl_renderer = SDL_CreateRenderer( _window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 	if ( sdl_renderer == nullptr )
 	{
 		Logger::error( "failed to create renderer" );

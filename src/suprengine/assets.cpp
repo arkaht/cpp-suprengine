@@ -10,88 +10,88 @@
 
 using namespace suprengine;
 
-std::map<std::string, Texture*> Assets::textures;
-std::map<std::string, Font*> Assets::fonts;
-std::map<std::string, Shader*> Assets::shaders;
-std::map<std::string, Mesh*> Assets::meshes;
+std::map<std::string, Texture*> Assets::_textures;
+std::map<std::string, Font*> Assets::_fonts;
+std::map<std::string, Shader*> Assets::_shaders;
+std::map<std::string, Mesh*> Assets::_meshes;
 
-RenderBatch* Assets::render_batch { nullptr };
-std::string Assets::resources_path { "" };
+RenderBatch* Assets::_render_batch { nullptr };
+std::string Assets::_resources_path { "" };
 
 const std::string Assets::PRIMITIVE_CUBE_PATH { "assets/suprengine/meshes/cube.gpmesh" };
 const std::string Assets::PRIMITIVE_SPHERE_PATH { "assets/suprengine/meshes/sphere.gpmesh" };
 
 Texture* Assets::get_texture( rconst_str path, const TextureParams& params, bool append_resources_path )
 {
-	std::string full_path = append_resources_path ? resources_path + path : path;
+	std::string full_path = append_resources_path ? _resources_path + path : path;
 
 	//  TODO: find a way to take params in account even with existing texture
 	//  load texture if un-found
-	if ( textures.find( path ) == textures.end() )
+	if ( _textures.find( path ) == _textures.end() )
 	{
-		textures[path] = render_batch->load_texture( full_path, params );
+		_textures[path] = _render_batch->load_texture( full_path, params );
 	}
 
 	//  get from textures
-	return textures[path];
+	return _textures[path];
 }
 
 Font* Assets::get_font( rconst_str path, int size, bool append_resources_path )
 {
-	std::string full_path = append_resources_path ? resources_path + path : path;
+	std::string full_path = append_resources_path ? _resources_path + path : path;
 	std::string key = full_path + std::to_string( size );
 
 	//  load texture if un-found
-	if ( fonts.find( path ) == fonts.end() )
+	if ( _fonts.find( path ) == _fonts.end() )
 	{
-		fonts[key] = Font::load( full_path, size );
+		_fonts[key] = Font::load( full_path, size );
 	}
 
 	//  get from textures
-	return fonts[key];
+	return _fonts[key];
 }
 
 Shader* Assets::load_shader( rconst_str name, rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename, rconst_str tse_filename, rconst_str geo_filename, bool append_resources_path )
 {
-	shaders[name] = load_shader_from_file( vtx_filename, frg_filename, tsc_filename, tse_filename, geo_filename );
+	_shaders[name] = load_shader_from_file( vtx_filename, frg_filename, tsc_filename, tse_filename, geo_filename );
 	return get_shader( name );
 }
 
-Shader* Assets::get_shader( rconst_str name ) { return shaders[name]; }
+Shader* Assets::get_shader( rconst_str name ) { return _shaders[name]; }
 
 Mesh* Assets::get_mesh( rconst_str path, bool append_resources_path )
 {
-	std::string full_path = append_resources_path ? resources_path + path : path;
+	std::string full_path = append_resources_path ? _resources_path + path : path;
 
-	if ( meshes.find( full_path ) == meshes.end() )
+	if ( _meshes.find( full_path ) == _meshes.end() )
 	{
-		meshes[full_path] = load_mesh_from_file( full_path, append_resources_path );
+		_meshes[full_path] = load_mesh_from_file( full_path, append_resources_path );
 	}
 
-	return meshes[full_path];
+	return _meshes[full_path];
 }
 
 void Assets::release()
 {
 	//  release textures
-	for ( auto& pair : textures )
+	for ( auto& pair : _textures )
 		delete pair.second;
-	textures.clear();
+	_textures.clear();
 
 	//  release fonts
-	for ( auto& pair : fonts )
+	for ( auto& pair : _fonts )
 		delete pair.second;
-	fonts.clear();
+	_fonts.clear();
 
 	//  release shaders
-	for ( auto& pair : shaders )
+	for ( auto& pair : _shaders )
 		delete pair.second;
-	shaders.clear();
+	_shaders.clear();
 
 	//  release meshes
-	for ( auto& pair : meshes )
+	for ( auto& pair : _meshes )
 		delete pair.second;
-	meshes.clear();
+	_meshes.clear();
 }
 
 Shader* Assets::load_shader_from_file( rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename, rconst_str tse_filename, rconst_str geo_filename )
@@ -210,8 +210,8 @@ Mesh* Assets::load_mesh_from_file( rconst_str path, bool append_resources_path )
 	size_t vertSize = 8;
 
 	// Load textures
-	const rapidjson::Value& textures = doc["textures"];
-	if ( !textures.IsArray() || textures.Size() < 1 )
+	const rapidjson::Value& _textures = doc["textures"];
+	if ( !_textures.IsArray() || _textures.Size() < 1 )
 	{
 		std::ostringstream s;
 		s << "Mesh " << path << " has no textures, there should be at least one";
@@ -220,9 +220,9 @@ Mesh* Assets::load_mesh_from_file( rconst_str path, bool append_resources_path )
 
 	//mesh.setSpecularPower( doc["specularPower"].GetFloat() );
 
-	for ( rapidjson::SizeType i = 0; i < textures.Size(); i++ )
+	for ( rapidjson::SizeType i = 0; i < _textures.Size(); i++ )
 	{
-		std::string texName = textures[i].GetString();
+		std::string texName = _textures[i].GetString();
 		Texture* texture = get_texture( texName, {}, append_resources_path );
 		mesh->add_texture( texture );
 	}

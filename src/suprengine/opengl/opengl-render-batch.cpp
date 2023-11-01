@@ -38,7 +38,7 @@ bool OpenGLRenderBatch::init()
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );  //  enable double buffering
 	SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );  //  force OpenGL to use hardware acceleration
 
-	gl_context = SDL_GL_CreateContext( window->get_sdl_window() );
+	gl_context = SDL_GL_CreateContext( _window->get_sdl_window() );
 
 	//  GLEW
 	glewExperimental = GL_TRUE;
@@ -86,7 +86,7 @@ bool OpenGLRenderBatch::init()
 		"assets/suprengine/shaders/simple-mesh.frag"
 	);
 
-	screen_offset = Vec3 { window->get_width() / 2.0f, window->get_height() / 2.0f, 0.0f };
+	screen_offset = Vec3 { _window->get_width() / 2.0f, _window->get_height() / 2.0f, 0.0f };
 
 	return true;
 }
@@ -110,16 +110,16 @@ void OpenGLRenderBatch::begin_render()
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	//  activate shader & vertex array
-	view_matrix = camera->get_view_matrix() * camera->projection_matrix;
+	_view_matrix = camera->get_view_matrix() * camera->get_projection_matrix();
 	if ( color_shader != nullptr )
 	{
 		color_shader->activate();
-		color_shader->set_mtx4( "u_view_projection", view_matrix );
+		color_shader->set_mtx4( "u_view_projection", _view_matrix );
 	}
 	if ( texture_shader != nullptr )
 	{
 		texture_shader->activate();
-		texture_shader->set_mtx4( "u_view_projection", view_matrix );
+		texture_shader->set_mtx4( "u_view_projection", _view_matrix );
 	}
 }
 
@@ -140,7 +140,7 @@ void OpenGLRenderBatch::render()
 
 void OpenGLRenderBatch::end_render()
 {
-	SDL_GL_SwapWindow( window->get_sdl_window() );
+	SDL_GL_SwapWindow( _window->get_sdl_window() );
 }
 
 void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
@@ -202,7 +202,7 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 	Shader* shader = mesh->get_shader();
 	if ( shader != nullptr )
 	{
-		shader->set_mtx4( "u_view_projection", view_matrix );  //  TODO: pass this matrix only once
+		shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
 		shader->set_mtx4( "u_world_transform", matrix );
 		shader->set_vec4( "u_modulate", color );
 	}
