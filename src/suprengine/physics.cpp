@@ -8,7 +8,7 @@ using namespace suprengine;
 void Physics::update()
 {
 	//std::unordered_map<Collider*, std::unordered_set<Collider*>> checked_colliders;
-	for ( auto collider : colliders )
+	for ( auto& collider : colliders )
 	{
 		for ( auto other : colliders )
 		{
@@ -41,14 +41,14 @@ void Physics::update()
 
 bool Physics::raycast( _RAYCAST_FUNC_PARAMS )
 {
-	for ( Collider * collider : colliders )
+	for ( auto& collider : colliders )
 		if ( collider->raycast( ray, hit, params ) )
 			return true;
 
 	return false;
 }
 
-void Physics::add_collider( Collider* collider )
+void Physics::add_collider( std::shared_ptr<Collider> collider )
 {
 	//  get priority order
 	int order = collider->get_priority_order();
@@ -56,17 +56,13 @@ void Physics::add_collider( Collider* collider )
 	//  search order position
 	auto itr = colliders.begin();
 	for ( ; itr != colliders.end(); itr++ )
-	{
 		if ( order >= ( *itr )->get_priority_order() )
-		{
 			break;
-		}
-	}
 
 	colliders.push_back( collider );
 }
 
-void Physics::remove_collider( Collider* collider )
+void Physics::remove_collider( std::shared_ptr<Collider> collider )
 {
 	auto itr = std::find( colliders.begin(), colliders.end(), collider );
 	if ( itr == colliders.end() ) return;

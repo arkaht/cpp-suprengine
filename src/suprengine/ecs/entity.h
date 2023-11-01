@@ -23,11 +23,12 @@ namespace suprengine
 	{
 	public:
 		uint32_t layer = 0x1;
+		EntityState state { EntityState::ACTIVE };
 
-		std::vector<Component*> components;
+		std::vector<std::shared_ptr<Component>> components;
 
-		Transform* transform { nullptr };
-		Collider* collider { nullptr };
+		std::shared_ptr<Transform> transform;
+		std::shared_ptr<Collider> collider { nullptr };
 
 		Entity();
 		virtual ~Entity();
@@ -35,16 +36,18 @@ namespace suprengine
 		Entity& operator=( const Entity& ) = delete;
 		
 		template <typename T, typename... Args>
-		T* create_component( Args&&... args )
+		std::shared_ptr<T> create_component( Args&&... args )
 		{
 			static_assert( std::is_base_of<Component, T>::value, "Entity::create_component: used for a non-Component class!" );
 			
-			T* component = new T( this, args... );
+			auto component = std::make_shared<T>( this, args... );
+			component->setup();
+			add_component( component );
+			
 			return component;
 		}
-		void add_component( Component* comp );
-		void remove_component( Component* comp );
-		std::vector<Component*>::iterator get_component_iterator( Component* comp );
+		void add_component( std::shared_ptr<Component> component );
+		void remove_component( std::shared_ptr<Component> component );
 
 		void update( float dt );
 		void kill();
@@ -52,17 +55,13 @@ namespace suprengine
 		virtual void update_this( float dt ) {}
 		virtual void debug_render( RenderBatch* render_batch ) {};
 
-		virtual void on_trigger_enter( Collider* collider ) {};
-		virtual void on_trigger_stay( Collider* collider ) {};
-		virtual void on_trigger_exit( Collider* collider ) {};
+		virtual void on_trigger_enter( std::shared_ptr<Collider> collider ) {};
+		virtual void on_trigger_stay( std::shared_ptr<Collider> collider ) {};
+		virtual void on_trigger_exit( std::shared_ptr<Collider> collider ) {};
 
 		Game* get_game() const { return game; }
 
-		void set_state( EntityState state );
-		EntityState get_state() const { return state; }
-
 	protected:
-		EntityState state { EntityState::ACTIVE };
 		Game* game { &Game::instance() };
 	};
 }

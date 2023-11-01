@@ -3,6 +3,8 @@
 #include <suprengine/vec3.h>
 #include <suprengine/ecs/components/collider.fwd.h>
 
+#include <memory>
+
 #define _RAYCAST_FUNC_PARAMS const Ray& ray, RayHit* hit, const RayParams& params
 
 namespace suprengine
@@ -30,7 +32,7 @@ namespace suprengine
 	{
 		Vec3 point = Vec3::zero;
 		Vec3 normal = Vec3::zero;
-		Collider* collider { nullptr };
+		std::weak_ptr<Collider> collider;
 	};
 
 	struct RayParams

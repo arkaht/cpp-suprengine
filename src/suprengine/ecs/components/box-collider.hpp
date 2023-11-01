@@ -21,7 +21,7 @@ namespace suprengine
 
 		BoxCollider( Entity* owner, const Box& shape ) : shape( shape ), Collider( owner ) {};
 
-		bool intersects( Collider* other ) override { return false; }  //  TODO: implement this
+		bool intersects( std::shared_ptr<Collider> other ) override { return false; }  //  TODO: implement this
 
 		//  source: https://subscription.packtpub.com/book/game+development/9781787123663/14/ch14lvl1sec135/raycast-bounding-box
 		bool raycast( _RAYCAST_FUNC_PARAMS )
@@ -75,7 +75,7 @@ namespace suprengine
 				return false;
 
 			//  hit result
-			hit->collider = this;
+			hit->collider = get_shared_from_this<Collider>();
 			hit->point = ray.origin + ray.direction * result_t;
 
 			//  provide normal

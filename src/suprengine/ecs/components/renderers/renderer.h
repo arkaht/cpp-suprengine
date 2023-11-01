@@ -9,18 +9,20 @@ namespace suprengine
 {
 	class Renderer : public Component
 	{
-	protected:
-		RenderBatch* render_batch { nullptr };
 	public:
 		bool should_render { true };
 		Color modulate { Color::white };
 
 		Renderer( Entity* owner, int priority_order = 0 );
-		~Renderer() override;
 
-		virtual void init();
-		virtual void render() {};
+		void setup();
+		void unsetup();
+
+		virtual void render() = 0;
 
 		virtual RenderPhase get_render_phase() const { return RenderPhase::SPRITE; }
+	
+	protected:
+		RenderBatch* render_batch { nullptr };
 	};
 }

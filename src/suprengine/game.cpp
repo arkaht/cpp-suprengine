@@ -165,11 +165,13 @@ void Game::update( float dt )
 	_is_updating = true;
 	for ( auto entity : entities )
 	{
-		if ( entity->get_state() == EntityState::ACTIVE )
+		if ( entity->state == EntityState::ACTIVE )
+		{
 			entity->update( dt );
+		}
 
 		//  kill entity
-		if ( entity->get_state() == EntityState::DEAD )
+		if ( entity->state == EntityState::DEAD )
 		{
 			dead_entities.push_back( entity );
 		}

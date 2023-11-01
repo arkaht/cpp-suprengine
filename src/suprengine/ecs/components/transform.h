@@ -6,11 +6,8 @@
 
 namespace suprengine
 {
-	class Transform : Component
+	class Transform : public Component
 	{
-	private:
-		Mtx4 matrix;
-
 	public:
 		bool is_matrix_dirty { true };
 
@@ -37,5 +34,8 @@ namespace suprengine
 		Vec3 get_up() const { return Vec3::transform( Vec3::up, rotation ); }
 
 		const Mtx4& get_matrix();
+
+	private:
+		Mtx4 matrix;
 	};
 }

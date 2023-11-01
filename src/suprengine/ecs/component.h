@@ -8,29 +8,39 @@
 
 namespace suprengine
 {
-	class Component
+	class Component : public std::enable_shared_from_this<Component>
 	{
-	protected:
-		Entity* owner { nullptr };
-		int priority_order;
 	public:
 		bool is_initialized { false };
 		bool should_update { true };
 
-		Transform* transform { nullptr };
+		std::shared_ptr<Transform> transform;
 
 		Component( Entity* owner, int priority_order = 0 );
-		virtual ~Component();
+		virtual ~Component() {};
 
 		Component() = delete;
 		Component( const Component& ) = delete;
 		Component& operator=( const Component& ) = delete;
 
-		virtual void init() {};
-		virtual void update( float dt ) {};
+		template <typename T>
+		std::shared_ptr<T> get_shared_from_this()
+		{
+			return std::static_pointer_cast<T>( shared_from_this() );
+		}
+
+		virtual void setup() {}
+		virtual void unsetup() {}
+
+		virtual void init() {}
+		virtual void update( float dt ) {}
 		virtual void debug_render( RenderBatch* render_batch ) {}
 
 		Entity* get_owner() const { return owner; }
 		int get_priority_order() const { return priority_order; }
+	
+	protected:
+		Entity* owner { nullptr };
+		int priority_order;
 	};
 }
