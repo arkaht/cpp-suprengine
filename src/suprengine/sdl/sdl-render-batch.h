@@ -19,7 +19,7 @@ namespace suprengine
 		SDLRenderBatch& operator=( const SDLRenderBatch& ) = delete;
 		~SDLRenderBatch();
 
-		bool initialize() override;
+		bool init() override;
 
 		void begin_render() override;
 		void end_render() override;

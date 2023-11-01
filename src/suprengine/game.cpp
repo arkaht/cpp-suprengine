@@ -25,12 +25,6 @@ Game::~Game()
 	//  release assets
 	Assets::release();
 
-	//  free dependencies
-	delete render_batch;
-	delete window;
-	delete inputs;
-	delete physics;
-
 	//  quit sdl
 	SDL_Quit();
 }
@@ -249,11 +243,12 @@ void Game::render()
 	//  debug render entities & components
 	if ( is_debug )
 	{
+		auto render_batch = get_render_batch();
 		for ( auto ent : entities )
 		{
 			ent->debug_render( render_batch );
 
-			for ( auto comp : ent->components )
+			for ( auto& comp : ent->components )
 			{
 				comp->debug_render( render_batch );
 			}

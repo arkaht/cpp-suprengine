@@ -12,7 +12,7 @@ Window::~Window()
 	SDL_DestroyWindow( sdl_window );
 }
 
-bool Window::initialize()
+bool Window::init()
 {
 	if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
 	{

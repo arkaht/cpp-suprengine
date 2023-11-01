@@ -19,27 +19,6 @@ namespace suprengine
 {
 	class Game
 	{
-	private:
-		Game() {};
-
-		void process_input();
-		void update( float dt );
-		void render();
-
-		bool _is_running { true }, _is_updating { false };
-		std::vector<Entity*> pending_entities, entities, dead_entities;
-
-		std::vector<Timer> timers;
-
-		Window* window { nullptr };
-		RenderBatch* render_batch { nullptr };
-		InputManager* inputs { nullptr };
-		Physics* physics { nullptr };
-
-		Updater updater {};
-
-		Scene* scene { nullptr };
-
 	public:
 		Camera* camera { nullptr };
 		bool is_debug { false };
@@ -52,28 +31,28 @@ namespace suprengine
 		}
 
 		Game( const Game& ) = delete;
-		Game& operator=( const Game& ) = delete;
 		Game( Game&& ) = delete;
+		Game& operator=( const Game& ) = delete;
 		Game& operator=( Game&& ) = delete;
 		~Game();
 
 		template <typename TRenderBatch>
-		bool initialize( const char* title = "my-cpp-game", int width = DEFAULT_WINDOW_WIDTH, int height = DEFAULT_WINDOW_HEIGHT )
+		bool init( const char* title = "my-cpp-game", int width = DEFAULT_WINDOW_WIDTH, int height = DEFAULT_WINDOW_HEIGHT )
 		{
 			//  init window
-			window = new Window( title, width, height );
-			if ( !window->initialize() ) return false;
+			window = std::make_unique<Window>( title, width, height );
+			if ( !window->init() ) return false;
 
 			//  init render batch
-			render_batch = new TRenderBatch( window );
-			if ( !render_batch->initialize() ) return false;
+			render_batch = std::make_unique<TRenderBatch>( get_window() );
+			if ( !render_batch->init() ) return false;
 
 			//  init assets
-			Assets::set_render_batch( render_batch );
+			Assets::set_render_batch( get_render_batch() );
 
 			//  init managers
-			inputs = new InputManager();
-			physics = new Physics();
+			inputs = std::make_unique<InputManager>();
+			physics = std::make_unique<Physics>();
 
 			return true;
 		}
@@ -88,10 +67,32 @@ namespace suprengine
 
 		void add_timer( const Timer& timer );
 
-		Window* get_window() const { return window; }
-		RenderBatch* get_render_batch() const { return render_batch; }
+		Window* get_window() const { return window.get(); }
+		RenderBatch* get_render_batch() const { return render_batch.get(); }
+		InputManager* get_inputs() { return inputs.get(); }
+		Physics* get_physics() { return physics.get(); }
 		Updater* get_timer() { return &updater; }
-		InputManager* get_inputs() { return inputs; }
-		Physics* get_physics() { return physics; }
+	
+	private:
+		Game() {};
+
+		void process_input();
+		void update( float dt );
+		void render();
+
+		bool _is_running { true }, _is_updating { false };
+		std::vector<Entity*> pending_entities, entities, dead_entities;
+
+		std::vector<Timer> timers;
+
+		std::unique_ptr<Window> window;
+		std::unique_ptr<RenderBatch> render_batch;
+		std::unique_ptr<InputManager> inputs;
+		std::unique_ptr<Physics> physics;
+
+		Updater updater {};
+
+		Scene* scene { nullptr };
+
 	};
 }

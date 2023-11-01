@@ -22,7 +22,7 @@ namespace suprengine
 		Window& operator=( const Window& ) = delete;
 		~Window();
 
-		bool initialize();
+		bool init();
 
 		SDL_Window* get_sdl_window() const { return sdl_window; }
 		int get_width() const { return width; }
