@@ -26,17 +26,23 @@ constexpr unsigned int QUAD_INDICES[] = {
 	2, 3, 0
 };
 
-class VertexArray
+namespace suprengine
 {
-private:
-	unsigned int vertices_count { 0 }, indices_count { 0 };
-	unsigned int vao_id { 0 }, vbo_id { 0 }, ibo_id { 0 };
-public:
-	VertexArray( const float* vertices, unsigned int vertices_count, const unsigned int* indices, unsigned int indices_count );
-	~VertexArray();
+	class VertexArray
+	{
+	public:
+		static const int stride = 8;
 
-	void activate();
+		VertexArray( const float* vertices, unsigned int vertices_count, const unsigned int* indices, unsigned int indices_count );
+		~VertexArray();
 
-	unsigned int get_vertices_count() const { return vertices_count; }
-	unsigned int get_indices_count() const { return indices_count; }
-};
+		void activate();
+
+		unsigned int get_vertices_count() const { return vertices_count; }
+		unsigned int get_indices_count() const { return indices_count; }
+	
+	private:
+		unsigned int vertices_count { 0 }, indices_count { 0 };
+		unsigned int vao_id { 0 }, vbo_id { 0 }, ibo_id { 0 };
+	};
+}

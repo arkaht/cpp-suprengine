@@ -5,22 +5,26 @@
 #include <fstream>
 
 #include <rapidjson/document.h>
-#include <assimp/scene.h>
 
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+
+#include <suprengine/opengl/opengl-model.hpp>
 #include <suprengine/opengl/opengl-mesh.hpp>
+#include <suprengine/opengl/vertex-array.h>
 
 using namespace suprengine;
 
 std::map<std::string, Texture*> Assets::_textures;
 std::map<std::string, Font*> Assets::_fonts;
 std::map<std::string, Shader*> Assets::_shaders;
-std::map<std::string, Mesh*> Assets::_meshes;
+std::map<std::string, Model*> Assets::_models;
 
 RenderBatch* Assets::_render_batch { nullptr };
 std::string Assets::_resources_path { "" };
 
-const std::string Assets::PRIMITIVE_CUBE_PATH { "assets/suprengine/meshes/cube.gpmesh" };
-const std::string Assets::PRIMITIVE_SPHERE_PATH { "assets/suprengine/meshes/sphere.gpmesh" };
+const std::string Assets::CUBE_PATH { "assets/suprengine/meshes/cube.fbx" };
+const std::string Assets::SPHERE_PATH { "assets/suprengine/meshes/sphere.fbx" };
 
 Texture* Assets::get_texture( rconst_str path, const TextureParams& params, bool append_resources_path )
 {
@@ -63,16 +67,49 @@ Shader* Assets::get_shader( rconst_str name )
 	return _shaders[name]; 
 }
 
-Mesh* Assets::get_mesh( rconst_str path, bool append_resources_path )
+Model* Assets::load_model( rconst_str name, rconst_str path )
 {
-	std::string full_path = append_resources_path ? _resources_path + path : path;
-
-	if ( _meshes.find( full_path ) == _meshes.end() )
+	//  set import flags
+	int flags = aiProcess_Triangulate 
+			  //| aiProcess_MakeLeftHanded
+			  | aiProcess_FlipUVs 
+			  | aiProcess_JoinIdenticalVertices;
+	
+	//  load mesh
+	Assimp::Importer importer;  //  TODO: save it for further loading
+	auto scene = importer.ReadFile( path, flags );
+	if ( scene == nullptr ) 
 	{
-		_meshes[full_path] = load_mesh_from_file( full_path, append_resources_path );
+		Logger::error( "Failed to load mesh '" + path + "', file path is probably wrong!" );
+		return nullptr;
 	}
 
-	return _meshes[full_path];
+	//  load model
+	auto meshes = load_node( scene->mRootNode, scene );
+	if ( meshes.size() == 0u )
+	{
+		Logger::error( "Failed to load mesh '" + path + "', no mesh couldn't be loaded!" );
+		return nullptr;
+	}
+
+	//  create model
+	auto model = new Model( std::move( meshes ) );
+	
+	//  register and return
+	_models[name] = model;
+	return model;
+}
+
+Model* Assets::get_model( rconst_str name )
+{
+	auto itr = _models.find( name );
+	if ( itr == _models.end() )
+	{
+		Logger::error( "Failed to get model '" + name + "', either not loaded or the name is wrong!" );
+		return nullptr;
+	}
+
+	return (*itr).second;
 }
 
 void Assets::release()
@@ -93,9 +130,9 @@ void Assets::release()
 	_shaders.clear();
 
 	//  release meshes
-	for ( auto& pair : _meshes )
+	for ( auto& pair : _models )
 		delete pair.second;
-	_meshes.clear();
+	_models.clear();
 }
 
 Shader* Assets::load_shader_from_file( rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename, rconst_str tse_filename, rconst_str geo_filename )
@@ -181,126 +218,97 @@ Shader* Assets::load_shader_from_file( rconst_str vtx_filename, rconst_str frg_f
 	return shader;
 }
 
-//  TODO: replace this w/ a real 3D model format like .obj/.fbx
-Mesh* Assets::load_mesh_from_file( rconst_str path, bool append_resources_path )
+VertexArray* Assets::load_mesh( const aiMesh* mesh )
 {
-	std::ifstream file( path );
-	if ( !file.is_open() )
-	{
-		Logger::error( "File not found: Mesh " + path );
-		return nullptr;
-	}
+	printf( "| Mesh Name: '%s'\n", mesh->mName.C_Str() );
+	
+	//  get vertices count
+	unsigned int vertices_count = mesh->mNumVertices;
+	printf( "> Vertices Count: %d\n", vertices_count );
 
-	std::stringstream fileStream;
-	fileStream << file.rdbuf();
-	std::string contents = fileStream.str();
-	rapidjson::StringStream jsonStr( contents.c_str() );
-	rapidjson::Document doc;
-	doc.ParseStream( jsonStr );
-
-	if ( !doc.IsObject() )
-	{
-		std::ostringstream s;
-		s << "Mesh " << path << " is not valid json";
-		Logger::error( s.str() );
-		return nullptr;
-	}
-
-	OpenGLMesh* mesh = new OpenGLMesh();
-	mesh->shader_name = doc["shader"].GetString();
-
-	// Skip the vertex format/shader for now
-	// (This is changed in a later chapter's code)
-	size_t vertSize = 8;
-
-	// Load textures
-	const rapidjson::Value& _textures = doc["textures"];
-	if ( !_textures.IsArray() || _textures.Size() < 1 )
-	{
-		std::ostringstream s;
-		s << "Mesh " << path << " has no textures, there should be at least one";
-		Logger::error( s.str() );
-	}
-
-	//mesh.setSpecularPower( doc["specularPower"].GetFloat() );
-
-	for ( rapidjson::SizeType i = 0; i < _textures.Size(); i++ )
-	{
-		std::string texName = _textures[i].GetString();
-		Texture* texture = get_texture( texName, {}, append_resources_path );
-		mesh->add_texture( texture );
-	}
-
-	// Load in the vertices
-	const rapidjson::Value& vertsJson = doc["vertices"];
-	if ( !vertsJson.IsArray() || vertsJson.Size() < 1 )
-	{
-		std::ostringstream s;
-		s << "Mesh " << path << " has no vertices";
-		Logger::error( s.str() );
-	}
-
-	std::vector<float> vertices;
-	vertices.reserve( vertsJson.Size() * vertSize );
-	//float radius = 0.0f;
-	for ( rapidjson::SizeType i = 0; i < vertsJson.Size(); i++ )
-	{
-		// For now, just assume we have 8 elements
-		const rapidjson::Value& vert = vertsJson[i];
-		if ( !vert.IsArray() || vert.Size() != 8 )
-		{
-			std::ostringstream s;
-			s << "Unexpected vertex format for " << path;
-			Logger::error( s.str() );
-		}
-
-		Vec3 pos( vert[0].GetFloat(), vert[1].GetFloat(), vert[2].GetFloat() );
-		//radius = math::max( radius, pos.lengthSq() );
-
-		// Add the floats
-		for ( rapidjson::SizeType i = 0; i < vert.Size(); i++ )
-		{
-			vertices.emplace_back( vert[i].GetFloat() );
-		}
-	}
-
-	// We were computing length squared earlier
-	//mesh.setRadius( math::sqrt( radius ) );
-
-	// Load in the indices
-	const rapidjson::Value& indJson = doc["indices"];
-	if ( !indJson.IsArray() || indJson.Size() < 1 )
-	{
-		std::ostringstream s;
-		s << "Mesh " << path << " has no indices";
-		Logger::error( s.str() );
-	}
-
+	//  init vertices and indices containers
+	std::vector<float> vertices( vertices_count * VertexArray::stride );
 	std::vector<unsigned int> indices;
-	indices.reserve( (size_t) ( indJson.Size() * 3.0f ) );
-	for ( rapidjson::SizeType i = 0; i < indJson.Size(); i++ )
+
+	bool has_normals = mesh->HasNormals();
+	bool has_uvs = mesh->HasTextureCoords( 0 );
+
+	printf( "> Normals: %s\n", has_normals ? "true" : "false" );
+	printf( "> UVs: %s\n", has_uvs ? "true" : "false" );
+
+	//  copy vertices
+	for ( size_t i = 0; i < vertices_count; i++ )
 	{
-		const rapidjson::Value& ind = indJson[i];
-		if ( !ind.IsArray() || ind.Size() != 3 )
+		size_t vertex_id = i * VertexArray::stride;
+
+		//  position
+		//  NOTE: Y and Z axes are swapped, models won't show properly otherwise
+		auto vertex = mesh->mVertices[i];
+		vertices[vertex_id + 0] = vertex.x;
+		vertices[vertex_id + 1] = vertex.z;
+		vertices[vertex_id + 2] = vertex.y;
+		
+		//  normal
+		if ( has_normals ) 
 		{
-			std::ostringstream s;
-			s << "Invalid indices for " << path;
-			Logger::error( s.str() );
+			//  NOTE: similarly to vertex, Y and Z axes are swapped
+			auto normal = mesh->mNormals[i];
+			vertices[vertex_id + 3] = normal.x;
+			vertices[vertex_id + 4] = normal.z;
+			vertices[vertex_id + 5] = normal.y;
 		}
 
-		indices.emplace_back( ind[0].GetUint() );
-		indices.emplace_back( ind[1].GetUint() );
-		indices.emplace_back( ind[2].GetUint() );
+		//  uv
+		if ( has_uvs )
+		{
+			auto uv = mesh->mTextureCoords[0][i];
+			vertices[vertex_id + 6] = uv.x;
+			vertices[vertex_id + 7] = uv.y;
+		}
 	}
 
-	// Now create a vertex array
-	mesh->vertex_array = new VertexArray(
-		vertices.data(),
-		static_cast<unsigned int>( vertices.size() ) / vertSize,
-		indices.data(),
-		static_cast<unsigned int>( indices.size() )
-	);
+	//  copy indices
+	for ( size_t i = 0; i < mesh->mNumFaces; i++ )
+	{
+		auto& face = mesh->mFaces[i];
+		for ( size_t j = 0; j < face.mNumIndices; j++ )
+		{
+			indices.push_back( face.mIndices[j] );
+		}
+	}
+	printf( "> Indices Count: %d\n", (int)indices.size() );
 
-	Logger::info( "Loaded mesh " + path );
-	return mesh;
+	//  create vertex array
+	auto vertex_array = new VertexArray( 
+		vertices.data(),
+		vertices_count,
+		indices.data(),
+		indices.size()
+	);
+	return vertex_array;
+}
+
+std::vector<Mesh*> Assets::load_node( const aiNode* node, const aiScene* scene )
+{
+	std::vector<Mesh*> meshes;
+
+	printf( "| Root Name: '%s'\n", node->mName.C_Str() );
+
+	//  load meshes
+	printf( "> Meshes Count: %d\n", node->mNumMeshes );
+	for ( size_t i = 0; i < node->mNumMeshes; i++ )
+	{
+		auto vertex_array = load_mesh( scene->mMeshes[node->mMeshes[i]] );
+		meshes.push_back( new OpenGLMesh( vertex_array ) );
+	}
+
+	//  recursive children loading
+	printf( "> Children Count: %d\n", node->mNumChildren );
+	for ( size_t i = 0; i < node->mNumChildren; i++ )
+	{
+		auto new_meshes = load_node( node->mChildren[i], scene );
+		meshes.insert( meshes.end(), new_meshes.begin(), new_meshes.end() );
+	}
+
+	return meshes;
 }

@@ -192,6 +192,12 @@
     <ClInclude Include="sdl\sdl-texture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="opengl\opengl-model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\renderers\model-renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="assets.cpp">

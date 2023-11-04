@@ -46,10 +46,8 @@ namespace suprengine
 
 			//  init render batch
 			_render_batch = std::make_unique<TRenderBatch>( get_window() );
-			if ( !_render_batch->init() ) return false;
-
-			//  init assets
 			Assets::set_render_batch( get_render_batch() );
+			if ( !_render_batch->init() ) return false;
 
 			//  init managers
 			_inputs = std::make_unique<InputManager>();

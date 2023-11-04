@@ -86,6 +86,17 @@ bool OpenGLRenderBatch::init()
 		"assets/suprengine/shaders/simple-mesh.frag"
 	);
 
+	auto texture = Assets::get_texture( "assets/suprengine/textures/cat.png" );
+
+	//  load models
+	Model* cube_model = Assets::load_model( "suprengine::cube", "assets/suprengine/models/cube.fbx" );
+	cube_model->get_mesh( 0 )->shader_name = "simple-mesh";
+	cube_model->get_mesh( 0 )->add_texture( texture );
+
+	Model* cylinder_model = Assets::load_model( "suprengine::cylinder", "assets/suprengine/models/cylinder.fbx" );
+	cylinder_model->get_mesh( 0 )->shader_name = "simple-mesh";
+	cylinder_model->get_mesh( 0 )->add_texture( texture );
+
 	screen_offset = Vec3 { _window->get_width() / 2.0f, _window->get_height() / 2.0f, 0.0f };
 
 	return true;
@@ -198,7 +209,7 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 {
 	mesh->activate( texture_id );
 
-	//  set matrice
+	//  set matrices
 	Shader* shader = mesh->get_shader();
 	if ( shader != nullptr )
 	{

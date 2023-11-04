@@ -10,29 +10,27 @@ namespace suprengine
 {
 	class OpenGLMesh : public Mesh
 	{
-	private:
 	public:
-		VertexArray* vertex_array { nullptr };
 
 		OpenGLMesh() 
 			: Mesh() {}
-		OpenGLMesh( VertexArray* vertex_array ) 
-			: vertex_array( vertex_array ), Mesh() {}
-		OpenGLMesh( VertexArray* vertex_array, rconst_str shader_name )
-			: vertex_array( vertex_array ), Mesh( shader_name ) {}
+		OpenGLMesh( VertexArray* _vertex_array ) 
+			: _vertex_array( _vertex_array ), Mesh() {}
+		OpenGLMesh( VertexArray* _vertex_array, rconst_str shader_name )
+			: _vertex_array( _vertex_array ), Mesh( shader_name ) {}
 		~OpenGLMesh()
 		{
-			delete vertex_array;
+			delete _vertex_array;
 		}
 
 		int get_indices_count() override
 		{
-			return vertex_array->get_indices_count();
+			return _vertex_array->get_indices_count();
 		}
 
 		void activate( int texture_id = 0 ) override
 		{
-			vertex_array->activate();
+			_vertex_array->activate();
 
 			if ( Texture* texture = get_texture( texture_id ) )
 				texture->activate();
@@ -40,5 +38,9 @@ namespace suprengine
 			if ( Shader* shader = get_shader() )
 				shader->activate();
 		}
+
+		VertexArray* _vertex_array;
+	private:
+	
 	};
 }

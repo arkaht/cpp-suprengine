@@ -21,6 +21,7 @@ namespace suprengine
 		Mesh( rconst_str shader_name ) : shader_name( shader_name ) {}
 		Mesh( const Mesh& mesh ) = delete;
 		void operator=( const Mesh& mesh ) = delete;
+		virtual ~Mesh() {}
 
 		int add_texture( Texture* texture )
 		{

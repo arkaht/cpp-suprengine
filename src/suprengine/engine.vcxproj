@@ -205,6 +205,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/suprengine/" /Y /I /E</Comma
     <ClInclude Include="components\colliders\rect-collider.hpp" />
     <ClInclude Include="components\renderers\anim-sprite-renderer.hpp" />
     <ClInclude Include="components\renderers\mesh-renderer.hpp" />
+    <ClInclude Include="components\renderers\model-renderer.hpp" />
     <ClInclude Include="components\renderers\rect-renderer.hpp" />
     <ClInclude Include="components\renderer.fwd.h" />
     <ClInclude Include="components\renderer.h" />
@@ -228,6 +229,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/suprengine/" /Y /I /E</Comma
     <ClInclude Include="mesh.h" />
     <ClInclude Include="mtx4.h" />
     <ClInclude Include="opengl\opengl-mesh.hpp" />
+    <ClInclude Include="opengl\opengl-model.hpp" />
     <ClInclude Include="opengl\opengl-render-batch.h" />
     <ClInclude Include="opengl\opengl-texture.hpp" />
     <ClInclude Include="opengl\shader.h" />

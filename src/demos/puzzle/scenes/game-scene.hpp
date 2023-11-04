@@ -4,7 +4,7 @@
 #include <suprengine/components/colliders/box-collider.hpp>
 #include <suprengine/components/mover.hpp>
 #include <suprengine/components/mouse-looker.hpp>
-#include <suprengine/components/renderers/mesh-renderer.hpp>
+#include <suprengine/components/renderers/model-renderer.hpp>
 
 using namespace suprengine;
 
@@ -17,19 +17,20 @@ namespace puzzle
 		{
 			_game->get_inputs()->set_relative_mouse_mode( true );
 			_game->get_render_batch()->set_background_color( Color::from_0x( 0x252627FF ) );
-
-			Mesh* mesh_cube = Assets::get_mesh( Assets::PRIMITIVE_CUBE_PATH, false );
+			
+			Model* cube_model = Assets::get_model( "suprengine::cube" );
+			Model* cylinder_model = Assets::get_model( "suprengine::cylinder" );
 
 			//  setup ground
 			auto ground = new Entity();
 			ground->transform->scale = Vec3 { 100.0f, 1.0f, 100.0f };
-			ground->create_component<MeshRenderer>( mesh_cube );
+			ground->create_component<ModelRenderer>( cube_model );
 			ground->create_component<BoxCollider>( Box::HALF );
 
 			//  setup cube
 			auto cube = new Entity();
 			cube->transform->location = Vec3 { 0.0f, 5.0f, -2.5f };
-			cube->create_component<MeshRenderer>( mesh_cube );
+			cube->create_component<ModelRenderer>( cylinder_model );
 			
 			//  setup camera
 			auto camera_owner = new Entity();
