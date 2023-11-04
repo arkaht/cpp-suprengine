@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include <rapidjson/document.h>
+#include <assimp/scene.h>
 
 #include <suprengine/opengl/opengl-mesh.hpp>
 
