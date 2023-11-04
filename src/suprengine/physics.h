@@ -2,7 +2,7 @@
 
 #include "ray.hpp"
 
-#include <suprengine/ecs/components/collider.fwd.h>
+#include <suprengine/components/collider.fwd.h>
 
 #include <vector>
 #include <memory>

@@ -1,7 +1,7 @@
 #include "game.h"
-#include "ecs/entity.h"
-#include "ecs/components/transform.h"
-#include "ecs/components/collider.h"
+#include "entity.h"
+#include "components/transform.h"
+#include "components/collider.h"
 #include "scene.h"
 
 #include <unordered_map>

@@ -1,7 +1,7 @@
 #include "render-batch.h"
 
 #include <suprengine/game.h>
-#include <suprengine/ecs/components/renderers/renderer.h>
+#include <suprengine/components/renderer.h>
 
 using namespace suprengine;
 

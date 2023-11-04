@@ -9,7 +9,7 @@
 #include <suprengine/mesh.h>
 #include <suprengine/font.fwd.h>
 
-#include <suprengine/ecs/components/renderers/renderer.fwd.h>
+#include <suprengine/components/renderer.fwd.h>
 
 #include <vector>
 #include <unordered_map>

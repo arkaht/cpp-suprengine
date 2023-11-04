@@ -1,8 +1,7 @@
 #pragma once
-#include "collider.h"
+#include <suprengine/components/collider.h>
 
-#include "transform.h"
-
+#include <suprengine/components/transform.h>
 #include <suprengine/box.h>
 
 namespace suprengine

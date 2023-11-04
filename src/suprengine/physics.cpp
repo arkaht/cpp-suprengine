@@ -1,7 +1,7 @@
 #include "physics.h"
 
-#include <suprengine/ecs/entity.h>
-#include <suprengine/ecs/components/collider.h>
+#include <suprengine/entity.h>
+#include <suprengine/components/collider.h>
 
 using namespace suprengine;
 

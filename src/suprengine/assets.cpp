@@ -57,7 +57,10 @@ Shader* Assets::load_shader( rconst_str name, rconst_str vtx_filename, rconst_st
 	return get_shader( name );
 }
 
-Shader* Assets::get_shader( rconst_str name ) { return _shaders[name]; }
+Shader* Assets::get_shader( rconst_str name ) 
+{ 
+	return _shaders[name]; 
+}
 
 Mesh* Assets::get_mesh( rconst_str path, bool append_resources_path )
 {

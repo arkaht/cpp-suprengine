@@ -114,76 +114,76 @@
     <ClInclude Include="opengl\vertex-array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\component.fwd.h">
+    <ClInclude Include="component.fwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\component.h">
+    <ClInclude Include="component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\entity.fwd.h">
+    <ClInclude Include="entity.fwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\entity.h">
+    <ClInclude Include="entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\box-collider.hpp">
+    <ClInclude Include="components\colliders\box-collider.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\camera.h">
+    <ClInclude Include="components\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\collider.fwd.h">
+    <ClInclude Include="components\collider.fwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\collider.h">
+    <ClInclude Include="components\collider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\mouse-follower.hpp">
+    <ClInclude Include="components\mouse-follower.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\mouse-looker.hpp">
+    <ClInclude Include="components\mouse-looker.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\mover.hpp">
+    <ClInclude Include="components\mover.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\rect-collider.hpp">
+    <ClInclude Include="components\colliders\rect-collider.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\sphere-collider.hpp">
+    <ClInclude Include="components\colliders\sphere-collider.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\spring-arm.hpp">
+    <ClInclude Include="components\spring-arm.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\target-rotator.h">
+    <ClInclude Include="components\target-rotator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\transform.fwd.h">
+    <ClInclude Include="components\transform.fwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\transform.h">
+    <ClInclude Include="components\transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\renderers\anim-sprite-renderer.hpp">
+    <ClInclude Include="components\renderers\anim-sprite-renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\renderers\mesh-renderer.hpp">
+    <ClInclude Include="components\renderers\mesh-renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\renderers\rect-renderer.hpp">
+    <ClInclude Include="components\renderers\rect-renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\renderers\renderer.fwd.h">
+    <ClInclude Include="components\renderer.fwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\renderers\renderer.h">
+    <ClInclude Include="components\renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\renderers\sprite-renderer.hpp">
+    <ClInclude Include="components\renderers\sprite-renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components\renderers\text-renderer.hpp">
+    <ClInclude Include="components\renderers\text-renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sdl\sdl-render-batch.h">
@@ -248,22 +248,22 @@
     <ClCompile Include="opengl\vertex-array.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\component.cpp">
+    <ClCompile Include="component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\entity.cpp">
+    <ClCompile Include="entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\components\camera.cpp">
+    <ClCompile Include="components\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\components\collider.cpp">
+    <ClCompile Include="components\collider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\components\transform.cpp">
+    <ClCompile Include="components\transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\components\renderers\renderer.cpp">
+    <ClCompile Include="components\renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sdl\sdl-render-batch.cpp">

@@ -1,7 +1,7 @@
 #include "sdl-render-batch.h"
 
 #include <suprengine/texture.h>
-#include <suprengine/ecs/components/renderers/renderer.h>
+#include <suprengine/components/renderer.h>
 
 using namespace suprengine;
 

@@ -1,7 +1,7 @@
 #include "camera.h"
 
 #include <suprengine/game.h>
-#include <suprengine/ecs/entity.h>
+#include <suprengine/entity.h>
 
 using namespace suprengine;
 

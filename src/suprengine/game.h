@@ -8,9 +8,9 @@
 #include "timer.hpp"
 #include "input-manager.h"
 #include "physics.h"
-#include "ecs/entity.fwd.h"
-#include "ecs/components/collider.fwd.h"
-#include "ecs/components/camera.h"
+#include "entity.fwd.h"
+#include "components/collider.fwd.h"
+#include "components/camera.h"
 
 #include <vector>
 

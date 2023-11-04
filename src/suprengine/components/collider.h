@@ -1,7 +1,7 @@
 #pragma once
 #include "collider.fwd.h"
 
-#include <suprengine/ecs/component.h>
+#include <suprengine/component.h>
 #include <suprengine/physics.h>
 #include <suprengine/ray.hpp>
 

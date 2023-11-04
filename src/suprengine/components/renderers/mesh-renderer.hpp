@@ -1,5 +1,5 @@
 #pragma once
-#include <suprengine/ecs/components/renderers/renderer.h>
+#include <suprengine/components/renderer.h>
 
 #include <suprengine/mesh.h>
 

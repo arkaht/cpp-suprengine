@@ -1,8 +1,8 @@
 #pragma once
-#include <suprengine/ecs/component.h>
+#include <suprengine/component.h>
 
-#include <suprengine/ecs/entity.h>
-#include <suprengine/ecs/components/transform.h>
+#include <suprengine/entity.h>
+#include <suprengine/components/transform.h>
 
 namespace suprengine
 {

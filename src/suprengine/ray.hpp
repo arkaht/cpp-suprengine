@@ -1,7 +1,7 @@
 #pragma once
 
 #include <suprengine/vec3.h>
-#include <suprengine/ecs/components/collider.fwd.h>
+#include <suprengine/components/collider.fwd.h>
 
 #include <memory>
 

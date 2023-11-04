@@ -1,10 +1,10 @@
 #pragma once
 
 #include <suprengine/scene.h>
-#include <suprengine/ecs/components/box-collider.hpp>
-#include <suprengine/ecs/components/mover.hpp>
-#include <suprengine/ecs/components/mouse-looker.hpp>
-#include <suprengine/ecs/components/renderers/mesh-renderer.hpp>
+#include <suprengine/components/colliders/box-collider.hpp>
+#include <suprengine/components/mover.hpp>
+#include <suprengine/components/mouse-looker.hpp>
+#include <suprengine/components/renderers/mesh-renderer.hpp>
 
 using namespace suprengine;
 

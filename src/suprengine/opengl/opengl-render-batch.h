@@ -1,6 +1,6 @@
 #pragma once
 #include <suprengine/render-batch.h>
-#include <suprengine/ecs/components/camera.h>
+#include <suprengine/components/camera.h>
 
 #include <SDL_image.h>
 

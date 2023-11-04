@@ -1,6 +1,6 @@
 #pragma once
 
-#include <suprengine/ecs/component.h>
+#include <suprengine/component.h>
 
 #include <suprengine/rect.h>
 #include <suprengine/mtx4.h>
