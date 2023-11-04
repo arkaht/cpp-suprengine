@@ -69,6 +69,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\PropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -170,7 +171,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EngineIncludes)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -180,8 +181,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../external\glew-2.1.0\lib\Release\x64;../../external\SDL2_image-2.0.5\lib\x64;../../external\SDL2_mixer-2.0.4\lib\x64;../../external\SDL2_ttf-2.0.15\lib\x64;../../external\SDL2-2.0.12\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;opengl32.lib;glew32.lib;SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../external/assimp-5.3.1/lib/;../../external\glew-2.1.0\lib\Release\x64;../../external\SDL2_image-2.0.5\lib\x64;../../external\SDL2_mixer-2.0.4\lib\x64;../../external\SDL2_ttf-2.0.15\lib\x64;../../external\SDL2-2.0.12\lib\x64</AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
       <Command>rd /S /Q "$(TargetDir)assets/suprengine/"
