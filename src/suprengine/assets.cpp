@@ -6,7 +6,6 @@
 
 #include <rapidjson/document.h>
 
-#include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
 #include <suprengine/opengl/opengl-model.hpp>
@@ -22,38 +21,53 @@ std::map<std::string, Model*> Assets::_models;
 
 RenderBatch* Assets::_render_batch { nullptr };
 std::string Assets::_resources_path { "" };
+Assimp::Importer Assets::_importer;
 
 const std::string Assets::CUBE_PATH { "assets/suprengine/meshes/cube.fbx" };
 const std::string Assets::SPHERE_PATH { "assets/suprengine/meshes/sphere.fbx" };
 
-Texture* Assets::get_texture( rconst_str path, const TextureParams& params, bool append_resources_path )
+Texture* Assets::load_texture( rconst_str name, rconst_str path, const TextureParams& params )
 {
-	std::string full_path = append_resources_path ? _resources_path + path : path;
-
-	//  TODO: find a way to take params in account even with existing texture
-	//  load texture if un-found
-	if ( _textures.find( path ) == _textures.end() )
-	{
-		_textures[path] = _render_batch->load_texture( full_path, params );
-	}
-
-	//  get from textures
-	return _textures[path];
+	_textures[name] = _render_batch->load_texture( path, params );
+	return _textures[name];
 }
 
-Font* Assets::get_font( rconst_str path, int size, bool append_resources_path )
+Texture* Assets::get_texture( rconst_str name )
 {
-	std::string full_path = append_resources_path ? _resources_path + path : path;
-	std::string key = full_path + std::to_string( size );
-
-	//  load texture if un-found
-	if ( _fonts.find( path ) == _fonts.end() )
+	//  check texture
+	auto itr = _textures.find( name );
+	if ( itr == _textures.end() )
 	{
-		_fonts[key] = Font::load( full_path, size );
+		Logger::error( "Failed to get texture '" + name + "', either not loaded or the name is wrong!" );
+		return nullptr;
 	}
 
 	//  get from textures
+	return (*itr).second;
+}
+
+Font* Assets::load_font( rconst_str name, rconst_str path, int size )
+{
+	std::string key = name + std::to_string( size );
+
+	_fonts[key] = Font::load( path, size );
 	return _fonts[key];
+}
+
+Font* Assets::get_font( rconst_str name, int size )
+{
+	std::string key = name + std::to_string( size );
+
+	//  check font
+	auto itr = _fonts.find( key );
+	if ( itr == _fonts.end() )
+	{
+		Logger::error( "Failed to get font '" + key + "', either not loaded or the name is wrong!" );
+		return nullptr;
+	}
+
+	//  get from textures
+	return (*itr).second;
 }
 
 Shader* Assets::load_shader( rconst_str name, rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename, rconst_str tse_filename, rconst_str geo_filename, bool append_resources_path )
@@ -64,7 +78,15 @@ Shader* Assets::load_shader( rconst_str name, rconst_str vtx_filename, rconst_st
 
 Shader* Assets::get_shader( rconst_str name ) 
 { 
-	return _shaders[name]; 
+	auto itr = _shaders.find( name );
+	if ( itr == _shaders.end() )
+	{
+		Logger::error( "Failed to get shader '" + name + "', either not loaded or the name is wrong!" );
+		return nullptr;
+	}
+
+	//  get from textures
+	return (*itr).second;
 }
 
 Model* Assets::load_model( rconst_str name, rconst_str path )
@@ -76,8 +98,7 @@ Model* Assets::load_model( rconst_str name, rconst_str path )
 			  | aiProcess_JoinIdenticalVertices;
 	
 	//  load mesh
-	Assimp::Importer importer;  //  TODO: save it for further loading
-	auto scene = importer.ReadFile( path, flags );
+	auto scene = _importer.ReadFile( path, flags );
 	if ( scene == nullptr ) 
 	{
 		Logger::error( "Failed to load mesh '" + path + "', file path is probably wrong!" );
