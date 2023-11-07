@@ -101,7 +101,15 @@ bool OpenGLRenderBatch::init()
 	cylinder_model->get_mesh( 0 )->shader_name = "simple-mesh";
 	cylinder_model->get_mesh( 0 )->add_texture( texture );
 
-	screen_offset = Vec3 { _window->get_width() / 2.0f, _window->get_height() / 2.0f, 0.0f };
+	Model* sphere_model = Assets::load_model( "suprengine::sphere", "assets/suprengine/models/sphere.fbx" );
+	sphere_model->get_mesh( 0 )->shader_name = "simple-mesh";
+	sphere_model->get_mesh( 0 )->add_texture( texture );
+
+	screen_offset = Vec3 { 
+		_window->get_width() / 2.0f, 
+		_window->get_height() / 2.0f, 
+		0.0f 
+	};
 
 	return true;
 }

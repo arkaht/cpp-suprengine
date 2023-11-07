@@ -20,6 +20,7 @@ namespace puzzle
 			
 			Model* cube_model = Assets::get_model( "suprengine::cube" );
 			Model* cylinder_model = Assets::get_model( "suprengine::cylinder" );
+			Model* sphere_model = Assets::get_model( "suprengine::sphere" );
 
 			//  setup ground
 			auto ground = new Entity();
@@ -30,7 +31,7 @@ namespace puzzle
 			//  setup cube
 			auto cube = new Entity();
 			cube->transform->location = Vec3 { 0.0f, 5.0f, -2.5f };
-			cube->create_component<ModelRenderer>( cylinder_model );
+			cube->create_component<ModelRenderer>( sphere_model );
 			
 			//  setup camera
 			auto camera_owner = new Entity();
