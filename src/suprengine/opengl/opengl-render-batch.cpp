@@ -86,8 +86,12 @@ bool OpenGLRenderBatch::init()
 		"assets/suprengine/shaders/simple-mesh.frag"
 	);
 
-	auto texture = Assets::get_texture( "assets/suprengine/textures/cat.png" );
+	//  load textures
+	Assets::load_texture( "suprengine::large-grid", "assets/suprengine/textures/large-grid.png" );
+	Assets::load_texture( "suprengine::medium-grid", "assets/suprengine/textures/medium-grid.png" );
 
+	auto texture = Assets::get_texture( "suprengine::medium-grid" );
+	
 	//  load models
 	Model* cube_model = Assets::load_model( "suprengine::cube", "assets/suprengine/models/cube.fbx" );
 	cube_model->get_mesh( 0 )->shader_name = "simple-mesh";
