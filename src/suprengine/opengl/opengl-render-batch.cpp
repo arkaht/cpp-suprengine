@@ -69,6 +69,9 @@ bool OpenGLRenderBatch::init()
 	glEnable( GL_DEBUG_OUTPUT );
 	glDebugMessageCallback( _message_callback, 0 );
 
+	//  enable face culling
+	glEnable( GL_CULL_FACE );
+
 	//  create vertex array
 	quad_vertex_array = new VertexArray( QUAD_VERTICES, 4, QUAD_INDICES, 6 );
 
