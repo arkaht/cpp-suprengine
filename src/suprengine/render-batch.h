@@ -27,6 +27,13 @@ namespace suprengine
 		FilteringType filtering = FilteringType::NEAREST;
 	};
 
+	struct AmbientLightInfos
+	{
+		Color color;
+		Vec3 direction;
+		float scale;
+	};
+
 	enum class DrawType
 	{
 		FILL,
@@ -41,13 +48,6 @@ namespace suprengine
 
 	class RenderBatch
 	{
-	protected:
-		Window* _window;
-		std::unordered_map<RenderPhase, std::vector<Renderer*>> renderers;
-
-		Vec2 translation { Vec2::zero };
-		Color background_color { Color::black };
-		Game* game { nullptr };
 	public:
 		RenderBatch( Window* _window );
 		virtual ~RenderBatch() {};
@@ -72,7 +72,21 @@ namespace suprengine
 
 		void set_background_color( Color color );
 
+		void set_ambient_direction( const Vec3& direction );
+		void set_ambient_scale( float scale );
+		void set_ambient_color( Color color );
+
 		void add_renderer( Renderer* renderer );
 		void remove_renderer( Renderer* renderer );
+
+	protected:
+		Window* _window;
+		std::unordered_map<RenderPhase, std::vector<Renderer*>> renderers;
+
+		AmbientLightInfos ambient_light;
+
+		Vec2 translation { Vec2::zero };
+		Color background_color { Color::black };
+		Game* game { nullptr };
 	};
 }

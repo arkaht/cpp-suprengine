@@ -145,8 +145,13 @@ void Game::update( float dt )
 		_pending_entities.clear();
 	}
 
-	//  update entities
+	//  update scene & entities
 	_is_updating = true;
+	if ( _scene )
+	{
+		_scene->update( dt );
+	}
+
 	for ( auto entity : _entities )
 	{
 		if ( entity->state == EntityState::ACTIVE )

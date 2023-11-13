@@ -9,6 +9,10 @@ RenderBatch::RenderBatch( Window* _window )
 	: _window( _window )
 {
 	game = &Game::instance();
+
+	ambient_light.color = Color::white;
+	ambient_light.direction = Vec3 { 0.3f, 1.0f, 0.3f }.normalized();
+	ambient_light.scale = 0.25f;
 }
 
 void RenderBatch::render()
@@ -48,6 +52,21 @@ Texture* RenderBatch::load_texture( rconst_str path, const TextureParams& params
 void RenderBatch::set_background_color( Color color )
 {
 	background_color = color;
+}
+
+void RenderBatch::set_ambient_direction( const Vec3& direction )
+{
+	ambient_light.direction = direction.normalized();
+}
+
+void RenderBatch::set_ambient_scale( float scale )
+{
+	ambient_light.scale = scale;
+}
+
+void RenderBatch::set_ambient_color( Color color )
+{
+	ambient_light.color = color;
 }
 
 void RenderBatch::add_renderer( Renderer* renderer )

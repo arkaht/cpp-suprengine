@@ -209,7 +209,7 @@ void OpenGLRenderBatch::draw_texture( const Mtx4& matrix, Texture* texture, cons
 		src_rect.w / size.x,
 		src_rect.h / size.y
 	);
-
+	
 	//  origin
 	texture_shader->set_vec2( "u_origin", origin );
 
@@ -228,6 +228,11 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 		shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
 		shader->set_mtx4( "u_world_transform", matrix );
 		shader->set_vec4( "u_modulate", color );
+
+		//  lighting
+		shader->set_vec3( "u_ambient_direction", ambient_light.direction );
+		shader->set_float("u_ambient_scale", ambient_light.scale );
+		shader->set_vec4( "u_ambient_color", ambient_light.color );
 	}
 
 	//  draw

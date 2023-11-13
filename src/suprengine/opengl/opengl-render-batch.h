@@ -11,17 +11,6 @@ namespace suprengine
 {
 	class OpenGLRenderBatch : public RenderBatch
 	{
-	private:
-		SDL_GLContext gl_context { nullptr };
-	
-		VertexArray* quad_vertex_array { nullptr };
-		Shader* color_shader { nullptr }, *texture_shader { nullptr };
-
-		Camera* camera { nullptr };
-		Vec3 screen_offset;
-
-		Mtx4 _view_matrix;
-
 	public:
 		OpenGLRenderBatch( Window* _window ) : RenderBatch( _window ) {};
 		OpenGLRenderBatch( const OpenGLRenderBatch& ) = delete;
@@ -47,6 +36,16 @@ namespace suprengine
 	private:
 		Mtx4 compute_location_matrix( float x, float y, float z );
 		void draw_elements( int indices_count );
+	
+		SDL_GLContext gl_context { nullptr };
+
+		VertexArray* quad_vertex_array { nullptr };
+		Shader* color_shader { nullptr }, *texture_shader { nullptr };
+
+		Camera* camera { nullptr };
+		Vec3 screen_offset;
+
+		Mtx4 _view_matrix;
 	};
 }
 
