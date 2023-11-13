@@ -1,7 +1,7 @@
 #include "opengl-render-batch.h"
-#include "opengl-texture.hpp"
 
 #include <suprengine/assets.h>
+#include <suprengine/texture.h>
 #include <suprengine/game.h>
 
 #include <filesystem>
@@ -96,16 +96,25 @@ bool OpenGLRenderBatch::init()
 	auto texture = Assets::get_texture( "suprengine::medium-grid" );
 	
 	//  load models
-	Model* cube_model = Assets::load_model( "suprengine::cube", "assets/suprengine/models/cube.fbx" );
-	cube_model->get_mesh( 0 )->shader_name = "simple-mesh";
+	Model* cube_model = Assets::load_model( 
+		"suprengine::cube", 
+		"assets/suprengine/models/cube.fbx", 
+		"simple-mesh"
+	);
 	cube_model->get_mesh( 0 )->add_texture( texture );
 
-	Model* cylinder_model = Assets::load_model( "suprengine::cylinder", "assets/suprengine/models/cylinder.fbx" );
-	cylinder_model->get_mesh( 0 )->shader_name = "simple-mesh";
+	Model* cylinder_model = Assets::load_model( 
+		"suprengine::cylinder", 
+		"assets/suprengine/models/cylinder.fbx", 
+		"simple-mesh" 
+	);
 	cylinder_model->get_mesh( 0 )->add_texture( texture );
 
-	Model* sphere_model = Assets::load_model( "suprengine::sphere", "assets/suprengine/models/sphere.fbx" );
-	sphere_model->get_mesh( 0 )->shader_name = "simple-mesh";
+	Model* sphere_model = Assets::load_model( 
+		"suprengine::sphere", 
+		"assets/suprengine/models/sphere.fbx", 
+		"simple-mesh" 
+	);
 	sphere_model->get_mesh( 0 )->add_texture( texture );
 
 	screen_offset = Vec3 { 
@@ -222,10 +231,9 @@ void OpenGLRenderBatch::draw_texture( const Mtx4& matrix, Texture* texture, cons
 
 void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color )
 {
-	mesh->activate( texture_id );
-
 	//  set matrices
 	Shader* shader = mesh->get_shader();
+	shader->activate();
 	if ( shader != nullptr )
 	{
 		shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
@@ -239,7 +247,43 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 	}
 
 	//  draw
+	mesh->get_vertex_array()->activate();
+	mesh->get_texture( texture_id )->activate();
 	draw_elements( mesh->get_indices_count() );
+}
+
+void OpenGLRenderBatch::draw_model( const Mtx4& matrix, Model* model, const Color& color )
+{
+	if ( model == nullptr ) return;
+
+	for ( int i = 0; i < model->get_mesh_count(); i++ )
+	{
+		auto mesh = model->get_mesh( i );
+
+		//  get shader
+		Shader* shader = mesh->shader_name == ""
+			? Assets::get_shader( model->shader_name )
+			: mesh->get_shader();
+
+		//  update uniforms
+		shader->activate();
+		if ( shader != nullptr )
+		{
+			shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
+			shader->set_mtx4( "u_world_transform", matrix );
+			shader->set_vec4( "u_modulate", color );
+
+			//  lighting
+			shader->set_vec3( "u_ambient_direction", ambient_light.direction );
+			shader->set_float( "u_ambient_scale", ambient_light.scale );
+			shader->set_vec4( "u_ambient_color", ambient_light.color );
+		}
+
+		//  draw
+		mesh->get_vertex_array()->activate();
+		mesh->get_texture( 0 )->activate();
+		draw_elements( mesh->get_indices_count() );
+	}
 }
 
 void OpenGLRenderBatch::scale( float zoom )
@@ -248,11 +292,6 @@ void OpenGLRenderBatch::scale( float zoom )
 void OpenGLRenderBatch::clip( const Rect& region )
 {
 	//  TODO: support clipping
-}
-
-Texture* OpenGLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
-{
-	return new OpenGLTexture( path, surface, params );
 }
 
 Mtx4 OpenGLRenderBatch::compute_location_matrix( float x, float y, float z )

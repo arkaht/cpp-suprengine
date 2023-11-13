@@ -49,6 +49,11 @@ Texture* RenderBatch::load_texture( rconst_str path, const TextureParams& params
 	return texture;
 }
 
+Texture* RenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
+{
+	return new Texture( path, surface, params );
+}
+
 void RenderBatch::set_background_color( Color color )
 {
 	background_color = color;

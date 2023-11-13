@@ -99,19 +99,13 @@
     <ClInclude Include="window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="opengl\opengl-mesh.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="opengl\opengl-render-batch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="opengl\opengl-texture.hpp">
+    <ClInclude Include="shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="opengl\shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="opengl\vertex-array.h">
+    <ClInclude Include="vertex-array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="component.fwd.h">
@@ -192,10 +186,10 @@
     <ClInclude Include="sdl\sdl-texture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="opengl\opengl-model.hpp">
+    <ClInclude Include="components\renderers\model-renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="components\renderers\model-renderer.hpp">
+    <ClInclude Include="model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -248,10 +242,10 @@
     <ClCompile Include="opengl\opengl-render-batch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="opengl\shader.cpp">
+    <ClCompile Include="shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="opengl\vertex-array.cpp">
+    <ClCompile Include="vertex-array.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="component.cpp">

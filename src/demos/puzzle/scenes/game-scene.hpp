@@ -32,18 +32,18 @@ namespace puzzle
 
 			//  setup sphere
 			auto sphere = new Entity();
-			sphere->transform->location = Vec3 { 0.0f, 5.0f, -2.5f };
-			sphere->create_component<ModelRenderer>( sphere_model );
+			sphere->transform->location = Vec3 { 0.0f, 2.0f, 2.0f };
+			sphere->create_component<ModelRenderer>( sphere_model )->modulate = Color::blue;
 
 			//  setup cube
 			auto cube = new Entity();
-			cube->transform->location = Vec3 { 0.0f, 5.0f, 2.5f };
-			cube->create_component<ModelRenderer>( cube_model );
+			cube->transform->location = Vec3 { 0.0f, 4.0f, 0.0f };
+			cube->create_component<ModelRenderer>( cube_model )->modulate = Color::green;
 
 			//  setup cylinder
 			auto cylinder = new Entity();
-			cylinder->transform->location = Vec3 { 0.0f, 5.0f, 0.0f };
-			cylinder->create_component<ModelRenderer>( cylinder_model );
+			cylinder->transform->location = Vec3 { 2.0f, 2.0f, 0.0f };
+			cylinder->create_component<ModelRenderer>( cylinder_model )->modulate = Color::red;
 			
 			//  setup camera
 			auto camera_owner = new Entity();

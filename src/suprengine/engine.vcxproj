@@ -228,12 +228,10 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/suprengine/" /Y /I /E</Comma
     <ClInclude Include="math.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="mtx4.h" />
-    <ClInclude Include="opengl\opengl-mesh.hpp" />
-    <ClInclude Include="opengl\opengl-model.hpp" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="opengl\opengl-render-batch.h" />
-    <ClInclude Include="opengl\opengl-texture.hpp" />
-    <ClInclude Include="opengl\shader.h" />
-    <ClInclude Include="opengl\vertex-array.h" />
+    <ClInclude Include="shader.h" />
+    <ClInclude Include="vertex-array.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="quaternion.h" />
     <ClInclude Include="ray.hpp" />
@@ -269,8 +267,8 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/suprengine/" /Y /I /E</Comma
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mtx4.cpp" />
     <ClCompile Include="opengl\opengl-render-batch.cpp" />
-    <ClCompile Include="opengl\shader.cpp" />
-    <ClCompile Include="opengl\vertex-array.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="vertex-array.cpp" />
     <ClCompile Include="physics.cpp" />
     <ClCompile Include="quaternion.cpp" />
     <ClCompile Include="render-batch.cpp" />

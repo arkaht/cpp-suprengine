@@ -1,7 +1,7 @@
 #pragma once
 #include <suprengine/components/renderer.h>
 
-#include <suprengine/opengl/opengl-model.hpp>
+#include <suprengine/model.h>
 
 namespace suprengine
 {
@@ -16,19 +16,11 @@ namespace suprengine
 
 		void render() override
 		{
-			if ( model == nullptr ) return;
-
-			auto& matrix = owner->transform->get_matrix();
-			for ( int i = 0; i < model->get_mesh_count(); i++ )
-			{
-				auto mesh = model->get_mesh( i );
-				_render_batch->draw_mesh( 
-					matrix, 
-					mesh, 
-					texture_id, 
-					modulate 
-				);
-			}
+			_render_batch->draw_model( 
+				owner->transform->get_matrix(), 
+				model, 
+				modulate 
+			);
 		}
 
 		RenderPhase get_render_phase() const override { return RenderPhase::MESH; }

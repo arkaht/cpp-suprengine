@@ -8,9 +8,8 @@
 
 #include <assimp/postprocess.h>
 
-#include <suprengine/opengl/opengl-model.hpp>
-#include <suprengine/opengl/opengl-mesh.hpp>
-#include <suprengine/opengl/vertex-array.h>
+#include <suprengine/model.h>
+#include <suprengine/vertex-array.h>
 
 using namespace suprengine;
 
@@ -89,7 +88,7 @@ Shader* Assets::get_shader( rconst_str name )
 	return (*itr).second;
 }
 
-Model* Assets::load_model( rconst_str name, rconst_str path )
+Model* Assets::load_model( rconst_str name, rconst_str path, rconst_str shader_name )
 {
 	//  set import flags
 	int flags = aiProcess_Triangulate 
@@ -114,7 +113,7 @@ Model* Assets::load_model( rconst_str name, rconst_str path )
 	}
 
 	//  create model
-	auto model = new Model( std::move( meshes ) );
+	auto model = new Model( std::move( meshes ), shader_name );
 	
 	//  register and return
 	_models[name] = model;
@@ -320,7 +319,7 @@ std::vector<Mesh*> Assets::load_node( const aiNode* node, const aiScene* scene )
 	for ( size_t i = 0; i < node->mNumMeshes; i++ )
 	{
 		auto vertex_array = load_mesh( scene->mMeshes[node->mMeshes[i]] );
-		meshes.push_back( new OpenGLMesh( vertex_array ) );
+		meshes.push_back( new Mesh( vertex_array ) );
 	}
 
 	//  recursive children loading

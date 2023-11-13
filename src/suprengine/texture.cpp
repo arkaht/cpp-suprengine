@@ -29,6 +29,61 @@ using namespace suprengine;
 //	return new Texture( path, texture, size );
 //}
 
+Texture::Texture( rconst_str path, SDL_Surface* surface, const TextureParams& params )
+	: path( path ), size { (float)surface->w, (float)surface->h }
+{
+	//  get pixel format
+	int format = 0;
+	std::string format_str = "NONE";
+	if ( surface->format->BytesPerPixel == 4 )
+	{
+		if ( surface->format->Rmask == 0x000000FF )
+		{
+			format = GL_RGBA;
+			format_str = "GL_RGBA";
+		}
+		else
+		{
+			format = GL_BGRA;
+			format_str = "GL_BGRA";
+		}
+	}
+	else
+	{
+		if ( surface->format->Rmask == 0x000000FF )
+		{
+			format = GL_RGB;
+			format_str = "GL_RGB";
+		}
+		else
+		{
+			format = GL_BGR;
+			format_str = "GL_BGR";
+		}
+	}
+
+	//  generate textures
+	glGenTextures( 1, &texture_id );
+	glBindTexture( GL_TEXTURE_2D, texture_id );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, format, GL_UNSIGNED_BYTE, surface->pixels );
+
+	//  enable bilinear filtering
+	int filter = params.filtering == FilteringType::BILINEAR ? GL_LINEAR : GL_NEAREST;
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter );
+
+	Logger::info(
+		"new OpenGLTexture '" + path +
+		"' (ID: " + std::to_string( texture_id ) +
+		" | FORMAT: " + format_str + ")"
+	);
+}
+
+Texture::~Texture()
+{
+	glDeleteTextures( 1, &texture_id );
+}
+
 SDL_Surface* Texture::load_surface( rconst_str path )
 {
 	SDL_Surface* surface = IMG_Load( path.c_str() );
@@ -71,5 +126,10 @@ Color Texture::get_pixel_color_at( SDL_Surface* surface, int x, int y )
 {
 	uint32_t pixel = Texture::get_pixel_at( surface, x, y );
 	return Color::from_pixel( pixel );
+}
+
+void Texture::activate()
+{
+	glBindTexture( GL_TEXTURE_2D, texture_id );
 }
 

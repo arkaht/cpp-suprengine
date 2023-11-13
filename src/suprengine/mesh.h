@@ -1,9 +1,9 @@
 #pragma once
 
-#include <suprengine/opengl/shader.h>
-#include <suprengine/texture.fwd.h>
-
 #include <suprengine/usings.h>
+#include <suprengine/vertex-array.h>
+#include <suprengine/shader.h>
+#include <suprengine/texture.fwd.h>
 
 #include <vector>
 
@@ -11,32 +11,28 @@ namespace suprengine
 {
 	class Mesh
 	{
-	protected:
-		std::vector<Texture*> _textures;
-
 	public:
-		std::string shader_name { "simple-mesh" };
+		std::string shader_name;
 
 		Mesh() {}
-		Mesh( rconst_str shader_name ) : shader_name( shader_name ) {}
+		Mesh( VertexArray* _vertex_array )
+			: _vertex_array( _vertex_array ) {}
+		Mesh( VertexArray* _vertex_array, rconst_str shader_name )
+			: _vertex_array( _vertex_array ) {}
 		Mesh( const Mesh& mesh ) = delete;
 		void operator=( const Mesh& mesh ) = delete;
-		virtual ~Mesh() {}
+		~Mesh();
 
-		int add_texture( Texture* texture )
-		{
-			_textures.emplace_back( texture );
-			return (int) _textures.size() - 1;
-		}
-		Texture* get_texture( int id )
-		{
-			if ( id < 0 || id >= _textures.size() ) return nullptr;
-			return _textures[id];
-		}
+		int add_texture( Texture* texture );
+		Texture* get_texture( int id );
 
-		virtual Shader* get_shader();
-		virtual int get_indices_count() { return 0; }
+		Shader* get_shader();
+		int get_indices_count();
 
-		virtual void activate( int texture_id = 0 ) {};
+		VertexArray* get_vertex_array() const { return _vertex_array; }
+
+	private:
+		VertexArray* _vertex_array { nullptr };
+		std::vector<Texture*> _textures;
 	};
 }
