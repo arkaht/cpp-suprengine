@@ -13,7 +13,7 @@ namespace suprengine
 		bool should_render { true };
 		Color modulate { Color::white };
 
-		Renderer( Entity* owner, int priority_order = 0 );
+		Renderer( Entity* owner, Color modulate = Color::white, int priority_order = 0 );
 
 		void setup();
 		void unsetup();

@@ -4,8 +4,9 @@
 
 using namespace suprengine;
 
-Renderer::Renderer( Entity* owner, int priority_order )
-	: Component( owner, priority_order )
+Renderer::Renderer( Entity* owner, Color modulate, int priority_order )
+	: modulate( modulate ),
+	  Component( owner, priority_order )
 {
 	_render_batch = owner->get_game()->get_render_batch();
 }

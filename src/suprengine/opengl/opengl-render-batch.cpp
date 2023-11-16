@@ -252,7 +252,12 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 	draw_elements( mesh->get_indices_count() );
 }
 
-void OpenGLRenderBatch::draw_model( const Mtx4& matrix, Model* model, const Color& color )
+void OpenGLRenderBatch::draw_model( 
+	const Mtx4& matrix, 
+	Model* model, 
+	rconst_str shader_name,
+	const Color& color
+)
 {
 	if ( model == nullptr ) return;
 
@@ -261,9 +266,17 @@ void OpenGLRenderBatch::draw_model( const Mtx4& matrix, Model* model, const Colo
 		auto mesh = model->get_mesh( i );
 
 		//  get shader
-		Shader* shader = mesh->shader_name == ""
-			? Assets::get_shader( model->shader_name )
-			: mesh->get_shader();
+		Shader* shader = nullptr;
+		if ( shader_name != "" )
+		{
+			shader = Assets::get_shader( shader_name );
+		}
+		else
+		{
+			shader = mesh->shader_name == ""
+				? Assets::get_shader( model->shader_name )
+				: mesh->get_shader();
+		}
 
 		//  update uniforms
 		shader->activate();
