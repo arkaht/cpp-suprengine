@@ -96,6 +96,6 @@ const Mtx4& Camera::get_projection_matrix()
 void Camera::setup_vars()
 {
 	Window* _window = owner->get_game()->get_window();
-	_viewport_size.x = (float) _window->get_width(), _viewport_size.y = (float) _window->get_height();
+	_viewport_size = _window->get_size();
 	viewport.w, viewport.h = _viewport_size.x, _viewport_size.y;  //  TODO: remove obsolete camera code
 }
