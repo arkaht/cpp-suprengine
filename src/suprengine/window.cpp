@@ -2,8 +2,12 @@
 
 using namespace suprengine;
 
-Window::Window( const char* title ) : title( title ) {}
-Window::Window( const char* title, const int width, const int height ) : title( title ), width( width ), height( height ) {}
+Window::Window( const char* title ) 
+	:	title( title ),
+		size { DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT } {}
+Window::Window( const char* title, const int width, const int height ) 
+	:	title( title ), 
+		size { (float)width, (float)height } {}
 
 Window::~Window()
 {
@@ -20,7 +24,7 @@ bool Window::init()
 		return false;
 	}
 
-	sdl_window = SDL_CreateWindow( title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL );
+	sdl_window = SDL_CreateWindow( title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size.x, size.y, SDL_WINDOW_OPENGL );
 	if ( sdl_window == nullptr )
 	{
 		Logger::error( "unable to create SDL window" );

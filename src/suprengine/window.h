@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 
+#include "vec2.h"
 #include "logger.h"
 
 namespace suprengine
@@ -10,11 +11,6 @@ namespace suprengine
 
 	class Window
 	{
-	private:
-		int width { DEFAULT_WINDOW_WIDTH }, height { DEFAULT_WINDOW_HEIGHT };
-		const char* title { "My Suprengine Game" };
-
-		SDL_Window* sdl_window { nullptr };
 	public:
 		Window( const char* title );
 		Window( const char* title, const int width, const int height );
@@ -25,8 +21,13 @@ namespace suprengine
 		bool init();
 
 		SDL_Window* get_sdl_window() const { return sdl_window; }
-		int get_width() const { return width; }
-		int get_height() const { return height; }
+		Vec2 get_size() const { return size; }
+
+	private:
+		Vec2 size;
+		const char* title;
+
+		SDL_Window* sdl_window { nullptr };
 	};
 };
 

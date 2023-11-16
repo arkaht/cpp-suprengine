@@ -117,11 +117,7 @@ bool OpenGLRenderBatch::init()
 	);
 	sphere_model->get_mesh( 0 )->add_texture( texture );
 
-	screen_offset = Vec3 { 
-		_window->get_width() / 2.0f, 
-		_window->get_height() / 2.0f, 
-		0.0f 
-	};
+	screen_offset = Vec3( _window->get_size() * 0.5f, 0.0f );
 
 	return true;
 }
@@ -294,7 +290,10 @@ void OpenGLRenderBatch::draw_model(
 
 		//  draw
 		mesh->get_vertex_array()->activate();
-		mesh->get_texture( 0 )->activate();
+		if ( auto texture = mesh->get_texture( 0 ) )
+		{
+			texture->activate();
+		}
 		draw_elements( mesh->get_indices_count() );
 	}
 }
