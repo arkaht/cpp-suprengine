@@ -32,6 +32,7 @@ namespace suprengine
 		bool is_key_down( SDL_Scancode key );
 
 		void set_relative_mouse_mode( bool value );
+		Vec2 get_mouse_pos() const { return current_mouse_pos; }
 
 	private:
 		uint8_t previous_states[SDL_NUM_SCANCODES];
