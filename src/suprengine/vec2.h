@@ -22,6 +22,30 @@ namespace suprengine
 			y += v.y;
 			return *this;
 		}
+		Vec2& operator*=( const Vec2& v )
+		{
+			x *= v.x;
+			y *= v.y;
+			return *this;
+		}
+		Vec2& operator*=( float v )
+		{
+			x *= v;
+			y *= v;
+			return *this;
+		}
+		Vec2& operator/=( const Vec2& v )
+		{
+			x /= v.x;
+			y /= v.y;
+			return *this;
+		}
+		Vec2& operator/=( float v )
+		{
+			x /= v;
+			y /= v;
+			return *this;
+		}
 
 		Vec2 operator+( const Vec2& v ) const
 		{
