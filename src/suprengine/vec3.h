@@ -13,7 +13,9 @@ namespace suprengine
 		float z;
 
 		Vec3() : x( 0.0f ), y( 0.0f ), z( 0.0f ) {}
+		Vec3( float value ) : x( value ), y( value ), z( value ) {}
 		Vec3( const Vec2& vec2 ) : x( vec2.x ), y( vec2.y ), z( 0.0f ) {}
+		Vec3( const Vec2& vec2, float z ) : x( vec2.x ), y( vec2.y ), z( z ) {}
 
 		explicit Vec3( float xP, float yP, float zP )
 			:x( xP ), y( yP ), z( zP )
