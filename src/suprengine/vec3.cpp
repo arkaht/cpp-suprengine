@@ -6,7 +6,7 @@ using namespace suprengine;
 
 const Vec3 Vec3::zero( 0.0f, 0.0f, 0.0f ), Vec3::one( 1.0f, 1.0f, 1.0f );
 const Vec3 Vec3::unit_x( 1.0f, 0.0f, 0.0f ), Vec3::unit_y( 0.0f, 1.0f, 0.0f ), Vec3::unit_z( 0.0f, 0.0f, 1.0f );
-const Vec3 Vec3::right( -1.0f, 0.0f, 0.0f ), Vec3::up( 0.0f, 1.0f, 0.0f ), Vec3::forward( 0.0f, 0.0f, -1.0f );
+const Vec3 Vec3::forward( 1.0f, 0.0f, 0.0f ), Vec3::up( 0.0f, 1.0f, 0.0f ), Vec3::right( 0.0f, 0.0f, 1.0f );
 const Vec3 Vec3::neg_unit_x( -1.0f, 0.0f, 0.0f ), Vec3::neg_unit_y( 0.0f, -1.0f, 0.0f ), Vec3::neg_unit_z( 0.0f, 0.0f, -1.0f );
 const Vec3 Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 const Vec3 Vec3::neg_infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
