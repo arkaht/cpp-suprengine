@@ -88,6 +88,7 @@ namespace puzzle
 				"assets/puzzle/models/spaceship2.fbx",
 				""
 			);
+			Assets::load_model( "projectile", "assets/puzzle/models/projectile.fbx", "" );
 
 			Model* cube_model = Assets::get_model( "suprengine::cube" );
 			Model* cylinder_model = Assets::get_model( "suprengine::cylinder" );
@@ -212,15 +213,15 @@ namespace puzzle
 				if ( shoot_time <= 0.0f )
 				{
 					auto bullet = new Entity();
-					bullet->transform->location = spaceship->transform->location;
+					bullet->transform->location = spaceship->transform->location + Vec3::forward * 1.5f;
 					//bullet->transform->rotation = /*Quaternion::look_at( 
 					//	bullet->transform->location,
 					//	target_spaceship_location + spaceship->transform->get_forward() * 50.0f,
 					//	Vec3::up
 					//)*/Quaternion::look_at( Vec3::forward, Vec3::up );
 					bullet->create_component<StylizedModelRenderer>( 
-						Assets::get_model( "suprengine::cylinder" ), 
-						Color::green 
+						Assets::get_model( "projectile" ), 
+						Color::green
 					);
 					bullet->create_component<Projectile>();
 
