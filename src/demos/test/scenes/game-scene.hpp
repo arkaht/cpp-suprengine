@@ -27,23 +27,23 @@ namespace test
 			//  setup ground
 			auto ground = new Entity();
 			ground->transform->scale = Vec3 { 100.0f, 1.0f, 100.0f };
-			ground->create_component<ModelRenderer>( cube_model );
+			ground->create_component<ModelRenderer>( cube_model, "simple-mesh" );
 			ground->create_component<BoxCollider>( Box::HALF );
 
 			//  setup sphere
 			auto sphere = new Entity();
 			sphere->transform->location = Vec3 { 0.0f, 2.0f, 2.0f };
-			sphere->create_component<ModelRenderer>( sphere_model )->modulate = Color::blue;
+			sphere->create_component<ModelRenderer>( sphere_model, "simple-mesh", Color::blue );
 
 			//  setup cube
 			auto cube = new Entity();
 			cube->transform->location = Vec3 { 0.0f, 4.0f, 0.0f };
-			cube->create_component<ModelRenderer>( cube_model )->modulate = Color::green;
+			cube->create_component<ModelRenderer>( cube_model, "simple-mesh", Color::green );
 
 			//  setup cylinder
 			auto cylinder = new Entity();
 			cylinder->transform->location = Vec3 { 2.0f, 2.0f, 0.0f };
-			cylinder->create_component<ModelRenderer>( cylinder_model )->modulate = Color::red;
+			cylinder->create_component<ModelRenderer>( cylinder_model, "simple-mesh", Color::red );
 			
 			//  setup camera
 			auto camera_owner = new Entity();

@@ -87,9 +87,9 @@ namespace puzzle
 			spaceship->create_component<StylizedModelRenderer>( spaceship_model, Color::green );
 
 			//  setup cylinder
-			auto cylinder = new Entity();
+			/*auto cylinder = new Entity();
 			cylinder->transform->location = Vec3 { 3.0f, 2.0f, 0.0f };
-			cylinder->create_component<StylizedModelRenderer>( cylinder_model, Color::red );
+			cylinder->create_component<StylizedModelRenderer>( cylinder_model, Color::red );*/
 			
 			//  setup camera
 			auto camera_owner = new Entity();
@@ -98,7 +98,7 @@ namespace puzzle
 			camera_owner->transform->look_at( Vec3 { 500.0f, 0.0f, 0.0f } );
 			//camera_owner->create_component<Mover>();
 			//camera_owner->create_component<MouseLooker>( 2.0f );
-			auto camera = camera_owner->create_component<Camera>( 77.7f );
+			camera = camera_owner->create_component<Camera>( 77.7f );
 			camera->activate();
 		}
 
@@ -121,12 +121,17 @@ namespace puzzle
 			previous_spaceship_location = Vec3::lerp(
 				previous_spaceship_location,
 				Vec3 {
-					0.0f,
+					previous_spaceship_location.x,
 					normalized_mouse_pos.y * 3.5f,
 					normalized_mouse_pos.x * 5.5f,
 				},
 				dt * 7.0f
 			);
+
+			float move_speed =  dt * 2.0f;
+			previous_spaceship_location.x += move_speed;
+			camera->transform->location.x += move_speed;
+			camera->transform->is_matrix_dirty = true;
 
 			//  location (idle feeling)
 			Vec3 location = previous_spaceship_location;
@@ -154,7 +159,7 @@ namespace puzzle
 				Vec2::zero, 
 				dt * 100.0f
 			);
-			printf( "%f %f\n", spaceship_aim_velocity.x, spaceship_aim_velocity.y );
+			//printf( "%f %f\n", spaceship_aim_velocity.x, spaceship_aim_velocity.y );
 
 			//  rotations
 			Quaternion target_roll = Quaternion( 
@@ -171,12 +176,13 @@ namespace puzzle
 			rotation = Quaternion::lerp(
 				rotation,
 				target_roll + target_pitch,
-				dt * 5.0f
+				dt * 15.0f
 			);
 			spaceship->transform->set_rotation( rotation );
 		}
 
 	private:
+		std::shared_ptr<Camera> camera;
 		Entity* spaceship;
 		Vec3 previous_spaceship_location;
 
