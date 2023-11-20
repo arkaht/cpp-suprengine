@@ -14,7 +14,6 @@ Renderer::Renderer( Entity* owner, Color modulate, int priority_order )
 void Renderer::setup()
 {
 	_render_batch->add_renderer( this );
-
 }
 
 void Renderer::unsetup()

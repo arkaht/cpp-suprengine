@@ -21,8 +21,9 @@ Entity::~Entity()
 	while ( !components.empty() )
 	{
 		auto& component = components.back();
-		remove_component( component );
 		component->unsetup();
+
+		remove_component( component );
 	}
 }
 

@@ -15,8 +15,8 @@ namespace suprengine
 
 		Renderer( Entity* owner, Color modulate = Color::white, int priority_order = 0 );
 
-		void setup();
-		void unsetup();
+		virtual void setup() override;
+		virtual void unsetup() override;
 
 		virtual void render() = 0;
 
