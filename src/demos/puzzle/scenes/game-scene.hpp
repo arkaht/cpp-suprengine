@@ -24,9 +24,13 @@ namespace puzzle
 
 			//  setup planet
 			auto planet = new Entity();
-			planet->transform->location = Vec3 { 100.0f, 75.0f, 50.0f };
-			planet->transform->scale = Vec3( 50.0f );
-			planet->create_component<StylizedModelRenderer>( sphere_model, Color::blue );
+			planet->transform->location = Vec3 { 150.0f, 75.0f, 0.0f };
+			planet->transform->rotation = Quaternion( Vec3 { 0.0f, 12.0f, 6.0f } );
+			planet->transform->scale = Vec3( 1.0f );
+			planet->create_component<StylizedModelRenderer>( 
+				Assets::get_model( "planet-ring" ), 
+				Color::from_0x( 0x1b66deFF )
+			);
 			
 			//  setup cube
 			spaceship = new PlayerSpaceship();
@@ -48,6 +52,7 @@ namespace puzzle
 			//  models
 			Assets::load_model( "spaceship", "assets/puzzle/models/spaceship2.fbx" );
 			Assets::load_model( "projectile", "assets/puzzle/models/projectile.fbx" );
+			Assets::load_model( "planet-ring", "assets/puzzle/models/planet-ring.fbx" );
 		}
 
 		void init_game()
