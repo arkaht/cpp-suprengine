@@ -67,22 +67,28 @@ void Camera::activate()
 	game->camera = this;
 }
 
+void Camera::set_view_matrix( const Mtx4& matrix )
+{
+	_view_matrix = matrix;
+	_is_view_matrix_dirty = false;
+
+	//  compute transform for external uses
+	transform->get_matrix();
+}
+
 const Mtx4& Camera::get_view_matrix() 
 { 
 	if ( _is_view_matrix_dirty || transform->is_matrix_dirty )
 	{
 		//  TODO: fix this for 2D
 		Vec3 origin = transform->location + _offset;
-		_view_matrix = Mtx4::create_look_at( 
-			origin, 
-			origin + transform->get_forward(), 
-			Vec3::up 
+		set_view_matrix( 
+			Mtx4::create_look_at( 
+				origin,
+				origin + transform->get_forward(),
+				up_direction
+			) 
 		);
-
-		_is_view_matrix_dirty = false;
-
-		//  compute transform for external uses
-		transform->get_matrix();
 	}
 
 	return _view_matrix;

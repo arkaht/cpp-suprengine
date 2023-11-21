@@ -18,6 +18,8 @@ namespace suprengine
 
 		Rect clip { 0, 0, 0, 0 };
 		bool clip_enabled { false };
+
+		Vec3 up_direction = Vec3::up;
 		
 		Camera( Entity* owner );
 		Camera( Entity* owner, float fov, float znear = CAMERA_DEFAULT_ZNEAR, float zfar = CAMERA_DEFAULT_ZFAR );
@@ -32,6 +34,12 @@ namespace suprengine
 
 		void reset( float width, float height );
 		void activate();
+
+		/*
+		 * Override auto-computed view matrix. 
+		 * Needs to be updated each end of frame before the actual rendering occurs.
+		 */
+		void set_view_matrix( const Mtx4& matrix );
 
 		const Mtx4& get_view_matrix();
 		const Mtx4& get_projection_matrix();
