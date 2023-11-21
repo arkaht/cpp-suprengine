@@ -44,7 +44,7 @@ namespace puzzle
 
 			//  setup sphere
 			auto planet = new Entity();
-			planet->transform->location = Vec3 { 100.0f, 50.0f, 75.0f };
+			planet->transform->location = Vec3 { 100.0f, 75.0f, 50.0f };
 			planet->transform->scale = Vec3( 50.0f );
 			planet->create_component<StylizedModelRenderer>( sphere_model, Color::blue );
 			
@@ -81,7 +81,7 @@ namespace puzzle
 			Vec2 window_size = window->get_size();
 			Vec2 mouse_pos = inputs->get_mouse_pos();
 			Vec2 normalized_mouse_pos = mouse_pos - window_size * 0.5f;
-			normalized_mouse_pos /= window_size * 0.8f;
+			normalized_mouse_pos /= window_size * 0.7f;
 			normalized_mouse_pos *= 2.0f;
 			normalized_mouse_pos.x = math::clamp( normalized_mouse_pos.x, -1.0f, 1.0f );
 			normalized_mouse_pos.y = math::clamp( normalized_mouse_pos.y, -1.0f, 1.0f );
@@ -89,7 +89,7 @@ namespace puzzle
 
 			Vec3 target_spaceship_location = Vec3::forward * previous_spaceship_location;
 			target_spaceship_location += Vec3::up * normalized_mouse_pos.y * 3.5f;
-			target_spaceship_location += Vec3::right * normalized_mouse_pos.x * 5.5f;
+			target_spaceship_location += Vec3::right * -normalized_mouse_pos.x * 5.5f;
 			
 			previous_spaceship_location = Vec3::lerp(
 				previous_spaceship_location,
@@ -107,8 +107,8 @@ namespace puzzle
 			Vec3 location = previous_spaceship_location;
 			location += Vec3 { 
 				math::cos( time * 0.4f ) * 0.1f,
-				math::sin( time * 1.5f ) * 0.2f,
-				math::cos( time * 1.8f ) * 0.3f
+				math::sin( time * 1.8f ) * 0.3f,
+				math::cos( time * 1.5f ) * 0.15f
 			};
 			spaceship->transform->set_location( location );
 
@@ -133,12 +133,12 @@ namespace puzzle
 
 			//  rotations
 			Quaternion target_roll = Quaternion( 
-				Vec3::unit_x, 
+				Vec3::forward, 
 				-normalized_mouse_pos.x * math::PI * 0.05f
 			  + -spaceship_aim_velocity.x / MAX_AIM * math::PI * 0.1f
 			);
 			Quaternion target_pitch = Quaternion(
-				Vec3::unit_z,
+				-Vec3::right,
 				-normalized_mouse_pos.y * math::PI * 0.05f
 			  + -spaceship_aim_velocity.y / MAX_AIM * math::PI * 0.1f
 			);
@@ -156,11 +156,11 @@ namespace puzzle
 				{
 					auto bullet = new Entity();
 					bullet->transform->location = spaceship->transform->location + Vec3::forward * 1.5f;
-					//bullet->transform->rotation = /*Quaternion::look_at( 
-					//	bullet->transform->location,
-					//	target_spaceship_location + spaceship->transform->get_forward() * 50.0f,
-					//	Vec3::up
-					//)*/Quaternion::look_at( Vec3::forward, Vec3::up );
+					/*bullet->transform->rotation = Quaternion::look_at(
+						bullet->transform->location,
+						target_spaceship_location + spaceship->transform->get_forward() * 50.0f,
+						Vec3::up
+					);*///Quaternion::look_at( Vec3::forward, Vec3::up );
 					bullet->create_component<StylizedModelRenderer>( 
 						Assets::get_model( "projectile" ), 
 						Color::green

@@ -19,7 +19,7 @@ namespace puzzle
 
 		void render() override
 		{
-			glFrontFace( GL_CW );
+			glFrontFace( GL_CCW );
 			_render_batch->draw_model(
 				Mtx4::create_scale( transform->scale * 1.025f )
 				* Mtx4::create_from_quaternion( transform->rotation )
@@ -29,7 +29,7 @@ namespace puzzle
 				modulate
 			);
 
-			glFrontFace( GL_CCW );
+			glFrontFace( GL_CW );
 			_render_batch->draw_model(
 				transform->get_matrix(),
 				model,

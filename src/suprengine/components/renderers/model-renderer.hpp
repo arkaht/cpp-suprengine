@@ -24,6 +24,7 @@ namespace suprengine
 
 		void render() override
 		{
+			glFrontFace( GL_CW );
 			_render_batch->draw_model( 
 				owner->transform->get_matrix(), 
 				model, 

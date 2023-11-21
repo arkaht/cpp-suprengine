@@ -265,8 +265,8 @@ VertexArray* Assets::load_mesh( const aiMesh* mesh )
 		//  NOTE: Y and Z axes are swapped, models won't show properly otherwise
 		auto vertex = mesh->mVertices[i];
 		vertices[vertex_id + 0] = vertex.x;
-		vertices[vertex_id + 1] = vertex.z;
-		vertices[vertex_id + 2] = vertex.y;
+		vertices[vertex_id + 1] = vertex.y;
+		vertices[vertex_id + 2] = vertex.z;
 		
 		//  normal
 		if ( has_normals ) 
@@ -274,8 +274,8 @@ VertexArray* Assets::load_mesh( const aiMesh* mesh )
 			//  NOTE: similarly to vertex, Y and Z axes are swapped
 			auto normal = mesh->mNormals[i];
 			vertices[vertex_id + 3] = normal.x;
-			vertices[vertex_id + 4] = normal.z;
-			vertices[vertex_id + 5] = normal.y;
+			vertices[vertex_id + 4] = normal.y;
+			vertices[vertex_id + 5] = normal.z;
 		}
 
 		//  uv
