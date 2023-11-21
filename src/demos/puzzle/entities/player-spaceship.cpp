@@ -20,6 +20,12 @@ PlayerSpaceship::PlayerSpaceship()
 
 void PlayerSpaceship::update_this( float dt )
 {
+	_handle_movement( dt );
+	_handle_shoot( dt );
+}
+
+void PlayerSpaceship::_handle_movement( float dt )
+{
 	float time = _game->get_timer()->get_accumulated_seconds();
 	auto inputs = _game->get_inputs();
 	auto window = _game->get_window();
@@ -29,7 +35,7 @@ void PlayerSpaceship::update_this( float dt )
 	Vec2 mouse_pos = inputs->get_mouse_pos();
 	Vec2 normalized_mouse_pos = mouse_pos - window_size * 0.5f;
 	normalized_mouse_pos /= window_size * 0.7f;
-	normalized_mouse_pos *= 2.0f;
+	normalized_mouse_pos *= -2.0f;
 	normalized_mouse_pos.x = math::clamp( normalized_mouse_pos.x, -1.0f, 1.0f );
 	normalized_mouse_pos.y = math::clamp( normalized_mouse_pos.y, -1.0f, 1.0f );
 	//printf( "%f %f\n", normalized_mouse_pos.x, normalized_mouse_pos.y );
@@ -104,35 +110,25 @@ void PlayerSpaceship::update_this( float dt )
 		dt * 15.0f
 	);
 	transform->set_rotation( rotation );
-
-	_handle_shoot( dt );
 }
 
 void PlayerSpaceship::_handle_shoot( float dt )
 {
-	auto inputs = _game->get_inputs();
-	if ( inputs->is_key_down( SDL_SCANCODE_SPACE ) )
-	{
-		if ( _shoot_time <= 0.0f )
-		{
-			for ( int i = 0; i < 2; i++ )
-			{
-				auto projectile = new Projectile( _color );
-				//bullet->transform->scale = Vec3( 1.0f, 0.3f, 0.3f );
-				projectile->transform->location = transform->location
-					+ Vec3::forward * 3.7f
-					+ transform->get_right() * 2.0f * ( i == 0 ? 1.0f : -1.0f )
-					+ transform->get_up() * 0.25f;
-				/*bullet->transform->rotation = Quaternion::look_at(
-					bullet->transform->location,
-					target_spaceship_location + spaceship->transform->get_forward() * 50.0f,
-					Vec3::up
-				);*///Quaternion::look_at( Vec3::forward, Vec3::up );
-				projectile->transform->rotation = transform->rotation;
-			}
-
-			_shoot_time = SHOOT_TIME;
-		}
-	}
 	_shoot_time -= dt;
+
+	auto inputs = _game->get_inputs();
+	if ( !inputs->is_key_down( SDL_SCANCODE_SPACE ) ) return;
+	if ( _shoot_time > 0.0f ) return;
+
+	for ( int i = 0; i < 2; i++ )
+	{
+		auto projectile = new Projectile( _color );
+		projectile->transform->location = transform->location
+			+ Vec3::forward * 3.7f
+			+ transform->get_right() * 2.0f * ( i == 0 ? 1.0f : -1.0f )
+			+ transform->get_up() * 0.25f;
+		projectile->transform->rotation = transform->rotation;
+	}
+
+	_shoot_time = SHOOT_TIME;
 }

@@ -18,18 +18,14 @@ namespace puzzle
 			load_assets();
 			init_game();
 
-			Model* cube_model = Assets::get_model( "suprengine::cube" );
-			Model* cylinder_model = Assets::get_model( "suprengine::cylinder" );
-			Model* sphere_model = Assets::get_model( "suprengine::sphere" );
-
 			//  setup planet
 			auto planet = new Entity();
-			planet->transform->location = Vec3 { 150.0f, 75.0f, 0.0f };
-			planet->transform->rotation = Quaternion( Vec3 { 0.0f, 12.0f, 6.0f } );
+			planet->transform->location = Vec3 { 150.0f, 100.0f, 0.0f };
+			planet->transform->rotation = Quaternion( Vec3 { 0.0f, 12.0f, -6.0f } );
 			planet->transform->scale = Vec3( 1.0f );
 			planet->create_component<StylizedModelRenderer>( 
 				Assets::get_model( "planet-ring" ), 
-				Color::from_0x( 0x1b66deFF )
+				Color::from_0x( 0x1c6cF0FF )
 			);
 			
 			//  setup cube

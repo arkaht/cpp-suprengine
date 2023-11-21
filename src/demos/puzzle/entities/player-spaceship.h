@@ -13,6 +13,7 @@ namespace puzzle
 		void update_this( float dt ) override;
 
 	private:
+		void _handle_movement( float dt );
 		void _handle_shoot( float dt );
 
 		Vec3 _previous_location;
