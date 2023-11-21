@@ -38,7 +38,7 @@ namespace suprengine
 				yaw = math::clamp( yaw, yaw_range.x, yaw_range.y );
 
 			//  compute pitch
-			pitch = math::normalize_angle( pitch + delta.y * sensitivity * dt );
+			pitch = math::normalize_angle( pitch - delta.y * sensitivity * dt );
 			if ( constrain_pitch )
 				pitch = math::clamp( pitch, pitch_range.x, pitch_range.y );
 
