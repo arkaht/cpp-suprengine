@@ -23,5 +23,11 @@
     <ClInclude Include="scenes\game-scene.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="components\stylized-model-renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\projectile.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

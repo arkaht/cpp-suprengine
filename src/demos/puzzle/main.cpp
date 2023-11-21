@@ -2,9 +2,11 @@
 
 #include "scenes/game-scene.hpp"
 
+using namespace suprengine;
+
 int main( int arg_count, char** args )
 {
-    auto& game = Game::instance();
+	auto& game = Game::instance();
 	if ( !game.init<OpenGLRenderBatch>( "Puzzle", 1280, 720 ) ) return EXIT_FAILURE;
 
 	//  set assets path

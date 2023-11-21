@@ -503,7 +503,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeaderFile />
-      <AdditionalIncludeDirectories>$(EngineIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EngineIncludes);$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -526,6 +526,8 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="components\projectile.hpp" />
+    <ClInclude Include="components\stylized-model-renderer.hpp" />
     <ClInclude Include="scenes\game-scene.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -4,70 +4,12 @@
 #include <suprengine/components/colliders/box-collider.hpp>
 #include <suprengine/components/mover.hpp>
 #include <suprengine/components/mouse-looker.hpp>
-#include <suprengine/components/renderers/model-renderer.hpp>
 
-using namespace suprengine;
+#include <components/stylized-model-renderer.hpp>
+#include <components/projectile.hpp>
 
 namespace puzzle 
 {
-	class Projectile : public Component
-	{
-	public:
-		float move_speed = 50.0f;
-		float life_time = 2.0f;
-		
-		Projectile( Entity* owner ) : Component( owner ) {}
-
-		void update( float dt ) override
-		{
-			transform->set_location( 
-				transform->location 
-			  + transform->get_forward() * move_speed * dt 
-			  //+ Vec3::forward * move_speed * dt 
-			);
-
-			life_time -= dt;
-			if ( life_time <= 0.0f )
-			{
-				owner->kill();
-			}
-		}
-	};
-
-	class StylizedModelRenderer : public ModelRenderer
-	{
-	public:
-		StylizedModelRenderer( 
-			Entity* owner, 
-			Model* model,
-			Color modulate = Color::white,
-			int priority_order = 0 
-		)
-			: ModelRenderer( owner, model, "stylized", modulate, priority_order )
-		{}
-
-		void render() override
-		{
-			glFrontFace( GL_CW );
-			_render_batch->draw_model( 
-				Mtx4::create_scale( transform->scale * 1.025f )
-				* Mtx4::create_from_quaternion( transform->rotation )
-				* Mtx4::create_translation( transform->location ), 
-				model, 
-				shader_name,
-				modulate
-			);
-
-			glFrontFace( GL_CCW );
-			_render_batch->draw_model( 
-				transform->get_matrix(), 
-				model, 
-				shader_name,
-				Color::black
-			);
-		}
-	};
-
 	class GameScene : public Scene
 	{
 	public:
