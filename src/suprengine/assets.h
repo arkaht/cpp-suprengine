@@ -37,7 +37,7 @@ namespace suprengine
 		static Shader* load_shader( rconst_str name, rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path = "", rconst_str tse_path = "", rconst_str geo_path = "", bool append_resources_path = true );
 		static Shader* get_shader( rconst_str name );
 
-		static Model* load_model( rconst_str name, rconst_str path, rconst_str shader_name );
+		static Model* load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
 		static Model* get_model( rconst_str name );
 
 		static void release();

@@ -38,17 +38,16 @@ namespace puzzle
 	private:
 		void load_assets()
 		{
-			auto shader = Assets::load_shader(
+			//  shaders
+			Assets::load_shader(
 				"stylized",
 				"assets/puzzle/shaders/stylized.vert",
 				"assets/puzzle/shaders/stylized.frag"
 			);
-			auto spaceship_model = Assets::load_model(
-				"spaceship",
-				"assets/puzzle/models/spaceship2.fbx",
-				""
-			);
-			Assets::load_model( "projectile", "assets/puzzle/models/projectile.fbx", "" );
+
+			//  models
+			Assets::load_model( "spaceship", "assets/puzzle/models/spaceship2.fbx" );
+			Assets::load_model( "projectile", "assets/puzzle/models/projectile.fbx" );
 		}
 
 		void init_game()
