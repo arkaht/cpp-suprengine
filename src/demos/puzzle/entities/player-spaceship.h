@@ -14,6 +14,7 @@ namespace puzzle
 
 	private:
 		void _handle_movement( float dt );
+		void _handle_camera( float dt );
 		void _handle_shoot( float dt );
 
 		Vec3 _previous_location;

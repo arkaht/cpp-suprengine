@@ -21,6 +21,7 @@ PlayerSpaceship::PlayerSpaceship()
 void PlayerSpaceship::update_this( float dt )
 {
 	_handle_movement( dt );
+	_handle_camera( dt );
 	_handle_shoot( dt );
 }
 
@@ -56,11 +57,6 @@ void PlayerSpaceship::_handle_movement( float dt )
 	float move_speed = dt * 2.0f;
 	Vec3 movement = Vec3::forward * move_speed;
 	_previous_location += movement;
-
-	//  camera update
-	camera->transform->set_location( 
-		Vec3::forward * _previous_location - Vec3::forward * 7.0f 
-	);
 
 	//  apply idle location feeling
 	Vec3 location = _previous_location;
@@ -110,6 +106,14 @@ void PlayerSpaceship::_handle_movement( float dt )
 		dt * 15.0f
 	);
 	transform->set_rotation( rotation );
+}
+
+void PlayerSpaceship::_handle_camera( float dt )
+{
+	//  camera update
+	camera->transform->set_location( 
+		Vec3::forward * _previous_location - Vec3::forward * 7.0f 
+	);
 }
 
 void PlayerSpaceship::_handle_shoot( float dt )
