@@ -132,10 +132,13 @@ namespace suprengine
 			return temp;
 		}
 
-		// Lerp from A to B by f
 		static Vec3 lerp( const Vec3& a, const Vec3& b, float f )
 		{
-			return Vec3( a + f * ( b - a ) );
+			return Vec3 {
+				math::lerp( a.x, b.x, f ),
+				math::lerp( a.y, b.y, f ),
+				math::lerp( a.z, b.z, f ),
+			};
 		}
 
 		// Reflect V about (normalized) N

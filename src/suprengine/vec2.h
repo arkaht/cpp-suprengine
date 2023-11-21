@@ -104,6 +104,14 @@ namespace suprengine
 			return (float) atan2( y, x );
 		}
 
+		static Vec2 lerp( const Vec2& a, const Vec2& b, float f )
+		{
+			return Vec2 {
+				math::lerp( a.x, b.x, f ),
+				math::lerp( a.y, b.y, f ),
+			};
+		}
+
 		static Vec2 approach( const Vec2& current, const Vec2& target, float delta )
 		{
 			return Vec2 {
