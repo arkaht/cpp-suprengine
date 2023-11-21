@@ -10,7 +10,7 @@ namespace puzzle
 	class Projectile : public Component
 	{
 	public:
-		float move_speed = 50.0f;
+		float move_speed = 75.0f;
 		float life_time = 2.0f;
 
 		Projectile( Entity* owner ) : Component( owner ) {}

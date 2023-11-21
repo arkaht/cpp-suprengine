@@ -9,6 +9,9 @@ namespace puzzle
 	class StylizedModelRenderer : public ModelRenderer
 	{
 	public:
+		float outline_scale = 0.025f;
+		bool draw_only_outline = false;
+
 		StylizedModelRenderer(
 			Entity* owner,
 			Model* model,
@@ -19,23 +22,31 @@ namespace puzzle
 
 		void render() override
 		{
+			Mtx4 outline_matrix = 
+				Mtx4::create_scale( transform->scale * ( 1.0f + outline_scale ) )
+				* Mtx4::create_from_quaternion( transform->rotation )
+				* Mtx4::create_translation( transform->location );
+
+			//  draw outline
 			glFrontFace( GL_CCW );
 			_render_batch->draw_model(
-				Mtx4::create_scale( transform->scale * 1.025f )
-				* Mtx4::create_from_quaternion( transform->rotation )
-				* Mtx4::create_translation( transform->location ),
+				outline_matrix,
 				model,
 				shader_name,
 				modulate
 			);
 
-			glFrontFace( GL_CW );
-			_render_batch->draw_model(
-				transform->get_matrix(),
-				model,
-				shader_name,
-				Color::black
-			);
+			//  draw mesh on top of outline
+			if ( !draw_only_outline )
+			{
+				glFrontFace( GL_CW );
+				_render_batch->draw_model(
+					transform->get_matrix(),
+					model,
+					shader_name,
+					Color::black
+				);
+			}
 		}
 	};
 }

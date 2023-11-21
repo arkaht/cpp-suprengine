@@ -154,18 +154,26 @@ namespace puzzle
 			{
 				if ( shoot_time <= 0.0f )
 				{
-					auto bullet = new Entity();
-					bullet->transform->location = spaceship->transform->location + Vec3::forward * 1.5f;
-					/*bullet->transform->rotation = Quaternion::look_at(
-						bullet->transform->location,
-						target_spaceship_location + spaceship->transform->get_forward() * 50.0f,
-						Vec3::up
-					);*///Quaternion::look_at( Vec3::forward, Vec3::up );
-					bullet->create_component<StylizedModelRenderer>( 
-						Assets::get_model( "projectile" ), 
-						Color::green
-					);
-					bullet->create_component<Projectile>();
+					for ( int i = 0; i < 2; i++ )
+					{
+						auto bullet = new Entity();
+						//bullet->transform->scale = Vec3( 1.0f, 0.3f, 0.3f );
+						bullet->transform->location = spaceship->transform->location 
+							+ Vec3::forward * 3.7f
+							+ spaceship->transform->get_right() * 2.0f * ( i == 0 ? 1.0f : -1.0f )
+							+ spaceship->transform->get_up() * 0.25f;
+						/*bullet->transform->rotation = Quaternion::look_at(
+							bullet->transform->location,
+							target_spaceship_location + spaceship->transform->get_forward() * 50.0f,
+							Vec3::up
+						);*///Quaternion::look_at( Vec3::forward, Vec3::up );
+						bullet->transform->rotation = spaceship->transform->rotation;
+						bullet->create_component<StylizedModelRenderer>( 
+							Assets::get_model( "projectile" ), 
+							Color::green
+						)->draw_only_outline = true;
+						bullet->create_component<Projectile>();
+					}
 
 					shoot_time = SHOOT_TIME;
 					printf( "shoot\n" );
@@ -181,7 +189,7 @@ namespace puzzle
 		Quaternion SPACESHIP_ROTATION_OFFSET;// = Quaternion( Vec3::up, math::HALF_PI );
 
 		float shoot_time = 0.0f;
-		const float SHOOT_TIME = 0.1f;
+		const float SHOOT_TIME = 0.15f;
 
 		Vec2 spaceship_aim_velocity;
 	};
