@@ -21,8 +21,8 @@ PlayerSpaceship::PlayerSpaceship()
 void PlayerSpaceship::update_this( float dt )
 {
 	_handle_movement( dt );
-	_handle_camera( dt );
 	_handle_shoot( dt );
+	_handle_camera( dt );
 }
 
 void PlayerSpaceship::_handle_movement( float dt )
@@ -31,89 +31,95 @@ void PlayerSpaceship::_handle_movement( float dt )
 	auto inputs = _game->get_inputs();
 	auto window = _game->get_window();
 
-	//  get normalized mouse pos
-	Vec2 window_size = window->get_size();
-	Vec2 mouse_pos = inputs->get_mouse_pos();
-	Vec2 normalized_mouse_pos = mouse_pos - window_size * 0.5f;
-	normalized_mouse_pos /= window_size * 0.7f;
-	normalized_mouse_pos *= -2.0f;
-	normalized_mouse_pos.x = math::clamp( normalized_mouse_pos.x, -1.0f, 1.0f );
-	normalized_mouse_pos.y = math::clamp( normalized_mouse_pos.y, -1.0f, 1.0f );
-	//printf( "%f %f\n", normalized_mouse_pos.x, normalized_mouse_pos.y );
+	const Vec3 AIM_SENSITIVITY { 0.3f, 0.1f, 0.075f };
+	const float MAX_AIM_VELOCITY = 2.0f;
+	const float MAX_THROTTLE_SPEED = 200.0f;
 
-	//  find target location
-	Vec3 target_spaceship_location = Vec3::forward * _previous_location;
-	target_spaceship_location += Vec3::up * normalized_mouse_pos.y * 3.5f;
-	target_spaceship_location += Vec3::right * -normalized_mouse_pos.x * 5.5f;
+	//  get inputs
+	Vec2 mouse_delta = -inputs->mouse_delta;
+	float yaw_delta = inputs->get_keys_as_axis( SDL_SCANCODE_A, SDL_SCANCODE_D, AIM_SENSITIVITY.z );
+	float throttle_delta = inputs->get_keys_as_axis( SDL_SCANCODE_S, SDL_SCANCODE_W, 0.2f );
 
-	//  lerp location to target
-	_previous_location = Vec3::lerp(
-		_previous_location,
-		target_spaceship_location,
-		dt * 5.0f
-	);
+	//  throttle
+	_throttle = math::clamp( _throttle + throttle_delta * dt, 0.1f, 1.0f );
+
+	//  handle aim velocity
+	{
+		//  add inputs
+		_aim_velocity.x = math::clamp( 
+			_aim_velocity.x + mouse_delta.x * AIM_SENSITIVITY.x, 
+			-MAX_AIM_VELOCITY, 
+			MAX_AIM_VELOCITY 
+		);
+		_aim_velocity.y = math::clamp( 
+			_aim_velocity.y + mouse_delta.y * AIM_SENSITIVITY.y, 
+			-MAX_AIM_VELOCITY, 
+			MAX_AIM_VELOCITY 
+		);
+		_aim_velocity.z = math::clamp(
+			_aim_velocity.z + yaw_delta,
+			-MAX_AIM_VELOCITY,
+			MAX_AIM_VELOCITY
+		);
+
+		//  drag to zero
+		_aim_velocity = Vec3::lerp( _aim_velocity, Vec2::zero, dt * 5.0f );
+	}
 
 	//  apply forward movement
-	float move_speed = dt * 2.0f;
-	Vec3 movement = Vec3::forward * move_speed;
+	float move_speed = dt * _throttle * MAX_THROTTLE_SPEED;
+	Vec3 movement = transform->get_forward() * move_speed;
 	_previous_location += movement;
+	transform->set_location( _previous_location );
 
-	//  apply idle location feeling
-	Vec3 location = _previous_location;
-	location += Vec3 {
-		math::cos( time * 0.4f ) * 0.1f,
-		math::sin( time * 1.8f ) * 0.3f,
-		math::cos( time * 1.5f ) * 0.15f
-	};
-
-	//  apply location
-	transform->set_location( location );
-
-	//  aim velocity (movement feeling)
-	const float MAX_AIM = 500.0f;
-	_aim_velocity.x = math::clamp(
-		_aim_velocity.x + inputs->mouse_delta.x,
-		-MAX_AIM,
-		MAX_AIM
-	);
-	_aim_velocity.y = math::clamp(
-		_aim_velocity.y + inputs->mouse_delta.y,
-		-MAX_AIM,
-		MAX_AIM
-	);
-	_aim_velocity = Vec2::approach(
-		_aim_velocity,
-		Vec2::zero,
-		dt * 200.0f
-	);
-	//printf( "%f %f\n", _aim_velocity.x, _aim_velocity.y );
-
-	//  rotations
-	Quaternion target_roll = Quaternion(
-		Vec3::forward,
-		-normalized_mouse_pos.x * math::PI * 0.05f
-		+ -_aim_velocity.x / MAX_AIM * math::PI * 0.1f
-	);
-	Quaternion target_pitch = Quaternion(
-		-Vec3::right,
-		-normalized_mouse_pos.y * math::PI * 0.05f
-		+ -_aim_velocity.y / MAX_AIM * math::PI * 0.1f
-	);
+	//  apply rotation
 	Quaternion rotation = transform->rotation;
-	rotation = Quaternion::lerp(
-		rotation,
-		target_roll + target_pitch,
-		dt * 15.0f
+	rotation = rotation + Quaternion( 
+		transform->get_forward(), 
+		_aim_velocity.x * dt 
+	);
+	rotation = rotation + Quaternion( 
+		transform->get_right(), 
+		_aim_velocity.y * dt 
+	);
+	rotation = rotation + Quaternion(
+		transform->get_up(),
+		_aim_velocity.z * dt
 	);
 	transform->set_rotation( rotation );
 }
 
 void PlayerSpaceship::_handle_camera( float dt )
 {
-	//  camera update
-	camera->transform->set_location( 
-		Vec3::forward * _previous_location - Vec3::forward * 7.0f 
+	auto inputs = _game->get_inputs();
+
+	Vec3 forward = transform->get_forward() * -7.0f;
+	if ( inputs->is_key_down( SDL_SCANCODE_E ) )
+	{
+		forward *= -3.0f;
+	}
+
+	//  apply location
+	Vec3 target_location = transform->location 
+	  + forward
+	  + transform->get_up() * 2.5f;
+	Vec3 location = Vec3::lerp( 
+		camera->transform->location, 
+		target_location, 
+		dt * 5.0f 
 	);
+	camera->transform->set_location( location );
+
+	//  apply rotation
+	Quaternion rotation = transform->rotation;
+	if ( inputs->is_key_down( SDL_SCANCODE_E ) )
+	{
+		rotation = Quaternion::look_at( -transform->get_right(), transform->get_up() );
+	}
+	camera->transform->set_rotation( rotation );
+
+	//  update up direction for roll
+	camera->up_direction = transform->get_up();
 }
 
 void PlayerSpaceship::_handle_shoot( float dt )
@@ -128,7 +134,7 @@ void PlayerSpaceship::_handle_shoot( float dt )
 	{
 		auto projectile = new Projectile( _color );
 		projectile->transform->location = transform->location
-			+ Vec3::forward * 3.7f
+			+ transform->get_forward() * 3.7f
 			+ transform->get_right() * 2.0f * ( i == 0 ? 1.0f : -1.0f )
 			+ transform->get_up() * 0.25f;
 		projectile->transform->rotation = transform->rotation;

@@ -18,7 +18,8 @@ namespace puzzle
 		void _handle_shoot( float dt );
 
 		Vec3 _previous_location;
-		Vec2 _aim_velocity;
+		float _throttle = 0.5f;
+		Vec3 _aim_velocity;
 		Color _color = Color::green;
 
 		const float SHOOT_TIME = 0.15f;

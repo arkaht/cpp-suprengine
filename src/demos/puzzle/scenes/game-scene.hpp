@@ -20,9 +20,9 @@ namespace puzzle
 
 			//  setup planet
 			auto planet = new Entity();
-			planet->transform->location = Vec3 { 150.0f, 100.0f, 0.0f };
+			planet->transform->location = Vec3 { 5000.0f, 3000.0f, 30.0f };
 			planet->transform->rotation = Quaternion( Vec3 { 0.0f, 12.0f, -6.0f } );
-			planet->transform->scale = Vec3( 1.0f );
+			planet->transform->scale = Vec3( 10.0f );
 			planet->create_component<StylizedModelRenderer>( 
 				Assets::get_model( "planet-ring" ), 
 				Color::from_0x( 0x1c6cF0FF )
@@ -53,7 +53,7 @@ namespace puzzle
 
 		void init_game()
 		{
-			//_game->get_inputs()->set_relative_mouse_mode( true );
+			_game->get_inputs()->set_relative_mouse_mode( true );
 
 			RenderBatch* render_batch = _game->get_render_batch();
 			render_batch->set_background_color( Color::from_0x( 0x00000000 ) );
