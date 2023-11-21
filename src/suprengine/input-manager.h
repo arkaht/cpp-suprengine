@@ -23,6 +23,17 @@ namespace suprengine
 
 		void update();
 
+		/*
+		 * Returns a value in range [-value; value] representing the input axis
+		 * of both keys. Keys need to be press to change the final value.
+		 */
+		float get_keys_as_axis( 
+			SDL_Scancode negative_key, 
+			SDL_Scancode positive_key, 
+			float value = 1.0f,
+			float default_value = 0.0f
+		);
+
 		KeyState get_key_state( SDL_Scancode key );
 		bool is_key_just_pressed( SDL_Scancode key );  //  TODO: fix it, doesn't work
 		bool is_key_just_released( SDL_Scancode key );  //  TODO: fix it, doesn't work

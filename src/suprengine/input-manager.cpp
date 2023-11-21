@@ -26,6 +26,27 @@ void InputManager::update()
 	current_mouse_pos = { (float) x, (float) y };
 }
 
+float InputManager::get_keys_as_axis( 
+	SDL_Scancode negative_key,
+	SDL_Scancode positive_key, 
+	float value,
+	float default_value
+)
+{
+	float axis = default_value;
+
+	if ( is_key_down( positive_key ) ) 
+	{
+		axis += value;
+	}
+	if ( is_key_down( negative_key ) ) 
+	{
+		axis -= value;
+	}
+
+	return axis;
+}
+
 KeyState InputManager::get_key_state( SDL_Scancode key )
 {
 	if ( previous_states[key] )
