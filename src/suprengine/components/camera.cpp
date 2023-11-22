@@ -67,6 +67,11 @@ void Camera::activate()
 	game->camera = this;
 }
 
+bool Camera::is_active()
+{
+	return owner->get_game()->camera == this;
+}
+
 void Camera::set_view_matrix( const Mtx4& matrix )
 {
 	_view_matrix = matrix;

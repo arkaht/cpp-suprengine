@@ -35,6 +35,8 @@ namespace suprengine
 		void reset( float width, float height );
 		void activate();
 
+		bool is_active();
+
 		/*
 		 * Override auto-computed view matrix. 
 		 * Needs to be updated each end of frame before the actual rendering occurs.
