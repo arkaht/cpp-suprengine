@@ -231,6 +231,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="mtx4.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="opengl\opengl-render-batch.h" />
+    <ClInclude Include="random.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="vertex-array.h" />
     <ClInclude Include="physics.h" />

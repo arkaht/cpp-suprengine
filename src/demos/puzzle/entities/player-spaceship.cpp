@@ -57,7 +57,7 @@ void PlayerSpaceship::_handle_movement( float dt )
 	float throttle_speed = 1.0f + inputs->is_key_down( SDL_SCANCODE_LSHIFT ) * 1.5f;
 
 	//  throttle
-	_throttle = math::clamp( _throttle + throttle_delta * throttle_speed * dt, 0.1f, 1.0f );
+	_throttle = math::clamp( _throttle + throttle_delta * throttle_speed * dt, 0.0f, 1.0f );
 	printf( "%.0f%%\n", _throttle * 100.0f );
 
 	//  handle aim velocity
@@ -108,7 +108,8 @@ void PlayerSpaceship::_handle_movement( float dt )
 	//  trail
 	{
 		//  intensity
-		const float trail_throttle_start = 0.85f;
+		const float trail_throttle_start = 0.3f;
+		const float trail_intensity_offset = 0.6f;
 		_trail_intensity = math::lerp( 
 			_trail_intensity, 
 			_throttle > trail_throttle_start 
@@ -130,8 +131,8 @@ void PlayerSpaceship::_handle_movement( float dt )
 			trail_entity->transform->set_rotation( transform->rotation );
 			trail_entity->transform->set_scale( 
 				transform->scale 
-			  * ( 1.0f * _trail_intensity + trail_model_renderer->outline_scale * 2.0f ) 
-			  * Vec3 { 1.0f, 1.0f, 0.5f }
+			  * ( 1.0f * math::min( trail_intensity_offset + _trail_intensity, 1.0f ) + trail_model_renderer->outline_scale * 2.0f ) 
+			  * Vec3 { 1.00f, 1.0f, 0.5f }
 			);
 		}
 	}
@@ -141,7 +142,7 @@ void PlayerSpaceship::_handle_camera( float dt )
 {
 	auto inputs = _game->get_inputs();
 
-	const Vec2 CAMERA_BACKWARD_RANGE { 5.0f, -3.0f };
+	const Vec2 CAMERA_BACKWARD_RANGE { 6.0f, -3.0f };
 	const Vec2 CAMERA_SPEED_RANGE { 5.0f, 12.0f };
 
 	float throttle_ratio = _throttle / 1.0f;
@@ -188,8 +189,9 @@ void PlayerSpaceship::_handle_shoot( float dt )
 	for ( int i = 0; i < 2; i++ )
 	{
 		auto projectile = new Projectile( _color );
+		projectile->transform->scale = Vec3( 1.5f );
 		projectile->transform->location = transform->location
-			+ transform->get_forward() * 3.7f
+			+ transform->get_forward() * 3.7f * projectile->transform->scale.x
 			+ transform->get_right() * 2.0f * ( i == 0 ? 1.0f : -1.0f )
 			+ transform->get_up() * 0.25f;
 		projectile->transform->rotation = transform->rotation;

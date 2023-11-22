@@ -4,9 +4,11 @@
 #include <suprengine/components/colliders/box-collider.hpp>
 #include <suprengine/components/mover.hpp>
 #include <suprengine/components/mouse-looker.hpp>
+#include <suprengine/random.h>
 
 #include <components/stylized-model-renderer.hpp>
 #include <entities/player-spaceship.h>
+#include <entities/asteroid.h>
 
 namespace puzzle 
 {
@@ -20,14 +22,29 @@ namespace puzzle
 
 			//  setup planet
 			auto planet = new Entity();
-			planet->transform->location = Vec3 { 5000.0f, 3000.0f, 30.0f };
-			planet->transform->rotation = Quaternion( Vec3 { 0.0f, 12.0f, -6.0f } );
+			planet->transform->location = Vec3 { 2000.0f, 500.0f, 30.0f };
+			planet->transform->rotation = Quaternion( Vec3 { 0.0f, 12.0f, -6.0f } * math::DEG2RAD );
 			planet->transform->scale = Vec3( 10.0f );
 			planet->create_component<StylizedModelRenderer>( 
 				Assets::get_model( "planet-ring" ), 
 				Color::from_0x( 0x1c6cF0FF )
 			);
-			
+
+			const int ASTEROID_COUNT = 32;
+			const Vec3 ASTEROIDS_LOCATION = Vec3 { 500.0f, 100.0f, 50.0f };
+
+			for ( int i = 0; i < ASTEROID_COUNT; i++ )
+			{
+				auto asteroid = new Asteroid();
+				asteroid->transform->location = ASTEROIDS_LOCATION + random::generate_location( 
+					-500.0f, -500.0f, -500.0f,
+					500.0f, 500.0f, 500.0f
+				);
+				asteroid->transform->rotation = Quaternion::look_at( random::generate_direction(), Vec3::up );
+				asteroid->transform->scale = random::generate_scale( 10.0f, 50.0f );
+				asteroid->linear_direction = Vec3::right * 5.0f * random::generate( 0.8f, 1.2f );
+			}
+
 			//  setup cube
 			spaceship = new PlayerSpaceship();
 			spaceship->transform->location = Vec3 { 0.0f, 0.0f, 0.0f };
@@ -49,6 +66,8 @@ namespace puzzle
 			Assets::load_model( "spaceship", "assets/puzzle/models/spaceship2.fbx" );
 			Assets::load_model( "projectile", "assets/puzzle/models/projectile.fbx" );
 			Assets::load_model( "planet-ring", "assets/puzzle/models/planet-ring.fbx" );
+			Assets::load_model( "asteroid0", "assets/puzzle/models/asteroid0.fbx" );
+			Assets::load_model( "asteroid1", "assets/puzzle/models/asteroid1.fbx" );
 		}
 
 		void init_game()

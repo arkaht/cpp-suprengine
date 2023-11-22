@@ -192,6 +192,9 @@
     <ClInclude Include="model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="assets.cpp">
