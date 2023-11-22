@@ -158,6 +158,7 @@ void OpenGLRenderBatch::render()
 {
 	//  draw meshes
 	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LEQUAL );
 	render_phase( RenderPhase::MESH );
 	glDisable( GL_DEPTH_TEST );
 
