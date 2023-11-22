@@ -143,11 +143,13 @@ void PlayerSpaceship::_handle_camera( float dt )
 	auto inputs = _game->get_inputs();
 
 	const Vec2 CAMERA_BACKWARD_RANGE { 6.0f, -3.0f };
-	const Vec2 CAMERA_SPEED_RANGE { 5.0f, 12.0f };
+	const Vec2 CAMERA_SPEED_RANGE { 7.0f, 12.0f };
+	const Vec2 CAMERA_UP_RANGE { 2.0f, 4.0f };
 
 	float throttle_ratio = _throttle / 1.0f;
 	float smooth_speed = math::lerp( CAMERA_SPEED_RANGE.x, CAMERA_SPEED_RANGE.y, throttle_ratio );
 	float backward_distance = math::lerp( CAMERA_BACKWARD_RANGE.x, CAMERA_BACKWARD_RANGE.y, throttle_ratio );
+	float up_distance = math::lerp( CAMERA_UP_RANGE.x, CAMERA_UP_RANGE.y, throttle_ratio );
 
 	Vec3 forward = transform->get_forward() * -backward_distance;
 	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )
@@ -158,7 +160,7 @@ void PlayerSpaceship::_handle_camera( float dt )
 	//  apply location
 	Vec3 target_location = transform->location 
 	  + forward
-	  + transform->get_up() * 3.0f;
+	  + transform->get_up() * up_distance;
 	Vec3 location = Vec3::lerp( 
 		camera->transform->location, 
 		target_location, 
