@@ -23,5 +23,8 @@
     <ClInclude Include="scenes\game-scene.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="camera-demo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

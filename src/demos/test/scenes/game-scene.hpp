@@ -6,6 +6,8 @@
 #include <suprengine/components/mouse-looker.hpp>
 #include <suprengine/components/renderers/model-renderer.hpp>
 
+#include "camera-demo.hpp"
+
 using namespace suprengine;
 
 namespace test
@@ -46,18 +48,18 @@ namespace test
 			cylinder->create_component<ModelRenderer>( cylinder_model, "simple-mesh", Color::red );
 			
 			//  setup camera
-			auto camera_owner = new Entity();
+			auto camera_owner = new CameraDemo( sphere );
 			camera_owner->transform->location = Vec3 { 5.0f, 3.0f, 7.0f };
 			camera_owner->transform->look_at( cylinder->transform->location );
 			camera_owner->create_component<Mover>();
-			camera_owner->create_component<MouseLooker>( 2.0f );
-			auto camera = camera_owner->create_component<Camera>( 77.7f );
+			//camera_owner->create_component<MouseLooker>( 2.0f );
+			auto camera = camera_owner->create_component<Camera>( CameraProjectionSettings {} );
 			camera->activate();
 		}
 
 		void update( float dt ) override
 		{
-			time += dt * 1.0f;
+			float time = _game->get_timer()->get_accumulated_seconds();
 
 			RenderBatch* render_batch = _game->get_render_batch();
 			render_batch->set_ambient_direction(
@@ -68,8 +70,5 @@ namespace test
 				}
 			);
 		}
-
-	private:
-		float time = 0.0f;
 	};
 }

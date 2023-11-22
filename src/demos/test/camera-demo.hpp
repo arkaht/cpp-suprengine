@@ -1,27 +1,20 @@
 #pragma once
-#include <suprengine/ecs/component.h>
+#include <suprengine/component.h>
 
-#include <suprengine/ecs/entity.h>
-#include <suprengine/ecs/components/spring-arm.hpp>
-#include <suprengine/ecs/components/mover.hpp>
-#include <suprengine/ecs/components/mouse-follower.hpp>
-#include <suprengine/ecs/components/mouse-looker.hpp>
-#include <suprengine/ecs/components/target-rotator.h>
+#include <suprengine/entity.h>
+#include <suprengine/components/spring-arm.hpp>
+#include <suprengine/components/mover.hpp>
+#include <suprengine/components/mouse-follower.hpp>
+#include <suprengine/components/mouse-looker.hpp>
+#include <suprengine/components/target-rotator.h>
 #include <suprengine/input-manager.h>
 
 using namespace suprengine;
 
-namespace demo_opengl3d
+namespace test
 {
 	class CameraDemo : public Entity
 	{
-	private:
-		Entity* player { nullptr };
-
-		SpringArm* spring_arm { nullptr };
-		Mover* mover { nullptr };
-		MouseLooker* mouse_looker { nullptr };
-		TargetRotator* target_rotator { nullptr };
 	public:
 		enum class CameraMode
 		{
@@ -33,10 +26,10 @@ namespace demo_opengl3d
 		CameraDemo( Entity* player ) 
 			: player( player ), Entity()
 		{
-			spring_arm = new SpringArm( this, player->transform );
-			mover = new Mover( this );
-			mouse_looker = new MouseLooker( this, 1.0f );
-			target_rotator = new TargetRotator( this, player->transform );
+			mover = create_component<Mover>();
+			mouse_looker = create_component<MouseLooker>( 1.0f );
+			spring_arm = create_component<SpringArm>( player->transform );
+			target_rotator = create_component<TargetRotator>( player->transform );
 
 			//  disable all modes
 			_disable_mode( CameraMode::FPS );
@@ -56,16 +49,24 @@ namespace demo_opengl3d
 
 		void update_this( float dt ) override
 		{
-			InputManager* inputs = game->get_inputs();
-			if ( inputs->is_key_pressed( SDL_SCANCODE_1 ) )
+			auto inputs = _game->get_inputs();
+
+			if ( inputs->is_key_just_pressed( SDL_SCANCODE_1 ) )
 				set_mode( CameraMode::FPS );
-			else if ( inputs->is_key_pressed( SDL_SCANCODE_2 ) )
+			else if ( inputs->is_key_just_pressed( SDL_SCANCODE_2 ) )
 				set_mode( CameraMode::TPS );
-			else if ( inputs->is_key_pressed( SDL_SCANCODE_3 ) )
+			else if ( inputs->is_key_just_pressed( SDL_SCANCODE_3 ) )
 				set_mode( CameraMode::STATIC );
 		}
 
 	private:
+		Entity* player { nullptr };
+
+		std::shared_ptr<SpringArm> spring_arm;
+		std::shared_ptr<Mover> mover;
+		std::shared_ptr<MouseLooker> mouse_looker;
+		std::shared_ptr<TargetRotator> target_rotator;
+
 		CameraMode current_mode = CameraMode::TPS;
 
 		void _enable_mode( CameraMode mode )
@@ -77,11 +78,11 @@ namespace demo_opengl3d
 					mouse_looker->should_update = true;
 					break;
 				case CameraMode::TPS:
-					player->set_state( EntityState::ACTIVE );
+					player->state = EntityState::ACTIVE;
 					spring_arm->should_update = true;
 					break;
 				case CameraMode::STATIC:
-					player->set_state( EntityState::ACTIVE );
+					player->state = EntityState::ACTIVE;
 					target_rotator->should_update = true;
 					break;
 			}
@@ -96,11 +97,11 @@ namespace demo_opengl3d
 					mouse_looker->should_update = false;
 					break;
 				case CameraMode::TPS:
-					player->set_state( EntityState::PAUSED );
+					player->state = EntityState::PAUSED;
 					spring_arm->should_update = false;
 					break;
 				case CameraMode::STATIC:
-					player->set_state( EntityState::PAUSED );
+					player->state = EntityState::PAUSED;
 					target_rotator->should_update = false;
 					break;
 			}
