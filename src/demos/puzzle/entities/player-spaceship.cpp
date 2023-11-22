@@ -39,9 +39,11 @@ void PlayerSpaceship::_handle_movement( float dt )
 	Vec2 mouse_delta = -inputs->mouse_delta;
 	float yaw_delta = inputs->get_keys_as_axis( SDL_SCANCODE_A, SDL_SCANCODE_D, AIM_SENSITIVITY.z );
 	float throttle_delta = inputs->get_keys_as_axis( SDL_SCANCODE_S, SDL_SCANCODE_W, 0.2f );
+	float throttle_speed = 1.0f + inputs->is_key_down( SDL_SCANCODE_LSHIFT ) * 1.5f;
 
 	//  throttle
-	_throttle = math::clamp( _throttle + throttle_delta * dt, 0.1f, 1.0f );
+	_throttle = math::clamp( _throttle + throttle_delta * throttle_speed * dt, 0.1f, 1.0f );
+	printf( "%.0f%%\n", _throttle * 100.0f );
 
 	//  handle aim velocity
 	{
@@ -93,33 +95,40 @@ void PlayerSpaceship::_handle_camera( float dt )
 {
 	auto inputs = _game->get_inputs();
 
-	Vec3 forward = transform->get_forward() * -7.0f;
-	if ( inputs->is_key_down( SDL_SCANCODE_E ) )
+	const Vec2 CAMERA_BACKWARD_RANGE { 3.0f, -3.0f };
+	const Vec2 CAMERA_SPEED_RANGE { 5.0f, 12.0f };
+
+	float throttle_ratio = _throttle / 1.0f;
+	float smooth_speed = math::lerp( CAMERA_SPEED_RANGE.x, CAMERA_SPEED_RANGE.y, throttle_ratio );
+	float backward_distance = math::lerp( CAMERA_BACKWARD_RANGE.x, CAMERA_BACKWARD_RANGE.y, throttle_ratio );
+
+	Vec3 forward = transform->get_forward() * -backward_distance;
+	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )
 	{
 		forward *= -3.0f;
-	}
+	}*/
 
 	//  apply location
 	Vec3 target_location = transform->location 
 	  + forward
-	  + transform->get_up() * 2.5f;
+	  + transform->get_up() * 3.0f;
 	Vec3 location = Vec3::lerp( 
 		camera->transform->location, 
 		target_location, 
-		dt * 5.0f 
+		dt * smooth_speed
 	);
 	camera->transform->set_location( location );
 
 	//  apply rotation
 	Quaternion rotation = transform->rotation;
-	if ( inputs->is_key_down( SDL_SCANCODE_E ) )
+	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )
 	{
 		rotation = Quaternion::look_at( -transform->get_right(), transform->get_up() );
-	}
+	}*/
 	camera->transform->set_rotation( rotation );
 
 	//  update up direction for roll
-	camera->up_direction = transform->get_up();
+	camera->up_direction = Vec3::lerp( camera->up_direction, transform->get_up(), dt * smooth_speed );
 }
 
 void PlayerSpaceship::_handle_shoot( float dt )

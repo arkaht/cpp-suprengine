@@ -8,7 +8,7 @@ namespace puzzle
 	class Projectile : public Entity
 	{
 	public:
-		float move_speed = 125.0f;
+		float move_speed = 500.0f;
 		float life_time = 2.5f;
 
 		Projectile( Color color );
