@@ -72,6 +72,14 @@ bool OpenGLRenderBatch::init()
 	//  enable face culling
 	glEnable( GL_CULL_FACE );
 
+	//  update viewport on window size change
+	_window->on_size_changed.listen( 
+		"suprengine::opengl-render-batch", 
+		[&]( const Vec2& size ) {
+			glViewport( 0.0f, 0.0f, size.x, size.y );
+		}
+	);
+
 	//  create vertex array
 	quad_vertex_array = new VertexArray( QUAD_VERTICES, 4, QUAD_INDICES, 6 );
 

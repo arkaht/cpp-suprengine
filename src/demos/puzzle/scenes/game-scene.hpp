@@ -50,7 +50,23 @@ namespace puzzle
 			spaceship->transform->location = Vec3 { 0.0f, 0.0f, 0.0f };
 		}
 		
-		void update( float dt ) override {}
+		void update( float dt ) override 
+		{
+			auto inputs = _game->get_inputs();
+
+			if ( inputs->is_key_just_pressed( SDL_SCANCODE_F1 ) )
+			{
+				auto window = _game->get_window();
+				if ( window->get_mode() != WindowMode::Windowed )
+				{
+					window->set_mode( WindowMode::Windowed );
+				}
+				else
+				{
+					window->set_mode( WindowMode::BorderlessFullscreen );
+				}
+			}
+		}
 
 	private:
 		void load_assets()

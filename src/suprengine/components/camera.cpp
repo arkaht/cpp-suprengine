@@ -12,11 +12,12 @@ Camera::Camera( Entity* owner )
 	setup_simple_projection();
 }
 
-Camera::Camera( Entity* owner, float fov, float znear, float zfar )
-	: Component( owner )
+Camera::Camera( Entity* owner, const CameraProjectionSettings& projection_settings )
+	: projection_settings( projection_settings ),
+	  Component( owner )
 {
 	setup_vars();
-	setup_perspective( fov, znear, zfar );
+	update_projection_from_settings();
 }
 
 void Camera::setup_simple_projection()
@@ -29,7 +30,20 @@ void Camera::setup_simple_projection()
 
 void Camera::setup_perspective( float fov, float znear, float zfar )
 {
-	_projection_matrix = Mtx4::create_perspective_fov( fov * math::DEG2RAD, _viewport_size.x, _viewport_size.y, znear, zfar );
+	_projection_matrix = Mtx4::create_perspective_fov( 
+		fov * math::DEG2RAD, 
+		_viewport_size.x, _viewport_size.y, 
+		znear, zfar 
+	);
+}
+
+void Camera::update_projection_from_settings()
+{
+	setup_perspective( 
+		projection_settings.fov, 
+		projection_settings.znear, 
+		projection_settings.zfar 
+	);
 }
 
 void Camera::look_at( const Vec3& target )
@@ -107,6 +121,16 @@ const Mtx4& Camera::get_projection_matrix()
 void Camera::setup_vars()
 {
 	Window* _window = owner->get_game()->get_window();
+
+	//  listen to window updates
+	_window->on_size_changed.listen( 
+		"suprengine::camera" + std::to_string( owner->get_unique_id() ), 
+		[&]( const Vec2& size ) {
+			_viewport_size = size;
+			update_projection_from_settings();
+		}
+	);
+
 	_viewport_size = _window->get_size();
 	viewport.w, viewport.h = _viewport_size.x, _viewport_size.y;  //  TODO: remove obsolete camera code
 }

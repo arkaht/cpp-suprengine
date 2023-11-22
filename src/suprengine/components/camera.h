@@ -10,9 +10,18 @@ namespace suprengine
 	constexpr float CAMERA_DEFAULT_ZNEAR { 0.01f }, 
 					CAMERA_DEFAULT_ZFAR { 10000.0f };
 
+	struct CameraProjectionSettings
+	{
+		float fov = 77.7f;
+		float znear = CAMERA_DEFAULT_ZNEAR;
+		float zfar = CAMERA_DEFAULT_ZFAR;
+	};
+
 	class Camera : public Component
 	{
 	public:
+		CameraProjectionSettings projection_settings;
+
 		Rect viewport { 0, 0, 0, 0 };
 		float zoom { 1.0f };
 
@@ -22,11 +31,16 @@ namespace suprengine
 		Vec3 up_direction = Vec3::up;
 		
 		Camera( Entity* owner );
-		Camera( Entity* owner, float fov, float znear = CAMERA_DEFAULT_ZNEAR, float zfar = CAMERA_DEFAULT_ZFAR );
+		Camera( 
+			Entity* owner, 
+			const CameraProjectionSettings& projection_settings
+		);
 
 		void setup_simple_projection();
 		void setup_perspective( float fov, float znear, float zfar );
 		void setup_perspective( float fov ) { setup_perspective( fov, CAMERA_DEFAULT_ZNEAR, CAMERA_DEFAULT_ZFAR ); }
+		void update_projection_from_settings();
+		
 		void look_at( const Vec3& target );
 
 		void set_offset( const Vec3& offset );
@@ -47,13 +61,13 @@ namespace suprengine
 		const Mtx4& get_projection_matrix();
 
 	protected:
+		void setup_vars();
+
 		Mtx4 _projection_matrix;
 		Mtx4 _view_matrix;
 		bool _is_view_matrix_dirty = true;
 
 		Vec3 _offset {};
 		Vec2 _viewport_size {};
-
-		void setup_vars();
 	};
 }
