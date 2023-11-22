@@ -13,24 +13,32 @@ PlayerSpaceship::PlayerSpaceship()
 	);
 
 	//  initialize trail
-	trail_entity = new Entity();
-	trail_model_renderer = trail_entity->create_component<StylizedModelRenderer>(
+	auto trail_entity = new Entity();
+	trail_renderer = trail_entity->create_component<StylizedModelRenderer>(
 		model_renderer->model,
 		_color
 	);
-	trail_model_renderer->draw_only_outline = true;
-	trail_model_renderer->draw_outline_ccw = false;
+	trail_renderer->draw_only_outline = true;
+	trail_renderer->draw_outline_ccw = false;
+
+	CameraProjectionSettings projection_settings {};
 
 	//  initialize camera
-	camera_owner = new Entity();
-	camera = camera_owner->create_component<Camera>( 77.7f );
+	auto camera_owner = new Entity();
+	camera = camera_owner->create_component<Camera>( projection_settings );
 	camera->activate();
+
+	camera_owner = new Entity();
+	camera_owner->transform->scale = Vec3( 10.0f );
+	second_camera = camera_owner->create_component<Camera>( projection_settings );
+	camera_owner->create_component<ModelRenderer>( Assets::get_model( "projectile" ) );
 }
 
 PlayerSpaceship::~PlayerSpaceship()
 {
-	camera_owner->kill();
-	trail_entity->kill();
+	camera->get_owner()->kill();
+	second_camera->get_owner()->kill();
+	trail_renderer->get_owner()->kill();
 }
 
 void PlayerSpaceship::update_this( float dt )
@@ -58,7 +66,7 @@ void PlayerSpaceship::_handle_movement( float dt )
 
 	//  throttle
 	_throttle = math::clamp( _throttle + throttle_delta * throttle_speed * dt, 0.0f, 1.0f );
-	printf( "%.0f%%\n", _throttle * 100.0f );
+	//printf( "%.0f%%\n", _throttle * 100.0f );
 
 	//  handle aim velocity
 	{
@@ -117,21 +125,22 @@ void PlayerSpaceship::_handle_movement( float dt )
 				: 0.0f,
 			2.0f * dt
 		);
-		trail_model_renderer->should_render = _trail_intensity > 0.01f;
+		trail_renderer->should_render = _trail_intensity > 0.01f;
 
 		//  update visual
-		if ( trail_model_renderer->should_render )
+		if ( trail_renderer->should_render )
 		{
-			trail_entity->transform->set_location( 
+			auto trail_transform = trail_renderer->transform;
+			trail_transform->set_location( 
 				transform->location 
 			  + -transform->get_forward() 
 				* _trail_intensity
 				* math::abs( 0.1f + math::sin( time * _throttle * 15.0f ) * 0.25f )
 			);
-			trail_entity->transform->set_rotation( transform->rotation );
-			trail_entity->transform->set_scale( 
+			trail_transform->set_rotation( transform->rotation );
+			trail_transform->set_scale( 
 				transform->scale 
-			  * ( 1.0f * math::min( trail_intensity_offset + _trail_intensity, 1.0f ) + trail_model_renderer->outline_scale * 2.0f ) 
+			  * ( 1.0f * math::min( trail_intensity_offset + _trail_intensity, 1.0f ) + trail_renderer->outline_scale * 2.0f ) 
 			  * Vec3 { 1.00f, 1.0f, 0.5f }
 			);
 		}
@@ -151,6 +160,25 @@ void PlayerSpaceship::_handle_camera( float dt )
 	float backward_distance = math::lerp( CAMERA_BACKWARD_RANGE.x, CAMERA_BACKWARD_RANGE.y, throttle_ratio );
 	float up_distance = math::lerp( CAMERA_UP_RANGE.x, CAMERA_UP_RANGE.y, throttle_ratio );
 
+	if ( inputs->is_mouse_button_just_pressed( MouseButton::Right ) )
+	{
+		auto next_camera = camera->is_active() ? second_camera : camera;
+		next_camera->activate();
+		printf( "C!\n" );
+	}
+
+	if ( second_camera->is_active() )
+	{
+		//second_camera->up_direction = transform->get_up();
+	}
+	Quaternion rot = Quaternion::look_at( 
+		Vec3::cross( ( second_camera->transform->location - transform->location ).normalized(), Vec3::up ), 
+		Vec3::up
+	);
+	second_camera->transform->set_rotation( 
+		rot
+	);
+
 	Vec3 forward = transform->get_forward() * -backward_distance;
 	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )
 	{
@@ -162,8 +190,8 @@ void PlayerSpaceship::_handle_camera( float dt )
 	  + forward
 	  + transform->get_up() * up_distance;
 	Vec3 location = Vec3::lerp( 
-		camera->transform->location, 
-		target_location, 
+		camera->transform->location,
+		target_location,
 		dt * smooth_speed
 	);
 	camera->transform->set_location( location );

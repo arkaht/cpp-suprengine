@@ -28,10 +28,9 @@ namespace puzzle
 		float _shoot_time = 0.0f;
 
 		std::shared_ptr<StylizedModelRenderer> model_renderer;
-		std::shared_ptr<StylizedModelRenderer> trail_model_renderer;
+		std::shared_ptr<StylizedModelRenderer> trail_renderer;
 
-		Entity* camera_owner { nullptr };
-		Entity* trail_entity { nullptr };
 		std::shared_ptr<Camera> camera;
+		std::shared_ptr<Camera> second_camera;
 	};
 }
