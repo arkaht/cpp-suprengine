@@ -6,7 +6,7 @@ InputManager::InputManager()
 {
 	//  setup keyboard states
 	SDL_memset( previous_states, 0, SDL_NUM_SCANCODES );  //  init everything to 0
-	current_states = SDL_GetKeyboardState( NULL );
+	SDL_memset( current_states, 0, SDL_NUM_SCANCODES );
 
 	//  setup mouse states
 	int x, y;
@@ -17,7 +17,8 @@ InputManager::InputManager()
 void InputManager::update()
 {
 	SDL_memcpy( previous_states, current_states, SDL_NUM_SCANCODES );  //  copy current states into previous
-	current_states = SDL_GetKeyboardState( NULL );
+	auto state = SDL_GetKeyboardState( NULL );
+	SDL_memcpy( current_states, state, SDL_NUM_SCANCODES );  //  copy new state into current
 
 	int x, y;
 	last_mouse_pos = current_mouse_pos;
