@@ -65,7 +65,7 @@ float Quaternion::get_x_angle()
     return math::atan2( 2.0f * ( w * x + y * z ), 1.0f - 2.0f * ( x * x + y * y ) );
 }
 
-inline float suprengine::Quaternion::get_y_angle()
+float Quaternion::get_y_angle()
 {
     return 2.0f * math::atan2(
         math::sqrt( 1.0f + 2.0f * ( w * y - x * z ) ),
@@ -73,12 +73,12 @@ inline float suprengine::Quaternion::get_y_angle()
     ) - math::HALF_PI;
 }
 
-inline float suprengine::Quaternion::get_z_angle()
+float Quaternion::get_z_angle()
 {
     return math::atan2( 2.0f * ( w * z + x * y ), 1.0f - 2.0f * ( y * y + z * z ) );
 }
 
-inline Vec3 suprengine::Quaternion::to_euler_angles()
+Vec3 Quaternion::to_euler_angles()
 {
     return Vec3 {
         get_x_angle(),
