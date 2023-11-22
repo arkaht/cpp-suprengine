@@ -7,9 +7,9 @@ namespace suprengine
 	{
 	private:
 	public:
-		Transform* target { nullptr };
+		std::shared_ptr<Transform> target;
 
-		TargetRotator( Entity* owner, Transform* target )
+		TargetRotator( Entity* owner, std::shared_ptr<Transform> target )
 			: target( target ), Component( owner ) {}
 
 		void update( float dt ) override
