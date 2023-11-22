@@ -12,10 +12,25 @@ PlayerSpaceship::PlayerSpaceship()
 		_color
 	);
 
+	//  initialize trail
+	trail_entity = new Entity();
+	trail_model_renderer = trail_entity->create_component<StylizedModelRenderer>(
+		model_renderer->model,
+		_color
+	);
+	trail_model_renderer->draw_only_outline = true;
+	trail_model_renderer->draw_outline_ccw = false;
+
 	//  initialize camera
 	camera_owner = new Entity();
 	camera = camera_owner->create_component<Camera>( 77.7f );
 	camera->activate();
+}
+
+PlayerSpaceship::~PlayerSpaceship()
+{
+	camera_owner->kill();
+	trail_entity->kill();
 }
 
 void PlayerSpaceship::update_this( float dt )
@@ -89,13 +104,44 @@ void PlayerSpaceship::_handle_movement( float dt )
 		_aim_velocity.z * dt
 	);
 	transform->set_rotation( rotation );
+
+	//  trail
+	{
+		//  intensity
+		const float trail_throttle_start = 0.85f;
+		_trail_intensity = math::lerp( 
+			_trail_intensity, 
+			_throttle > trail_throttle_start 
+				? math::remap( _throttle, trail_throttle_start, 1.0f, 0.0f, 1.0f )
+				: 0.0f,
+			2.0f * dt
+		);
+		trail_model_renderer->should_render = _trail_intensity > 0.01f;
+
+		//  update visual
+		if ( trail_model_renderer->should_render )
+		{
+			trail_entity->transform->set_location( 
+				transform->location 
+			  + -transform->get_forward() 
+				* _trail_intensity
+				* math::abs( 0.1f + math::sin( time * _throttle * 15.0f ) * 0.25f )
+			);
+			trail_entity->transform->set_rotation( transform->rotation );
+			trail_entity->transform->set_scale( 
+				transform->scale 
+			  * ( 1.0f * _trail_intensity + trail_model_renderer->outline_scale * 2.0f ) 
+			  * Vec3 { 1.0f, 1.0f, 0.5f }
+			);
+		}
+	}
 }
 
 void PlayerSpaceship::_handle_camera( float dt )
 {
 	auto inputs = _game->get_inputs();
 
-	const Vec2 CAMERA_BACKWARD_RANGE { 3.0f, -3.0f };
+	const Vec2 CAMERA_BACKWARD_RANGE { 5.0f, -3.0f };
 	const Vec2 CAMERA_SPEED_RANGE { 5.0f, 12.0f };
 
 	float throttle_ratio = _throttle / 1.0f;

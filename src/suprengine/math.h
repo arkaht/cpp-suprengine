@@ -43,13 +43,22 @@ namespace suprengine::math
 	{
 		if ( value >= 0 )
 			return fmodf( value, div );
-		
+
 		return value - floor( value / div ) * div;
 	}
 
 	static float normalize_angle( float ang )
 	{
 		return modulo( ang + PI, DOUBLE_PI ) - PI;
+	}
+
+	static float remap( 
+		float value, 
+		float low1, float high1, 
+		float low2, float high2 
+	)
+	{
+		return low2 + ( value - low1 ) * ( high2 - low2 ) / ( high1 - low1 );
 	}
 
 	template <typename T>

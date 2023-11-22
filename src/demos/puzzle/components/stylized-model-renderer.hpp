@@ -11,6 +11,7 @@ namespace puzzle
 	public:
 		float outline_scale = 0.025f;
 		bool draw_only_outline = false;
+		bool draw_outline_ccw = true;
 
 		StylizedModelRenderer(
 			Entity* owner,
@@ -28,7 +29,7 @@ namespace puzzle
 				* Mtx4::create_translation( transform->location );
 
 			//  draw outline
-			glFrontFace( GL_CCW );
+			glFrontFace( draw_outline_ccw ? GL_CCW : GL_CW );
 			_render_batch->draw_model(
 				outline_matrix,
 				model,

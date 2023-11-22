@@ -9,6 +9,7 @@ namespace puzzle
 	{
 	public:
 		PlayerSpaceship();
+		~PlayerSpaceship();
 
 		void update_this( float dt ) override;
 
@@ -19,6 +20,7 @@ namespace puzzle
 
 		Vec3 _previous_location;
 		float _throttle = 0.5f;
+		float _trail_intensity = 0.0f;
 		Vec3 _aim_velocity;
 		Color _color = Color::green;
 
@@ -26,8 +28,10 @@ namespace puzzle
 		float _shoot_time = 0.0f;
 
 		std::shared_ptr<StylizedModelRenderer> model_renderer;
+		std::shared_ptr<StylizedModelRenderer> trail_model_renderer;
 
 		Entity* camera_owner { nullptr };
+		Entity* trail_entity { nullptr };
 		std::shared_ptr<Camera> camera;
 	};
 }
