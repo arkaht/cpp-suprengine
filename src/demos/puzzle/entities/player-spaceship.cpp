@@ -185,7 +185,7 @@ void PlayerSpaceship::_handle_shoot( float dt )
 	_shoot_time -= dt;
 
 	auto inputs = _game->get_inputs();
-	if ( !inputs->is_key_down( SDL_SCANCODE_SPACE ) ) return;
+	if ( !inputs->is_mouse_button_down( MouseButton::Left ) ) return;
 	if ( _shoot_time > 0.0f ) return;
 
 	for ( int i = 0; i < 2; i++ )
