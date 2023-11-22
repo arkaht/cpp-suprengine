@@ -2,9 +2,13 @@
 
 using namespace suprengine;
 
+int Entity::_global_id { 0 };
+
 Entity::Entity()
 	: _game( &Game::instance() )
 {
+	_unique_id = _global_id++;
+
 	//  assign a transform
 	transform = create_component<Transform>();
 

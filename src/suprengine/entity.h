@@ -60,9 +60,14 @@ namespace suprengine
 		virtual void on_trigger_exit( std::shared_ptr<Collider> collider ) {};
 
 		Game* get_game() const { return _game; }
+		int get_unique_id() const { return _unique_id; }
 
 	protected:
 		Game* _game { nullptr };
+
+	private:
+		int _unique_id = -1;
+		static int _global_id;
 	};
 }
 
