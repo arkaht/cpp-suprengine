@@ -22,6 +22,8 @@ PlayerSpaceship::PlayerSpaceship()
 	trail_renderer->draw_outline_ccw = false;
 
 	CameraProjectionSettings projection_settings {};
+	projection_settings.znear = 1.0f;
+	projection_settings.zfar = 10000.0f;
 
 	//  initialize camera
 	auto camera_owner = new Entity();
@@ -164,7 +166,6 @@ void PlayerSpaceship::_handle_camera( float dt )
 	{
 		auto next_camera = camera->is_active() ? second_camera : camera;
 		next_camera->activate();
-		printf( "C!\n" );
 	}
 
 	if ( second_camera->is_active() )
