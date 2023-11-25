@@ -47,8 +47,8 @@ namespace suprengine
 		Vec3 get_offset() const { return _offset; }
 
 		void reset( float width, float height );
-		void activate();
 
+		void activate();
 		bool is_active();
 
 		/*
