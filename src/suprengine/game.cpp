@@ -120,12 +120,12 @@ void Game::process_input()
 	}
 	
 	//  quit
-	if ( _inputs->is_key_pressed( SDL_SCANCODE_ESCAPE ) )
+	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_ESCAPE ) )
 	{
 		_is_running = false;
 	}
 	//  toggle debug
-	if ( _inputs->is_key_pressed( SDL_SCANCODE_COMMA ) )
+	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_COMMA ) )
 	{
 		is_debug = !is_debug;
 	}
