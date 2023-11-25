@@ -33,6 +33,11 @@ namespace suprengine
 			rconst_str shader_name,
 			const Color& color = Color::white
 		) override;
+		virtual void draw_debug_model( 
+			const Mtx4& matrix, 
+			Model* model, 
+			const Color& color 
+		) override;
 
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;

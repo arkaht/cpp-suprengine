@@ -120,7 +120,7 @@
     <ClInclude Include="entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="components\colliders\box-collider.hpp">
+    <ClInclude Include="components\colliders\box-collider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="components\camera.h">
@@ -144,7 +144,7 @@
     <ClInclude Include="components\colliders\rect-collider.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="components\colliders\sphere-collider.hpp">
+    <ClInclude Include="components\colliders\sphere-collider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="components\spring-arm.hpp">
@@ -279,6 +279,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\colliders\box-collider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\colliders\sphere-collider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

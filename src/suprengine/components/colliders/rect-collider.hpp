@@ -1,8 +1,8 @@
 #pragma once
-#include "collider.h"
+#include <suprengine/components/collider.h>
+#include <suprengine/components/transform.h>
 
 #include <suprengine/entity.h>
-#include <suprengine/components/transform.h>
 
 namespace suprengine
 {
@@ -14,12 +14,12 @@ namespace suprengine
 		RectCollider( Entity* owner, Rect shape, int priority_order = 0 )
 			: shape( shape ), Collider( owner, priority_order ) {}
 
-		bool intersects( Collider* c ) override
+		bool intersects( std::shared_ptr<Collider> other ) override
 		{
 			Rect rect = owner->transform->get_rect( shape );
 
 			//  rect-rect collision
-			if ( auto rc = dynamic_cast<RectCollider*>( c ) )
+			if ( auto rc = std::dynamic_pointer_cast<RectCollider>( other ) )
 			{
 				Rect rc_rect = rc->owner->transform->get_rect( rc->shape );
 				return rect.x < rc_rect.x + rc_rect.w && rc_rect.x < rect.x + rect.w

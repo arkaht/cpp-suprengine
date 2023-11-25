@@ -57,10 +57,7 @@ const Mtx4& Transform::get_matrix()
 {
 	if ( is_matrix_dirty )
 	{
-		matrix = Mtx4::create_scale( scale )
-			* Mtx4::create_from_quaternion( rotation )
-			* Mtx4::create_translation( location );
-
+		matrix = Mtx4::create_from_transform( scale, rotation, location );
 		is_matrix_dirty = false;
 	}
 

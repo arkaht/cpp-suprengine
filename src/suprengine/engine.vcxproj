@@ -196,7 +196,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="color.h" />
     <ClInclude Include="component.fwd.h" />
     <ClInclude Include="component.h" />
-    <ClInclude Include="components\colliders\box-collider.hpp" />
+    <ClInclude Include="components\colliders\box-collider.h" />
     <ClInclude Include="components\camera.h" />
     <ClInclude Include="components\collider.fwd.h" />
     <ClInclude Include="components\collider.h" />
@@ -212,7 +212,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="components\renderer.h" />
     <ClInclude Include="components\renderers\sprite-renderer.hpp" />
     <ClInclude Include="components\renderers\text-renderer.hpp" />
-    <ClInclude Include="components\colliders\sphere-collider.hpp" />
+    <ClInclude Include="components\colliders\sphere-collider.h" />
     <ClInclude Include="components\spring-arm.hpp" />
     <ClInclude Include="components\target-rotator.h" />
     <ClInclude Include="components\transform.fwd.h" />
@@ -259,6 +259,8 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClCompile Include="component.cpp" />
     <ClCompile Include="components\camera.cpp" />
     <ClCompile Include="components\collider.cpp" />
+    <ClCompile Include="components\colliders\box-collider.cpp" />
+    <ClCompile Include="components\colliders\sphere-collider.cpp" />
     <ClCompile Include="components\renderer.cpp" />
     <ClCompile Include="components\transform.cpp" />
     <ClCompile Include="entity.cpp" />

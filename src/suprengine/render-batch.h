@@ -68,6 +68,11 @@ namespace suprengine
 			rconst_str shader_name,
 			const Color& color = Color::white 
 		) = 0;
+		virtual void draw_debug_model( 
+			const Mtx4& matrix, 
+			Model* model, 
+			const Color& color 
+		) = 0;
 
 		void translate( const Vec2& pos );
 		virtual void scale( float zoom ) = 0;

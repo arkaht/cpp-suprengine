@@ -307,6 +307,24 @@ void OpenGLRenderBatch::draw_model(
 	}
 }
 
+void OpenGLRenderBatch::draw_debug_model( 
+	const Mtx4& matrix, 
+	Model* model, 
+	const Color& color 
+)
+{
+	if ( model == nullptr ) return;
+
+	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	draw_model(
+		matrix,
+		model,
+		"color",
+		color
+	);
+	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+}
+
 void OpenGLRenderBatch::scale( float zoom )
 {}
 

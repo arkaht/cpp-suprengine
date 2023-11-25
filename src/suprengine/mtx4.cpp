@@ -124,3 +124,14 @@ void Mtx4::invert()
 		}
 	}
 }
+
+Mtx4 Mtx4::create_from_transform( 
+	const Vec3& scale, 
+	const Quaternion& rotation,
+	const Vec3& location 
+)
+{
+	return Mtx4::create_scale( scale )
+		 * Mtx4::create_from_quaternion( rotation )
+		 * Mtx4::create_translation( location );
+}

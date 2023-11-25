@@ -153,12 +153,10 @@ namespace suprengine
 		{
 			return Vec3::normalize( Vec3( mat[0][0], mat[0][1], mat[0][2] ) );
 		}
-
 		Vec3 get_y_axis() const
 		{
 			return Vec3::normalize( Vec3( mat[1][0], mat[1][1], mat[1][2] ) );
 		}
-
 		Vec3 get_z_axis() const
 		{
 			return Vec3::normalize( Vec3( mat[2][0], mat[2][1], mat[2][2] ) );
@@ -173,6 +171,12 @@ namespace suprengine
 			return retVal;
 		}
 
+		static Mtx4 create_from_transform( 
+			const Vec3& scale, 
+			const Quaternion& rotation, 
+			const Vec3& location 
+		);
+
 		static Mtx4 create_scale( float xScale, float yScale, float zScale )
 		{
 			float temp[4][4] =
@@ -184,12 +188,10 @@ namespace suprengine
 			};
 			return Mtx4( temp );
 		}
-
 		static Mtx4 create_scale( const Vec3& scaleVector )
 		{
 			return create_scale( scaleVector.x, scaleVector.y, scaleVector.z );
 		}
-
 		static Mtx4 create_scale( float scale )
 		{
 			return create_scale( scale, scale, scale );
@@ -206,7 +208,6 @@ namespace suprengine
 			};
 			return Mtx4( temp );
 		}
-
 		static Mtx4 create_rotation_y( float theta )
 		{
 			float temp[4][4] =
@@ -218,7 +219,6 @@ namespace suprengine
 			};
 			return Mtx4( temp );
 		}
-
 		static Mtx4 create_rotation_z( float theta )
 		{
 			float temp[4][4] =
@@ -227,34 +227,6 @@ namespace suprengine
 				{ -math::sin( theta ), math::cos( theta ), 0.0f, 0.0f },
 				{ 0.0f, 0.0f, 1.0f, 0.0f },
 				{ 0.0f, 0.0f, 0.0f, 1.0f },
-			};
-			return Mtx4( temp );
-		}
-
-		static Mtx4 create_translation( float x, float y, float z )
-		{
-			float temp[4][4] =
-			{
-				{ 1.0f, 0.0f, 0.0f, 0.0f },
-				{ 0.0f, 1.0f, 0.0f, 0.0f },
-				{ 0.0f, 0.0f, 1.0f, 0.0f },
-				{ x, y, z, 1.0f }
-			};
-			return Mtx4( temp );
-		}
-		static Mtx4 create_translation( const Vec3& pos )
-		{
-			return create_translation( pos.x, pos.y, pos.z );
-		}
-
-		static Mtx4 create_simple_view_projection( float width, float height )
-		{
-			float temp[4][4] =
-			{
-				{ 2.0f / width, 0.0f, 0.0f, 0.0f },
-				{ 0.0f, 2.0f / height, 0.0f, 0.0f },
-				{ 0.0f, 0.0f, 1.0f, 0.0f },
-				{ 0.0f, 0.0f, 1.0f, 1.0f }
 			};
 			return Mtx4( temp );
 		}
@@ -285,7 +257,6 @@ namespace suprengine
 
 			return Mtx4( mat );
 		}
-
 		static Mtx4 create_look_at( const Vec3& eye, const Vec3& target, const Vec3& up )
 		{
 			Vec3 zaxis = Vec3::normalize( target - eye );
@@ -306,6 +277,22 @@ namespace suprengine
 			return Mtx4( temp );
 		}
 
+		static Mtx4 create_translation( float x, float y, float z )
+		{
+			float temp[4][4] =
+			{
+				{ 1.0f, 0.0f, 0.0f, 0.0f },
+				{ 0.0f, 1.0f, 0.0f, 0.0f },
+				{ 0.0f, 0.0f, 1.0f, 0.0f },
+				{ x, y, z, 1.0f }
+			};
+			return Mtx4( temp );
+		}
+		static Mtx4 create_translation( const Vec3& pos )
+		{
+			return create_translation( pos.x, pos.y, pos.z );
+		}
+
 		static Mtx4 create_ortho( float width, float height, float near, float far )
 		{
 			float temp[4][4] =
@@ -317,7 +304,6 @@ namespace suprengine
 			};
 			return Mtx4( temp );
 		}
-
 		static Mtx4 create_perspective_fov( float fovY, float width, float height, float near, float far )
 		{
 			float yScale = math::cot( fovY / 2.0f );
@@ -328,6 +314,17 @@ namespace suprengine
 				{ 0.0f, yScale, 0.0f, 0.0f },
 				{ 0.0f, 0.0f, far / ( far - near ), 1.0f },
 				{ 0.0f, 0.0f, -near * far / ( far - near ), 0.0f }
+			};
+			return Mtx4( temp );
+		}
+		static Mtx4 create_simple_view_projection( float width, float height )
+		{
+			float temp[4][4] =
+			{
+				{ 2.0f / width, 0.0f, 0.0f, 0.0f },
+				{ 0.0f, 2.0f / height, 0.0f, 0.0f },
+				{ 0.0f, 0.0f, 1.0f, 0.0f },
+				{ 0.0f, 0.0f, 1.0f, 1.0f }
 			};
 			return Mtx4( temp );
 		}
