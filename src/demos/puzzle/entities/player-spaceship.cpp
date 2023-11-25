@@ -64,7 +64,7 @@ void PlayerSpaceship::_handle_movement( float dt )
 	Vec2 mouse_delta = -inputs->mouse_delta;
 	float yaw_delta = inputs->get_keys_as_axis( SDL_SCANCODE_A, SDL_SCANCODE_D, AIM_SENSITIVITY.z );
 	float throttle_delta = inputs->get_keys_as_axis( SDL_SCANCODE_S, SDL_SCANCODE_W, 0.2f );
-	float throttle_speed = 1.0f + inputs->is_key_down( SDL_SCANCODE_LSHIFT ) * 1.5f;
+	float throttle_speed = 1.0f + /*inputs->is_key_down( SDL_SCANCODE_LSHIFT ) **/ 1.5f;
 
 	//  throttle
 	_throttle = math::clamp( _throttle + throttle_delta * throttle_speed * dt, 0.0f, 1.0f );
