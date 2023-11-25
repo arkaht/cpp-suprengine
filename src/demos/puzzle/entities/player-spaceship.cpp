@@ -1,5 +1,7 @@
 #include "player-spaceship.h"
 
+#include <suprengine/components/colliders/box-collider.h>
+
 #include <entities/projectile.h>
 
 using namespace puzzle;
@@ -24,6 +26,8 @@ PlayerSpaceship::PlayerSpaceship()
 	CameraProjectionSettings projection_settings {};
 	projection_settings.znear = 1.0f;
 	projection_settings.zfar = 10000.0f;
+
+	create_component<BoxCollider>( Box::HALF );
 
 	//  initialize camera
 	auto camera_owner = new Entity();
@@ -164,7 +168,7 @@ void PlayerSpaceship::_handle_camera( float dt )
 
 	if ( inputs->is_mouse_button_just_pressed( MouseButton::Right ) )
 	{
-		auto next_camera = camera->is_active() ? second_camera : camera;
+		auto& next_camera = camera->is_active() ? second_camera : camera;
 		next_camera->activate();
 	}
 
@@ -172,13 +176,17 @@ void PlayerSpaceship::_handle_camera( float dt )
 	{
 		//second_camera->up_direction = transform->get_up();
 	}
+
+	Vec3 dir = ( transform->location - second_camera->transform->location ).normalized();
 	Quaternion rot = Quaternion::look_at( 
-		Vec3::cross( ( second_camera->transform->location - transform->location ).normalized(), Vec3::up ), 
+		/*Vec3::cross( 
+			dir,
+			Vec3::up 
+		)*/dir, 
 		Vec3::up
 	);
-	second_camera->transform->set_rotation( 
-		rot
-	);
+	rot.normalize();
+	second_camera->transform->set_rotation( rot );
 
 	Vec3 forward = transform->get_forward() * -backward_distance;
 	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )

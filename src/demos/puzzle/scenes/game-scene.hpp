@@ -1,7 +1,7 @@
 #pragma once
 
 #include <suprengine/scene.h>
-#include <suprengine/components/colliders/box-collider.hpp>
+#include <suprengine/components/colliders/box-collider.h>
 #include <suprengine/components/mover.hpp>
 #include <suprengine/components/mouse-looker.hpp>
 #include <suprengine/random.h>
@@ -43,6 +43,7 @@ namespace puzzle
 				asteroid->transform->rotation = Quaternion::look_at( random::generate_direction(), Vec3::up );
 				asteroid->transform->scale = random::generate_scale( 10.0f, 50.0f );
 				asteroid->linear_direction = Vec3::right * 5.0f * random::generate( 0.8f, 1.2f );
+				asteroid->update_collision_to_transform();
 			}
 
 			//  setup cube
