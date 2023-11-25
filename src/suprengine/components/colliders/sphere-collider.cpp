@@ -52,7 +52,7 @@ void SphereCollider::debug_render( RenderBatch* render_batch )
 {
 	auto model = Assets::get_model( "suprengine::sphere" );
 	Mtx4 matrix = Mtx4::create_from_transform( 
-		transform->scale, 
+		radius * transform->scale, 
 		Quaternion::identity,
 		transform->location 
 	);
