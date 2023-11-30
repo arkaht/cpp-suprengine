@@ -468,7 +468,8 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeaderFile />
-      <AdditionalIncludeDirectories>../../;../../../external\SDL2-2.0.12/include;../../../external\SDL2_ttf-2.0.15/include;../../../external\SDL2_mixer-2.0.4/include;../../../external\SDL2_image-2.0.5/include;../../../external\rapidjson/include;../../../external/glew-2.1.0/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EngineIncludes);$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -476,6 +477,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>rd /S /Q "$(TargetDir)assets/$(ProjectName)/"
+xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -513,7 +518,6 @@
     </Link>
     <PreBuildEvent>
       <Command>rd /S /Q "$(TargetDir)assets/$(ProjectName)/"
-
 xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
