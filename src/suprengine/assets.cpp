@@ -303,7 +303,7 @@ VertexArray* Assets::load_mesh( const aiMesh* mesh )
 		vertices.data(),
 		vertices_count,
 		indices.data(),
-		indices.size()
+		(unsigned int)indices.size()
 	);
 	return vertex_array;
 }

@@ -76,7 +76,7 @@ bool OpenGLRenderBatch::init()
 	_window->on_size_changed.listen( 
 		"suprengine::opengl-render-batch", 
 		[&]( const Vec2& size ) {
-			glViewport( 0.0f, 0.0f, size.x, size.y );
+			glViewport( 0, 0, (GLsizei)size.x, (GLsizei)size.y );
 		}
 	);
 
