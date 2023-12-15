@@ -13,6 +13,7 @@ PlayerSpaceship::PlayerSpaceship()
 		Assets::get_model( "spaceship" ),
 		_color
 	);
+	create_component<BoxCollider>( Box::HALF );
 
 	//  initialize trail
 	auto trail_entity = new Entity();
@@ -23,21 +24,21 @@ PlayerSpaceship::PlayerSpaceship()
 	trail_renderer->draw_only_outline = true;
 	trail_renderer->draw_outline_ccw = false;
 
+	//  setup camera settings
 	CameraProjectionSettings projection_settings {};
 	projection_settings.znear = 1.0f;
 	projection_settings.zfar = 10000.0f;
-
-	create_component<BoxCollider>( Box::HALF );
 
 	//  initialize camera
 	auto camera_owner = new Entity();
 	camera = camera_owner->create_component<Camera>( projection_settings );
 	camera->activate();
 
+	//  test: second camera
 	camera_owner = new Entity();
 	camera_owner->transform->scale = Vec3( 10.0f );
 	second_camera = camera_owner->create_component<Camera>( projection_settings );
-	camera_owner->create_component<ModelRenderer>( Assets::get_model( "projectile" ) );
+	//camera_owner->create_component<ModelRenderer>( Assets::get_model( "projectile" ) );
 }
 
 PlayerSpaceship::~PlayerSpaceship()
@@ -49,20 +50,16 @@ PlayerSpaceship::~PlayerSpaceship()
 
 void PlayerSpaceship::update_this( float dt )
 {
-	_handle_movement( dt );
-	_handle_shoot( dt );
-	_handle_camera( dt );
+	_update_movement( dt );
+	_update_shoot( dt );
+	_update_camera( dt );
 }
 
-void PlayerSpaceship::_handle_movement( float dt )
+void PlayerSpaceship::_update_movement( float dt )
 {
 	float time = _game->get_timer()->get_accumulated_seconds();
 	auto inputs = _game->get_inputs();
 	auto window = _game->get_window();
-
-	const Vec3 AIM_SENSITIVITY { 0.3f, 0.1f, 0.075f };
-	const float MAX_AIM_VELOCITY = 2.0f;
-	const float MAX_THROTTLE_SPEED = 200.0f;
 
 	//  get inputs
 	Vec2 mouse_delta = -inputs->mouse_delta;
@@ -120,73 +117,72 @@ void PlayerSpaceship::_handle_movement( float dt )
 	transform->set_rotation( rotation );
 
 	//  trail
-	{
-		//  intensity
-		const float trail_throttle_start = 0.3f;
-		const float trail_intensity_offset = 0.6f;
-		_trail_intensity = math::lerp( 
-			_trail_intensity, 
-			_throttle > trail_throttle_start 
-				? math::remap( _throttle, trail_throttle_start, 1.0f, 0.0f, 1.0f )
-				: 0.0f,
-			2.0f * dt
-		);
-		trail_renderer->should_render = _trail_intensity > 0.01f;
+	_update_trail( dt, time );
+}
 
-		//  update visual
-		if ( trail_renderer->should_render )
-		{
-			auto trail_transform = trail_renderer->transform;
-			trail_transform->set_location( 
-				transform->location 
-			  + -transform->get_forward() 
-				* _trail_intensity
-				* math::abs( 0.1f + math::sin( time * _throttle * 15.0f ) * 0.25f )
-			);
-			trail_transform->set_rotation( transform->rotation );
-			trail_transform->set_scale( 
-				transform->scale 
-			  * ( 1.0f * math::min( trail_intensity_offset + _trail_intensity, 1.0f ) + trail_renderer->outline_scale * 2.0f ) 
-			  * Vec3 { 1.00f, 1.0f, 0.5f }
-			);
-		}
+void PlayerSpaceship::_update_trail( float dt, float time )
+{
+	//  intensity
+	const float trail_throttle_start = 0.3f;
+	const float trail_intensity_offset = 0.6f;
+	_trail_intensity = math::lerp(
+		_trail_intensity,
+		_throttle > trail_throttle_start
+		? math::remap( _throttle, trail_throttle_start, 1.0f, 0.0f, 1.0f )
+		: 0.0f,
+		2.0f * dt
+	);
+	trail_renderer->should_render = _trail_intensity > 0.01f;
+
+	//  update visual
+	if ( trail_renderer->should_render )
+	{
+		auto trail_transform = trail_renderer->transform;
+		trail_transform->set_location(
+			transform->location
+			+ -transform->get_forward()
+			* _trail_intensity
+			* math::abs( 0.1f + math::sin( time * _throttle * 15.0f ) * 0.25f )
+		);
+		trail_transform->set_rotation( transform->rotation );
+		trail_transform->set_scale(
+			transform->scale
+			* ( 1.0f * math::min( trail_intensity_offset + _trail_intensity, 1.0f ) + trail_renderer->outline_scale * 2.0f )
+			* Vec3 { 1.00f, 1.0f, 0.5f }
+		);
 	}
 }
 
-void PlayerSpaceship::_handle_camera( float dt )
+void PlayerSpaceship::_update_camera( float dt )
 {
 	auto inputs = _game->get_inputs();
-
-	const Vec2 CAMERA_BACKWARD_RANGE { 6.0f, -3.0f };
-	const Vec2 CAMERA_SPEED_RANGE { 7.0f, 12.0f };
-	const Vec2 CAMERA_UP_RANGE { 2.0f, 4.0f };
 
 	float throttle_ratio = _throttle / 1.0f;
 	float smooth_speed = math::lerp( CAMERA_SPEED_RANGE.x, CAMERA_SPEED_RANGE.y, throttle_ratio );
 	float backward_distance = math::lerp( CAMERA_BACKWARD_RANGE.x, CAMERA_BACKWARD_RANGE.y, throttle_ratio );
 	float up_distance = math::lerp( CAMERA_UP_RANGE.x, CAMERA_UP_RANGE.y, throttle_ratio );
 
-	if ( inputs->is_mouse_button_just_pressed( MouseButton::Right ) )
-	{
-		auto& next_camera = camera->is_active() ? second_camera : camera;
-		next_camera->activate();
-	}
+	//if ( inputs->is_mouse_button_just_pressed( MouseButton::Right ) )
+	//{
+	//	auto& next_camera = camera->is_active() ? second_camera : camera;
+	//	next_camera->activate();
+	//}
 
-	if ( second_camera->is_active() )
-	{
-		//second_camera->up_direction = transform->get_up();
-	}
+	//if ( second_camera->is_active() )
+	//{
+	//	//second_camera->up_direction = transform->get_up();
+	//}
 
-	Vec3 dir = ( transform->location - second_camera->transform->location ).normalized();
-	Quaternion rot = Quaternion::look_at( 
-		/*Vec3::cross( 
-			dir,
-			Vec3::up 
-		)*/dir, 
-		Vec3::up
-	);
-	rot.normalize();
-	second_camera->transform->set_rotation( rot );
+	//Vec3 dir = ( transform->location - second_camera->transform->location ).normalized();
+	//Quaternion rot = Quaternion::look_at( 
+	//	/*Vec3::cross( 
+	//		dir,
+	//		Vec3::up 
+	//	)*/dir, 
+	//	Vec3::up
+	//);
+	//rot.normalize();
+	//second_camera->transform->set_rotation( rot );
 
 	Vec3 forward = transform->get_forward() * -backward_distance;
 	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )
@@ -217,14 +213,17 @@ void PlayerSpaceship::_handle_camera( float dt )
 	camera->up_direction = Vec3::lerp( camera->up_direction, transform->get_up(), dt * smooth_speed );
 }
 
-void PlayerSpaceship::_handle_shoot( float dt )
+void PlayerSpaceship::_update_shoot( float dt )
 {
+	auto inputs = _game->get_inputs();
+
+	//  reduce shoot cooldown
 	_shoot_time -= dt;
 
-	auto inputs = _game->get_inputs();
-	if ( !inputs->is_mouse_button_down( MouseButton::Left ) ) return;
 	if ( _shoot_time > 0.0f ) return;
+	if ( !inputs->is_mouse_button_down( MouseButton::Left ) ) return;
 
+	//  spawn projectile
 	for ( int i = 0; i < 2; i++ )
 	{
 		auto projectile = new Projectile( _color );
@@ -236,5 +235,6 @@ void PlayerSpaceship::_handle_shoot( float dt )
 		projectile->transform->rotation = transform->rotation;
 	}
 
+	//  put on cooldown
 	_shoot_time = SHOOT_TIME;
 }
