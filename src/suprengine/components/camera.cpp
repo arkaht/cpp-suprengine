@@ -30,30 +30,54 @@ void Camera::setup_simple_projection()
 
 void Camera::setup_perspective( float fov, float znear, float zfar )
 {
-	_projection_matrix = Mtx4::create_perspective_fov( 
-		fov * math::DEG2RAD, 
-		_viewport_size.x, _viewport_size.y, 
-		znear, zfar 
+	_projection_matrix = Mtx4::create_perspective_fov(
+		fov * math::DEG2RAD,
+		_viewport_size.x, _viewport_size.y,
+		znear, zfar
 	);
 }
 
 void Camera::update_projection_from_settings()
 {
-	setup_perspective( 
-		projection_settings.fov, 
-		projection_settings.znear, 
-		projection_settings.zfar 
+	setup_perspective(
+		projection_settings.fov,
+		projection_settings.znear,
+		projection_settings.zfar
 	);
+}
+
+Vec3 Camera::world_to_viewport( const Vec3& location )
+{
+	Vec3 pos = location;
+
+	//  pass location to view & projection matrices
+	pos = Vec3::transform( pos, _view_matrix );
+	pos = Vec3::transform( pos, _projection_matrix );
+
+	//  normalize by Z-axis
+	pos.x /= pos.z;
+	pos.y /= pos.z;
+
+	//  remap [-1.0f; 1.0f] to [0.0f; 1.0f]
+	pos.x = ( pos.x + 1.0f ) * 0.5f;
+	pos.y = ( pos.y + 1.0f ) * 0.5f;
+	//printf( "x=%f; y=%f; z=%f\n", pos.x, pos.y, pos.z );
+
+	//  to viewport
+	pos.x *= _viewport_size.x;
+	pos.y *= _viewport_size.y;
+
+	return pos;
 }
 
 void Camera::look_at( const Vec3& target )
 {
-	transform->set_rotation( 
+	transform->set_rotation(
 		Quaternion::look_at(
-			transform->location + _offset, 
+			transform->location + _offset,
 			target,
 			Vec3::up
-		) 
+		)
 	);
 	//view_matrix = Mtx4::create_look_at( transform->location, target, Vec3::up );
 	_is_view_matrix_dirty = true;
@@ -95,18 +119,18 @@ void Camera::set_view_matrix( const Mtx4& matrix )
 	transform->get_matrix();
 }
 
-const Mtx4& Camera::get_view_matrix() 
-{ 
+const Mtx4& Camera::get_view_matrix()
+{
 	if ( _is_view_matrix_dirty || transform->is_matrix_dirty )
 	{
 		//  TODO: fix this for 2D
 		Vec3 origin = transform->location + _offset;
-		set_view_matrix( 
-			Mtx4::create_look_at( 
+		set_view_matrix(
+			Mtx4::create_look_at(
 				origin,
 				origin + transform->get_forward(),
 				up_direction
-			) 
+			)
 		);
 	}
 
