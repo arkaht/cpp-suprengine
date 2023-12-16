@@ -97,8 +97,7 @@ void PlayerSpaceship::_update_movement( float dt )
 	//  apply forward movement
 	float move_speed = dt * _throttle * MAX_THROTTLE_SPEED;
 	Vec3 movement = transform->get_forward() * move_speed;
-	_previous_location += movement;
-	transform->set_location( _previous_location );
+	transform->set_location( transform->location + movement );
 
 	//  apply rotation
 	Quaternion rotation = transform->rotation;
