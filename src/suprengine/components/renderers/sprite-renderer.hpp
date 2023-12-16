@@ -1,5 +1,5 @@
 #pragma once
-#include "renderer.h"
+#include <suprengine/components/renderer.h>
 
 namespace suprengine
 {
@@ -11,8 +11,14 @@ namespace suprengine
 		Rect dest { 0.0f, 0.0f, 0.0f, 0.0f };
 		Vec2 origin { 0.5f, 0.5f };
 
-		SpriteRenderer( Entity* owner, Texture* texture, int priority_order = 0 )
-			: texture( texture ), dest( dest ), Renderer( owner, priority_order )
+		SpriteRenderer( 
+			Entity* owner, 
+			Texture* texture, 
+			Color modulate = Color::white, 
+			int priority_order = 0 
+		)
+			: texture( texture ), dest( dest ), 
+			  Renderer( owner, modulate, priority_order )
 		{
 			if ( texture == nullptr ) return;
 
@@ -31,7 +37,6 @@ namespace suprengine
 		{
 			if ( texture == nullptr ) return;
 
-			Transform* transf = owner->transform;
 			_render_batch->draw_texture( 
 				source,
 				owner->transform->get_rect( dest ),
