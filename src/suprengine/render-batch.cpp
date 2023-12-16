@@ -10,9 +10,18 @@ RenderBatch::RenderBatch( Window* _window )
 {
 	game = &Game::instance();
 
+	//  setup ambient light
 	ambient_light.color = Color::white;
 	ambient_light.direction = Vec3 { 0.3f, 1.0f, 0.3f }.normalized();
 	ambient_light.scale = 0.25f;
+
+	//  update viewport on window size change
+	_window->on_size_changed.listen( 
+		"suprengine::render-batch", 
+		[&]( const Vec2& size ) {
+			on_window_resized( size );
+		}
+	);
 }
 
 void RenderBatch::render()
@@ -31,6 +40,17 @@ void RenderBatch::render_phase( const RenderPhase phase )
 
 		renderer->render();
 	}
+}
+
+void RenderBatch::draw_texture( const Vec2& pos, const Vec2& scale, float rotation, const Vec2& origin, Texture* texture, const Color& color )
+{
+	Rect src_rect { Vec2::zero, texture->get_size() };
+	Rect dest_rect { pos, texture->get_size() * scale };
+
+	draw_texture( 
+		src_rect, dest_rect, 
+		rotation, origin, texture, color 
+	);
 }
 
 void RenderBatch::translate( const Vec2& pos )

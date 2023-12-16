@@ -53,15 +53,50 @@ namespace suprengine
 		virtual ~RenderBatch() {};
 
 		virtual bool init() = 0;
+
 		virtual void begin_render() = 0;
 		virtual void render();
 		virtual void render_phase( const RenderPhase phase );
 		virtual void end_render() = 0;
 
-		virtual void draw_rect( DrawType draw_type, const Rect& rect, const Color& color = Color::white ) = 0;
-		virtual void draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color = Color::white ) = 0;
-		virtual void draw_texture( const Mtx4& matrix, Texture* texture, const Vec2& origin, const Rect& src_rect, const Color& color = Color::white ) = 0;
-		virtual void draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id = 0, const Color& color = Color::white ) = 0;
+		virtual void on_window_resized( const Vec2& size ) = 0;
+
+		virtual void draw_rect( 
+			DrawType draw_type, 
+			const Rect& rect,
+			const Color& color = Color::white 
+		) = 0;
+		
+		virtual void draw_texture(
+			const Vec2& pos,
+			const Vec2& scale,
+			float rotation,
+			const Vec2& origin,
+			Texture* texture,
+			const Color& color = Color::white
+		);
+		virtual void draw_texture(
+			const Rect& src_rect,
+			const Rect& dest_rect, 
+			float rotation, 
+			const Vec2& origin, 
+			Texture* texture,
+			const Color& color = Color::white 
+		) = 0;
+		virtual void draw_texture(
+			const Mtx4& matrix,
+			Texture* texture,
+			const Vec2& origin, 
+			const Rect& src_rect, 
+			const Color& color = Color::white
+		) = 0;
+
+		virtual void draw_mesh( 
+			const Mtx4& matrix, 
+			Mesh* mesh, 
+			int texture_id = 0, 
+			const Color& color = Color::white
+		) = 0;
 		virtual void draw_model( 
 			const Mtx4& matrix, 
 			Model* model, 

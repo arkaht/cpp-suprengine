@@ -49,6 +49,9 @@ namespace suprengine
 			Assets::set_render_batch( get_render_batch() );
 			if ( !_render_batch->init() ) return false;
 
+			//  setup window size on render batch
+			_render_batch->on_window_resized( _window->get_size() );
+
 			//  init managers
 			_inputs = std::make_unique<InputManager>();
 			_physics = std::make_unique<Physics>();

@@ -69,37 +69,35 @@ bool OpenGLRenderBatch::init()
 	glEnable( GL_DEBUG_OUTPUT );
 	glDebugMessageCallback( _message_callback, 0 );
 
-	//  enable face culling
-	glEnable( GL_CULL_FACE );
-
-	//  update viewport on window size change
-	_window->on_size_changed.listen( 
-		"suprengine::opengl-render-batch", 
-		[&]( const Vec2& size ) {
-			glViewport( 0, 0, (GLsizei)size.x, (GLsizei)size.y );
-		}
-	);
-
 	//  create vertex array
 	quad_vertex_array = new VertexArray( QUAD_VERTICES, 4, QUAD_INDICES, 6 );
 
 	//  load shaders
-	color_shader = Assets::load_shader( "color",
+	color_shader = Assets::load_shader( 
+		"color",
 		"assets/suprengine/shaders/transform.vert",
 		"assets/suprengine/shaders/color.frag"
 	);
-	texture_shader = Assets::load_shader( "texture",
+	texture_shader = Assets::load_shader( 
+		"texture",
 		"assets/suprengine/shaders/texture.vert",
 		"assets/suprengine/shaders/texture.frag"
 	);
-	Assets::load_shader( "simple-mesh",
+	Assets::load_shader( 
+		"simple-mesh",
 		"assets/suprengine/shaders/simple-mesh.vert",
 		"assets/suprengine/shaders/simple-mesh.frag"
 	);
 
 	//  load textures
-	Assets::load_texture( "suprengine::large-grid", "assets/suprengine/textures/large-grid.png" );
-	Assets::load_texture( "suprengine::medium-grid", "assets/suprengine/textures/medium-grid.png" );
+	Assets::load_texture( 
+		"large-grid", 
+		"assets/suprengine/textures/large-grid.png" 
+	);
+	Assets::load_texture( 
+		"medium-grid", 
+		"assets/suprengine/textures/medium-grid.png" 
+	);
 
 	auto texture = Assets::get_texture( "suprengine::medium-grid" );
 	
@@ -125,7 +123,6 @@ bool OpenGLRenderBatch::init()
 	);
 	sphere_model->get_mesh( 0 )->add_texture( texture );
 
-	screen_offset = Vec3( _window->get_size() * 0.5f, 0.0f );
 
 	return true;
 }
@@ -165,22 +162,67 @@ void OpenGLRenderBatch::begin_render()
 void OpenGLRenderBatch::render()
 {
 	//  draw meshes
-	glEnable( GL_DEPTH_TEST );
-	glDepthFunc( GL_LEQUAL );
-	render_phase( RenderPhase::MESH );
-	glDisable( GL_DEPTH_TEST );
+	{
+		//  enable clockwise
+		glFrontFace( GL_CW );
+
+		//  enable face culling
+		glEnable( GL_CULL_FACE );	
+
+		//  enable depth testing
+		glEnable( GL_DEPTH_TEST );  
+		glDepthFunc( GL_LEQUAL );
+
+		//  render
+		render_phase( RenderPhase::MESH );
+
+		//  disable options
+		glDisable( GL_DEPTH_TEST );
+		glDisable( GL_CULL_FACE );
+	}
 
 	//  draw sprites
-	glEnable( GL_BLEND );
-	glBlendEquationSeparate( GL_FUNC_ADD, GL_FUNC_ADD );
-	glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO );
-	render_phase( RenderPhase::SPRITE );
-	glDisable( GL_BLEND );
+	{
+		//  setup shaders
+		if ( texture_shader != nullptr )
+		{
+			texture_shader->activate();
+			texture_shader->set_mtx4( "u_view_projection", _viewport_matrix );
+		}
+
+		//  enable counter-clockwise
+		glFrontFace( GL_CCW );
+
+		//  enable blending
+		glEnable( GL_BLEND );
+		glBlendEquationSeparate( GL_FUNC_ADD, GL_FUNC_ADD );
+		glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO );
+		
+		//  render
+		render_phase( RenderPhase::SPRITE );
+
+		//  disable options
+		glDisable( GL_BLEND );
+	}
 }
 
 void OpenGLRenderBatch::end_render()
 {
 	SDL_GL_SwapWindow( _window->get_sdl_window() );
+}
+
+void OpenGLRenderBatch::on_window_resized( const Vec2& size )
+{
+	//  update viewport
+	glViewport( 0, 0, (GLsizei)size.x, (GLsizei)size.y );
+
+	//  update screen offset
+	screen_offset = Vec3( size * 0.5f, 0.0f );
+
+	//  update viewport matrix
+	_viewport_matrix = Mtx4::create_simple_view_projection( 
+		size.x, size.y
+	);
 }
 
 void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
@@ -198,19 +240,35 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	draw_elements( 6 );
 }
 
-void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color )
+void OpenGLRenderBatch::draw_texture( 
+	const Rect& src_rect, 
+	const Rect& dest_rect, 
+	float rotation, 
+	const Vec2& origin, 
+	Texture* texture, 
+	const Color& color
+)
 {
 	//  setup matrices
-	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
+	Mtx4 scale_matrix = Mtx4::create_scale( 
+		dest_rect.w, dest_rect.h, 1.0f );
 	Mtx4 rotation_matrix = Mtx4::create_rotation_z( rotation );
-	Mtx4 location_matrix = compute_location_matrix( dest_rect.x, dest_rect.y, 0.0f );
-	draw_texture( 
+	Mtx4 location_matrix = compute_location_matrix( 
+		dest_rect.x, dest_rect.y, 0.0f );
+
+	draw_texture(
 		scale_matrix * rotation_matrix * location_matrix, 
 		texture, origin, src_rect, color 
 	);
 }
 
-void OpenGLRenderBatch::draw_texture( const Mtx4& matrix, Texture* texture, const Vec2& origin, const Rect& src_rect, const Color& color )
+void OpenGLRenderBatch::draw_texture(
+	const Mtx4& matrix, 
+	Texture* texture, 
+	const Vec2& origin, 
+	const Rect& src_rect,
+	const Color& color 
+)
 {
 	quad_vertex_array->activate();
 	texture_shader->activate();
