@@ -91,7 +91,11 @@ void PlayerSpaceship::_update_movement( float dt )
 		);
 
 		//  drag to zero
-		_aim_velocity = Vec3::lerp( _aim_velocity, Vec2::zero, dt * 5.0f );
+		_aim_velocity = Vec3::lerp( 
+			_aim_velocity, 
+			Vec2::zero, 
+			dt * AIM_VELOCITY_DECREASE
+		);
 	}
 
 	//  apply forward movement
@@ -157,9 +161,12 @@ void PlayerSpaceship::_update_camera( float dt )
 	auto inputs = _game->get_inputs();
 
 	float throttle_ratio = _throttle / 1.0f;
-	float smooth_speed = math::lerp( CAMERA_SPEED_RANGE.x, CAMERA_SPEED_RANGE.y, throttle_ratio );
-	float backward_distance = math::lerp( CAMERA_BACKWARD_RANGE.x, CAMERA_BACKWARD_RANGE.y, throttle_ratio );
-	float up_distance = math::lerp( CAMERA_UP_RANGE.x, CAMERA_UP_RANGE.y, throttle_ratio );
+	float smooth_speed = math::lerp( 
+		CAMERA_MOVE_SPEED.x, CAMERA_MOVE_SPEED.y, throttle_ratio );
+	float backward_distance = math::lerp( 
+		CAMERA_BACKWARD.x, CAMERA_BACKWARD.y, throttle_ratio );
+	float up_distance = math::lerp( 
+		CAMERA_UP_RANGE.x, CAMERA_UP_RANGE.y, throttle_ratio );
 
 	//if ( inputs->is_mouse_button_just_pressed( MouseButton::Right ) )
 	//{
@@ -182,13 +189,13 @@ void PlayerSpaceship::_update_camera( float dt )
 	//);
 	//rot.normalize();
 	//second_camera->transform->set_rotation( rot );
-
+	
 	Vec3 forward = transform->get_forward() * -backward_distance;
 	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )
 	{
 		forward *= -3.0f;
 	}*/
-
+	
 	//  apply location
 	Vec3 target_location = transform->location 
 	  + forward
@@ -201,7 +208,11 @@ void PlayerSpaceship::_update_camera( float dt )
 	camera->transform->set_location( location );
 
 	//  apply rotation
-	Quaternion rotation = transform->rotation;
+	Quaternion rotation = Quaternion::lerp(
+		camera->transform->rotation,
+		transform->rotation,
+		dt * CAMERA_ROTATION_SPEED
+	);
 	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )
 	{
 		rotation = Quaternion::look_at( -transform->get_right(), transform->get_up() );
