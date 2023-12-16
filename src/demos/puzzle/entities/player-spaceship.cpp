@@ -15,7 +15,7 @@ PlayerSpaceship::PlayerSpaceship()
 		_color
 	);
 	create_component<BoxCollider>( Box::HALF );
-	create_component<PlayerHUD>();
+	create_component<PlayerHUD>( _color );
 
 	//  initialize trail
 	auto trail_entity = new Entity();

@@ -15,12 +15,12 @@ namespace puzzle
 
 	private:
 		const Vec3 AIM_SENSITIVITY { 
-			0.15f,		//  mouse-x: roll
-			0.07f,		//  mouse-y: pitch
+			0.30f,		//  mouse-x: roll
+			0.15f,		//  mouse-y: pitch
 			0.10f		//  Q-D: yaw
 		};
 		const float AIM_VELOCITY_DECREASE = 6.0f;
-		const float MAX_AIM_VELOCITY = 2.0f;
+		const float MAX_AIM_VELOCITY = 5.0f;
 		const float MAX_THROTTLE_SPEED = 200.0f;
 
 		const Vec2 CAMERA_BACKWARD { 
