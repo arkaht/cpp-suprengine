@@ -204,7 +204,10 @@ void OpenGLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rec
 	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
 	Mtx4 rotation_matrix = Mtx4::create_rotation_z( rotation );
 	Mtx4 location_matrix = compute_location_matrix( dest_rect.x, dest_rect.y, 0.0f );
-	draw_texture( scale_matrix * rotation_matrix * location_matrix, texture, origin, src_rect, color );
+	draw_texture( 
+		scale_matrix * rotation_matrix * location_matrix, 
+		texture, origin, src_rect, color 
+	);
 }
 
 void OpenGLRenderBatch::draw_texture( const Mtx4& matrix, Texture* texture, const Vec2& origin, const Rect& src_rect, const Color& color )

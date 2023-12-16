@@ -30,6 +30,9 @@
     <ClCompile Include="components\spaceship-controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="components\player-hud.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scenes\game-scene.hpp">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="components\spaceship-controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\player-hud.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

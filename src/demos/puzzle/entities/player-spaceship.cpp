@@ -3,6 +3,7 @@
 #include <suprengine/components/colliders/box-collider.h>
 
 #include <entities/projectile.h>
+#include <components/player-hud.h>
 
 using namespace puzzle;
 
@@ -14,6 +15,7 @@ PlayerSpaceship::PlayerSpaceship()
 		_color
 	);
 	create_component<BoxCollider>( Box::HALF );
+	create_component<PlayerHUD>();
 
 	//  initialize trail
 	auto trail_entity = new Entity();

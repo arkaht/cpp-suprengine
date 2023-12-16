@@ -79,6 +79,9 @@ namespace puzzle
 				"assets/puzzle/shaders/stylized.frag"
 			);
 
+			//  textures
+			Assets::load_texture( "crosshair-line", "assets/puzzle/sprites/crosshair-line.png" );
+
 			//  models
 			Assets::load_model( "spaceship", "assets/puzzle/models/spaceship2.fbx" );
 			Assets::load_model( "projectile", "assets/puzzle/models/projectile.fbx" );
