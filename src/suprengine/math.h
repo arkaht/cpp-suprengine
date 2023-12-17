@@ -52,6 +52,11 @@ namespace suprengine::math
 		return modulo( ang + PI, DOUBLE_PI ) - PI;
 	}
 
+	static float sign( float x )
+	{
+		return x >= 0.0f ? 1.0f : -1.0f;
+	}
+
 	static float remap( 
 		float value, 
 		float low1, float high1, 
@@ -64,13 +69,13 @@ namespace suprengine::math
 	template <typename T>
 	T max( const T& a, const T& b )
 	{
-		return ( a < b ? b : a );
+		return a < b ? b : a;
 	}
 
 	template <typename T>
 	T min( const T& a, const T& b )
 	{
-		return ( a < b ? a : b );
+		return a < b ? a : b;
 	}
 
 	template <typename T>

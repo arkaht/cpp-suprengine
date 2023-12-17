@@ -1,6 +1,7 @@
 #include "player-spaceship.h"
 
 #include <suprengine/components/colliders/box-collider.h>
+#include <suprengine/easing.h>
 
 #include <entities/projectile.h>
 #include <components/player-hud.h>
@@ -63,8 +64,13 @@ void PlayerSpaceship::_update_movement( float dt )
 	auto inputs = _game->get_inputs();
 	auto window = _game->get_window();
 
-	//  get inputs
+	//  get mouse delta
 	Vec2 mouse_delta = -inputs->mouse_delta;
+	//printf( "x=%f; y=%f\n", mouse_delta.x, mouse_delta.y );
+	//mouse_delta.x *= easing::in_sine( math::abs( mouse_delta.x ) / max_mouse_delta );
+	//mouse_delta.y *= easing::in_sine( math::abs( mouse_delta.y ) / max_mouse_delta );
+	
+	//  get inputs
 	float yaw_delta = inputs->get_keys_as_axis( SDL_SCANCODE_A, SDL_SCANCODE_D, AIM_SENSITIVITY.z );
 	float throttle_delta = inputs->get_keys_as_axis( SDL_SCANCODE_S, SDL_SCANCODE_W, 0.2f );
 	float throttle_speed = 1.0f + /*inputs->is_key_down( SDL_SCANCODE_LSHIFT ) **/ 1.5f;
