@@ -168,7 +168,7 @@ void PlayerSpaceship::_update_camera( float dt )
 {
 	auto inputs = _game->get_inputs();
 
-	float throttle_ratio = _throttle / 1.0f;
+	float throttle_ratio = easing::in_out_cubic( _throttle / 1.0f );
 	float smooth_speed = math::lerp( 
 		CAMERA_MOVE_SPEED.x, CAMERA_MOVE_SPEED.y, throttle_ratio );
 	float backward_distance = math::lerp( 
@@ -228,7 +228,23 @@ void PlayerSpaceship::_update_camera( float dt )
 	camera->transform->set_rotation( rotation );
 
 	//  update up direction for roll
-	camera->up_direction = Vec3::lerp( camera->up_direction, transform->get_up(), dt * smooth_speed );
+	camera->up_direction = Vec3::lerp( 
+		camera->up_direction, 
+		transform->get_up(), 
+		dt * smooth_speed 
+	);
+
+	//  update fov
+	float fov = math::lerp( 
+		CAMERA_FOV.x, 
+		CAMERA_FOV.y, 
+		throttle_ratio
+	);
+	/*float time = _game->get_timer()->get_accumulated_seconds();
+	fov += throttle_ratio 
+		 * math::sin( time * 5.0f )
+		 * 1.0f;*/
+	camera->set_fov( fov );
 }
 
 void PlayerSpaceship::_update_shoot( float dt )

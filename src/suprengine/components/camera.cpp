@@ -46,6 +46,14 @@ void Camera::update_projection_from_settings()
 	);
 }
 
+void Camera::set_fov( float fov )
+{
+	if ( fov == projection_settings.fov ) return;
+
+	projection_settings.fov = fov;
+	update_projection_from_settings();
+}
+
 Vec3 Camera::world_to_viewport( const Vec3& location )
 {
 	Vec3 pos = location;

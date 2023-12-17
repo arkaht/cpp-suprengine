@@ -30,6 +30,7 @@ namespace suprengine
 
 		Vec3 up_direction = Vec3::up;
 		
+	public:
 		Camera( Entity* owner );
 		Camera( 
 			Entity* owner, 
@@ -40,6 +41,8 @@ namespace suprengine
 		void setup_perspective( float fov, float znear, float zfar );
 		void setup_perspective( float fov ) { setup_perspective( fov, CAMERA_DEFAULT_ZNEAR, CAMERA_DEFAULT_ZFAR ); }
 		void update_projection_from_settings();
+
+		void set_fov( float fov );
 
 		/*
 		 * Translate a 3D-world location into a 2D-viewport position.

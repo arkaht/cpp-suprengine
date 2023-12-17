@@ -52,9 +52,14 @@ namespace suprengine::math
 		return modulo( ang + PI, DOUBLE_PI ) - PI;
 	}
 
-	static float sign( float x )
+	static float sign( float value )
 	{
-		return x >= 0.0f ? 1.0f : -1.0f;
+		return value >= 0.0f ? 1.0f : -1.0f;
+	}
+
+	static float pow( float value, float exp )
+	{
+		return powf( value, exp );
 	}
 
 	static float remap( 

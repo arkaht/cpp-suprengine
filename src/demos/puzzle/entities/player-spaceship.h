@@ -23,9 +23,13 @@ namespace puzzle
 		const float MAX_AIM_VELOCITY = 10.0f;
 		const float MAX_THROTTLE_SPEED = 200.0f;
 
+		const Vec2 CAMERA_FOV {
+			77.0f,		//  at min throttle 
+			99.0f		//  at max throttle
+		};
 		const Vec2 CAMERA_BACKWARD { 
 			6.0f,		//  at min throttle 
-			1.0f		//  at max throttle
+			-3.0f		//  at max throttle
 		};
 		const Vec2 CAMERA_MOVE_SPEED { 
 			7.0f,		//  at min throttle 
