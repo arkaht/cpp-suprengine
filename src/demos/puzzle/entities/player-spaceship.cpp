@@ -152,33 +152,42 @@ void PlayerSpaceship::_update_movement( float dt )
 void PlayerSpaceship::_update_trail( float dt, float time )
 {
 	//  intensity
-	const float trail_throttle_start = 0.3f;
-	const float trail_intensity_offset = 0.6f;
+	float trail_intensity_target = 0.0f;
+	if ( _throttle > TRAIL_THROTTLE_START )
+	{
+		trail_intensity_target = math::remap( 
+			_throttle, 
+			TRAIL_THROTTLE_START, 1.0f, 
+			0.0f, 1.0f 
+		);
+	}
 	_trail_intensity = math::lerp(
 		_trail_intensity,
-		_throttle > trail_throttle_start
-		? math::remap( _throttle, trail_throttle_start, 1.0f, 0.0f, 1.0f )
-		: 0.0f,
-		2.0f * dt
+		trail_intensity_target,
+		dt * TRAIL_INTENSITY_SPEED
 	);
 	trail_renderer->should_render = _trail_intensity > 0.01f;
 
 	//  update visual
 	if ( trail_renderer->should_render )
 	{
-		auto trail_transform = trail_renderer->transform;
-		trail_transform->set_location(
-			transform->location
-			+ -transform->get_forward()
+		auto& trail_transform = trail_renderer->transform;
+
+		//  location
+		Vec3 location = transform->location;
+		location += -transform->get_forward()
 			* _trail_intensity
-			* math::abs( 0.1f + math::sin( time * _throttle * 15.0f ) * 0.25f )
-		);
+			* math::abs( 0.1f + math::sin( time * _throttle * TRAIL_WAVE_FREQUENCY ) * TRAIL_WAVE_AMPLITUDE );
+		trail_transform->set_location( location );
+
+		//  rotation
 		trail_transform->set_rotation( transform->rotation );
-		trail_transform->set_scale(
-			transform->scale
-			* ( 1.0f * math::min( trail_intensity_offset + _trail_intensity, 1.0f ) + trail_renderer->outline_scale * 2.0f )
-			* Vec3 { 1.00f, 1.0f, 0.5f }
-		);
+
+		//  scale
+		Vec3 scale = transform->scale * TRAIL_MODEL_SCALE;
+		scale *= math::min( TRAIL_MODEL_SCALE_INTENSITY_OFFSET + _trail_intensity, 1.0f ) 
+			   + trail_renderer->outline_scale * TRAIL_MODEL_OUTLINE_SCALE;
+		trail_transform->set_scale( scale );
 	}
 }
 

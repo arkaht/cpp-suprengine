@@ -58,6 +58,21 @@ namespace puzzle
 		//  Camera smooth rotation speed
 		const float CAMERA_ROTATION_SPEED = 10.0f;
 
+		//  Trail starting throttle threshold 
+		const float TRAIL_THROTTLE_START = 0.3f;
+		//  Trail intensity smooth speed
+		const float TRAIL_INTENSITY_SPEED = 2.0f;
+		//  Trail model wave animation frequency
+		const float TRAIL_WAVE_FREQUENCY = 15.0f;
+		//  Trail model wave animation amplitude
+		const float TRAIL_WAVE_AMPLITUDE = 0.25f;
+		//  Trail model scale offset for intensity factor
+		const float TRAIL_MODEL_SCALE_INTENSITY_OFFSET = 0.6f;
+		//  Trail model scale
+		const Vec3  TRAIL_MODEL_SCALE { 1.0f, 1.0f, 0.5f };
+		//  Trail model outline scale added as an offset to scale
+		const float TRAIL_MODEL_OUTLINE_SCALE = 2.0f;
+
 		//  Shoot time interval
 		const float SHOOT_TIME = 0.15f;
 
