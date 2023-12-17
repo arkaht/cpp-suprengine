@@ -71,12 +71,30 @@ void PlayerSpaceship::_update_movement( float dt )
 	//mouse_delta.y *= easing::in_sine( math::abs( mouse_delta.y ) / max_mouse_delta );
 	
 	//  get inputs
-	float yaw_delta = inputs->get_keys_as_axis( SDL_SCANCODE_A, SDL_SCANCODE_D, AIM_SENSITIVITY.z );
-	float throttle_delta = inputs->get_keys_as_axis( SDL_SCANCODE_S, SDL_SCANCODE_W, 0.2f );
-	float throttle_speed = 1.0f + /*inputs->is_key_down( SDL_SCANCODE_LSHIFT ) **/ 1.5f;
+	float yaw_delta = inputs->get_keys_as_axis( 
+		SDL_SCANCODE_A, SDL_SCANCODE_D, AIM_SENSITIVITY.z );
+	float throttle_delta = inputs->get_keys_as_axis( 
+		SDL_SCANCODE_S, SDL_SCANCODE_W, 1.0f );
+	float throttle_speed = THROTTLE_GAIN_SPEED 
+		/*+ inputs->is_key_down( SDL_SCANCODE_LSHIFT ) * 1.5f*/;
+
+	//  find throttle target
+	float throttle_target = math::clamp( _throttle, 0.0f, 1.0f );
+	if ( throttle_delta > 0.0f )
+	{
+		throttle_target = 1.0f + MAX_THROTTLE_FORWARD_OFFSET;
+	}
+	else if ( throttle_delta < 0.0f )
+	{
+		throttle_target = 0.0f;
+	}
 
 	//  throttle
-	_throttle = math::clamp( _throttle + throttle_delta * throttle_speed * dt, 0.0f, 1.0f );
+	_throttle = math::approach( 
+		_throttle,
+		throttle_target,
+		throttle_speed * dt
+	);
 	//printf( "%.0f%%\n", _throttle * 100.0f );
 
 	//  handle aim velocity
