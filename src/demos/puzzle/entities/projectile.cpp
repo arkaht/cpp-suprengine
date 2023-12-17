@@ -1,10 +1,12 @@
 #include "projectile.h"
-#include "asteroid.h"
+
+#include <entities/asteroid.h>
+#include <entities/player-spaceship.h>
 
 using namespace puzzle;
 
-Projectile::Projectile( Color color )
-	: _color( color )
+Projectile::Projectile( PlayerSpaceship* owner, Color color )
+	: _owner( owner ), _color( color )
 {
 	model_renderer = create_component<StylizedModelRenderer>(
 		Assets::get_model( "projectile" ),
@@ -54,10 +56,19 @@ void Projectile::on_hit( const RayHit& result )
 
 	auto entity = collider->get_owner();
 
+	//  damage asteroid
 	if ( auto asteroid = dynamic_cast<Asteroid*>( entity ) )
 	{
-		asteroid->damage( damage_amount, -result.normal * knockback_force );
+		asteroid->damage( 
+			damage_amount, 
+			-result.normal * knockback_force 
+		);
 		printf( "hit asteroid %d!\n", asteroid->get_unique_id() );
 	}
 
+	//  alert owner
+	if ( _owner )
+	{
+		_owner->on_hit.invoke( entity );
+	}
 }

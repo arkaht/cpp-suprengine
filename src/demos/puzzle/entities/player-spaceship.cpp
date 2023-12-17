@@ -16,7 +16,7 @@ PlayerSpaceship::PlayerSpaceship()
 		_color
 	);
 	create_component<BoxCollider>( Box::HALF );
-	create_component<PlayerHUD>( _color );
+	create_component<PlayerHUD>( this, _color );
 
 	//  initialize trail
 	auto trail_entity = new Entity();
@@ -56,6 +56,14 @@ void PlayerSpaceship::update_this( float dt )
 	_update_movement( dt );
 	_update_shoot( dt );
 	_update_camera( dt );
+}
+
+Vec3 PlayerSpaceship::get_shoot_location( const Vec3& axis_scale ) const
+{
+	return transform->location
+		+ transform->get_forward() * 3.7f * axis_scale.x
+		+ transform->get_right() * 2.0f * axis_scale.y
+		+ transform->get_up() * 0.25f * axis_scale.z;
 }
 
 void PlayerSpaceship::_update_movement( float dt )
@@ -279,7 +287,7 @@ void PlayerSpaceship::_update_shoot( float dt )
 	auto inputs = _game->get_inputs();
 
 	//  reduce shoot cooldown
-	_shoot_time -= dt;
+	_shoot_time = math::max( 0.0f, _shoot_time - dt );
 
 	if ( _shoot_time > 0.0f ) return;
 	if ( !inputs->is_mouse_button_down( MouseButton::Left ) ) return;
@@ -287,12 +295,16 @@ void PlayerSpaceship::_update_shoot( float dt )
 	//  spawn projectile
 	for ( int i = 0; i < 2; i++ )
 	{
-		auto projectile = new Projectile( _color );
+		auto projectile = new Projectile( this, _color );
 		projectile->transform->scale = Vec3( 1.5f );
-		projectile->transform->location = transform->location
-			+ transform->get_forward() * 3.7f * projectile->transform->scale.x
-			+ transform->get_right() * 2.0f * ( i == 0 ? 1.0f : -1.0f )
-			+ transform->get_up() * 0.25f;
+		projectile->transform->location = 
+			get_shoot_location( 
+				Vec3 {
+					projectile->transform->scale.x,
+					i == 0 ? -1.0f : 1.0f,
+					1.0f
+				} 
+			);
 		projectile->transform->rotation = transform->rotation;
 	}
 
