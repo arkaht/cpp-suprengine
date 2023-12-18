@@ -8,12 +8,12 @@ using namespace suprengine;
 RenderBatch::RenderBatch( Window* _window )
 	: _window( _window )
 {
-	game = &Game::instance();
+	_game = &Game::instance();
 
 	//  setup ambient light
-	ambient_light.color = Color::white;
-	ambient_light.direction = Vec3 { 0.3f, 1.0f, 0.3f }.normalized();
-	ambient_light.scale = 0.25f;
+	_ambient_light.color = Color::white;
+	_ambient_light.direction = Vec3 { 0.3f, 1.0f, 0.3f }.normalized();
+	_ambient_light.scale = 0.25f;
 
 	//  update viewport on window size change
 	_window->on_size_changed.listen( 
@@ -24,16 +24,11 @@ RenderBatch::RenderBatch( Window* _window )
 	);
 }
 
-void RenderBatch::render()
+void RenderBatch::_render_phase( const RenderPhase phase )
 {
-	render_phase( RenderPhase::SPRITE );
-}
+	if ( _renderers.find( phase ) == _renderers.end() ) return;
 
-void RenderBatch::render_phase( const RenderPhase phase )
-{
-	if ( renderers.find( phase ) == renderers.end() ) return;
-
-	auto& list = renderers.at( phase );
+	auto& list = _renderers.at( phase );
 	for ( auto renderer : list )
 	{
 		if ( !renderer->should_render ) continue;
@@ -51,11 +46,6 @@ void RenderBatch::draw_texture( const Vec2& pos, const Vec2& scale, float rotati
 		src_rect, dest_rect, 
 		rotation, origin, texture, color 
 	);
-}
-
-void RenderBatch::translate( const Vec2& pos )
-{
-	translation += pos;
 }
 
 Texture* RenderBatch::load_texture( rconst_str path, const TextureParams& params )
@@ -76,22 +66,22 @@ Texture* RenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* s
 
 void RenderBatch::set_background_color( Color color )
 {
-	background_color = color;
+	_background_color = color;
 }
 
 void RenderBatch::set_ambient_direction( const Vec3& direction )
 {
-	ambient_light.direction = direction.normalized();
+	_ambient_light.direction = direction.normalized();
 }
 
 void RenderBatch::set_ambient_scale( float scale )
 {
-	ambient_light.scale = scale;
+	_ambient_light.scale = scale;
 }
 
 void RenderBatch::set_ambient_color( Color color )
 {
-	ambient_light.color = color;
+	_ambient_light.color = color;
 }
 
 void RenderBatch::add_renderer( Renderer* renderer )
@@ -101,11 +91,11 @@ void RenderBatch::add_renderer( Renderer* renderer )
 
 	//  check phase creation
 	RenderPhase phase = renderer->get_render_phase();
-	if ( renderers.find( phase ) == renderers.end() )
-		renderers.insert( std::pair( phase, std::vector<Renderer*>() ) );
+	if ( _renderers.find( phase ) == _renderers.end() )
+		_renderers.insert( std::pair( phase, std::vector<Renderer*>() ) );
 
 	//  search order position
-	auto& list = renderers.at( phase );
+	auto& list = _renderers.at( phase );
 	auto itr = list.begin();
 	for ( ; itr != list.end(); itr++ )
 		if ( order >= (*itr)->get_priority_order() )
@@ -119,10 +109,10 @@ void RenderBatch::remove_renderer( Renderer* renderer )
 {
 	//  check phase
 	RenderPhase phase = renderer->get_render_phase();
-	if ( renderers.find( phase ) == renderers.end() ) return;
+	if ( _renderers.find( phase ) == _renderers.end() ) return;
 
 	//  find element in vector
-	auto& list = renderers.at( phase );
+	auto& list = _renderers.at( phase );
 	auto itr = std::find( list.begin(), list.end(), renderer );
 	if ( itr == list.end() ) return;
 

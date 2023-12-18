@@ -7,18 +7,18 @@ using namespace suprengine;
 
 SDLRenderBatch::~SDLRenderBatch()
 {
-	if ( sdl_renderer == nullptr ) return;
+	if ( _sdl_renderer == nullptr ) return;
 
 	TTF_Quit();
 
-	SDL_DestroyRenderer( sdl_renderer );
+	SDL_DestroyRenderer( _sdl_renderer );
 }
 
 bool SDLRenderBatch::init()
 {
 	//  create renderer
-	sdl_renderer = SDL_CreateRenderer( _window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-	if ( sdl_renderer == nullptr )
+	_sdl_renderer = SDL_CreateRenderer( _window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+	if ( _sdl_renderer == nullptr )
 	{
 		Logger::error( "failed to create renderer" );
 		return false;
@@ -43,35 +43,36 @@ bool SDLRenderBatch::init()
 
 void SDLRenderBatch::begin_render()
 {
-	translation = Vec2::zero;
+	_translation = Vec2::zero;
 
-	SDL_SetRenderDrawColor( sdl_renderer, background_color.r, background_color.g, background_color.b, background_color.a );
-	SDL_RenderClear( sdl_renderer );
+	SDL_SetRenderDrawColor( _sdl_renderer, _background_color.r, _background_color.g, _background_color.b, _background_color.a );
+	SDL_RenderClear( _sdl_renderer );
 
-	SDL_SetRenderDrawBlendMode( sdl_renderer, SDL_BLENDMODE_BLEND );
+	SDL_SetRenderDrawBlendMode( _sdl_renderer, SDL_BLENDMODE_BLEND );
 }
 
 void SDLRenderBatch::end_render()
 {
-	SDL_RenderPresent( sdl_renderer );
+	SDL_RenderPresent( _sdl_renderer );
 }
 
 void SDLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
 {
-	SDL_SetRenderDrawColor( sdl_renderer, color.r, color.g, color.b, color.a );
+	SDL_SetRenderDrawColor( _sdl_renderer, color.r, color.g, color.b, color.a );
 
 	auto sdl_rect = rect.to_sdl_rect();
 
 	//  apply translation
-	sdl_rect.x += (int) translation.x, sdl_rect.y += (int) translation.y;
+	sdl_rect.x += (int)_translation.x;
+	sdl_rect.y += (int)_translation.y;
 
 	switch ( draw_type )
 	{
-	case DrawType::FILL:
-		SDL_RenderFillRect( sdl_renderer, &sdl_rect );
+	case DrawType::Fill:
+		SDL_RenderFillRect( _sdl_renderer, &sdl_rect );
 		break;
-	case DrawType::LINE:
-		SDL_RenderDrawRect( sdl_renderer, &sdl_rect );
+	case DrawType::Line:
+		SDL_RenderDrawRect( _sdl_renderer, &sdl_rect );
 		break;
 	}
 }
@@ -89,7 +90,8 @@ void SDLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, 
 	}
 
 	//  apply translation
-	dest.x += (int) translation.x, dest.y += (int) translation.y;
+	dest.x += (int)_translation.x;
+	dest.y += (int)_translation.y;
 
 	//  modulate color
 	SDL_SetTextureColorMod( sdl_texture, color.r, color.g, color.b );
@@ -98,7 +100,7 @@ void SDLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, 
 
 	//  draw texture
 	SDL_RenderCopyEx(
-		sdl_renderer,
+		_sdl_renderer,
 		sdl_texture,
 		&src,
 		&dest,
@@ -108,18 +110,23 @@ void SDLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, 
 	);
 }
 
+void SDLRenderBatch::translate( const Vec2& pos )
+{
+	_translation += pos;
+}
+
 void SDLRenderBatch::scale( float zoom )
 {
-	SDL_RenderSetScale( sdl_renderer, zoom, zoom );
+	SDL_RenderSetScale( _sdl_renderer, zoom, zoom );
 }
 
 void SDLRenderBatch::clip( const Rect& region )
 {
 	SDL_Rect clip_rect = region.to_sdl_rect();
-	SDL_RenderSetClipRect( sdl_renderer, &clip_rect );
+	SDL_RenderSetClipRect( _sdl_renderer, &clip_rect );
 }
 
 Texture* SDLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
 {
-	return new SDLTexture( sdl_renderer, path, surface );
+	return new SDLTexture( _sdl_renderer, path, surface );
 }

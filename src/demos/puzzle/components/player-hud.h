@@ -21,7 +21,7 @@ namespace puzzle
 
 		RenderPhase get_render_phase() const override 
 		{
-			return RenderPhase::SPRITE;
+			return RenderPhase::Viewport;
 		}
 
 	private:

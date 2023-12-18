@@ -155,7 +155,13 @@ void Assets::release()
 	_models.clear();
 }
 
-Shader* Assets::load_shader_from_file( rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename, rconst_str tse_filename, rconst_str geo_filename )
+Shader* Assets::load_shader_from_file( 
+	rconst_str vtx_filename, 
+	rconst_str frg_filename, 
+	rconst_str tsc_filename, 
+	rconst_str tse_filename, 
+	rconst_str geo_filename 
+)
 {
 	// 1. Retrieve the vertex/fragment source code from filePath
 	std::string vertexCode;

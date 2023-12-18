@@ -20,7 +20,7 @@ namespace suprengine
 
 		virtual void render() = 0;
 
-		virtual RenderPhase get_render_phase() const { return RenderPhase::SPRITE; }
+		virtual RenderPhase get_render_phase() const = 0;
 	
 	protected:
 		RenderBatch* _render_batch { nullptr };

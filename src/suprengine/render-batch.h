@@ -18,13 +18,13 @@ namespace suprengine
 {
 	enum class FilteringType
 	{
-		NEAREST,
-		BILINEAR,
+		Nearest,
+		Bilinear,
 	};
 
 	struct TextureParams
 	{
-		FilteringType filtering = FilteringType::NEAREST;
+		FilteringType filtering = FilteringType::Nearest;
 	};
 
 	struct AmbientLightInfos
@@ -36,14 +36,16 @@ namespace suprengine
 
 	enum class DrawType
 	{
-		FILL,
-		LINE,
+		Fill,
+		Line,
 	};
 
 	enum class RenderPhase
 	{
-		MESH,
-		SPRITE,
+		//  3D-rendering
+		World,
+		//  2D-rendering (e.g. Sprites, UI)
+		Viewport,
 	};
 
 	class RenderBatch
@@ -52,11 +54,20 @@ namespace suprengine
 		RenderBatch( Window* _window );
 		virtual ~RenderBatch() {};
 
+		void set_background_color( Color color );
+
+		void set_ambient_direction( const Vec3& direction );
+		void set_ambient_scale( float scale );
+		void set_ambient_color( Color color );
+
+		void add_renderer( Renderer* renderer );
+		void remove_renderer( Renderer* renderer );
+
+	public:
 		virtual bool init() = 0;
 
 		virtual void begin_render() = 0;
-		virtual void render();
-		virtual void render_phase( const RenderPhase phase );
+		virtual void render() = 0;
 		virtual void end_render() = 0;
 
 		virtual void on_window_resized( const Vec2& size ) = 0;
@@ -109,30 +120,24 @@ namespace suprengine
 			const Color& color 
 		) = 0;
 
-		void translate( const Vec2& pos );
+		virtual void translate( const Vec2& pos ) = 0;
 		virtual void scale( float zoom ) = 0;
 		virtual void clip( const Rect& region ) = 0;
 
 		virtual Texture* load_texture( rconst_str path, const TextureParams& params = {} );
 		virtual Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params = {} );
 
-		void set_background_color( Color color );
-
-		void set_ambient_direction( const Vec3& direction );
-		void set_ambient_scale( float scale );
-		void set_ambient_color( Color color );
-
-		void add_renderer( Renderer* renderer );
-		void remove_renderer( Renderer* renderer );
+	protected:
+		void _render_phase( RenderPhase phase );
 
 	protected:
 		Window* _window;
-		std::unordered_map<RenderPhase, std::vector<Renderer*>> renderers;
+		std::unordered_map<RenderPhase, std::vector<Renderer*>> _renderers;
 
-		AmbientLightInfos ambient_light;
+		AmbientLightInfos _ambient_light;
 
-		Vec2 translation { Vec2::zero };
-		Color background_color { Color::black };
-		Game* game { nullptr };
+		Color _background_color { Color::black };
+		Game* _game { nullptr };
+
 	};
 }

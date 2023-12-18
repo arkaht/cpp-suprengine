@@ -33,6 +33,9 @@ namespace suprengine
 			);
 		}
 
-		RenderPhase get_render_phase() const override { return RenderPhase::MESH; }
+		RenderPhase get_render_phase() const override 
+		{ 
+			return RenderPhase::World; 
+		}
 	};
 }

@@ -95,73 +95,7 @@ bool OpenGLRenderBatch::init()
 	glEnable( GL_DEBUG_OUTPUT );
 	glDebugMessageCallback( _message_callback, 0 );
 
-	//  create vertex array
-	_quad_vertex_array = new VertexArray( 
-		VertexArrayPreset::Position3_Normal3_UV2,
-		QUAD_VERTICES, 4, 
-		QUAD_INDICES, 6 
-	);
-	_rect_vertex_array = new VertexArray(
-		VertexArrayPreset::Position2_UV2,
-		RECT_VERTICES, 4,
-		RECT_INDICES, 6
-	);
-
-	//  load shaders
-	_framebuffer_shader = Assets::load_shader(
-		"suprengine::framebuffer",
-		"assets/suprengine/shaders/framebuffer.vert",
-		"assets/suprengine/shaders/framebuffer.frag"
-	);
-	_color_shader = Assets::load_shader( 
-		"color",
-		"assets/suprengine/shaders/transform.vert",
-		"assets/suprengine/shaders/color.frag"
-	);
-	_texture_shader = Assets::load_shader( 
-		"texture",
-		"assets/suprengine/shaders/texture.vert",
-		"assets/suprengine/shaders/texture.frag"
-	);
-	Assets::load_shader( 
-		"simple-mesh",
-		"assets/suprengine/shaders/simple-mesh.vert",
-		"assets/suprengine/shaders/simple-mesh.frag"
-	);
-
-	//  load textures
-	Assets::load_texture( 
-		"large-grid", 
-		"assets/suprengine/textures/large-grid.png" 
-	);
-	Assets::load_texture( 
-		"medium-grid", 
-		"assets/suprengine/textures/medium-grid.png" 
-	);
-
-	auto texture = Assets::get_texture( "suprengine::medium-grid" );
-	
-	//  load models
-	Model* cube_model = Assets::load_model( 
-		"suprengine::cube", 
-		"assets/suprengine/models/cube.fbx", 
-		"simple-mesh"
-	);
-	cube_model->get_mesh( 0 )->add_texture( texture );
-
-	Model* cylinder_model = Assets::load_model( 
-		"suprengine::cylinder", 
-		"assets/suprengine/models/cylinder.fbx", 
-		"simple-mesh" 
-	);
-	cylinder_model->get_mesh( 0 )->add_texture( texture );
-
-	Model* sphere_model = Assets::load_model( 
-		"suprengine::sphere", 
-		"assets/suprengine/models/sphere.fbx", 
-		"simple-mesh" 
-	);
-	sphere_model->get_mesh( 0 )->add_texture( texture );
+	_load_assets();
 
 
 	return true;
@@ -169,7 +103,7 @@ bool OpenGLRenderBatch::init()
 
 void OpenGLRenderBatch::begin_render()
 {
-	_camera = game->camera;
+	_camera = _game->camera;
 	if ( _camera == nullptr )
 	{
 		Logger::error( "no main camera, rendering aborted!" );
@@ -179,10 +113,10 @@ void OpenGLRenderBatch::begin_render()
 	//  clear screen
 	glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
 	glClearColor(
-		background_color.r / 255.0f,
-		background_color.g / 255.0f,
-		background_color.b / 255.0f,
-		background_color.a / 255.0f
+		_background_color.r / 255.0f,
+		_background_color.g / 255.0f,
+		_background_color.b / 255.0f,
+		_background_color.a / 255.0f
 	);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -215,7 +149,7 @@ void OpenGLRenderBatch::render()
 		glDepthFunc( GL_LEQUAL );
 
 		//  render
-		render_phase( RenderPhase::MESH );
+		_render_phase( RenderPhase::World );
 
 		//  disable options
 		glDisable( GL_DEPTH_TEST );
@@ -240,7 +174,7 @@ void OpenGLRenderBatch::render()
 		glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO );
 		
 		//  render
-		render_phase( RenderPhase::SPRITE );
+		_render_phase( RenderPhase::Viewport );
 
 		//  disable options
 		glDisable( GL_BLEND );
@@ -250,7 +184,7 @@ void OpenGLRenderBatch::render()
 void OpenGLRenderBatch::end_render()
 {
 	Vec2 window_size = _window->get_size();
-	int width = window_size.x, height = window_size.y;
+	int width = (int)window_size.x, height = (int)window_size.y;
 
 	//  copy framebuffer into post-process framebuffer
 	glBindFramebuffer( GL_READ_FRAMEBUFFER, _fbo );
@@ -267,7 +201,7 @@ void OpenGLRenderBatch::end_render()
 	_rect_vertex_array->activate();
 	_framebuffer_shader->activate();
 	glBindTexture( GL_TEXTURE_2D, _pp_texture );
-	draw_elements( 6 );
+	_draw_elements( 6 );
 	
 	//  populate rendering
 	SDL_GL_SwapWindow( _window->get_sdl_window() );
@@ -275,7 +209,7 @@ void OpenGLRenderBatch::end_render()
 
 void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 {
-	int width = size.x, height = size.y;
+	int width = (int)size.x, height = (int)size.y;
 
 	//  update viewport
 	glViewport( 0, 0, width, height );
@@ -300,12 +234,12 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 
 	//  setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
-	Mtx4 location_matrix = compute_location_matrix( rect.x, rect.y, 0.0f );
+	Mtx4 location_matrix = _compute_location_matrix( rect.x, rect.y, 0.0f );
 	_color_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
 	_color_shader->set_vec4( "u_modulate", color );
 
 	//  draw
-	draw_elements( 6 );
+	_draw_elements( 6 );
 }
 
 void OpenGLRenderBatch::draw_texture( 
@@ -321,7 +255,7 @@ void OpenGLRenderBatch::draw_texture(
 	Mtx4 scale_matrix = Mtx4::create_scale( 
 		dest_rect.w, dest_rect.h, 1.0f );
 	Mtx4 rotation_matrix = Mtx4::create_rotation_z( rotation );
-	Mtx4 location_matrix = compute_location_matrix( 
+	Mtx4 location_matrix = _compute_location_matrix( 
 		dest_rect.x, dest_rect.y, 0.0f );
 
 	draw_texture(
@@ -360,7 +294,7 @@ void OpenGLRenderBatch::draw_texture(
 	_texture_shader->set_vec2( "u_origin", origin );
 
 	//  draw
-	draw_elements( 6 );
+	_draw_elements( 6 );
 }
 
 void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color )
@@ -375,15 +309,15 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 		shader->set_vec4( "u_modulate", color );
 
 		//  lighting
-		shader->set_vec3( "u_ambient_direction", ambient_light.direction );
-		shader->set_float("u_ambient_scale", ambient_light.scale );
-		shader->set_vec4( "u_ambient_color", ambient_light.color );
+		shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
+		shader->set_float("u_ambient_scale", _ambient_light.scale );
+		shader->set_vec4( "u_ambient_color", _ambient_light.color );
 	}
 
 	//  draw
 	mesh->get_vertex_array()->activate();
 	mesh->get_texture( texture_id )->activate();
-	draw_elements( mesh->get_indices_count() );
+	_draw_elements( mesh->get_indices_count() );
 }
 
 void OpenGLRenderBatch::draw_model( 
@@ -421,9 +355,9 @@ void OpenGLRenderBatch::draw_model(
 			shader->set_vec4( "u_modulate", color );
 
 			//  lighting
-			shader->set_vec3( "u_ambient_direction", ambient_light.direction );
-			shader->set_float( "u_ambient_scale", ambient_light.scale );
-			shader->set_vec4( "u_ambient_color", ambient_light.color );
+			shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
+			shader->set_float( "u_ambient_scale", _ambient_light.scale );
+			shader->set_vec4( "u_ambient_color", _ambient_light.color );
 		}
 
 		//  draw
@@ -432,7 +366,7 @@ void OpenGLRenderBatch::draw_model(
 		{
 			texture->activate();
 		}
-		draw_elements( mesh->get_indices_count() );
+		_draw_elements( mesh->get_indices_count() );
 	}
 }
 
@@ -454,12 +388,87 @@ void OpenGLRenderBatch::draw_debug_model(
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 }
 
+void OpenGLRenderBatch::translate( const Vec2& pos )
+{
+}
+
 void OpenGLRenderBatch::scale( float zoom )
 {}
 
 void OpenGLRenderBatch::clip( const Rect& region )
 {
 	//  TODO: support clipping
+}
+
+void OpenGLRenderBatch::_load_assets()
+{
+	//  create vertex array
+	_quad_vertex_array = new VertexArray(
+		VertexArrayPreset::Position3_Normal3_UV2,
+		QUAD_VERTICES, 4,
+		QUAD_INDICES, 6
+	);
+	_rect_vertex_array = new VertexArray(
+		VertexArrayPreset::Position2_UV2,
+		RECT_VERTICES, 4,
+		RECT_INDICES, 6
+	);
+
+	//  load shaders
+	_framebuffer_shader = Assets::load_shader(
+		"suprengine::framebuffer",
+		"assets/suprengine/shaders/framebuffer.vert",
+		"assets/suprengine/shaders/framebuffer.frag"
+	);
+	_color_shader = Assets::load_shader(
+		"suprengine::color",
+		"assets/suprengine/shaders/transform.vert",
+		"assets/suprengine/shaders/color.frag"
+	);
+	_texture_shader = Assets::load_shader(
+		"suprengine::texture",
+		"assets/suprengine/shaders/texture.vert",
+		"assets/suprengine/shaders/texture.frag"
+	);
+	Assets::load_shader(
+		"suprengine::lit-mesh",
+		"assets/suprengine/shaders/lit-mesh.vert",
+		"assets/suprengine/shaders/lit-mesh.frag"
+	);
+
+	//  load textures
+	Assets::load_texture(
+		"large-grid",
+		"assets/suprengine/textures/large-grid.png"
+	);
+	Assets::load_texture(
+		"medium-grid",
+		"assets/suprengine/textures/medium-grid.png"
+	);
+
+	auto texture = Assets::get_texture( "suprengine::medium-grid" );
+
+	//  load models
+	Model* cube_model = Assets::load_model(
+		"suprengine::cube",
+		"assets/suprengine/models/cube.fbx",
+		"simple-mesh"
+	);
+	cube_model->get_mesh( 0 )->add_texture( texture );
+
+	Model* cylinder_model = Assets::load_model(
+		"suprengine::cylinder",
+		"assets/suprengine/models/cylinder.fbx",
+		"simple-mesh"
+	);
+	cylinder_model->get_mesh( 0 )->add_texture( texture );
+
+	Model* sphere_model = Assets::load_model(
+		"suprengine::sphere",
+		"assets/suprengine/models/sphere.fbx",
+		"simple-mesh"
+	);
+	sphere_model->get_mesh( 0 )->add_texture( texture );
 }
 
 void OpenGLRenderBatch::_create_framebuffers( int width, int height )
@@ -560,7 +569,7 @@ void OpenGLRenderBatch::_release_framebuffers()
 	glDeleteFramebuffers( 1, &_pp_fbo );
 }
 
-Mtx4 OpenGLRenderBatch::compute_location_matrix( float x, float y, float z )
+Mtx4 OpenGLRenderBatch::_compute_location_matrix( float x, float y, float z )
 {
 	return Mtx4::create_translation(
 		Vec3 {
@@ -571,7 +580,7 @@ Mtx4 OpenGLRenderBatch::compute_location_matrix( float x, float y, float z )
 	);
 }
 
-void OpenGLRenderBatch::draw_elements( int indices_count )
+void OpenGLRenderBatch::_draw_elements( int indices_count )
 {
 	glDrawElements( GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, nullptr );
 }

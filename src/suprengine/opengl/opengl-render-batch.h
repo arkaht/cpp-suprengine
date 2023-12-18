@@ -69,21 +69,24 @@ namespace suprengine
 			const Color& color 
 		) override;
 
+		void translate( const Vec2& pos ) override;
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;
 
 	private:
+		void _load_assets();
+
 		void _create_framebuffers( int width, int height );
 		void _release_framebuffers();
 
-		Mtx4 compute_location_matrix( float x, float y, float z );
-		void draw_elements( int indices_count );
+		Mtx4 _compute_location_matrix( float x, float y, float z );
+		void _draw_elements( int indices_count );
 	
 	private:
 		SDL_GLContext _gl_context { nullptr };
 
-		unsigned int _fbo, _pp_fbo, _rbo;
-		unsigned int _framebuffer_texture, _pp_texture;
+		unsigned int _fbo = 0, _pp_fbo = 0, _rbo = 0;
+		unsigned int _framebuffer_texture = 0, _pp_texture = 0;
 
 		VertexArray* _rect_vertex_array { nullptr };
 		VertexArray* _quad_vertex_array { nullptr };
