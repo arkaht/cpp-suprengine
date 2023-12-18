@@ -28,9 +28,14 @@ constexpr unsigned int RECT_INDICES[] = {
 	2, 3, 0
 };
 
+int samples = 8;
+
 OpenGLRenderBatch::~OpenGLRenderBatch()
 {
 	SDL_GL_DeleteContext( _gl_context );
+
+	_release_framebuffers();
+
 	delete _quad_vertex_array;
 	delete _rect_vertex_array;
 }
@@ -84,96 +89,6 @@ bool OpenGLRenderBatch::init()
 	{
 		Logger::error( "failed to initialize TTF library" );
 		return false;
-	}
-
-	{
-		int samples = 4;
-		Vec2 window_size = _window->get_size();
-		int width = window_size.x, height = window_size.y;
-
-		//  create framebuffer object
-		glGenFramebuffers( 1, &_fbo );
-		glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
-
-		//  create framebuffer texture
-		int target = GL_TEXTURE_2D_MULTISAMPLE;
-		glGenTextures( 1, &_framebuffer_texture );
-		glBindTexture( target, _framebuffer_texture );
-		glTexImage2DMultisample( 
-			target, samples, GL_RGB, width, height, GL_TRUE );
-		glTexParameteri( 
-			target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-		glTexParameteri( 
-			target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-		glTexParameteri( 
-			target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-		glTexParameteri( 
-			target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-		glFramebufferTexture2D( 
-			GL_FRAMEBUFFER, 
-			GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-			_framebuffer_texture,
-			0
-		);
-
-		//  create renderbuffer object
-		glGenRenderbuffers( 1, &_rbo );
-		glBindRenderbuffer( GL_RENDERBUFFER, _rbo );
-		glRenderbufferStorageMultisample( 
-			GL_RENDERBUFFER, 
-			samples, 
-			GL_DEPTH24_STENCIL8, 
-			width, height 
-		);
-		glFramebufferRenderbuffer( 
-			GL_FRAMEBUFFER, 
-			GL_DEPTH_STENCIL_ATTACHMENT, 
-			GL_RENDERBUFFER, 
-			_rbo 
-		);
-
-		//  error-checking framebuffer
-		auto status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
-		if ( status != GL_FRAMEBUFFER_COMPLETE )
-		{
-			Logger::error( "OpenGL Framebuffer error: " + std::to_string( status ) );
-			throw std::exception( "OpenGL Framebuffer couldn't be created!" );
-		}
-		Logger::info( "OpenGL Framebuffer created" );
-
-		//  create post-process framebuffer object
-		glGenFramebuffers( 1, &_pp_fbo );
-		glBindFramebuffer( GL_FRAMEBUFFER, _pp_fbo );
-
-		//  create post-process framebuffer texture
-		target = GL_TEXTURE_2D;
-		glGenTextures( 1, &_pp_texture );
-		glBindTexture( target, _pp_texture );
-		glTexImage2D( 
-			target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
-		glTexParameteri( 
-			target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-		glTexParameteri( 
-			target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-		glTexParameteri( 
-			target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-		glTexParameteri( 
-			target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-		glFramebufferTexture2D( 
-			GL_FRAMEBUFFER, 
-			GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-			_pp_texture,
-			0
-		);
-
-		//  error-checking post-process framebuffer
-		status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
-		if ( status != GL_FRAMEBUFFER_COMPLETE )
-		{
-			Logger::error( "OpenGL Post-Processing Framebuffer error: " + std::to_string( status ) );
-			throw std::exception( "OpenGL Post-Processing Framebuffer couldn't be created!" );
-		}
-		Logger::info( "OpenGL Post-Processing Framebuffer created" );
 	}
 
 	//  enable debug output
@@ -337,6 +252,7 @@ void OpenGLRenderBatch::end_render()
 	Vec2 window_size = _window->get_size();
 	int width = window_size.x, height = window_size.y;
 
+	//  copy framebuffer into post-process framebuffer
 	glBindFramebuffer( GL_READ_FRAMEBUFFER, _fbo );
 	glBindFramebuffer( GL_DRAW_FRAMEBUFFER, _pp_fbo );
 	glBlitFramebuffer( 
@@ -346,25 +262,23 @@ void OpenGLRenderBatch::end_render()
 		GL_NEAREST 
 	);
 
-	//glFrontFace( GL_CW );
+	//  render framebuffer
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 	_rect_vertex_array->activate();
 	_framebuffer_shader->activate();
 	glBindTexture( GL_TEXTURE_2D, _pp_texture );
-	/*Mtx4 scale_matrix = Mtx4::create_scale( width, height, 1.0f );
-	_framebuffer_shader->set_mtx4( "u_world_transform", scale_matrix );
-	_texture_shader->set_vec4( "u_modulate", Color::white );
-	_texture_shader->set_vec4( "u_source_rect", 0.0f, 0.0f, 1.0f, 1.0f );
-	_texture_shader->set_vec2( "u_origin", Vec2 { 0.5f, 0.5f } );*/
 	draw_elements( 6 );
 	
+	//  populate rendering
 	SDL_GL_SwapWindow( _window->get_sdl_window() );
 }
 
 void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 {
+	int width = size.x, height = size.y;
+
 	//  update viewport
-	glViewport( 0, 0, (GLsizei)size.x, (GLsizei)size.y );
+	glViewport( 0, 0, width, height );
 
 	//  update screen offset
 	_screen_offset = Vec3( size * 0.5f, 0.0f );
@@ -373,6 +287,10 @@ void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 	_viewport_matrix = Mtx4::create_simple_view_projection( 
 		size.x, size.y
 	);
+
+	//  update framebuffers
+	_release_framebuffers();
+	_create_framebuffers( width, height );
 }
 
 void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
@@ -542,6 +460,104 @@ void OpenGLRenderBatch::scale( float zoom )
 void OpenGLRenderBatch::clip( const Rect& region )
 {
 	//  TODO: support clipping
+}
+
+void OpenGLRenderBatch::_create_framebuffers( int width, int height )
+{
+	//  create framebuffer object
+	glGenFramebuffers( 1, &_fbo );
+	glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
+
+	//  create framebuffer texture
+	int target = GL_TEXTURE_2D_MULTISAMPLE;
+	glGenTextures( 1, &_framebuffer_texture );
+	glBindTexture( target, _framebuffer_texture );
+	glTexImage2DMultisample(
+		target, samples, GL_RGB, width, height, GL_TRUE );
+	glTexParameteri(
+		target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri(
+		target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	glTexParameteri(
+		target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri(
+		target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+	glFramebufferTexture2D(
+		GL_FRAMEBUFFER,
+		GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+		_framebuffer_texture,
+		0
+	);
+
+	//  create renderbuffer object
+	glGenRenderbuffers( 1, &_rbo );
+	glBindRenderbuffer( GL_RENDERBUFFER, _rbo );
+	glRenderbufferStorageMultisample(
+		GL_RENDERBUFFER,
+		samples,
+		GL_DEPTH24_STENCIL8,
+		width, height
+	);
+	glFramebufferRenderbuffer(
+		GL_FRAMEBUFFER,
+		GL_DEPTH_STENCIL_ATTACHMENT,
+		GL_RENDERBUFFER,
+		_rbo
+	);
+
+	//  error-checking framebuffer
+	auto status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+	if ( status != GL_FRAMEBUFFER_COMPLETE )
+	{
+		Logger::error( "OpenGL: Framebuffer error: " + std::to_string( status ) );
+		throw std::exception( "OpenGL Framebuffer couldn't be created!" );
+	}
+	Logger::info( "OpenGL: Framebuffer created" );
+
+	//  create post-process framebuffer object
+	glGenFramebuffers( 1, &_pp_fbo );
+	glBindFramebuffer( GL_FRAMEBUFFER, _pp_fbo );
+
+	//  create post-process framebuffer texture
+	target = GL_TEXTURE_2D;
+	glGenTextures( 1, &_pp_texture );
+	glBindTexture( target, _pp_texture );
+	glTexImage2D(
+		target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
+	glTexParameteri(
+		target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri(
+		target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	glTexParameteri(
+		target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri(
+		target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+	glFramebufferTexture2D(
+		GL_FRAMEBUFFER,
+		GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+		_pp_texture,
+		0
+	);
+
+	//  error-checking post-process framebuffer
+	status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+	if ( status != GL_FRAMEBUFFER_COMPLETE )
+	{
+		Logger::error( "OpenGL: Post-Processing Framebuffer error: " + std::to_string( status ) );
+		throw std::exception( "OpenGL Post-Processing Framebuffer couldn't be created!" );
+	}
+	Logger::info( "OpenGL: Post-Processing Framebuffer created" );
+}
+
+void OpenGLRenderBatch::_release_framebuffers()
+{
+	glDeleteRenderbuffers( 1, &_rbo );
+	
+	glDeleteTextures( 1, &_framebuffer_texture );
+	glDeleteTextures( 1, &_pp_texture );
+
+	glDeleteFramebuffers( 1, &_fbo );
+	glDeleteFramebuffers( 1, &_pp_fbo );
 }
 
 Mtx4 OpenGLRenderBatch::compute_location_matrix( float x, float y, float z )

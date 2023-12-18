@@ -23,6 +23,10 @@ namespace suprengine
 		void render() override;
 		void end_render() override;
 
+		/*
+		 * Called whenever the window is resized.
+		 * Also called on engine startup.
+		 */
 		void on_window_resized( const Vec2& size ) override;
 
 		void draw_rect( 
@@ -69,6 +73,9 @@ namespace suprengine
 		void clip( const Rect& region ) override;
 
 	private:
+		void _create_framebuffers( int width, int height );
+		void _release_framebuffers();
+
 		Mtx4 compute_location_matrix( float x, float y, float z );
 		void draw_elements( int indices_count );
 	
