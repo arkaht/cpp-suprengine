@@ -241,13 +241,15 @@ Shader* Assets::load_shader_from_file( rconst_str vtx_filename, rconst_str frg_f
 VertexArray* Assets::load_mesh( const aiMesh* mesh )
 {
 	printf( "| Mesh Name: '%s'\n", mesh->mName.C_Str() );
+
+	VertexArrayPreset preset = VertexArrayPreset::Position3_Normal3_UV2;
 	
 	//  get vertices count
 	unsigned int vertices_count = mesh->mNumVertices;
 	printf( "> Vertices Count: %d\n", vertices_count );
 
 	//  init vertices and indices containers
-	std::vector<float> vertices( vertices_count * VertexArray::stride );
+	std::vector<float> vertices( vertices_count * preset.stride );
 	std::vector<unsigned int> indices;
 
 	bool has_normals = mesh->HasNormals();
@@ -259,7 +261,7 @@ VertexArray* Assets::load_mesh( const aiMesh* mesh )
 	//  copy vertices
 	for ( size_t i = 0; i < vertices_count; i++ )
 	{
-		size_t vertex_id = i * VertexArray::stride;
+		size_t vertex_id = i * preset.stride;
 
 		//  position
 		//  NOTE: Y and Z axes are swapped, models won't show properly otherwise
@@ -299,7 +301,8 @@ VertexArray* Assets::load_mesh( const aiMesh* mesh )
 	printf( "> Indices Count: %d\n", (int)indices.size() );
 
 	//  create vertex array
-	auto vertex_array = new VertexArray( 
+	auto vertex_array = new VertexArray(
+		preset,
 		vertices.data(),
 		vertices_count,
 		indices.data(),

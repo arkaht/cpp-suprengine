@@ -28,12 +28,36 @@ constexpr unsigned int QUAD_INDICES[] = {
 
 namespace suprengine
 {
+	class VertexArrayPreset
+	{
+	public:
+		static const VertexArrayPreset Position3_Normal3_UV2;
+		static const VertexArrayPreset Position2_UV2;
+
+	public:
+		VertexArrayPreset( 
+			unsigned int positions,
+			unsigned int normals,
+			unsigned int uvs
+		);
+
+	public:
+		unsigned int stride;
+		unsigned int positions;
+		unsigned int normals;
+		unsigned int uvs;
+	};
+
 	class VertexArray
 	{
 	public:
-		static const int stride = 8;
-
-		VertexArray( const float* vertices, unsigned int vertices_count, const unsigned int* indices, unsigned int indices_count );
+		VertexArray( 
+			const VertexArrayPreset& preset,
+			const float* vertices, 
+			unsigned int vertices_count, 
+			const unsigned int* indices, 
+			unsigned int indices_count
+		);
 		~VertexArray();
 
 		void activate();

@@ -8,10 +8,31 @@
 
 using namespace suprengine;
 
+constexpr float RECT_VERTICES[] = {
+	//  bottom-left
+	-1.0f, -1.0f,  //  position
+	 0.0f,  0.0f,  //  uv
+	//  bottom-right
+	1.0f, -1.0f,  //  position
+	1.0f,  0.0f,  //  uv
+	//  top-right
+	1.0f, 1.0f,  //  position
+	1.0f, 1.0f,  //  uv
+	//  top-left
+	-1.0f, 1.0f,  //  position
+	0.0f, 1.0f   //  uv
+};
+
+constexpr unsigned int RECT_INDICES[] = {
+	0, 1, 2,
+	2, 3, 0
+};
+
 OpenGLRenderBatch::~OpenGLRenderBatch()
 {
 	SDL_GL_DeleteContext( _gl_context );
 	delete _quad_vertex_array;
+	delete _rect_vertex_array;
 }
 
 //  https://www.khronos.org/opengl/wiki/OpenGL_Error
@@ -65,14 +86,118 @@ bool OpenGLRenderBatch::init()
 		return false;
 	}
 
+	{
+		int samples = 4;
+		Vec2 window_size = _window->get_size();
+		int width = window_size.x, height = window_size.y;
+
+		//  create framebuffer object
+		glGenFramebuffers( 1, &_fbo );
+		glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
+
+		//  create framebuffer texture
+		int target = GL_TEXTURE_2D_MULTISAMPLE;
+		glGenTextures( 1, &_framebuffer_texture );
+		glBindTexture( target, _framebuffer_texture );
+		glTexImage2DMultisample( 
+			target, samples, GL_RGB, width, height, GL_TRUE );
+		glTexParameteri( 
+			target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( 
+			target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+		glTexParameteri( 
+			target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+		glTexParameteri( 
+			target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+		glFramebufferTexture2D( 
+			GL_FRAMEBUFFER, 
+			GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+			_framebuffer_texture,
+			0
+		);
+
+		//  create renderbuffer object
+		glGenRenderbuffers( 1, &_rbo );
+		glBindRenderbuffer( GL_RENDERBUFFER, _rbo );
+		glRenderbufferStorageMultisample( 
+			GL_RENDERBUFFER, 
+			samples, 
+			GL_DEPTH24_STENCIL8, 
+			width, height 
+		);
+		glFramebufferRenderbuffer( 
+			GL_FRAMEBUFFER, 
+			GL_DEPTH_STENCIL_ATTACHMENT, 
+			GL_RENDERBUFFER, 
+			_rbo 
+		);
+
+		//  error-checking framebuffer
+		auto status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+		if ( status != GL_FRAMEBUFFER_COMPLETE )
+		{
+			Logger::error( "OpenGL Framebuffer error: " + std::to_string( status ) );
+			throw std::exception( "OpenGL Framebuffer couldn't be created!" );
+		}
+		Logger::info( "OpenGL Framebuffer created" );
+
+		//  create post-process framebuffer object
+		glGenFramebuffers( 1, &_pp_fbo );
+		glBindFramebuffer( GL_FRAMEBUFFER, _pp_fbo );
+
+		//  create post-process framebuffer texture
+		target = GL_TEXTURE_2D;
+		glGenTextures( 1, &_pp_texture );
+		glBindTexture( target, _pp_texture );
+		glTexImage2D( 
+			target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
+		glTexParameteri( 
+			target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( 
+			target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+		glTexParameteri( 
+			target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+		glTexParameteri( 
+			target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+		glFramebufferTexture2D( 
+			GL_FRAMEBUFFER, 
+			GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+			_pp_texture,
+			0
+		);
+
+		//  error-checking post-process framebuffer
+		status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+		if ( status != GL_FRAMEBUFFER_COMPLETE )
+		{
+			Logger::error( "OpenGL Post-Processing Framebuffer error: " + std::to_string( status ) );
+			throw std::exception( "OpenGL Post-Processing Framebuffer couldn't be created!" );
+		}
+		Logger::info( "OpenGL Post-Processing Framebuffer created" );
+	}
+
 	//  enable debug output
 	glEnable( GL_DEBUG_OUTPUT );
 	glDebugMessageCallback( _message_callback, 0 );
 
 	//  create vertex array
-	_quad_vertex_array = new VertexArray( QUAD_VERTICES, 4, QUAD_INDICES, 6 );
+	_quad_vertex_array = new VertexArray( 
+		VertexArrayPreset::Position3_Normal3_UV2,
+		QUAD_VERTICES, 4, 
+		QUAD_INDICES, 6 
+	);
+	_rect_vertex_array = new VertexArray(
+		VertexArrayPreset::Position2_UV2,
+		RECT_VERTICES, 4,
+		RECT_INDICES, 6
+	);
 
 	//  load shaders
+	_framebuffer_shader = Assets::load_shader(
+		"suprengine::framebuffer",
+		"assets/suprengine/shaders/framebuffer.vert",
+		"assets/suprengine/shaders/framebuffer.frag"
+	);
 	_color_shader = Assets::load_shader( 
 		"color",
 		"assets/suprengine/shaders/transform.vert",
@@ -137,6 +262,7 @@ void OpenGLRenderBatch::begin_render()
 	}
 
 	//  clear screen
+	glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
 	glClearColor(
 		background_color.r / 255.0f,
 		background_color.g / 255.0f,
@@ -208,6 +334,30 @@ void OpenGLRenderBatch::render()
 
 void OpenGLRenderBatch::end_render()
 {
+	Vec2 window_size = _window->get_size();
+	int width = window_size.x, height = window_size.y;
+
+	glBindFramebuffer( GL_READ_FRAMEBUFFER, _fbo );
+	glBindFramebuffer( GL_DRAW_FRAMEBUFFER, _pp_fbo );
+	glBlitFramebuffer( 
+		0, 0, width, height, 
+		0, 0, width, height, 
+		GL_COLOR_BUFFER_BIT, 
+		GL_NEAREST 
+	);
+
+	//glFrontFace( GL_CW );
+	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+	_rect_vertex_array->activate();
+	_framebuffer_shader->activate();
+	glBindTexture( GL_TEXTURE_2D, _pp_texture );
+	/*Mtx4 scale_matrix = Mtx4::create_scale( width, height, 1.0f );
+	_framebuffer_shader->set_mtx4( "u_world_transform", scale_matrix );
+	_texture_shader->set_vec4( "u_modulate", Color::white );
+	_texture_shader->set_vec4( "u_source_rect", 0.0f, 0.0f, 1.0f, 1.0f );
+	_texture_shader->set_vec2( "u_origin", Vec2 { 0.5f, 0.5f } );*/
+	draw_elements( 6 );
+	
 	SDL_GL_SwapWindow( _window->get_sdl_window() );
 }
 

@@ -75,10 +75,15 @@ namespace suprengine
 	private:
 		SDL_GLContext _gl_context { nullptr };
 
+		unsigned int _fbo, _pp_fbo, _rbo;
+		unsigned int _framebuffer_texture, _pp_texture;
+
+		VertexArray* _rect_vertex_array { nullptr };
 		VertexArray* _quad_vertex_array { nullptr };
 
 		Shader* _color_shader { nullptr };
 		Shader* _texture_shader { nullptr };
+		Shader* _framebuffer_shader { nullptr };
 
 		Camera* _camera { nullptr };
 		Vec3 _screen_offset;
