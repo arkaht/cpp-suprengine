@@ -72,15 +72,16 @@ namespace suprengine
 		Mtx4 compute_location_matrix( float x, float y, float z );
 		void draw_elements( int indices_count );
 	
-		SDL_GLContext gl_context { nullptr };
+	private:
+		SDL_GLContext _gl_context { nullptr };
 
-		VertexArray* quad_vertex_array { nullptr };
+		VertexArray* _quad_vertex_array { nullptr };
 
-		Shader* color_shader { nullptr };
-		Shader* texture_shader { nullptr };
+		Shader* _color_shader { nullptr };
+		Shader* _texture_shader { nullptr };
 
-		Camera* camera { nullptr };
-		Vec3 screen_offset;
+		Camera* _camera { nullptr };
+		Vec3 _screen_offset;
 
 		Mtx4 _view_matrix;
 		Mtx4 _viewport_matrix;

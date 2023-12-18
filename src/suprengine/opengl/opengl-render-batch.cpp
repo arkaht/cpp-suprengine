@@ -10,8 +10,8 @@ using namespace suprengine;
 
 OpenGLRenderBatch::~OpenGLRenderBatch()
 {
-	SDL_GL_DeleteContext( gl_context );
-	delete quad_vertex_array;
+	SDL_GL_DeleteContext( _gl_context );
+	delete _quad_vertex_array;
 }
 
 //  https://www.khronos.org/opengl/wiki/OpenGL_Error
@@ -38,7 +38,7 @@ bool OpenGLRenderBatch::init()
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );  //  enable double buffering
 	SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );  //  force OpenGL to use hardware acceleration
 
-	gl_context = SDL_GL_CreateContext( _window->get_sdl_window() );
+	_gl_context = SDL_GL_CreateContext( _window->get_sdl_window() );
 
 	//  GLEW
 	glewExperimental = GL_TRUE;
@@ -70,15 +70,15 @@ bool OpenGLRenderBatch::init()
 	glDebugMessageCallback( _message_callback, 0 );
 
 	//  create vertex array
-	quad_vertex_array = new VertexArray( QUAD_VERTICES, 4, QUAD_INDICES, 6 );
+	_quad_vertex_array = new VertexArray( QUAD_VERTICES, 4, QUAD_INDICES, 6 );
 
 	//  load shaders
-	color_shader = Assets::load_shader( 
+	_color_shader = Assets::load_shader( 
 		"color",
 		"assets/suprengine/shaders/transform.vert",
 		"assets/suprengine/shaders/color.frag"
 	);
-	texture_shader = Assets::load_shader( 
+	_texture_shader = Assets::load_shader( 
 		"texture",
 		"assets/suprengine/shaders/texture.vert",
 		"assets/suprengine/shaders/texture.frag"
@@ -129,8 +129,8 @@ bool OpenGLRenderBatch::init()
 
 void OpenGLRenderBatch::begin_render()
 {
-	camera = game->camera;
-	if ( camera == nullptr )
+	_camera = game->camera;
+	if ( _camera == nullptr )
 	{
 		Logger::error( "no main camera, rendering aborted!" );
 		return;
@@ -146,16 +146,16 @@ void OpenGLRenderBatch::begin_render()
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	//  activate shader & vertex array
-	_view_matrix = camera->get_view_matrix() * camera->get_projection_matrix();
-	if ( color_shader != nullptr )
+	_view_matrix = _camera->get_view_matrix() * _camera->get_projection_matrix();
+	if ( _color_shader != nullptr )
 	{
-		color_shader->activate();
-		color_shader->set_mtx4( "u_view_projection", _view_matrix );
+		_color_shader->activate();
+		_color_shader->set_mtx4( "u_view_projection", _view_matrix );
 	}
-	if ( texture_shader != nullptr )
+	if ( _texture_shader != nullptr )
 	{
-		texture_shader->activate();
-		texture_shader->set_mtx4( "u_view_projection", _view_matrix );
+		_texture_shader->activate();
+		_texture_shader->set_mtx4( "u_view_projection", _view_matrix );
 	}
 }
 
@@ -184,10 +184,10 @@ void OpenGLRenderBatch::render()
 	//  draw sprites
 	{
 		//  setup shaders
-		if ( texture_shader != nullptr )
+		if ( _texture_shader != nullptr )
 		{
-			texture_shader->activate();
-			texture_shader->set_mtx4( "u_view_projection", _viewport_matrix );
+			_texture_shader->activate();
+			_texture_shader->set_mtx4( "u_view_projection", _viewport_matrix );
 		}
 
 		//  enable counter-clockwise
@@ -217,7 +217,7 @@ void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 	glViewport( 0, 0, (GLsizei)size.x, (GLsizei)size.y );
 
 	//  update screen offset
-	screen_offset = Vec3( size * 0.5f, 0.0f );
+	_screen_offset = Vec3( size * 0.5f, 0.0f );
 
 	//  update viewport matrix
 	_viewport_matrix = Mtx4::create_simple_view_projection( 
@@ -227,14 +227,14 @@ void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 
 void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
 {
-	quad_vertex_array->activate();
-	color_shader->activate();
+	_quad_vertex_array->activate();
+	_color_shader->activate();
 
 	//  setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
 	Mtx4 location_matrix = compute_location_matrix( rect.x, rect.y, 0.0f );
-	color_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
-	color_shader->set_vec4( "u_modulate", color );
+	_color_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
+	_color_shader->set_vec4( "u_modulate", color );
 
 	//  draw
 	draw_elements( 6 );
@@ -270,18 +270,18 @@ void OpenGLRenderBatch::draw_texture(
 	const Color& color 
 )
 {
-	quad_vertex_array->activate();
-	texture_shader->activate();
+	_quad_vertex_array->activate();
+	_texture_shader->activate();
 	texture->activate();
 
-	texture_shader->set_mtx4( "u_world_transform", matrix );
+	_texture_shader->set_mtx4( "u_world_transform", matrix );
 
 	//  set modulate
-	texture_shader->set_vec4( "u_modulate", color );
+	_texture_shader->set_vec4( "u_modulate", color );
 
 	//  source rect
 	Vec2 size = texture->get_size();
-	texture_shader->set_vec4( "u_source_rect",
+	_texture_shader->set_vec4( "u_source_rect",
 		src_rect.x / size.x,
 		src_rect.y / size.y,
 		src_rect.w / size.x,
@@ -289,7 +289,7 @@ void OpenGLRenderBatch::draw_texture(
 	);
 	
 	//  origin
-	texture_shader->set_vec2( "u_origin", origin );
+	_texture_shader->set_vec2( "u_origin", origin );
 
 	//  draw
 	draw_elements( 6 );
@@ -398,8 +398,8 @@ Mtx4 OpenGLRenderBatch::compute_location_matrix( float x, float y, float z )
 {
 	return Mtx4::create_translation(
 		Vec3 {
-			x - screen_offset.x,
-			y - screen_offset.y,
+			x - _screen_offset.x,
+			y - _screen_offset.y,
 			z
 		}
 	);
