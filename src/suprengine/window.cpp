@@ -2,11 +2,7 @@
 
 using namespace suprengine;
 
-Window::Window( const char* title ) 
-	:	_title( title ),
-		_size { DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT }
-{}
-Window::Window( const char* title, const int width, const int height ) 
+Window::Window( const std::string& title, int width, int height  ) 
 	:	_title( title ), 
 		_size { (float)width, (float)height }
 {}
@@ -26,7 +22,7 @@ bool Window::init()
 	}
 
 	_sdl_window = SDL_CreateWindow( 
-		_title, 
+		_title.c_str(), 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 		_size.x, _size.y,
 		SDL_WINDOW_OPENGL

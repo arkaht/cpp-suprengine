@@ -4,7 +4,7 @@
 
 int main( int arg_count, char** args )
 {
-    auto& game = Game::instance();
+    auto& game = Engine::instance();
 	if ( !game.init<OpenGLRenderBatch>( "Test", 1280, 720 ) ) return EXIT_FAILURE;
 
 	//  set assets path

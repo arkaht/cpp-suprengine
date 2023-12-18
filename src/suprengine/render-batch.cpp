@@ -8,7 +8,7 @@ using namespace suprengine;
 RenderBatch::RenderBatch( Window* _window )
 	: _window( _window )
 {
-	_game = &Game::instance();
+	_engine = &Engine::instance();
 
 	//  setup ambient light
 	_ambient_light.color = Color::white;

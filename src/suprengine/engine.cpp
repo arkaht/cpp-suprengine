@@ -1,20 +1,21 @@
-#include "game.h"
-#include "entity.h"
-#include "components/transform.h"
-#include "components/collider.h"
-#include "scene.h"
+#include "engine.h"
+
+#include <suprengine/entity.h>
+#include <suprengine/components/transform.h>
+#include <suprengine/components/collider.h>
+#include <suprengine/scene.h>
 
 #include <unordered_map>
 #include <algorithm>
 
-#include <suprengine/sdl/sdl-render-batch.h>
-#include <suprengine/opengl/opengl-render-batch.h>
-
 using namespace suprengine;
 
-Game::~Game()
+Engine::~Engine()
 {
 	clear_entities();
+
+	//  release game
+	_game.reset( nullptr );
 
 	//  release scene
 	_scene.reset( nullptr );
@@ -32,7 +33,7 @@ Game::~Game()
 	SDL_Quit();
 }
 
-void Game::loop()
+void Engine::loop()
 {
 	while ( _is_running )
 	{
@@ -47,7 +48,7 @@ void Game::loop()
 	}
 }
 
-void Game::add_entity( Entity* entity )
+void Engine::add_entity( Entity* entity )
 {
 	if ( _is_updating )
 	{
@@ -63,7 +64,7 @@ void Game::add_entity( Entity* entity )
 	}
 }
 
-void Game::remove_entity( Entity* entity )
+void Engine::remove_entity( Entity* entity )
 {
 	//  remove from actives
 	auto itr = std::find( _entities.begin(), _entities.end(), entity );
@@ -83,7 +84,7 @@ void Game::remove_entity( Entity* entity )
 	}
 }
 
-void Game::clear_entities()
+void Engine::clear_entities()
 {
 	//  clear entities
 	while ( !_entities.empty() )
@@ -92,12 +93,12 @@ void Game::clear_entities()
 	}
 }
 
-void Game::add_timer( const Timer& timer )
+void Engine::add_timer( const Timer& timer )
 {
 	_timers.push_back( timer );
 }
 
-void Game::process_input()
+void Engine::process_input()
 {
 	_inputs->mouse_delta = Vec2::zero;
 
@@ -131,7 +132,7 @@ void Game::process_input()
 	}
 }
 
-void Game::update( float dt )
+void Engine::update( float dt )
 {
 	_inputs->update();
 
@@ -154,13 +155,13 @@ void Game::update( float dt )
 
 	for ( auto entity : _entities )
 	{
-		if ( entity->state == EntityState::ACTIVE )
+		if ( entity->state == EntityState::Active )
 		{
 			entity->update( dt );
 		}
 
 		//  kill entity
-		if ( entity->state == EntityState::DEAD )
+		if ( entity->state == EntityState::Invalid )
 		{
 			_dead_entities.push_back( entity );
 		}
@@ -208,15 +209,10 @@ void Game::update( float dt )
 	}
 }
 
-void Game::render()
+void Engine::render()
 {
 	//  start rendering
 	_render_batch->begin_render();
-
-	//  draw screen diagonals
-	/*SDL_SetRenderDrawColor( sdl_renderer, 255, 255, 255, 255 );
-	SDL_RenderDrawLine( sdl_renderer, 0, 0, _window->get_width() / camera.zoom, _window->get_height() / camera.zoom );
-	SDL_RenderDrawLine( sdl_renderer, _window->get_width() / camera.zoom, 0, 0, _window->get_height() / camera.zoom );*/
 
 	//  apply camera
 	if ( camera != nullptr ) 

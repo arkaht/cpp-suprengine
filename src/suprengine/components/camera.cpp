@@ -109,7 +109,7 @@ void Camera::reset( float width, float height )
 
 void Camera::activate()
 {
-	Game* game = owner->get_game();
+	Engine* game = owner->get_game();
 	game->camera = this;
 }
 

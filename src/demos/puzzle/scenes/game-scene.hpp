@@ -17,9 +17,6 @@ namespace puzzle
 	public:
 		void init() override 
 		{
-			load_assets();
-			init_game();
-
 			//  setup planet
 			auto planet = new Entity();
 			planet->transform->location = Vec3 { 2000.0f, 500.0f, 30.0f };
@@ -53,11 +50,12 @@ namespace puzzle
 		
 		void update( float dt ) override 
 		{
-			auto inputs = _game->get_inputs();
+			auto engine = _game->get_engine();
+			auto inputs = engine->get_inputs();
 
 			if ( inputs->is_key_just_pressed( SDL_SCANCODE_F1 ) )
 			{
-				auto window = _game->get_window();
+				auto window = engine->get_window();
 				if ( window->get_mode() != WindowMode::Windowed )
 				{
 					window->set_mode( WindowMode::Windowed );
@@ -70,35 +68,6 @@ namespace puzzle
 		}
 
 	private:
-		void load_assets()
-		{
-			//  shaders
-			Assets::load_shader(
-				"stylized",
-				"assets/puzzle/shaders/stylized.vert",
-				"assets/puzzle/shaders/stylized.frag"
-			);
-
-			//  textures
-			Assets::load_texture( "crosshair-line", "assets/puzzle/sprites/crosshair-line.png" );
-
-			//  models
-			Assets::load_model( "spaceship", "assets/puzzle/models/spaceship2.fbx" );
-			Assets::load_model( "projectile", "assets/puzzle/models/projectile.fbx" );
-			Assets::load_model( "planet-ring", "assets/puzzle/models/planet-ring.fbx" );
-			Assets::load_model( "asteroid0", "assets/puzzle/models/asteroid0.fbx" );
-			Assets::load_model( "asteroid1", "assets/puzzle/models/asteroid1.fbx" );
-		}
-
-		void init_game()
-		{
-			_game->get_inputs()->set_relative_mouse_mode( true );
-
-			RenderBatch* render_batch = _game->get_render_batch();
-			render_batch->set_background_color( Color::from_0x( 0x00000000 ) );
-		}
-
-		std::shared_ptr<Camera> camera;
 		Entity* spaceship;
 	};
 }

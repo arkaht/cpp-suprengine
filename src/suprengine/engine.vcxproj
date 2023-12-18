@@ -229,7 +229,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="event.hpp" />
     <ClInclude Include="font.fwd.h" />
     <ClInclude Include="font.h" />
-    <ClInclude Include="game.fwd.h" />
+    <ClInclude Include="engine.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="input-manager.h" />
     <ClInclude Include="logger.h" />
@@ -272,7 +272,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClCompile Include="components\transform.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="font.cpp" />
-    <ClCompile Include="game.cpp" />
+    <ClCompile Include="engine.cpp" />
     <ClCompile Include="input-manager.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="mesh.cpp" />

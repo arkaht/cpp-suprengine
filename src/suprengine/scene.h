@@ -1,10 +1,10 @@
 #pragma once
-#include "scene.fwd.h"
-
-#include "game.fwd.h"
 
 namespace suprengine
 {
+	class IGame;
+	class Engine;
+
 	class Scene
 	{
 	public:
@@ -14,9 +14,9 @@ namespace suprengine
 		virtual void init() {}
 		virtual void update( float dt ) {}
 
-		Game* get_game() const { return _game; }
+		IGame* get_game() const { return _game; }
 	
 	protected:
-		Game* _game { nullptr };
+		IGame* _game { nullptr };
 	};
 }

@@ -1,11 +1,9 @@
 #pragma once
-#include <suprengine/game.fwd.h>
 
 #include <suprengine/usings.h>
 #include <suprengine/window.h>
 #include <suprengine/rect.h>
 #include <suprengine/color.h>
-#include <suprengine/texture.fwd.h>
 #include <suprengine/model.h>
 #include <suprengine/font.fwd.h>
 
@@ -16,6 +14,8 @@
 
 namespace suprengine
 {
+	class Engine;
+
 	enum class FilteringType
 	{
 		Nearest,
@@ -137,7 +137,7 @@ namespace suprengine
 		AmbientLightInfos _ambient_light;
 
 		Color _background_color { Color::black };
-		Game* _game { nullptr };
+		Engine* _engine { nullptr };
 
 	};
 }

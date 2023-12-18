@@ -5,7 +5,7 @@
 #include "components/collider.fwd.h"
 #include "components/transform.h"
 
-#include <suprengine/game.h>
+#include <suprengine/engine.h>
 #include <suprengine/mtx4.h>
 
 #include <vector>
@@ -14,16 +14,16 @@ namespace suprengine
 {
 	enum class EntityState
 	{
-		ACTIVE,
-		PAUSED,
-		DEAD,
+		Active,
+		Paused,
+		Invalid,
 	};
 
 	class Entity
 	{
 	public:
 		uint32_t layer = 0x1;
-		EntityState state { EntityState::ACTIVE };
+		EntityState state { EntityState::Active };
 
 		std::vector<std::shared_ptr<Component>> components;
 
@@ -59,11 +59,11 @@ namespace suprengine
 		virtual void on_trigger_stay( std::shared_ptr<Collider> collider ) {};
 		virtual void on_trigger_exit( std::shared_ptr<Collider> collider ) {};
 
-		Game* get_game() const { return _game; }
+		Engine* get_game() const { return _engine; }
 		int get_unique_id() const { return _unique_id; }
 
 	protected:
-		Game* _game { nullptr };
+		Engine* _engine { nullptr };
 
 	private:
 		int _unique_id = -1;

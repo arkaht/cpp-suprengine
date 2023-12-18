@@ -29,7 +29,7 @@ void Projectile::update_this( float dt )
 		RayParams params {};
 
 		//  check safe movement 
-		auto physics = _game->get_physics();
+		auto physics = _engine->get_physics();
 		if ( physics->raycast( ray, &result, params ) )
 		{
 			on_hit( result );

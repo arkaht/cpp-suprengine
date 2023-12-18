@@ -5,7 +5,7 @@ using namespace suprengine;
 int Entity::_global_id { 0 };
 
 Entity::Entity()
-	: _game( &Game::instance() )
+	: _engine( &Engine::instance() )
 {
 	_unique_id = _global_id++;
 
@@ -13,13 +13,13 @@ Entity::Entity()
 	transform = create_component<Transform>();
 
 	//  register in game
-	_game->add_entity( this );
+	_engine->add_entity( this );
 }
 
 Entity::~Entity()
 {
 	//  remove from game
-	_game->remove_entity( this );
+	_engine->remove_entity( this );
 
 	//  release components
 	while ( !components.empty() )
@@ -78,5 +78,5 @@ void Entity::update( float dt )
 
 void Entity::kill()
 {
-	state = EntityState::DEAD;
+	state = EntityState::Invalid;
 }

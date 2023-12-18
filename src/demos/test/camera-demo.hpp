@@ -49,7 +49,7 @@ namespace test
 
 		void update_this( float dt ) override
 		{
-			auto inputs = _game->get_inputs();
+			auto inputs = _engine->get_inputs();
 
 			if ( inputs->is_key_just_pressed( SDL_SCANCODE_1 ) )
 				set_mode( CameraMode::FPS );
@@ -78,11 +78,11 @@ namespace test
 					mouse_looker->should_update = true;
 					break;
 				case CameraMode::TPS:
-					player->state = EntityState::ACTIVE;
+					player->state = EntityState::Active;
 					spring_arm->should_update = true;
 					break;
 				case CameraMode::STATIC:
-					player->state = EntityState::ACTIVE;
+					player->state = EntityState::Active;
 					target_rotator->should_update = true;
 					break;
 			}
@@ -97,11 +97,11 @@ namespace test
 					mouse_looker->should_update = false;
 					break;
 				case CameraMode::TPS:
-					player->state = EntityState::PAUSED;
+					player->state = EntityState::Paused;
 					spring_arm->should_update = false;
 					break;
 				case CameraMode::STATIC:
-					player->state = EntityState::PAUSED;
+					player->state = EntityState::Paused;
 					target_rotator->should_update = false;
 					break;
 			}

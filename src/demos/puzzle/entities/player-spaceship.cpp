@@ -68,9 +68,9 @@ Vec3 PlayerSpaceship::get_shoot_location( const Vec3& axis_scale ) const
 
 void PlayerSpaceship::_update_movement( float dt )
 {
-	float time = _game->get_timer()->get_accumulated_seconds();
-	auto inputs = _game->get_inputs();
-	auto window = _game->get_window();
+	float time = _engine->get_timer()->get_accumulated_seconds();
+	auto inputs = _engine->get_inputs();
+	auto window = _engine->get_window();
 
 	//  get mouse delta
 	Vec2 mouse_delta = -inputs->mouse_delta;
@@ -201,7 +201,7 @@ void PlayerSpaceship::_update_trail( float dt, float time )
 
 void PlayerSpaceship::_update_camera( float dt )
 {
-	auto inputs = _game->get_inputs();
+	auto inputs = _engine->get_inputs();
 
 	float throttle_ratio = easing::in_out_cubic( _throttle / 1.0f );
 	float smooth_move_speed = math::lerp( 
@@ -301,7 +301,7 @@ void PlayerSpaceship::_update_camera( float dt )
 
 void PlayerSpaceship::_update_shoot( float dt )
 {
-	auto inputs = _game->get_inputs();
+	auto inputs = _engine->get_inputs();
 
 	//  reduce shoot cooldown
 	_shoot_time = math::max( 0.0f, _shoot_time - dt );

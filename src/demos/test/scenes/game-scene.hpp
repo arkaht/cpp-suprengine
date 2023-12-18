@@ -17,9 +17,9 @@ namespace test
 	public:
 		void init() override 
 		{
-			_game->get_inputs()->set_relative_mouse_mode( true );
+			_engine->get_inputs()->set_relative_mouse_mode( true );
 
-			RenderBatch* render_batch = _game->get_render_batch();
+			RenderBatch* render_batch = _engine->get_render_batch();
 			render_batch->set_background_color( Color::from_0x( 0x252627FF ) );
 
 			Model* cube_model = Assets::get_model( "suprengine::cube" );
@@ -59,9 +59,9 @@ namespace test
 
 		void update( float dt ) override
 		{
-			float time = _game->get_timer()->get_accumulated_seconds();
+			float time = _engine->get_timer()->get_accumulated_seconds();
 
-			RenderBatch* render_batch = _game->get_render_batch();
+			RenderBatch* render_batch = _engine->get_render_batch();
 			render_batch->set_ambient_direction(
 				Vec3 {
 					cosf( time ),

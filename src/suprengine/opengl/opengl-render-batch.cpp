@@ -3,6 +3,7 @@
 #include <suprengine/assets.h>
 #include <suprengine/texture.h>
 #include <suprengine/game.h>
+#include <suprengine/engine.h>
 
 #include <filesystem>
 
@@ -103,7 +104,7 @@ bool OpenGLRenderBatch::init()
 
 void OpenGLRenderBatch::begin_render()
 {
-	_camera = _game->camera;
+	_camera = _engine->camera;
 	if ( _camera == nullptr )
 	{
 		Logger::error( "no main camera, rendering aborted!" );
