@@ -206,8 +206,6 @@ void PlayerSpaceship::_update_camera( float dt )
 	float throttle_ratio = easing::in_out_cubic( _throttle / 1.0f );
 	float smooth_speed = math::lerp( 
 		CAMERA_MOVE_SPEED.x, CAMERA_MOVE_SPEED.y, throttle_ratio );
-	float backward_distance = math::lerp( 
-		CAMERA_BACKWARD.x, CAMERA_BACKWARD.y, throttle_ratio );
 	float up_distance = math::lerp( 
 		CAMERA_UP_RANGE.x, CAMERA_UP_RANGE.y, throttle_ratio );
 
@@ -233,40 +231,59 @@ void PlayerSpaceship::_update_camera( float dt )
 	//rot.normalize();
 	//second_camera->transform->set_rotation( rot );
 	
-	Vec3 forward = transform->get_forward() * -backward_distance;
+	const Vec3 up = transform->get_up();
+	const Vec3 forward = transform->get_forward();
 	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )
 	{
 		forward *= -3.0f;
 	}*/
 	
-	//  apply location
-	Vec3 target_location = transform->location 
-	  + forward
-	  + transform->get_up() * up_distance;
+	//  find targets location & rotation
+	Vec3 target_location = transform->location
+	  + up * up_distance;
+	Quaternion target_rotation = transform->rotation;
+	if ( inputs->is_mouse_button_down( MouseButton::Right ) )
+	{
+		float distance = math::lerp( 
+			CAMERA_LOOK_BACKWARD_DISTANCE.x, 
+			CAMERA_LOOK_BACKWARD_DISTANCE.y, 
+			_throttle  //  looks better on linearly progressive distance
+		);
+		target_location += forward * distance;
+		target_rotation = Quaternion::concatenate( 
+			target_rotation, 
+			Quaternion( up, math::PI ) 
+		);
+	}
+	else
+	{
+		float distance = math::lerp( 
+			CAMERA_BACKWARD.x, 
+			CAMERA_BACKWARD.y, 
+			throttle_ratio 
+		);
+		target_location += forward * -distance;
+	}
+
+	//  apply location & rotation
 	Vec3 location = Vec3::lerp( 
 		camera->transform->location,
 		target_location,
 		dt * smooth_speed
 	);
-	camera->transform->set_location( location );
-
-	//  apply rotation
 	Quaternion rotation = Quaternion::lerp(
 		camera->transform->rotation,
-		transform->rotation,
+		target_rotation,
 		dt * CAMERA_ROTATION_SPEED
 	);
-	/*if ( inputs->is_key_down( SDL_SCANCODE_E ) )
-	{
-		rotation = Quaternion::look_at( -transform->get_right(), transform->get_up() );
-	}*/
+	camera->transform->set_location( location );
 	camera->transform->set_rotation( rotation );
 
 	//  update up direction for roll
 	camera->up_direction = Vec3::lerp( 
 		camera->up_direction, 
-		transform->get_up(), 
-		dt * smooth_speed 
+		up, 
+		dt * CAMERA_ROTATION_SPEED 
 	);
 
 	//  update fov

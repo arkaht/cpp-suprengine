@@ -31,7 +31,7 @@ namespace puzzle
 		const float CROSSHAIR_LINES_DISTANCE = 14.0f;
 		const float CROSSHAIR_LINES_SHOOT_DISTANCE = 3.0f;
 		const Vec2  CROSSHAIR_LINES_SHOOT_SCALE { 0.25f, 0.85f };
-		const Vec2  CROSSHAIR_LINE_SCALE { 0.5f, 0.5f };
+		const Vec2  CROSSHAIR_LINE_SCALE { 0.5f, 0.75f };
 
 		const float HIT_TIME = 0.25f;
 

@@ -51,6 +51,11 @@ namespace puzzle
 			6.0f,		//  at min throttle 
 			-3.0f		//  at max throttle
 		};
+		//  Camera distance when looking backward depending on throttle
+		const Vec2 CAMERA_LOOK_BACKWARD_DISTANCE {
+			12.0f,		//  at min throttle
+			25.0f		//  at max throttle
+		};
 		//  Camera smooth movement speed depending on throttle
 		const Vec2 CAMERA_MOVE_SPEED { 
 			7.0f,		//  at min throttle 
