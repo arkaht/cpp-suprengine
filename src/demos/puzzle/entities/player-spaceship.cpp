@@ -204,7 +204,7 @@ void PlayerSpaceship::_update_camera( float dt )
 	auto inputs = _game->get_inputs();
 
 	float throttle_ratio = easing::in_out_cubic( _throttle / 1.0f );
-	float smooth_speed = math::lerp( 
+	float smooth_move_speed = math::lerp( 
 		CAMERA_MOVE_SPEED.x, CAMERA_MOVE_SPEED.y, throttle_ratio );
 	float up_distance = math::lerp( 
 		CAMERA_UP_RANGE.x, CAMERA_UP_RANGE.y, throttle_ratio );
@@ -269,7 +269,7 @@ void PlayerSpaceship::_update_camera( float dt )
 	Vec3 location = Vec3::lerp( 
 		camera->transform->location,
 		target_location,
-		dt * smooth_speed
+		dt * smooth_move_speed
 	);
 	Quaternion rotation = Quaternion::lerp(
 		camera->transform->rotation,
