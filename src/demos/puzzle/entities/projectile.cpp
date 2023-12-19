@@ -20,23 +20,7 @@ void Projectile::update_this( float dt )
 	float movement_speed = move_speed * dt;
 	Vec3 movement = transform->get_forward() * movement_speed;
 	Vec3 new_location = transform->location + movement;
-
-	//  check collisions
-	//{
-		//  setup ray
-		Ray ray( transform->location, transform->get_forward(), movement_speed );
-		RayHit result {};
-		RayParams params {};
-
-		//  check safe movement 
-		auto physics = _engine->get_physics();
-		if ( physics->raycast( ray, &result, params ) )
-		{
-			on_hit( result );
-			kill();
-			return;
-		}
-	//}
+	if ( _check_collisions( movement_speed ) ) return;
 
 	//  movement
 	transform->set_location( new_location );
@@ -49,13 +33,38 @@ void Projectile::update_this( float dt )
 	}
 }
 
-void Projectile::on_hit( const RayHit& result )
+bool Projectile::_check_collisions( float movement_speed )
 {
-	auto collider = result.collider.lock();
-	if ( !collider ) return;
+	auto physics = _engine->get_physics();
 
-	auto entity = collider->get_owner();
+	//  setup ray
+	Ray ray( 
+		transform->location, 
+		transform->get_forward(), 
+		movement_speed 
+	);
+	RayParams params {};
 
+	//  check safe movement 
+	RayHit result;
+	if ( physics->raycast( ray, &result, params ) )
+	{
+		if ( result.collider->get_owner() != _owner )
+		{
+			_on_hit( result );
+			kill();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Projectile::_on_hit( const RayHit& result )
+{
+	auto entity = result.collider->get_owner();
+
+	//  TODO: Create a Health component 
 	//  damage asteroid
 	if ( auto asteroid = dynamic_cast<Asteroid*>( entity ) )
 	{

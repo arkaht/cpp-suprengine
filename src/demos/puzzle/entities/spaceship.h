@@ -32,9 +32,6 @@ namespace puzzle
 		/*
 		 * Called when an entity has been damaged by the spaceship.
 		 * 
-		 * For now, only called by Asteroid entities. 
-		 * TODO: Create a Health component 
-		 * 
 		 * Parameters:
 		 * - Entity* victim
 		 */

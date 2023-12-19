@@ -32,7 +32,7 @@ namespace suprengine
 	{
 		Vec3 point = Vec3::zero;
 		Vec3 normal = Vec3::zero;
-		std::weak_ptr<Collider> collider;
+		std::shared_ptr<Collider> collider;
 	};
 
 	struct RayParams

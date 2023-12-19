@@ -14,14 +14,16 @@ namespace puzzle
 
 		void update_this( float dt ) override;
 
-		void on_hit( const RayHit& result );
-
 	public:
 		float move_speed = 750.0f;
 		float life_time = 2.5f;
 
 		float damage_amount = 5.0f; 
 		float knockback_force = 80.0f;
+
+	private:
+		bool _check_collisions( float movement_speed );
+		void _on_hit( const RayHit& result );
 
 	private:
 		Color _color;
