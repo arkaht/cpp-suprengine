@@ -24,7 +24,7 @@ namespace suprengine
 
 		void update( float dt ) override
 		{
-			Physics* physics = owner->get_game()->get_physics();
+			Physics* physics = owner->get_engine()->get_physics();
 
 			//  get ideal new position
 			Vec3 pos = target->location + Vec3::transform( spring_offset, target->rotation );

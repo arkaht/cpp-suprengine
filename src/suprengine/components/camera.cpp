@@ -109,13 +109,13 @@ void Camera::reset( float width, float height )
 
 void Camera::activate()
 {
-	Engine* game = owner->get_game();
+	Engine* game = owner->get_engine();
 	game->camera = this;
 }
 
 bool Camera::is_active()
 {
-	return owner->get_game()->camera == this;
+	return owner->get_engine()->camera == this;
 }
 
 void Camera::set_view_matrix( const Mtx4& matrix )
@@ -152,7 +152,7 @@ const Mtx4& Camera::get_projection_matrix()
 
 void Camera::setup_vars()
 {
-	Window* _window = owner->get_game()->get_window();
+	Window* _window = owner->get_engine()->get_window();
 
 	//  listen to window updates
 	_window->on_size_changed.listen( 

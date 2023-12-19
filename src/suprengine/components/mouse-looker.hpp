@@ -28,7 +28,7 @@ namespace suprengine
 		void update( float dt ) override
 		{
 			//  get mouse delta
-			InputManager* _inputs = owner->get_game()->get_inputs();
+			InputManager* _inputs = owner->get_engine()->get_inputs();
 			Vec2 delta = _inputs->mouse_delta;
 			if ( delta == Vec2::zero ) return;
 

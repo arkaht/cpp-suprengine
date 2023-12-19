@@ -6,7 +6,7 @@ using namespace suprengine;
 Collider::Collider( Entity* owner, int priority_order )
 	: Component( owner, priority_order )
 {
-	_physics = owner->get_game()->get_physics();
+	_physics = owner->get_engine()->get_physics();
 }
 
 void Collider::setup()

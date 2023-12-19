@@ -38,7 +38,7 @@ void PlayerHUD::update( float dt )
 
 void PlayerHUD::render()
 {
-	auto game = owner->get_game();
+	auto game = owner->get_engine();
 	auto window = game->get_window();
 	auto camera = game->camera;
 

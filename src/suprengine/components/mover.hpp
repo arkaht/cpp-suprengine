@@ -17,7 +17,7 @@ namespace suprengine
 
 		void update( float dt ) override
 		{
-			InputManager* _inputs = owner->get_game()->get_inputs();
+			InputManager* _inputs = owner->get_engine()->get_inputs();
 			Vec3 dir {};
 
 			//  forward/backward
@@ -48,7 +48,7 @@ namespace suprengine
 			//  check collisions
 			if ( should_collide )
 			{
-				Physics* _physics = owner->get_game()->get_physics();
+				Physics* _physics = owner->get_engine()->get_physics();
 				
 				//  setup raycast
 				Ray ray( transform->location, move_dir );

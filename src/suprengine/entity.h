@@ -70,7 +70,7 @@ namespace suprengine
 		virtual void on_trigger_stay( std::shared_ptr<Collider> collider ) {};
 		virtual void on_trigger_exit( std::shared_ptr<Collider> collider ) {};
 
-		Engine* get_game() const { return _engine; }
+		Engine* get_engine() const { return _engine; }
 		int get_unique_id() const { return _unique_id; }
 
 	protected:
