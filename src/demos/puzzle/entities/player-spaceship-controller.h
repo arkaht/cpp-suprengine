@@ -40,7 +40,7 @@ namespace puzzle
 		//  Camera backward distance depending on throttle
 		const Vec2 CAMERA_BACKWARD { 
 			6.0f,		//  at min throttle 
-			-3.0f		//  at max throttle
+			2.0f		//  at max throttle
 		};
 		//  Camera distance when looking backward depending on throttle
 		const Vec2 CAMERA_LOOK_BACKWARD_DISTANCE {

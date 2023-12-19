@@ -22,22 +22,22 @@ void GameScene::init()
 	{
 		auto asteroid = new Asteroid();
 		asteroid->transform->location = ASTEROIDS_LOCATION + random::generate_location(
-			-500.0f, -500.0f, -500.0f,
-			500.0f, 500.0f, 500.0f
+			-300.0f, -300.0f, -300.0f,
+			300.0f, 300.0f, 300.0f
 		);
 		asteroid->transform->rotation = Quaternion::look_at( random::generate_direction(), Vec3::up );
-		asteroid->transform->scale = random::generate_scale( 10.0f, 50.0f );
-		asteroid->linear_direction = Vec3::right * 5.0f * random::generate( 0.8f, 1.2f );
+		asteroid->transform->scale = random::generate_scale( 4.0f, 30.0f );
+		asteroid->linear_direction = Vec3::right * 2.0f * random::generate( 0.8f, 1.2f );
 		asteroid->update_collision_to_transform();
 	}
 
 	//  spawn spaceships
 	spaceship1 = new Spaceship();
-	spaceship1->set_color( Color::green );
+	spaceship1->set_color( Color::from_0x( 0xf2cd13FF ) );
 	spaceship1->transform->location = Vec3 { 0.0f, 0.0f, 0.0f };
 
 	spaceship2 = new Spaceship();
-	spaceship2->set_color( Color::from_0x( 0xc2ff29FF ) );
+	spaceship2->set_color( Color::from_0x( 0x9213f2FF ) );
 	spaceship2->transform->location = Vec3 { 50.0f, 0.0f, 0.0f };
 
 	//  possess it by player

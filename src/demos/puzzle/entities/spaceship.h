@@ -41,6 +41,7 @@ namespace puzzle
 		SpaceshipController* controller { nullptr };
 
 	private:
+		//  Outline scale on models renderers
 		const float MODEL_OUTLINE_SCALE = 0.03f;
 
 		//  Throttle gain per second
@@ -51,7 +52,7 @@ namespace puzzle
 		 * Speed at maximum throttle (i.e. 1.0), 
 		 * proportionally scaled before and beyond 
 		 */
-		const float MAX_THROTTLE_SPEED = 200.0f;
+		const float MAX_THROTTLE_SPEED = 90.0f;
 
 		//  Trail starting throttle threshold 
 		const float TRAIL_THROTTLE_START = 0.3f;
