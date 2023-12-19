@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="entities\player-spaceship.cpp">
+    <ClCompile Include="entities\player-spaceship-controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="entities\projectile.cpp">
@@ -27,7 +27,7 @@
     <ClCompile Include="entities\asteroid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="components\spaceship-controller.cpp">
+    <ClCompile Include="entities\spaceship-controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="components\player-hud.cpp">
@@ -39,6 +39,9 @@
     <ClCompile Include="scenes\game-scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="entities\spaceship.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scenes\game-scene.h">
@@ -47,7 +50,7 @@
     <ClInclude Include="components\stylized-model-renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="entities\player-spaceship.h">
+    <ClInclude Include="entities\player-spaceship-controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="entities\projectile.h">
@@ -59,7 +62,7 @@
     <ClInclude Include="entities\spaceship.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="components\spaceship-controller.h">
+    <ClInclude Include="entities\spaceship-controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="components\player-hud.h">

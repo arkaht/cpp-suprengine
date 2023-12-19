@@ -2,25 +2,21 @@
 
 #include <suprengine/easing.h>
 
-#include <entities/player-spaceship.h>
+#include <entities/player-spaceship-controller.h>
 
 using namespace puzzle;
 
 PlayerHUD::PlayerHUD( 
-	Entity* owner, 
-	PlayerSpaceship* spaceship, 
-	Color color 
+	PlayerSpaceshipController* owner
 )
-	: _color( color ),
-	  _spaceship( spaceship ),
+	: _controller( owner ),
 	  Renderer( owner )
 {
-	_crosshair_color = _color;
-	_spaceship->on_hit.listen( "player-hud", 
-		[&]( Entity* hit_entity )
+	_controller->event_on_possess_changed.listen( "player-hud",
+		[&]( Spaceship* previous, Spaceship* current )
 		{
-			_hit_time = HIT_TIME;
-			_crosshair_color = Color::white;
+			_unbind_from_spaceship( previous );
+			_bind_to_spaceship( current );
 		}
 	);
 
@@ -29,9 +25,15 @@ PlayerHUD::PlayerHUD(
 
 void PlayerHUD::update( float dt )
 {
+	auto spaceship = _controller->get_ship();
+	if ( !spaceship ) return;
+
 	_hit_time = math::max( 0.0f, _hit_time - dt );
 	_crosshair_color = Color::lerp( 
-		_crosshair_color, _color, dt * CROSSHAIR_COLOR_SMOOTH_SPEED );
+		_crosshair_color, 
+		spaceship->get_color(), 
+		dt * CROSSHAIR_COLOR_SMOOTH_SPEED 
+	);
 }
 
 void PlayerHUD::render()
@@ -40,27 +42,56 @@ void PlayerHUD::render()
 	auto window = game->get_window();
 	auto camera = game->camera;
 
+	auto spaceship = _controller->get_ship();
+	if ( !spaceship ) return;
+
 	Vec2 window_size = window->get_size();
 
 	//  crosshair
 	{
-		Vec3 aim_location = _spaceship->get_shoot_location( Vec3 { 1.0f, 0.0f, 1.0f } );
-		aim_location += owner->transform->get_forward() * CROSSHAIR_DISTANCE;
+		Vec3 aim_location = spaceship->get_shoot_location( Vec3 { 1.0f, 0.0f, 1.0f } );
+		aim_location += spaceship->transform->get_forward() * CROSSHAIR_DISTANCE;
 
 		Vec3 crosshair_pos = camera->world_to_viewport( aim_location );
 		if ( crosshair_pos.z > 0.0f )
 		{
-			draw_crosshair( crosshair_pos );
+			_draw_crosshair( crosshair_pos );
 		}
 	}
 }
 
-void PlayerHUD::draw_crosshair( const Vec2& pos )
+void PlayerHUD::_bind_to_spaceship( Spaceship* spaceship )
 {
+	if ( !spaceship ) return;
+
+	//  color
+	_crosshair_color = spaceship->get_color();
+
+	//  events
+	spaceship->on_hit.listen( "player-hud", 
+		[&]( Entity* hit_entity )
+		{
+			_hit_time = HIT_TIME;
+			_crosshair_color = Color::white;
+		}
+	);
+}
+
+void PlayerHUD::_unbind_from_spaceship( Spaceship* spaceship )
+{
+	if ( !spaceship ) return;
+
+	spaceship->on_hit.unlisten( "player-hud" );
+}
+
+void PlayerHUD::_draw_crosshair( const Vec2& pos )
+{
+	auto spaceship = _controller->get_ship();
+
 	const float angle_iter = math::DOUBLE_PI / CROSSHAIR_LINES_COUNT;
 	
 	float shoot_ratio = 
-		easing::in_out_cubic( _spaceship->get_shoot_time() / 0.15f );
+		easing::in_out_cubic( spaceship->get_shoot_time() / 0.15f );
 	float hit_ratio =
 		easing::in_out_cubic( _hit_time / HIT_TIME );
 

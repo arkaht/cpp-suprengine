@@ -12,8 +12,9 @@ void GameScene::init()
 	planet->create_component<StylizedModelRenderer>(
 		Assets::get_model( "planet-ring" ),
 		Color::from_0x( 0x1c6cF0FF )
-		);
+	);
 
+	//  spawn asteroids
 	const int ASTEROID_COUNT = 32;
 	const Vec3 ASTEROIDS_LOCATION = Vec3 { 500.0f, 100.0f, 50.0f };
 
@@ -30,9 +31,18 @@ void GameScene::init()
 		asteroid->update_collision_to_transform();
 	}
 
-	//  setup cube
-	spaceship = new PlayerSpaceship();
-	spaceship->transform->location = Vec3 { 0.0f, 0.0f, 0.0f };
+	//  spawn spaceships
+	spaceship1 = new Spaceship();
+	spaceship1->set_color( Color::green );
+	spaceship1->transform->location = Vec3 { 0.0f, 0.0f, 0.0f };
+
+	spaceship2 = new Spaceship();
+	spaceship2->set_color( Color::from_0x( 0xc2ff29FF ) );
+	spaceship2->transform->location = Vec3 { 50.0f, 0.0f, 0.0f };
+
+	//  possess it by player
+	player_controller = new PlayerSpaceshipController();
+	player_controller->possess( spaceship1 );
 }
 
 void GameScene::update( float dt )
@@ -40,6 +50,7 @@ void GameScene::update( float dt )
 	auto engine = _game->get_engine();
 	auto inputs = engine->get_inputs();
 
+	//  window mode toggle
 	if ( inputs->is_key_just_pressed( SDL_SCANCODE_F1 ) )
 	{
 		auto window = engine->get_window();
@@ -51,5 +62,15 @@ void GameScene::update( float dt )
 		{
 			window->set_mode( WindowMode::BorderlessFullscreen );
 		}
+	}
+
+	//  switch spaceship possession
+	if ( inputs->is_key_just_pressed( SDL_SCANCODE_1 ) )
+	{
+		player_controller->possess( spaceship1 );
+	}
+	if ( inputs->is_key_just_pressed( SDL_SCANCODE_2 ) )
+	{
+		player_controller->possess( spaceship2 );
 	}
 }

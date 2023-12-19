@@ -86,7 +86,7 @@ void BoxCollider::debug_render( RenderBatch* render_batch )
 {
 	auto model = Assets::get_model( "suprengine::cube" );
 	Mtx4 matrix = Mtx4::create_from_transform( 
-		transform->scale, 
+		shape.max * transform->scale,
 		Quaternion::identity/*transform->rotation*/,  //  rotation is not handled yet
 		transform->location 
 	);

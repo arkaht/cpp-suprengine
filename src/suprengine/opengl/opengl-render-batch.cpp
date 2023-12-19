@@ -383,7 +383,7 @@ void OpenGLRenderBatch::draw_debug_model(
 	draw_model(
 		matrix,
 		model,
-		"color",
+		"suprengine::color",
 		color
 	);
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );

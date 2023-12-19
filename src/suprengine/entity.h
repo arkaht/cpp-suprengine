@@ -46,6 +46,17 @@ namespace suprengine
 			
 			return component;
 		}
+		template <typename T, typename... Args>
+		std::shared_ptr<T> create_component_pro( Args&&... args )
+		{
+			static_assert( std::is_base_of<Component, T>::value, "Entity::create_component: used for a non-Component class!" );
+			
+			auto component = std::make_shared<T>( args... );
+			component->setup();
+			add_component( component );
+			
+			return component;
+		}
 		void add_component( std::shared_ptr<Component> component );
 		void remove_component( std::shared_ptr<Component> component );
 

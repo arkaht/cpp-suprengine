@@ -1,11 +1,11 @@
 #include "projectile.h"
 
 #include <entities/asteroid.h>
-#include <entities/player-spaceship.h>
+#include <entities/spaceship.h>
 
 using namespace puzzle;
 
-Projectile::Projectile( PlayerSpaceship* owner, Color color )
+Projectile::Projectile( Spaceship* owner, Color color )
 	: _owner( owner ), _color( color )
 {
 	model_renderer = create_component<StylizedModelRenderer>(

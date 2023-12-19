@@ -5,12 +5,12 @@ namespace puzzle
 {
 	using namespace suprengine;
 
-	class PlayerSpaceship;
+	class Spaceship;
 
 	class Projectile : public Entity
 	{
 	public:
-		Projectile( PlayerSpaceship* owner, Color color );
+		Projectile( Spaceship* owner, Color color );
 
 		void update_this( float dt ) override;
 
@@ -26,7 +26,7 @@ namespace puzzle
 	private:
 		Color _color;
 
-		PlayerSpaceship* _owner;
+		Spaceship* _owner;
 
 		std::shared_ptr<StylizedModelRenderer> model_renderer;
 	};

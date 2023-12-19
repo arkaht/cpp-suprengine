@@ -7,7 +7,7 @@
 #include <suprengine/random.h>
 
 #include <components/stylized-model-renderer.hpp>
-#include <entities/player-spaceship.h>
+#include <entities/player-spaceship-controller.h>
 #include <entities/asteroid.h>
 
 namespace puzzle 
@@ -19,6 +19,8 @@ namespace puzzle
 		void update( float dt ) override;
 
 	private:
-		Entity* spaceship;
+		Spaceship* spaceship1 { nullptr };
+		Spaceship* spaceship2 { nullptr };
+		PlayerSpaceshipController* player_controller { nullptr };
 	};
 }

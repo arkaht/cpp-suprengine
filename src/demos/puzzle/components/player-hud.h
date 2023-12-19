@@ -5,15 +5,14 @@ namespace puzzle
 {
 	using namespace suprengine;
 
-	class PlayerSpaceship;
+	class Spaceship;
+	class PlayerSpaceshipController;
 
 	class PlayerHUD : public Renderer
 	{
 	public:
 		PlayerHUD( 
-			Entity* owner, 
-			PlayerSpaceship* spaceship, 
-			Color color 
+			PlayerSpaceshipController* owner
 		);
 
 		void update( float dt ) override;
@@ -37,15 +36,17 @@ namespace puzzle
 		const float HIT_TIME = 0.25f;
 
 	private:
-		void draw_crosshair( const Vec2& pos );
+		void _bind_to_spaceship( Spaceship* spaceship );
+		void _unbind_from_spaceship( Spaceship* spaceship );
+
+		void _draw_crosshair( const Vec2& pos );
 
 	private:
 		Texture* _crosshair_line_texture;
-		Color _color = Color::white;
 
-		Color _crosshair_color;
+		Color _crosshair_color = Color::white;
 		float _hit_time = 0.0f;
 
-		PlayerSpaceship* _spaceship;
+		PlayerSpaceshipController* _controller;
 	};
 }
