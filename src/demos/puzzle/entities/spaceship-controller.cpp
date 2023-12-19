@@ -12,11 +12,20 @@ void SpaceshipController::possess( Spaceship* ship )
 {
 	auto old = _possessed_ship;
 
+	//  unpossess
 	_suppress_event = true;
 	unpossess();
 	_suppress_event = false;
 
 	//auto ptr = get_shared_from_this<SpaceshipController>();
+
+	//  force unpossess previous controller
+	if ( ship->controller )
+	{
+		ship->controller->unpossess();
+	}
+
+	//  possess
 	_possessed_ship = ship;
 	_possessed_ship->controller = this;
 	on_possess();
