@@ -1,6 +1,6 @@
 #pragma once
 
-#include <components/stylized-model-renderer.hpp>
+#include <components/stylized-model-renderer.h>
 #include <entities/spaceship-controller.h>
 #include <entities/projectile.h>
 

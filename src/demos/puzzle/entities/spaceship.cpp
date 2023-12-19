@@ -4,11 +4,17 @@ using namespace puzzle;
 
 Spaceship::Spaceship()
 {
+	DynamicCameraDistanceSettings dcd_settings {};
+	dcd_settings.is_active = true;
+	dcd_settings.max_distance_sqr = math::pow( 256.0f, 2.0f );
+	dcd_settings.max_outline_scale = 1.0f;
+
 	//  setup components
 	model_renderer = create_component<StylizedModelRenderer>(
 		Assets::get_model( "spaceship" ),
 		_color
 	);
+	model_renderer->dynamic_camera_distance_settings = dcd_settings;
 	model_renderer->outline_scale = MODEL_OUTLINE_SCALE;
 	create_component<BoxCollider>( Box {
 		Vec3 { -2.0f, -2.0f, -2.0f },
@@ -21,6 +27,7 @@ Spaceship::Spaceship()
 		model_renderer->model,
 		_color
 	);
+	trail_renderer->dynamic_camera_distance_settings = dcd_settings;
 	trail_renderer->outline_scale = MODEL_OUTLINE_SCALE;
 	trail_renderer->draw_only_outline = true;
 	trail_renderer->draw_outline_ccw = false;

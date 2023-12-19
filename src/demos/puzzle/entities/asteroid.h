@@ -1,7 +1,7 @@
 #pragma once
 
 #include <suprengine/components/colliders/sphere-collider.h>
-#include <components/stylized-model-renderer.hpp>
+#include <components/stylized-model-renderer.h>
 
 namespace puzzle
 {

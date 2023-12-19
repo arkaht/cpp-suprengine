@@ -6,7 +6,6 @@
 #include <suprengine/components/mouse-looker.hpp>
 #include <suprengine/random.h>
 
-#include <components/stylized-model-renderer.hpp>
 #include <entities/player-spaceship-controller.h>
 #include <entities/asteroid.h>
 

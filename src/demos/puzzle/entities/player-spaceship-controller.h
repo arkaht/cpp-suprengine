@@ -1,8 +1,6 @@
 #pragma once
 #include <entities/spaceship.h>
 
-#include <components/stylized-model-renderer.hpp>
-
 namespace puzzle
 {
 	using namespace suprengine;
