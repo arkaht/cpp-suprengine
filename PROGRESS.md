@@ -5,8 +5,9 @@
 
 ### Spaceship:
 + refactoring: exported variables, code clean-up, spaceship/controller separation
-+ assets: added bevels on 3D models
++ visual: added bevels on 3D models, added dynamic camera distance outline scale for spaceships (visible at far distances)
 + **3C**: 
 	+ camera: tweaked aim velocity & sensibility, added dynamic FOV
-	+ movement: increased throttle gain speed, added forward-input max throttle gain
+	+ movement: added forward-input max throttle gain
 + UI: added 3D crosshair (w/ testing feedbacks)
++ global: shrinked world scale by ~45% (spaceships speeds were too fast)
