@@ -529,6 +529,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClCompile Include="game-instance.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="entities\projectile.cpp" />
+    <ClCompile Include="scenes\game-scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\suprengine\engine.vcxproj">
@@ -544,7 +545,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="entities\projectile.h" />
     <ClInclude Include="entities\spaceship.h" />
     <ClInclude Include="game-instance.h" />
-    <ClInclude Include="scenes\game-scene.hpp" />
+    <ClInclude Include="scenes\game-scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

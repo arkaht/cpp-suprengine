@@ -36,9 +36,12 @@
     <ClCompile Include="game-instance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scenes\game-scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="scenes\game-scene.hpp">
+    <ClInclude Include="scenes\game-scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="components\stylized-model-renderer.hpp">

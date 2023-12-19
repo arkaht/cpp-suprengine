@@ -1,6 +1,6 @@
 #include "game-instance.h"
 
-#include <scenes/game-scene.hpp>
+#include <scenes/game-scene.h>
 
 using namespace puzzle;
 
