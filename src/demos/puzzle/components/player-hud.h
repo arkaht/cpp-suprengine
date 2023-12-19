@@ -32,6 +32,7 @@ namespace puzzle
 		const float CROSSHAIR_LINES_SHOOT_DISTANCE = 3.0f;
 		const Vec2  CROSSHAIR_LINES_SHOOT_SCALE { 0.25f, 0.85f };
 		const Vec2  CROSSHAIR_LINE_SCALE { 0.5f, 0.75f };
+		const float CROSSHAIR_COLOR_SMOOTH_SPEED = 4.0f;
 
 		const float HIT_TIME = 0.25f;
 
@@ -42,6 +43,7 @@ namespace puzzle
 		Texture* _crosshair_line_texture;
 		Color _color = Color::white;
 
+		Color _crosshair_color;
 		float _hit_time = 0.0f;
 
 		PlayerSpaceship* _spaceship;

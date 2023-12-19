@@ -2,6 +2,8 @@
 
 #include <SDL.h>
 
+#include <suprengine/math.h>
+
 namespace suprengine
 {
 	struct Color
@@ -28,6 +30,16 @@ namespace suprengine
 				(uint8_t) ( hex >> 16 ),
 				(uint8_t) ( hex >> 8 ),
 				(uint8_t) hex
+			};
+		}
+
+		static Color lerp( const Color& a, const Color& b, float t )
+		{
+			return Color {
+				math::lerp( a.r, b.r, t ),
+				math::lerp( a.g, b.g, t ),
+				math::lerp( a.b, b.b, t ),
+				math::lerp( a.a, b.a, t )
 			};
 		}
 

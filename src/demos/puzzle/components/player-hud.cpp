@@ -15,10 +15,12 @@ PlayerHUD::PlayerHUD(
 	  _spaceship( spaceship ),
 	  Renderer( owner )
 {
+	_crosshair_color = _color;
 	_spaceship->on_hit.listen( "player-hud", 
 		[&]( Entity* hit_entity )
 		{
 			_hit_time = HIT_TIME;
+			_crosshair_color = Color::white;
 		}
 	);
 
@@ -28,6 +30,8 @@ PlayerHUD::PlayerHUD(
 void PlayerHUD::update( float dt )
 {
 	_hit_time = math::max( 0.0f, _hit_time - dt );
+	_crosshair_color = Color::lerp( 
+		_crosshair_color, _color, dt * CROSSHAIR_COLOR_SMOOTH_SPEED );
 }
 
 void PlayerHUD::render()
@@ -79,7 +83,7 @@ void PlayerHUD::draw_crosshair( const Vec2& pos )
 			angle,
 			Vec2 { 0.5f, 0.5f }, 
 			_crosshair_line_texture,
-			_color
+			_crosshair_color
 		);
 		angle += angle_iter;
 	}

@@ -124,7 +124,8 @@ namespace suprengine::math
 		return 1.0f / tan( angle );
 	}
 
-	inline float lerp( float a, float b, float f )
+	template <typename T>
+	inline T lerp( T a, T b, float f )
 	{
 		return a + f * ( b - a );
 	}
