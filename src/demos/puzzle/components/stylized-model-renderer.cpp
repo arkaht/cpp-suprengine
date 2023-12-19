@@ -28,7 +28,7 @@ void StylizedModelRenderer::render()
 			dist_sqr / dynamic_camera_distance_settings.max_distance_sqr
 		);
 		offset_scale += offset;
-		printf( "%f\n", offset );
+		//printf( "%f\n", offset );
 	}
 	else
 	{
