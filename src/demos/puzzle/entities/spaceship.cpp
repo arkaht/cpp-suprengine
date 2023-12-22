@@ -4,7 +4,7 @@ using namespace puzzle;
 
 Spaceship::Spaceship()
 {
-	DynamicCameraDistanceSettings dcd_settings {};
+	CameraDynamicDistanceSettings dcd_settings {};
 	dcd_settings.is_active = true;
 	dcd_settings.max_distance_sqr = math::pow( 256.0f, 2.0f );
 	dcd_settings.max_outline_scale = 1.0f;
