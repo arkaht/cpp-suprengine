@@ -7,6 +7,7 @@
 #include <suprengine/random.h>
 
 #include <entities/player-spaceship-controller.h>
+#include <entities/ai-spaceship-controller.h>
 #include <entities/asteroid.h>
 
 namespace puzzle 
@@ -20,6 +21,8 @@ namespace puzzle
 	private:
 		Spaceship* spaceship1 { nullptr };
 		Spaceship* spaceship2 { nullptr };
+
 		PlayerSpaceshipController* player_controller { nullptr };
+		AISpaceshipController* ai_controller { nullptr };
 	};
 }

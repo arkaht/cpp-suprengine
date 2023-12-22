@@ -43,6 +43,10 @@ void GameScene::init()
 	//  possess it by player
 	player_controller = new PlayerSpaceshipController();
 	player_controller->possess( spaceship1 );
+
+	ai_controller = new AISpaceshipController();
+	ai_controller->possess( spaceship2 );
+	ai_controller->target = spaceship1;
 }
 
 void GameScene::update( float dt )

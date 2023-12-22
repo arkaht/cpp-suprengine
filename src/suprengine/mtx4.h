@@ -134,11 +134,15 @@ namespace suprengine
 
 			return retVal;
 		}
-
 		Mtx4& operator*=( const Mtx4& right )
 		{
 			*this = *this * right;
 			return *this;
+		}
+
+		const float* operator[]( int id ) const
+		{
+			return mat[id];
 		}
 
 		// Invert the matrix - super slow
