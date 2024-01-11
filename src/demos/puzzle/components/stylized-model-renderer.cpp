@@ -36,10 +36,11 @@ void StylizedModelRenderer::render()
 	}
 
 	//  compute outline matrix
-	Mtx4 outline_matrix =
-		Mtx4::create_scale( transform->scale * offset_scale )
-		* Mtx4::create_from_quaternion( transform->rotation )
-		* Mtx4::create_translation( transform->location );
+	Mtx4 outline_matrix = Mtx4::create_from_transform( 
+		transform->scale * offset_scale,
+		transform->rotation,
+		transform->location
+	);
 
 	//  draw outline
 	glFrontFace( draw_outline_ccw ? GL_CCW : GL_CW );
