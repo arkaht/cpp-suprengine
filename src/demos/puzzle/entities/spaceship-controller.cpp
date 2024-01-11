@@ -47,8 +47,8 @@ void SpaceshipController::unpossess()
 
 	//  reset pointer
 	auto old = _possessed_ship;
-	_possessed_ship = nullptr;
 	on_unpossess();
+	_possessed_ship = nullptr;
 
 	//  invoke event
 	if ( !_suppress_event )
