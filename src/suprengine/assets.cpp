@@ -248,7 +248,8 @@ VertexArray* Assets::load_mesh( const aiMesh* mesh )
 {
 	printf( "| Mesh Name: '%s'\n", mesh->mName.C_Str() );
 
-	VertexArrayPreset preset = VertexArrayPreset::Position3_Normal3_UV2;
+	const VertexArrayPreset& preset = 
+		VertexArrayPreset::Position3_Normal3_UV2;
 	
 	//  get vertices count
 	unsigned int vertices_count = mesh->mNumVertices;
