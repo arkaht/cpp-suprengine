@@ -450,6 +450,13 @@ void OpenGLRenderBatch::_load_assets()
 	auto texture = Assets::get_texture( "suprengine::medium-grid" );
 
 	//  load models
+	Model* arrow_model = Assets::load_model(
+		"suprengine::arrow",
+		"assets/suprengine/models/arrow.fbx",
+		SHADER_LIT_MESH
+	);
+	arrow_model->get_mesh( 0 )->add_texture( texture );
+
 	Model* cube_model = Assets::load_model(
 		"suprengine::cube",
 		"assets/suprengine/models/cube.fbx",
