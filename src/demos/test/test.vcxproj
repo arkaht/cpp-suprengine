@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(EngineIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(EngineIncludes);$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -140,7 +140,9 @@
     <ProjectReference />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game-instance.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="scenes\game-scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\suprengine\engine.vcxproj">
@@ -149,7 +151,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera-demo.hpp" />
-    <ClInclude Include="scenes\game-scene.hpp" />
+    <ClInclude Include="game-instance.h" />
+    <ClInclude Include="scenes\game-scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
