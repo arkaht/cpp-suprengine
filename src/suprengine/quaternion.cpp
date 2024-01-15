@@ -187,6 +187,7 @@ Quaternion Quaternion::look_at( const Vec3& forward, const Vec3& up )
 	Vec3 dir = forward.normalized();
 	Vec3 axis = Vec3::cross( up, dir ).normalized();
 	Vec3 vector3 = Vec3::cross( dir, axis );
+
 	float m00 = axis.x;
 	float m01 = axis.y;
 	float m02 = axis.z;
@@ -197,9 +198,8 @@ Quaternion Quaternion::look_at( const Vec3& forward, const Vec3& up )
 	float m21 = dir.y;
 	float m22 = dir.z;
 
-
-	float num8 = ( m00 + m11 ) + m22;
 	Quaternion quaternion;
+	float num8 = m00 + m11 + m22;
 	if ( num8 > 0.0f )
 	{
 		float num = math::sqrt( num8 + 1.0f );
