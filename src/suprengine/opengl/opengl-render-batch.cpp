@@ -348,9 +348,9 @@ void OpenGLRenderBatch::draw_model(
 		}
 
 		//  update uniforms
-		shader->activate();
 		if ( shader != nullptr )
 		{
+			shader->activate();
 			shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
 			shader->set_mtx4( "u_world_transform", matrix );
 			shader->set_vec4( "u_modulate", color );
@@ -432,18 +432,18 @@ void OpenGLRenderBatch::_load_assets()
 		"assets/suprengine/shaders/texture.frag"
 	);
 	Assets::load_shader(
-		"suprengine::lit-mesh",
+		SHADER_LIT_MESH,
 		"assets/suprengine/shaders/lit-mesh.vert",
 		"assets/suprengine/shaders/lit-mesh.frag"
 	);
 
 	//  load textures
 	Assets::load_texture(
-		"large-grid",
+		"suprengine::large-grid",
 		"assets/suprengine/textures/large-grid.png"
 	);
 	Assets::load_texture(
-		"medium-grid",
+		"suprengine::medium-grid",
 		"assets/suprengine/textures/medium-grid.png"
 	);
 
@@ -453,21 +453,21 @@ void OpenGLRenderBatch::_load_assets()
 	Model* cube_model = Assets::load_model(
 		"suprengine::cube",
 		"assets/suprengine/models/cube.fbx",
-		"simple-mesh"
+		SHADER_LIT_MESH
 	);
 	cube_model->get_mesh( 0 )->add_texture( texture );
 
 	Model* cylinder_model = Assets::load_model(
 		"suprengine::cylinder",
 		"assets/suprengine/models/cylinder.fbx",
-		"simple-mesh"
+		SHADER_LIT_MESH
 	);
 	cylinder_model->get_mesh( 0 )->add_texture( texture );
 
 	Model* sphere_model = Assets::load_model(
 		"suprengine::sphere",
 		"assets/suprengine/models/sphere.fbx",
-		"simple-mesh"
+		SHADER_LIT_MESH
 	);
 	sphere_model->get_mesh( 0 )->add_texture( texture );
 }

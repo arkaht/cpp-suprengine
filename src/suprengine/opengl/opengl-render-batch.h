@@ -9,6 +9,8 @@
 
 namespace suprengine
 {
+	const static std::string SHADER_LIT_MESH = "suprengine::lit-mesh";
+
 	class OpenGLRenderBatch : public RenderBatch
 	{
 	public:

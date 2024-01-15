@@ -15,7 +15,7 @@ namespace suprengine
 		ModelRenderer( 
 			Entity* owner, 
 			Model* model, 
-			rconst_str shader_name = "simple-mesh", 
+			rconst_str shader_name = SHADER_LIT_MESH, 
 			Color modulate = Color::white,
 			int priority_order = 0 
 		)
