@@ -439,40 +439,40 @@ void OpenGLRenderBatch::_load_assets()
 
 	//  load textures
 	Assets::load_texture(
-		"suprengine::large-grid",
+		TEXTURE_LARGE_GRID,
 		"assets/suprengine/textures/large-grid.png"
 	);
 	Assets::load_texture(
-		"suprengine::medium-grid",
+		TEXTURE_MEDIUM_GRID,
 		"assets/suprengine/textures/medium-grid.png"
 	);
 
-	auto texture = Assets::get_texture( "suprengine::medium-grid" );
+	auto texture = Assets::get_texture( TEXTURE_MEDIUM_GRID );
 
 	//  load models
 	Model* arrow_model = Assets::load_model(
-		"suprengine::arrow",
+		MESH_ARROW,
 		"assets/suprengine/models/arrow.fbx",
 		SHADER_LIT_MESH
 	);
 	arrow_model->get_mesh( 0 )->add_texture( texture );
 
 	Model* cube_model = Assets::load_model(
-		"suprengine::cube",
+		MESH_CUBE,
 		"assets/suprengine/models/cube.fbx",
 		SHADER_LIT_MESH
 	);
 	cube_model->get_mesh( 0 )->add_texture( texture );
 
 	Model* cylinder_model = Assets::load_model(
-		"suprengine::cylinder",
+		MESH_CYLINDER,
 		"assets/suprengine/models/cylinder.fbx",
 		SHADER_LIT_MESH
 	);
 	cylinder_model->get_mesh( 0 )->add_texture( texture );
 
 	Model* sphere_model = Assets::load_model(
-		"suprengine::sphere",
+		MESH_SPHERE,
 		"assets/suprengine/models/sphere.fbx",
 		SHADER_LIT_MESH
 	);

@@ -6,9 +6,9 @@ using namespace test;
 
 void GameScene::init()
 {
-	Model* cube_model = Assets::get_model( "suprengine::cube" );
-	Model* cylinder_model = Assets::get_model( "suprengine::cylinder" );
-	Model* sphere_model = Assets::get_model( "suprengine::sphere" );
+	Model* cube_model = Assets::get_model( MESH_CUBE );
+	Model* cylinder_model = Assets::get_model( MESH_CYLINDER );
+	Model* sphere_model = Assets::get_model( MESH_SPHERE );
 
 	//  setup ground
 	auto ground = new Entity();
