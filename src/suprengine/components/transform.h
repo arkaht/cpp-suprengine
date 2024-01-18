@@ -11,11 +11,12 @@ namespace suprengine
 	public:
 		bool is_matrix_dirty { true };
 
-		Transform( Entity* owner ) : Component( owner ) {}
-
-		Vec3 location;
-		Quaternion rotation;
+		Vec3 location { Vec3::zero };
+		Quaternion rotation { Quaternion::identity };
 		Vec3 scale { Vec3::one };
+
+	public:
+		Transform( Entity* owner ) : Component( owner ) {}
 
 		Rect get_rect( const Rect& rect );
 
@@ -29,9 +30,9 @@ namespace suprengine
 
 		void look_at( const Vec3& target );
 
-		Vec3 get_forward() const { return Vec3::transform( Vec3::forward, rotation ); }
-		Vec3 get_right() const { return Vec3::transform( Vec3::right, rotation ); }
-		Vec3 get_up() const { return Vec3::transform( Vec3::up, rotation ); }
+		Vec3 get_forward() const;
+		Vec3 get_right() const;
+		Vec3 get_up() const;
 
 		const Mtx4& get_matrix();
 

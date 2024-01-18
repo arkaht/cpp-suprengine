@@ -53,6 +53,21 @@ void Transform::look_at( const Vec3& target )
 	is_matrix_dirty = true;
 }
 
+Vec3 Transform::get_right() const 
+{ 
+	return Vec3::transform( Vec3::right, rotation ); 
+}
+
+Vec3 Transform::get_forward() const 
+{ 
+	return Vec3::transform( Vec3::forward, rotation ); 
+}
+
+Vec3 Transform::get_up() const 
+{ 
+	return Vec3::transform( Vec3::up, rotation ); 
+}
+
 const Mtx4& Transform::get_matrix()
 {
 	if ( is_matrix_dirty )
