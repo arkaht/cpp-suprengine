@@ -11,7 +11,10 @@ namespace puzzle
 	struct SpaceshipControlInputs
 	{
 		float throttle_delta = 0.0f;
+
 		Quaternion desired_rotation = Quaternion::identity;
+		bool should_smooth_rotation = true;
+		float smooth_rotation_speed = 1.0f;
 	};
 
 	class SpaceshipController : public Entity
@@ -21,8 +24,8 @@ namespace puzzle
 
 		void possess( Spaceship* ship );
 		void unpossess();
-		Spaceship* get_ship() const { return _possessed_ship; }
 
+		Spaceship* get_ship() const { return _possessed_ship; }
 		const SpaceshipControlInputs& get_inputs() const { return _inputs; }
 
 	public:

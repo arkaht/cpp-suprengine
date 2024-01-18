@@ -129,12 +129,14 @@ void Spaceship::_update_movement( float dt )
 	transform->set_location( transform->location + movement );
 
 	//  apply rotation
-	Quaternion rotation = transform->rotation;
-	if ( controller )  //  avoid identiy rotation when no controller
+	if ( controller )  //  avoid identity rotation when no controller
 	{
-		rotation = inputs.desired_rotation;
+		Quaternion rotation = inputs.should_smooth_rotation 
+			? Quaternion::slerp( transform->rotation, inputs.desired_rotation, dt * inputs.smooth_rotation_speed )
+			: inputs.desired_rotation;
+
+		transform->set_rotation( rotation );
 	}
-	transform->set_rotation( rotation );
 }
 
 void Spaceship::_update_trail( float dt )

@@ -103,6 +103,10 @@ void PlayerSpaceshipController::update_inputs( float dt )
 		_aim_velocity.z * dt
 	);
 	_inputs.desired_rotation = rotation;
+
+	//  we want the player to directly control its rotation, 
+	//  so no smoothing
+	_inputs.should_smooth_rotation = false;
 }
 
 void PlayerSpaceshipController::_update_shoot( float dt )

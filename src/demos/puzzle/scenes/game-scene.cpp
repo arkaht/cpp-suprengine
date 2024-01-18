@@ -72,6 +72,7 @@ void GameScene::update( float dt )
 	if ( inputs->is_key_just_pressed( SDL_SCANCODE_1 ) )
 	{
 		player_controller->possess( spaceship1 );
+		ai_controller->possess( spaceship2 );
 	}
 	if ( inputs->is_key_just_pressed( SDL_SCANCODE_2 ) )
 	{
