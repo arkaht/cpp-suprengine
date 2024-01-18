@@ -1,7 +1,5 @@
 #include "quaternion.h"
 
-#include <suprengine/mtx4.h>
-
 using namespace suprengine;
 
 const Quaternion Quaternion::identity( 0.0f, 0.0f, 0.0f, 1.0f );
@@ -25,17 +23,19 @@ Quaternion::Quaternion( const Vec3& axis, float angle )
 
 Quaternion::Quaternion( const Vec3& angles )
 {
-	float cr = math::cos( angles.x * 0.5f );
-	float sr = math::sin( angles.x * 0.5f );
-	float cp = math::cos( angles.y * 0.5f );
-	float sp = math::sin( angles.y * 0.5f );
-	float cy = math::cos( angles.z * 0.5f );
-	float sy = math::sin( angles.z * 0.5f );
+	float sp = math::sin( angles.x * 0.5f );
+	float cp = math::cos( angles.x * 0.5f );
 
-	w = cr * cp * cy + sr * sp * sy;
-	x = sr * cp * cy - cr * sp * sy;
-	y = cr * sp * cy + sr * cp * sy;
-	z = cr * cp * sy - sr * sp * cy;
+	float sy = math::sin( angles.y * 0.5f );
+	float cy = math::cos( angles.y * 0.5f );
+
+	float sr = math::sin( angles.z * 0.5f );
+	float cr = math::cos( angles.z * 0.5f );
+
+	x =  cr * sp * sy  -  sr * cp * cy;
+	y = -cr * sp * cy  -  sr * cp * sy;
+	z =  cr * cp * sy  -  sr * sp * cy;
+	w =  cr * cp * cy  +  sr * sp * sy;
 }
 
 void Quaternion::set( float inX, float inY, float inZ, float inW )
@@ -183,71 +183,38 @@ Quaternion Quaternion::concatenate( const Quaternion& q, const Quaternion& p )
 	return retVal;
 }
 
-//  https://answers.unity.com/questions/467614/what-is-the-source-code-of-quaternionlookrotation.html
+/*
+ *  I didn't think I would say that one day but..
+ *  Thanks Unreal for your code!
+ * 
+ *  I spent so much time trying to fix a weird 90 degrees offset 
+ *  bug with the old look_at function I had (basically pointing 
+ *  targets with their up axis instead of their forward), which 
+ *  I believe was fundamentally messed up with my coordinates system.
+ * 
+ *  Therefore, as Unreal was using the same coordinates system than me,
+ *  I just looked at their code and adapted it.
+ *  (also fixing the Quaternion constructor w/ Vec3 angles)
+ * 
+ *  Happy to finally code again :)
+ */
 Quaternion Quaternion::look_at( const Vec3& forward, const Vec3& up )
 {
-	Vec3 dir = forward.normalized();
-	Vec3 axis = Vec3::cross( up, dir ).normalized();
-	Vec3 vector3 = Vec3::cross( dir, axis );
+	const Vec3 dir = forward.normalized();
 
-	float m00 = axis.x;
-	float m01 = axis.y;
-	float m02 = axis.z;
-
-	float m10 = vector3.x;
-	float m11 = vector3.y;
-	float m12 = vector3.z;
-
-	float m20 = dir.x;
-	float m21 = dir.y;
-	float m22 = dir.z;
-
-	Quaternion quaternion;
-	quaternion.w = math::sqrt( 
-		math::max( 0.0f, 1.0f + m00 + m11 + m22 ) ) / 2;
-	quaternion.x = math::sqrt( 
-		math::max( 0.0f, 1.0f + m00 - m11 - m22 ) ) / 2;
-	quaternion.y = math::sqrt( 
-		math::max( 0.0f, 1.0f - m00 + m11 - m22 ) ) / 2;
-	quaternion.z = math::sqrt( 
-		math::max( 0.0f, 1.0f - m00 - m11 + m22 ) ) / 2;
-
-	quaternion.x = _copysign( quaternion.x, m21 - m12 );
-	quaternion.y = _copysign( quaternion.y, m02 - m20 );
-	quaternion.z = _copysign( quaternion.z, m10 - m01 );
-
-	return quaternion;
+	return Quaternion(
+		Vec3 {
+			math::atan2( 
+				dir.z, 
+				math::sqrt( dir.x * dir.x + dir.y * dir.y ) 
+			),
+			math::atan2( dir.y, dir.x ),
+			0.0f
+		}
+	);
 }
 
 Quaternion Quaternion::look_at( const Vec3& origin, const Vec3& target, const Vec3& up )
 {
-	Mtx4 m = Mtx4::create_look_at( origin, target, up );
-
-	float m00 = m[0][0];
-	float m01 = m[0][1];
-	float m02 = m[0][0];
-
-	float m10 = m[1][0];
-	float m11 = m[1][1];
-	float m12 = m[1][2];
-
-	float m20 = m[2][0];
-	float m21 = m[2][1];
-	float m22 = m[2][2];
-
-	Quaternion quaternion;
-	quaternion.w = math::sqrt( 
-		math::max( 0.0f, 1.0f + m00 + m11 + m22 ) ) / 2;
-	quaternion.x = math::sqrt( 
-		math::max( 0.0f, 1.0f + m00 - m11 - m22 ) ) / 2;
-	quaternion.y = math::sqrt( 
-		math::max( 0.0f, 1.0f - m00 + m11 - m22 ) ) / 2;
-	quaternion.z = math::sqrt( 
-		math::max( 0.0f, 1.0f - m00 - m11 + m22 ) ) / 2;
-
-	quaternion.x = _copysign( quaternion.x, m21 - m12 );
-	quaternion.y = _copysign( quaternion.y, m02 - m20 );
-	quaternion.z = _copysign( quaternion.z, m10 - m01 );
-
-	return quaternion;
+	return look_at( target - origin, up );
 }

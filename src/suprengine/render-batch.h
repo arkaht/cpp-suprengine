@@ -14,6 +14,14 @@
 
 namespace suprengine
 {
+	const static std::string SHADER_LIT_MESH = "suprengine::lit-mesh";
+	const static std::string TEXTURE_LARGE_GRID = "suprengine::large-grid";
+	const static std::string TEXTURE_MEDIUM_GRID = "suprengine::medium-grid";
+	const static std::string MESH_ARROW = "suprengine::arrow";
+	const static std::string MESH_CUBE = "suprengine::cube";
+	const static std::string MESH_CYLINDER = "suprengine::cylinder";
+	const static std::string MESH_SPHERE = "suprengine::sphere";
+
 	class Engine;
 
 	enum class FilteringType
