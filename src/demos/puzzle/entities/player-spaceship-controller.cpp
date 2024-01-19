@@ -83,7 +83,7 @@ void PlayerSpaceshipController::update_inputs( float dt )
 		//  drag to zero
 		_aim_velocity = Vec3::lerp( 
 			_aim_velocity, 
-			Vec2::zero, 
+			Vec3::zero,
 			dt * AIM_VELOCITY_DECREASE
 		);
 	}

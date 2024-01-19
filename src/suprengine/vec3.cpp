@@ -16,19 +16,27 @@ const Vec3
 	Vec3::right( 0.0f, 1.0f, 0.0f ),
 	Vec3::up( 0.0f, 0.0f, 1.0f );
 const Vec3 
-	Vec3::neg_unit_x( -1.0f, 0.0f, 0.0f ), 
-	Vec3::neg_unit_y( 0.0f, -1.0f, 0.0f ), 
-	Vec3::neg_unit_z( 0.0f, 0.0f, -1.0f );
-const Vec3 
-	Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY ),
-	Vec3::neg_infinity( math::NEG_INFINITY, math::NEG_INFINITY, math::NEG_INFINITY );
+	Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 
-void Vec3::set( float xP, float yP, float zP )
-{
-	x = xP;
-	y = yP;
-	z = zP;
-}
+Vec3::Vec3() 
+	: x( 0.0f ), y( 0.0f ), z( 0.0f ) 
+{}
+
+Vec3::Vec3( float value ) 
+	: x( value ), y( value ), z( value ) 
+{}
+
+Vec3::Vec3( const Vec2& vec ) 
+	: x( vec.x ), y( vec.y ), z( 0.0f ) 
+{}
+
+Vec3::Vec3( const Vec2& vec, float z ) 
+	: x( vec.x ), y( vec.y ), z( z ) 
+{}
+
+Vec3::Vec3( float x, float y, float z )
+	: x( x ), y( y ), z( z )
+{}
 
 float Vec3::length_sqr() const
 {
@@ -58,6 +66,64 @@ Vec3 Vec3::normalized() const
 	Vec3 v( x, y, z );
 	v.normalize();
 	return v;
+}
+
+const float* Vec3::get_as_float_ptr() const
+{
+	return reinterpret_cast<const float*>( &x );
+}
+
+Vec3 Vec3::normalize( const Vec3& vec )
+{
+	Vec3 temp = vec;
+	temp.normalize();
+	return temp;
+}
+
+float Vec3::dot( const Vec3& a, const Vec3& b )
+{
+	return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+Vec3 Vec3::cross( const Vec3& a, const Vec3& b )
+{
+	Vec3 temp;
+	temp.x = a.y * b.z - a.z * b.y;
+	temp.y = a.z * b.x - a.x * b.z;
+	temp.z = a.x * b.y - a.y * b.x;
+	return temp;
+}
+
+Vec3 Vec3::lerp( const Vec3& a, const Vec3& b, float f )
+{
+	return Vec3 {
+		math::lerp( a.x, b.x, f ),
+		math::lerp( a.y, b.y, f ),
+		math::lerp( a.z, b.z, f ),
+	};
+}
+
+Vec3 Vec3::reflect( const Vec3& v, const Vec3& n )
+{
+	return v - 2.0f * Vec3::dot( v, n ) * n;
+}
+
+Vec3 Vec3::approach( const Vec3& current, const Vec3& target, float delta )
+{
+	return Vec3 {
+		math::approach( current.x, target.x, delta ),
+		math::approach( current.y, target.y, delta ),
+		math::approach( current.y, target.y, delta )
+	};
+}
+
+Vec3 Vec3::sqrt( const Vec3& current )
+{
+	return Vec3 {
+		math::sqrt( current.x ),
+		math::sqrt( current.y ),
+		math::sqrt( current.z )
+	};
 }
 
 Vec3 Vec3::transform( const Vec3& vec, const Mtx4& mat, float w )

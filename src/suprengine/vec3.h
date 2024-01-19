@@ -8,31 +8,53 @@ namespace suprengine
 	class Vec3
 	{
 	public:
-		float x;
-		float y;
-		float z;
+		static const Vec3 zero, one;
+		static const Vec3 forward, right, up;
+		static const Vec3 unit_x, unit_y, unit_z;
+		static const Vec3 infinity;
 
-		Vec3() : x( 0.0f ), y( 0.0f ), z( 0.0f ) {}
-		Vec3( float value ) : x( value ), y( value ), z( value ) {}
-		Vec3( const Vec2& vec2 ) : x( vec2.x ), y( vec2.y ), z( 0.0f ) {}
-		Vec3( const Vec2& vec2, float z ) : x( vec2.x ), y( vec2.y ), z( z ) {}
+	public:
+		float x { 0.0f };
+		float y { 0.0f };
+		float z { 0.0f };
 
-		explicit Vec3( float xP, float yP, float zP )
-			:x( xP ), y( yP ), z( zP )
-		{}
+	public:
+		explicit Vec3();
+		explicit Vec3( float value );
+		explicit Vec3( float xP, float yP, float zP );
 
-		void set( float xP, float yP, float zP );
+		explicit Vec3( const Vec2& vec );
+		explicit Vec3( const Vec2& vec, float z );
+
+	public:
 		float length_sqr() const;
 		float length() const;
 		void normalize();
 
 		Vec3 normalized() const;
 
-		const float* getAsFloatPtr() const
-		{
-			return reinterpret_cast<const float*>( &x );
-		}
+		const float* get_as_float_ptr() const;
 
+	public:
+		// Normalize the provided vector
+		static Vec3 normalize( const Vec3& vec );
+		// Dot product between two vectors (a dot b)
+		static float dot( const Vec3& a, const Vec3& b );
+		// Cross product between two vectors (a cross b)
+		static Vec3 cross( const Vec3& a, const Vec3& b );
+		static Vec3 lerp( const Vec3& a, const Vec3& b, float t );
+		// Reflect V about (normalized) N
+		static Vec3 reflect( const Vec3& v, const Vec3& n );
+		static Vec3 approach( const Vec3& current, const Vec3& target, float delta );
+		static Vec3 sqrt( const Vec3& current );
+
+		// Transform a Vector3 by a quaternion
+		static Vec3 transform( const Vec3& v, const class Quaternion& q );
+		static Vec3 transform( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );
+		// This will transform the vector and renormalize the w component
+		static Vec3 transform_with_perspective_div( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );
+
+	public:
 		// Vector addition (a + b)
 		friend Vec3 operator+( const Vec3& a, const Vec3& b )
 		{
@@ -107,76 +129,5 @@ namespace suprengine
 				&& math::near( y, vec3.y )
 				&& math::near( z, vec3.z );
 		}
-
-		// Normalize the provided vector
-		static Vec3 normalize( const Vec3& vec )
-		{
-			Vec3 temp = vec;
-			temp.normalize();
-			return temp;
-		}
-
-		// Dot product between two vectors (a dot b)
-		static float dot( const Vec3& a, const Vec3& b )
-		{
-			return ( a.x * b.x + a.y * b.y + a.z * b.z );
-		}
-
-		// Cross product between two vectors (a cross b)
-		static Vec3 cross( const Vec3& a, const Vec3& b )
-		{
-			Vec3 temp;
-			temp.x = a.y * b.z - a.z * b.y;
-			temp.y = a.z * b.x - a.x * b.z;
-			temp.z = a.x * b.y - a.y * b.x;
-			return temp;
-		}
-
-		static Vec3 lerp( const Vec3& a, const Vec3& b, float f )
-		{
-			return Vec3 {
-				math::lerp( a.x, b.x, f ),
-				math::lerp( a.y, b.y, f ),
-				math::lerp( a.z, b.z, f ),
-			};
-		}
-
-		// Reflect V about (normalized) N
-		static Vec3 reflect( const Vec3& v, const Vec3& n )
-		{
-			return v - 2.0f * Vec3::dot( v, n ) * n;
-		}
-
-		static Vec3 approach( const Vec3& current, const Vec3& target, float delta )
-		{
-			return Vec3 {
-				math::approach( current.x, target.x, delta ),
-				math::approach( current.y, target.y, delta ),
-				math::approach( current.y, target.y, delta )
-			};
-		}
-
-		static Vec3 sqrt( const Vec3& current )
-		{
-			return Vec3 {
-				math::sqrt( current.x ),
-				math::sqrt( current.y ),
-				math::sqrt( current.z )
-			};
-		}
-
-		static Vec3 transform( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );
-
-		// This will transform the vector and renormalize the w component
-		static Vec3 transform_with_perspective_div( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );
-
-		// Transform a Vector3 by a quaternion
-		static Vec3 transform( const Vec3& v, const class Quaternion& q );
-
-		static const Vec3 zero, one;
-		static const Vec3 right, up, forward;
-		static const Vec3 unit_x, unit_y, unit_z;
-		static const Vec3 neg_unit_x, neg_unit_y, neg_unit_z;
-		static const Vec3 infinity, neg_infinity;
 	};
 }
