@@ -198,11 +198,16 @@ Quaternion Quaternion::concatenate( const Quaternion& q, const Quaternion& p )
  *  I spent so much time trying to fix a weird 90 degrees offset 
  *  bug with the old look_at function I had (basically pointing 
  *  targets with their up axis instead of their forward), which 
- *  I believe was fundamentally messed up with my coordinates system.
+ *  I believe was fundamentally messed up with my coordinates 
+ *  system.
  * 
- *  Therefore, as Unreal was using the same coordinates system than me,
- *  I just looked at their code and adapted it.
+ *  Therefore, as Unreal was using the same coordinates system 
+ *  than me, I just looked at their code and adapted it.
  *  (also fixing the Quaternion constructor w/ Vec3 angles)
+ * 
+ *  It has been 3 weeks wondering if the issue was caused by 
+ *  the look_at function, my coordinates system or my model 
+ *  importer (or all of them in the same time)
  * 
  *  Happy to finally code again :)
  */
