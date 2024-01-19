@@ -21,7 +21,7 @@ namespace suprengine
 	public:
 		explicit Vec3();
 		explicit Vec3( float value );
-		explicit Vec3( float xP, float yP, float zP );
+		explicit Vec3( float x, float y, float z );
 
 		explicit Vec3( const Vec2& vec );
 		explicit Vec3( const Vec2& vec, float z );

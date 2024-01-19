@@ -4,6 +4,7 @@
 
 using namespace suprengine;
 
+
 const Vec3 
 	Vec3::zero( 0.0f, 0.0f, 0.0f ), 
 	Vec3::one( 1.0f, 1.0f, 1.0f );
@@ -18,8 +19,8 @@ const Vec3
 const Vec3 
 	Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 
-Vec3::Vec3() 
-	: x( 0.0f ), y( 0.0f ), z( 0.0f ) 
+
+Vec3::Vec3()
 {}
 
 Vec3::Vec3( float value ) 
