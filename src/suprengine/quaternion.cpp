@@ -21,22 +21,30 @@ Quaternion::Quaternion( const Vec3& axis, float angle )
 	w = math::cos( half_angle );
 }
 
-Quaternion::Quaternion( const Vec3& angles )
+Quaternion::Quaternion( const RadAngles& angles )
 {
-	float sp = math::sin( angles.x * 0.5f );
-	float cp = math::cos( angles.x * 0.5f );
+	float pitch = angles.p * 0.5f;
+	float yaw   = angles.y * 0.5f;
+	float roll  = angles.r * 0.5f;
 
-	float sy = math::sin( angles.y * 0.5f );
-	float cy = math::cos( angles.y * 0.5f );
+	float sp = math::sin( pitch );
+	float cp = math::cos( pitch );
 
-	float sr = math::sin( angles.z * 0.5f );
-	float cr = math::cos( angles.z * 0.5f );
+	float sy = math::sin( yaw );
+	float cy = math::cos( yaw );
+
+	float sr = math::sin( roll );
+	float cr = math::cos( roll );
 
 	x =  cr * sp * sy  -  sr * cp * cy;
 	y = -cr * sp * cy  -  sr * cp * sy;
 	z =  cr * cp * sy  -  sr * sp * cy;
 	w =  cr * cp * cy  +  sr * sp * sy;
 }
+
+Quaternion::Quaternion( const DegAngles& angles )
+	: Quaternion( RadAngles( angles ) )
+{}
 
 void Quaternion::set( float inX, float inY, float inZ, float inW )
 {
@@ -203,7 +211,7 @@ Quaternion Quaternion::look_at( const Vec3& forward, const Vec3& up )
 	const Vec3 dir = forward.normalized();
 
 	return Quaternion(
-		Vec3 {
+		RadAngles {
 			math::atan2( 
 				dir.z, 
 				math::sqrt( dir.x * dir.x + dir.y * dir.y ) 

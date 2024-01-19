@@ -17,7 +17,7 @@ Asteroid::~Asteroid() {}
 void Asteroid::update_this( float dt )
 {
 	Vec3 movement = linear_direction * dt;
-	Vec3 rotation = linear_direction * math::DEG2RAD * dt;
+	RadAngles rotation = RadAngles( linear_direction * math::DEG2RAD * dt );
 
 	transform->set_location( transform->location + movement );
 	transform->set_rotation( transform->rotation + Quaternion( rotation ) );

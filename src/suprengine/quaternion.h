@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vec3.h"
+#include "angles.h"
 
 namespace suprengine
 {
@@ -12,6 +13,7 @@ namespace suprengine
 		float z;
 		float w;
 
+	public:
 		Quaternion()
 		{
 			*this = Quaternion::identity;
@@ -23,8 +25,11 @@ namespace suprengine
 		// It is assumed that axis is already normalized,
 		// and the angle is in radians
 		explicit Quaternion( const Vec3& axis, float angle );
-		explicit Quaternion( const Vec3& angles );
 
+		explicit Quaternion( const RadAngles& angles );
+		explicit Quaternion( const DegAngles& angles );
+
+	public:
 		void set( float inX, float inY, float inZ, float inW );
 		void conjugate();
 		void normalize();

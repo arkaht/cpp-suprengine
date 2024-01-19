@@ -7,7 +7,7 @@ void GameScene::init()
 	//  setup planet
 	auto planet = new Entity();
 	planet->transform->location = Vec3 { 2000.0f, 500.0f, 30.0f };
-	planet->transform->rotation = Quaternion( Vec3 { 0.0f, 12.0f, -6.0f } *math::DEG2RAD );
+	planet->transform->rotation = Quaternion( DegAngles { -6.0f, 0.0f, 12.0f } );
 	planet->transform->scale = Vec3( 10.0f );
 	planet->create_component<StylizedModelRenderer>(
 		Assets::get_model( "planet-ring" ),

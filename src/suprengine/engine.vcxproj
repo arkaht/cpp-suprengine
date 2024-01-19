@@ -197,6 +197,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="angles.h" />
     <ClInclude Include="assets.h" />
     <ClInclude Include="box.h" />
     <ClInclude Include="color.h" />
@@ -260,6 +261,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="angles.cpp" />
     <ClCompile Include="assets.cpp" />
     <ClCompile Include="box.cpp" />
     <ClCompile Include="color.cpp" />
