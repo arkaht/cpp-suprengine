@@ -47,6 +47,8 @@ void GameScene::init()
 	ai_controller = new AISpaceshipController();
 	ai_controller->possess( spaceship2 );
 	ai_controller->target = spaceship1;
+
+	generate_ai_spaceships( 10 );
 }
 
 void GameScene::update( float dt )
@@ -77,5 +79,44 @@ void GameScene::update( float dt )
 	if ( inputs->is_key_just_pressed( SDL_SCANCODE_2 ) )
 	{
 		player_controller->possess( spaceship2 );
+	}
+}
+
+void GameScene::generate_ai_spaceships( int count )
+{
+	std::vector<Spaceship*> potential_targets;
+	std::vector<AISpaceshipController*> controllers;
+	for ( int i = 0; i < count; i++ )
+	{
+		auto spaceship = new Spaceship();
+		spaceship->set_color( Color 
+			{ 
+				(unsigned char)random::generate( 0, 255 ),
+				(unsigned char)random::generate( 0, 255 ),
+				(unsigned char)random::generate( 0, 255 ),
+			} 
+		);
+		spaceship->transform->location = Vec3 
+		{ 
+			100.0f + i * 50.0f,
+			0.0f,
+			0.0f
+		};
+		potential_targets.push_back( spaceship );
+
+		auto controller = new AISpaceshipController();
+		controller->possess( spaceship );
+		controller->target = spaceship1;
+		controllers.push_back( controller );
+	}
+
+	auto rd = std::random_device {};
+	auto rng = std::default_random_engine { rd() };
+	std::shuffle( potential_targets.begin(), potential_targets.end(), rng );
+
+	for ( auto controller : controllers )
+	{
+		controller->target = potential_targets[potential_targets.size() - 1];
+		potential_targets.pop_back();
 	}
 }

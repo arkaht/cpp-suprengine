@@ -48,7 +48,7 @@ void AISpaceshipController::update_inputs( float dt )
 		}
 
 		_inputs.throttle_delta = forward_alignement;
-		printf( "%f\n", _inputs.throttle_delta );
+		//printf( "%f\n", _inputs.throttle_delta );
 
 		_inputs.desired_rotation = desired_rotation;
 

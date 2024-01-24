@@ -18,6 +18,8 @@ namespace puzzle
 		void init() override;
 		void update( float dt ) override;
 
+		void generate_ai_spaceships( int count );
+
 	private:
 		Spaceship* spaceship1 { nullptr };
 		Spaceship* spaceship2 { nullptr };
