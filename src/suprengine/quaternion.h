@@ -25,7 +25,6 @@ namespace suprengine
 		explicit Quaternion( const DegAngles& angles );
 
 	public:
-		void set( float inX, float inY, float inZ, float inW );
 		void conjugate();
 		void normalize();
 
