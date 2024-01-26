@@ -4,10 +4,9 @@ using namespace suprengine;
 
 const Quaternion Quaternion::identity( 0.0f, 0.0f, 0.0f, 1.0f );
 
-Quaternion::Quaternion( float xP, float yP, float zP, float wP )
-{
-	set( xP, yP, zP, wP );
-}
+Quaternion::Quaternion( float x, float y, float z, float w )
+	: x( x ), y( y ), z( z ), w( w )
+{}
 
 Quaternion::Quaternion( const Vec3& axis, float angle )
 {
@@ -45,14 +44,6 @@ Quaternion::Quaternion( const RadAngles& angles )
 Quaternion::Quaternion( const DegAngles& angles )
 	: Quaternion( RadAngles( angles ) )
 {}
-
-void Quaternion::set( float inX, float inY, float inZ, float inW )
-{
-	x = inX;
-	y = inY;
-	z = inZ;
-	w = inW;
-}
 
 void Quaternion::conjugate()
 {

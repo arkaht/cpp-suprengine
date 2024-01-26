@@ -18,12 +18,7 @@ namespace suprengine
 		{
 			*this = Quaternion::identity;
 		}
-		// This directly sets the quaternion components --
-		// don't use for axis/angle
-		explicit Quaternion( float inX, float inY, float inZ, float inW );
-		// Construct the quaternion from an axis and angle
-		// It is assumed that axis is already normalized,
-		// and the angle is in radians
+		explicit Quaternion( float x, float y, float z, float w );
 		explicit Quaternion( const Vec3& axis, float angle );
 
 		explicit Quaternion( const RadAngles& angles );
