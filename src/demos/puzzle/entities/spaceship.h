@@ -1,6 +1,7 @@
 #pragma once
 
 #include <components/stylized-model-renderer.h>
+#include <components/health-component.h>
 #include <entities/spaceship-controller.h>
 #include <entities/projectile.h>
 
@@ -76,6 +77,8 @@ namespace puzzle
 		void _update_movement( float dt );
 		void _update_trail( float dt );
 
+		void _on_damage( const DamageResult& result );
+
 	private:
 		float _throttle = 0.0f;
 		float _trail_intensity = 0.0f;
@@ -83,7 +86,9 @@ namespace puzzle
 
 		float _shoot_time = 0.0f;
 
-		std::shared_ptr<StylizedModelRenderer> model_renderer;
-		std::shared_ptr<StylizedModelRenderer> trail_renderer;
+		std::shared_ptr<StylizedModelRenderer> _model_renderer;
+		std::shared_ptr<StylizedModelRenderer> _trail_renderer;
+		std::shared_ptr<BoxCollider> _collider;
+		std::shared_ptr<HealthComponent> _health;
 	};
 }

@@ -10,6 +10,11 @@ Asteroid::Asteroid()
 		Color::from_0x( 0xeb6e3dFF )
 	);
 	_collider = create_component<SphereCollider>( 1.0f );
+
+	_health = create_component<HealthComponent>();
+	_health->on_damage.listen( "owner", 
+		std::bind( &Asteroid::_on_damage, this, std::placeholders::_1 ) 
+	);
 }
 
 Asteroid::~Asteroid() {}
@@ -25,18 +30,20 @@ void Asteroid::update_this( float dt )
 
 void Asteroid::update_collision_to_transform()
 {
-	_health = 5.0f * transform->scale.x;
+	_health->max_health = 5.0f * transform->scale.x;
+	_health->health = _health->max_health;
+
 	//printf( "%f\n", _health);
 	//_collider->radius = 
 	//	( transform->scale.x + transform->scale.y + transform->scale.z ) / 3.0f;
 }
 
-void Asteroid::damage( float amount, const Vec3& knockback )
+void Asteroid::_on_damage( const DamageResult& result )
 {
-	linear_direction += knockback * ( 1.0f / transform->scale.x );
+	linear_direction += result.info.knockback * ( 1.0f / transform->scale.x );
 
 	//  check death
-	if ( ( _health -= amount ) <= 0.0f )
+	if ( !result.is_alive )
 	{
 		//  split
 		if ( split_times > 0 )

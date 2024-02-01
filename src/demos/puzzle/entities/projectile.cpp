@@ -64,15 +64,15 @@ void Projectile::_on_hit( const RayHit& result )
 {
 	auto entity = result.collider->get_owner();
 
-	//  TODO: Create a Health component 
-	//  damage asteroid
-	if ( auto asteroid = dynamic_cast<Asteroid*>( entity ) )
+	//  damage health component
+	if ( auto health = entity->get_component<HealthComponent>() )
 	{
-		asteroid->damage( 
-			damage_amount, 
-			-result.normal * knockback_force 
-		);
-		printf( "hit asteroid %d!\n", asteroid->get_unique_id() );
+		DamageInfo info {};
+		info.attacker = _owner;
+		info.damage = damage_amount;
+		info.knockback = -result.normal * knockback_force;
+
+		health->damage( info );
 	}
 
 	//  alert owner

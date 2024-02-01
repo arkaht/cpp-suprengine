@@ -10,32 +10,37 @@ Spaceship::Spaceship()
 	dcd_settings.max_outline_scale = 1.0f;
 
 	//  setup components
-	model_renderer = create_component<StylizedModelRenderer>(
+	_model_renderer = create_component<StylizedModelRenderer>(
 		Assets::get_model( "spaceship" ),
 		_color
 	);
-	model_renderer->dynamic_camera_distance_settings = dcd_settings;
-	model_renderer->outline_scale = MODEL_OUTLINE_SCALE;
-	create_component<BoxCollider>( Box {
+	_model_renderer->dynamic_camera_distance_settings = dcd_settings;
+	_model_renderer->outline_scale = MODEL_OUTLINE_SCALE;
+	_collider = create_component<BoxCollider>( Box {
 		Vec3 { -2.0f, -2.0f, -2.0f },
 		Vec3 { 2.0f, 2.0f, 2.0f },
 	} );
 
 	//  initialize trail
 	auto trail_entity = new Entity();
-	trail_renderer = trail_entity->create_component<StylizedModelRenderer>(
-		model_renderer->model,
+	_trail_renderer = trail_entity->create_component<StylizedModelRenderer>(
+		_model_renderer->model,
 		_color
 	);
-	trail_renderer->dynamic_camera_distance_settings = dcd_settings;
-	trail_renderer->outline_scale = MODEL_OUTLINE_SCALE;
-	trail_renderer->draw_only_outline = true;
-	trail_renderer->draw_outline_ccw = false;
+	_trail_renderer->dynamic_camera_distance_settings = dcd_settings;
+	_trail_renderer->outline_scale = MODEL_OUTLINE_SCALE;
+	_trail_renderer->draw_only_outline = true;
+	_trail_renderer->draw_outline_ccw = false;
+
+	//  health
+	_health = create_component<HealthComponent>();
+	_health->on_damage.listen( "owner", 
+		std::bind( &Spaceship::_on_damage, this, std::placeholders::_1 ) );
 }
 
 Spaceship::~Spaceship()
 {
-	trail_renderer->get_owner()->kill();
+	_trail_renderer->get_owner()->kill();
 
 	if ( controller )
 	{
@@ -87,8 +92,8 @@ void Spaceship::set_color( const Color& color )
 	_color = color;
 
 	//  update renderers
-	model_renderer->modulate = _color;
-	trail_renderer->modulate = _color;
+	_model_renderer->modulate = _color;
+	_trail_renderer->modulate = _color;
 }
 
 void Spaceship::_update_movement( float dt )
@@ -158,12 +163,12 @@ void Spaceship::_update_trail( float dt )
 		trail_intensity_target,
 		dt * TRAIL_INTENSITY_SPEED
 	);
-	trail_renderer->should_render = _trail_intensity > 0.01f;
+	_trail_renderer->should_render = _trail_intensity > 0.01f;
 
 	//  update visual
-	if ( trail_renderer->should_render )
+	if ( _trail_renderer->should_render )
 	{
-		auto& trail_transform = trail_renderer->transform;
+		auto& trail_transform = _trail_renderer->transform;
 
 		//  location
 		Vec3 location = transform->location;
@@ -178,7 +183,41 @@ void Spaceship::_update_trail( float dt )
 		//  scale
 		Vec3 scale = transform->scale * TRAIL_MODEL_SCALE;
 		scale *= math::min( TRAIL_MODEL_SCALE_INTENSITY_OFFSET + _trail_intensity, 1.0f ) 
-			   + trail_renderer->outline_scale * TRAIL_MODEL_OUTLINE_SCALE_OFFSET;
+			   + _trail_renderer->outline_scale * TRAIL_MODEL_OUTLINE_SCALE_OFFSET;
 		trail_transform->set_scale( scale );
+	}
+}
+
+void Spaceship::_on_damage( const DamageResult& result )
+{
+	if ( !result.is_alive )
+	{
+		_model_renderer->is_active = false;
+		_trail_renderer->is_active = false;
+		_collider->is_active = false;
+
+		if ( controller )
+			controller->state = EntityState::Paused;
+
+		state = EntityState::Paused;
+
+		printf( "Spaceship[%d] is killed!\n", get_unique_id() );
+
+		TIMER( 5.0f, {
+			transform->set_location( Vec3::zero );
+
+			_model_renderer->is_active = true;
+			_trail_renderer->is_active = true;
+			_collider->is_active = true;
+
+			if ( controller )
+				controller->state = EntityState::Active;
+
+			state = EntityState::Active;
+
+			_health->heal_to_full();
+
+			printf( "Spaceship[%d] has respawned!\n", get_unique_id() );
+		} );
 	}
 }

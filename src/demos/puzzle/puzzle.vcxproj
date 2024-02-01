@@ -530,6 +530,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClCompile Include="entities\player-spaceship-controller.cpp" />
     <ClCompile Include="entities\spaceship.cpp" />
     <ClCompile Include="game-instance.cpp" />
+    <ClCompile Include="components\health-component.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="entities\projectile.cpp" />
     <ClCompile Include="scenes\game-scene.cpp" />
@@ -549,6 +550,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="entities\projectile.h" />
     <ClInclude Include="entities\spaceship.h" />
     <ClInclude Include="game-instance.h" />
+    <ClInclude Include="components\health-component.h" />
     <ClInclude Include="scenes\game-scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
