@@ -61,6 +61,8 @@ void Entity::update( float dt )
 {
 	for ( auto& component : components )
 	{
+		if ( !component->is_active ) continue;
+
 		//  init
 		if ( !component->is_initialized )
 		{

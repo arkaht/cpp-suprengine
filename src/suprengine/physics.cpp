@@ -10,10 +10,15 @@ void Physics::update()
 	//std::unordered_map<Collider*, std::unordered_set<Collider*>> checked_colliders;
 	for ( auto& collider : colliders )
 	{
-		for ( auto other : colliders )
+		//  ignore non-active collider
+		if ( !collider->is_active ) continue;
+
+		for ( auto& other : colliders )
 		{
 			//  ignore self
 			if ( collider == other ) continue;
+			//  ignore non-active collider
+			if ( !other->is_active ) continue;
 			//  ignore layers not in mask filter
 			if ( ( collider->mask & other->get_owner()->layer ) == 0 ) continue;
 
@@ -42,8 +47,12 @@ void Physics::update()
 bool Physics::raycast( _RAYCAST_FUNC_PARAMS )
 {
 	for ( auto& collider : colliders )
-		if ( collider->raycast( ray, hit, params ) )
-			return true;
+	{
+		if ( !collider->is_active ) continue;
+		if ( !collider->raycast( ray, hit, params ) ) continue;
+
+		return true;
+	}
 
 	return false;
 }

@@ -11,11 +11,6 @@ namespace suprengine
 	class Component : public std::enable_shared_from_this<Component>
 	{
 	public:
-		bool is_initialized { false };
-		bool should_update { true };
-
-		std::shared_ptr<Transform> transform;
-
 		Component( Entity* owner, int priority_order = 0 );
 		virtual ~Component() {};
 
@@ -38,7 +33,14 @@ namespace suprengine
 
 		Entity* get_owner() const { return owner; }
 		int get_priority_order() const { return priority_order; }
-	
+		
+	public:
+		bool is_initialized { false };
+		bool should_update { true };
+		bool is_active { true };
+
+		std::shared_ptr<Transform> transform;
+
 	protected:
 		Entity* owner { nullptr };
 		int priority_order;

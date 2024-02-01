@@ -94,6 +94,6 @@ void BoxCollider::debug_render( RenderBatch* render_batch )
 	render_batch->draw_debug_model(
 		matrix,
 		model,
-		Color::green
+		is_active ? Color::green : Color::red
 	);
 }
