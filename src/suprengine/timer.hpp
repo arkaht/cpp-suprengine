@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#define TIMER( time, code )  game->add_timer( { time, [&]() { code } } )
+#define TIMER( time, code )  _engine->add_timer( { time, [&]() { code } } )
 
 namespace suprengine
 {
