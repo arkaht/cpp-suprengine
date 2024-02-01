@@ -59,6 +59,21 @@ namespace suprengine
 		}
 		void add_component( std::shared_ptr<Component> component );
 		void remove_component( std::shared_ptr<Component> component );
+		template <typename T>
+		std::shared_ptr<T> get_component()
+		{
+			static_assert( std::is_base_of<Component, T>::value, "Entity::get_component: used for a non-Component class!" );
+			
+			for ( std::shared_ptr<Component> component : components )
+			{
+				std::shared_ptr<T> target = std::dynamic_pointer_cast<T>( component );
+				if ( !target ) continue;
+
+				return target;
+			}
+
+			return nullptr;
+		}
 
 		void update( float dt );
 		void kill();
