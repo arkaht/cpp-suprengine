@@ -32,7 +32,7 @@ PlayerSpaceshipController::~PlayerSpaceshipController()
 
 void PlayerSpaceshipController::update_this( float dt )
 {
-	if ( !_possessed_ship ) return;
+	if ( !_possessed_ship || _possessed_ship->state != EntityState::Active ) return;
 
 	_update_shoot( dt );
 	_update_camera( dt );

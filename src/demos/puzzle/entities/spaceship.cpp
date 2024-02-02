@@ -215,12 +215,11 @@ void Spaceship::_on_damage( const DamageResult& result )
 {
 	if ( !result.is_alive )
 	{
+		_throttle = 0.0f;
+
 		_model_renderer->is_active = false;
 		_trail_renderer->is_active = false;
 		_collider->is_active = false;
-
-		if ( controller )
-			controller->state = EntityState::Paused;
 
 		state = EntityState::Paused;
 
@@ -228,13 +227,11 @@ void Spaceship::_on_damage( const DamageResult& result )
 
 		TIMER( 5.0f, {
 			transform->set_location( Vec3::zero );
+			transform->set_rotation( Quaternion::identity );
 
 			_model_renderer->is_active = true;
 			_trail_renderer->is_active = true;
 			_collider->is_active = true;
-
-			if ( controller )
-				controller->state = EntityState::Active;
 
 			state = EntityState::Active;
 
