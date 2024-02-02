@@ -20,6 +20,7 @@ namespace puzzle
 		void update_this( float dt ) override;
 
 		void shoot();
+		void launch_missiles( std::weak_ptr<Transform> wk_target );
 
 		Vec3 get_shoot_location( const Vec3& axis_scale ) const;
 		float get_shoot_time() const { return _shoot_time; }

@@ -1,5 +1,7 @@
 #include "spaceship.h"
 
+#include <entities/guided-missile.h>
+
 using namespace puzzle;
 
 Spaceship::Spaceship()
@@ -73,10 +75,31 @@ void Spaceship::shoot()
 				} 
 			);
 		projectile->transform->rotation = transform->rotation;
+		projectile->damage_amount = 25.0f;
 	}
 
 	//  put on cooldown
 	_shoot_time = SHOOT_TIME;
+}
+
+void Spaceship::launch_missiles( 
+	std::weak_ptr<Transform> wk_target 
+)
+{
+	for ( int i = 0; i < 6; i++ )
+	{
+		float row = floorf( i / 2.0f );
+		_engine->add_timer( { row * 0.1f, 
+			[wk_target, this, i, row] {
+				auto missile = new GuidedMissile( this, wk_target, _color );
+				missile->transform->location = transform->location 
+					+ transform->get_right() * ( i % 2 == 0 ? 1.0f : -1.0f ) * 2.0f
+					+ transform->get_forward() * row * 3.0f;
+				missile->transform->rotation = Quaternion::look_at( transform->get_up(), Vec3::up );
+				missile->up_direction = transform->get_up();
+			}
+		} );
+	}
 }
 
 Vec3 Spaceship::get_shoot_location( const Vec3& axis_scale ) const

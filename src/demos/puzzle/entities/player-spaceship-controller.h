@@ -18,6 +18,10 @@ namespace puzzle
 
 		void update_inputs( float dt ) override;
 
+	public:
+		//  TODO: remove and replace by auto-target system
+		std::weak_ptr<Transform> wk_missile_target;
+
 	private:
 		//  Aim sensitivity for each axis
 		const Vec3 AIM_SENSITIVITY { 

@@ -525,6 +525,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClCompile Include="components\player-hud.cpp" />
     <ClCompile Include="components\stylized-model-renderer.cpp" />
     <ClCompile Include="entities\ai-spaceship-controller.cpp" />
+    <ClCompile Include="entities\guided-missile.cpp" />
     <ClCompile Include="entities\spaceship-controller.cpp" />
     <ClCompile Include="entities\asteroid.cpp" />
     <ClCompile Include="entities\player-spaceship-controller.cpp" />
@@ -543,6 +544,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
   <ItemGroup>
     <ClInclude Include="components\player-hud.h" />
     <ClInclude Include="entities\ai-spaceship-controller.h" />
+    <ClInclude Include="entities\guided-missile.h" />
     <ClInclude Include="entities\spaceship-controller.h" />
     <ClInclude Include="components\stylized-model-renderer.h" />
     <ClInclude Include="entities\asteroid.h" />

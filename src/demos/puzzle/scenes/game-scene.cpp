@@ -43,6 +43,7 @@ void GameScene::init()
 	//  possess it by player
 	player_controller = new PlayerSpaceshipController();
 	player_controller->possess( spaceship1 );
+	player_controller->wk_missile_target = spaceship1->transform;
 
 	ai_controller = new AISpaceshipController();
 	ai_controller->possess( spaceship2 );

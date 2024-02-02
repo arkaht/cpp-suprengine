@@ -113,11 +113,17 @@ void PlayerSpaceshipController::_update_shoot( float dt )
 {
 	auto input_manager = _engine->get_inputs();
 
-	if ( _possessed_ship->get_shoot_time() > 0.0f ) return;
-	if ( !input_manager->is_mouse_button_down( MouseButton::Left ) ) return;
-
 	//  shoot
-	_possessed_ship->shoot();
+	if ( input_manager->is_mouse_button_down( MouseButton::Left )
+	  && _possessed_ship->get_shoot_time() <= 0.0f ) 
+	{
+		_possessed_ship->shoot();
+	}
+
+	if ( input_manager->is_mouse_button_just_pressed( MouseButton::Right ) )
+	{
+		_possessed_ship->launch_missiles( wk_missile_target );
+	}
 }
 
 void PlayerSpaceshipController::_update_camera( float dt )
@@ -141,7 +147,7 @@ void PlayerSpaceshipController::_update_camera( float dt )
 	Vec3 target_location = _possessed_ship->transform->location
 	  + up * up_distance;
 	Quaternion target_rotation = _possessed_ship->transform->rotation;
-	if ( input_manager->is_mouse_button_down( MouseButton::Right ) )
+	if ( input_manager->is_mouse_button_down( MouseButton::Middle ) )
 	{
 		float distance = math::lerp( 
 			CAMERA_LOOK_BACKWARD_DISTANCE.x, 
