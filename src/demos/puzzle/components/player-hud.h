@@ -10,6 +10,17 @@ namespace puzzle
 	class Spaceship;
 	class PlayerSpaceshipController;
 
+	struct KillIconData
+	{
+		float x_offset = -1.0f;
+
+		float life_time { 0.0f };
+		float scale { 1.0f };
+
+		Color color { Color::transparent };
+		Color target_color { Color::white };
+	};
+
 	class PlayerHUD : public Renderer
 	{
 	public:
@@ -39,6 +50,10 @@ namespace puzzle
 		const float KILL_SCALE_TIME = 0.33f;
 		const float KILL_COLOR_IN_SPEED = 8.0f;
 		const float KILL_COLOR_OUT_SPEED = 6.0f;
+		const float KILL_ICON_SIZE = 48.0f;
+		float KILL_ICON_TEXTURE_SCALE = -1.0f;  //  auto-filled
+		const float KILL_X_GAP = 8.0f;
+		const float KILL_X_SPEED = 6.0f;
 
 		const float HIT_TIME = 0.25f;
 
@@ -55,11 +70,8 @@ namespace puzzle
 		Texture* _kill_icon_texture;
 
 		Color _crosshair_color = Color::white;
-		Color _kill_color = Color::transparent;
-		Color _target_kill_color = Color::white;
-		float _kill_scale = 1.0f;
+		std::vector<KillIconData> _kill_icons;
 		float _hit_time = 0.0f;
-		float _kill_time = 0.0f;
 
 		PlayerSpaceshipController* _controller;
 	};

@@ -22,6 +22,7 @@ PlayerHUD::PlayerHUD(
 
 	_crosshair_line_texture = Assets::get_texture( "crosshair-line" );
 	_kill_icon_texture = Assets::get_texture( "kill-icon" );
+	KILL_ICON_TEXTURE_SCALE = KILL_ICON_SIZE / _kill_icon_texture->get_size().x;
 }
 
 void PlayerHUD::update( float dt )
@@ -36,24 +37,55 @@ void PlayerHUD::update( float dt )
 		dt * CROSSHAIR_COLOR_SMOOTH_SPEED 
 	);
 
-	if ( _kill_time > 0.0f )
+	int column = 0;
+	for ( auto itr = _kill_icons.begin(); itr != _kill_icons.end(); )
 	{
-		_kill_time = math::max( 0.0f, _kill_time - dt );
-		_kill_color = Color::lerp(
-			_kill_color,
-			_target_kill_color,
-			dt * KILL_COLOR_IN_SPEED
-		);
-		_kill_scale = easing::out_expo( 
-			math::min( KILL_SCALE_TIME, KILL_TIME - _kill_time ) / KILL_SCALE_TIME );
-	}
-	else
-	{
-		_kill_color = Color::lerp( 
-			_kill_color, 
-			Color::transparent,
-			dt * KILL_COLOR_OUT_SPEED
-		);
+		auto& data = *itr;
+
+		//  update x-offset
+		float target_x = column * ( KILL_X_GAP + KILL_ICON_SIZE );
+		if ( data.x_offset == -1.0f )
+		{
+			data.x_offset = target_x;
+		}
+		else 
+		{
+			data.x_offset = math::lerp( 
+				data.x_offset, 
+				target_x,
+				dt * KILL_X_SPEED
+			);
+		}
+
+		if ( data.life_time > 0.0f )
+		{
+			data.life_time = math::max( 0.0f, data.life_time - dt );
+			data.color = Color::lerp(
+				data.color,
+				data.target_color,
+				dt * KILL_COLOR_IN_SPEED
+			);
+			data.scale = easing::out_expo( 
+				math::min( KILL_SCALE_TIME, KILL_TIME - data.life_time ) / KILL_SCALE_TIME );
+			
+			column++;
+		}
+		else
+		{
+			data.color.a = math::lerp( 
+				data.color.a, 
+				(uint8_t)0,
+				dt * KILL_COLOR_OUT_SPEED
+			);
+
+			if ( data.color.a == 0 )
+			{
+				itr = _kill_icons.erase( itr );
+				break;
+			}
+		}
+
+		itr++;
 	}
 }
 
@@ -80,20 +112,23 @@ void PlayerHUD::render()
 		}
 	}
 
-	/*if ( _kill_time > 0.0f )
-	{*/
+	int count = _kill_icons.size();
+	for ( int i = 0; i < count; i++ )
+	{
+		const auto& data = _kill_icons[i];
+
 		_render_batch->draw_texture( 
 			Vec2 { 
-				window_size.x * 0.5f,
+				window_size.x * 0.5f + data.x_offset,
 				window_size.y * 0.25f,
 			},
-			Vec2::one * _kill_scale * 0.1f,
+			Vec2::one * data.scale * KILL_ICON_TEXTURE_SCALE,
 			0.0f,
 			Vec2 { 0.5f, 0.5f },
 			_kill_icon_texture,
-			_kill_color
+			data.color
 		);
-	/*}*/
+	}
 }
 
 void PlayerHUD::_bind_to_spaceship( Spaceship* spaceship )
@@ -162,8 +197,10 @@ void PlayerHUD::_on_spaceship_hit( const DamageResult& result )
 	auto spaceship = dynamic_cast<Spaceship*>( health->get_owner() );
 	if ( spaceship && !result.is_alive )
 	{
-		_kill_time = KILL_TIME;
-		_kill_color = Color::transparent;
-		_target_kill_color = spaceship->get_color();
+		KillIconData data {};
+		data.life_time = KILL_TIME;
+		data.target_color = spaceship->get_color();
+
+		_kill_icons.push_back( data );
 	}
 }
