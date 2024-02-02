@@ -21,6 +21,7 @@ PlayerHUD::PlayerHUD(
 	);
 
 	_crosshair_line_texture = Assets::get_texture( "crosshair-line" );
+	_kill_icon_texture = Assets::get_texture( "kill-icon" );
 }
 
 void PlayerHUD::update( float dt )
@@ -34,6 +35,26 @@ void PlayerHUD::update( float dt )
 		spaceship->get_color(), 
 		dt * CROSSHAIR_COLOR_SMOOTH_SPEED 
 	);
+
+	if ( _kill_time > 0.0f )
+	{
+		_kill_time = math::max( 0.0f, _kill_time - dt );
+		_kill_color = Color::lerp(
+			_kill_color,
+			_target_kill_color,
+			dt * KILL_COLOR_IN_SPEED
+		);
+		_kill_scale = easing::out_expo( 
+			math::min( KILL_SCALE_TIME, KILL_TIME - _kill_time ) / KILL_SCALE_TIME );
+	}
+	else
+	{
+		_kill_color = Color::lerp( 
+			_kill_color, 
+			Color::transparent,
+			dt * KILL_COLOR_OUT_SPEED
+		);
+	}
 }
 
 void PlayerHUD::render()
@@ -58,6 +79,21 @@ void PlayerHUD::render()
 			_draw_crosshair( crosshair_pos );
 		}
 	}
+
+	/*if ( _kill_time > 0.0f )
+	{*/
+		_render_batch->draw_texture( 
+			Vec2 { 
+				window_size.x * 0.5f,
+				window_size.y * 0.25f,
+			},
+			Vec2::one * _kill_scale * 0.1f,
+			0.0f,
+			Vec2 { 0.5f, 0.5f },
+			_kill_icon_texture,
+			_kill_color
+		);
+	/*}*/
 }
 
 void PlayerHUD::_bind_to_spaceship( Spaceship* spaceship )
@@ -69,12 +105,7 @@ void PlayerHUD::_bind_to_spaceship( Spaceship* spaceship )
 
 	//  events
 	spaceship->on_hit.listen( "player-hud", 
-		[&]( Entity* hit_entity )
-		{
-			_hit_time = HIT_TIME;
-			_crosshair_color = Color::white;
-		}
-	);
+		std::bind( &PlayerHUD::_on_spaceship_hit, this, std::placeholders::_1 ) );
 }
 
 void PlayerHUD::_unbind_from_spaceship( Spaceship* spaceship )
@@ -117,5 +148,22 @@ void PlayerHUD::_draw_crosshair( const Vec2& pos )
 			_crosshair_color
 		);
 		angle += angle_iter;
+	}
+}
+
+void PlayerHUD::_on_spaceship_hit( const DamageResult& result )
+{
+	_hit_time = HIT_TIME;
+	_crosshair_color = Color::white;
+
+	auto health = result.victim.lock();
+	if ( !health ) return;
+
+	auto spaceship = dynamic_cast<Spaceship*>( health->get_owner() );
+	if ( spaceship && !result.is_alive )
+	{
+		_kill_time = KILL_TIME;
+		_kill_color = Color::transparent;
+		_target_kill_color = spaceship->get_color();
 	}
 }

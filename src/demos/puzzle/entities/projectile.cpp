@@ -72,12 +72,12 @@ void Projectile::_on_hit( const RayHit& result )
 		info.damage = damage_amount;
 		info.knockback = -result.normal * knockback_force;
 
-		health->damage( info );
-	}
+		DamageResult result = health->damage( info );
 
-	//  alert owner
-	if ( _owner )
-	{
-		_owner->on_hit.invoke( entity );
+		//  alert owner
+		if ( result.is_valid && _owner )
+		{
+			_owner->on_hit.invoke( result );
+		}
 	}
 }

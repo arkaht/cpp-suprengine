@@ -34,9 +34,9 @@ namespace puzzle
 		 * Called when an entity has been damaged by the spaceship.
 		 * 
 		 * Parameters:
-		 * - Entity* victim
+		 * - const DamageResult& result
 		 */
-		Event<Entity*> on_hit;
+		Event<const DamageResult&> on_hit;
 
 	public:
 		SpaceshipController* controller { nullptr };

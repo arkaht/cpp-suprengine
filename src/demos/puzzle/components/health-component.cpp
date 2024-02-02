@@ -7,14 +7,16 @@ HealthComponent::HealthComponent( Entity* owner, float health )
 	  Component( owner )
 {}
 
-bool HealthComponent::damage( const DamageInfo& info )
+DamageResult HealthComponent::damage( const DamageInfo& info )
 {
+	DamageResult result( info );
+
 	//  check component can receive damage
-	if ( !is_alive() ) return false;
+	if ( !is_alive() ) return result;
 
 	//  check damage infos
-	if ( info.attacker == nullptr ) return false;
-	if ( info.damage <= 0.0f ) return false;
+	if ( info.attacker == nullptr ) return result;
+	if ( info.damage <= 0.0f ) return result;
 
 	health -= info.damage;
 	if ( health <= 0.0f )
@@ -23,15 +25,15 @@ bool HealthComponent::damage( const DamageInfo& info )
 	}
 	//printf( "%f -> %f\n", health + info.damage, health );
 
-	//  generate result
-	DamageResult result( info );
+	//  validate result
+	result.is_valid = true;
 	result.victim = get_shared_from_this<HealthComponent>();
 	result.is_alive = is_alive();
 
 	//  trigger event
 	on_damage.invoke( result );
 
-	return true;
+	return result;
 }
 
 bool HealthComponent::is_alive() const

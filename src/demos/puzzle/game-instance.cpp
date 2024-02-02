@@ -18,6 +18,10 @@ void GameInstance::load_assets()
 		"crosshair-line", 
 		"assets/puzzle/sprites/crosshair-line.png" 
 	);
+	Assets::load_texture( 
+		"kill-icon", 
+		"assets/puzzle/sprites/kill-icon.png" 
+	);
 
 	//  models
 	Assets::load_model( 

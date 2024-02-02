@@ -19,12 +19,12 @@ namespace puzzle
 	struct DamageResult
 	{
 		DamageResult( const DamageInfo& info )
-			: info( info )
-		{}
+			: info( info ) {}
 
 		const DamageInfo& info;
 		std::weak_ptr<HealthComponent> victim;
 		bool is_alive { false };
+		bool is_valid { false };
 	};
 
 	class HealthComponent : public Component
@@ -35,7 +35,7 @@ namespace puzzle
 		void heal( float amount );
 		void heal_to_full();
 
-		bool damage( const DamageInfo& info );
+		DamageResult damage( const DamageInfo& info );
 
 		bool is_alive() const;
 

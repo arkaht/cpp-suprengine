@@ -17,4 +17,11 @@ namespace suprengine::easing
 			 ? 4.0f * x * x * x
 			 : 1.0f - math::pow( -2.0f * x + 2.0f, 3.0f ) * 0.5f;
 	}
+
+	template <typename T>
+	static T out_expo( T x ) 
+	{ 
+		if ( x == 1 ) return 1;
+		return 1 - math::pow( 2.0f, -10.0f * x );
+	}
 }
