@@ -90,13 +90,7 @@ void GameScene::generate_ai_spaceships( int count )
 	for ( int i = 0; i < count; i++ )
 	{
 		auto spaceship = new Spaceship();
-		spaceship->set_color( Color 
-			{ 
-				(unsigned char)random::generate( 0, 255 ),
-				(unsigned char)random::generate( 0, 255 ),
-				(unsigned char)random::generate( 0, 255 ),
-			} 
-		);
+		spaceship->set_color( random::generate_color() );
 		spaceship->transform->location = Vec3 
 		{ 
 			100.0f + i * 50.0f,

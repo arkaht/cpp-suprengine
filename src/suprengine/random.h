@@ -2,6 +2,7 @@
 #include <random>
 
 #include "vec3.h"
+#include "color.h"
 
 namespace suprengine
 {
@@ -45,6 +46,19 @@ namespace suprengine
 				m * math::cos( angle ),
 				m * math::sin( angle ),
 				z,	
+			};
+		}
+
+		static Color generate_color( bool should_randomize_alpha = false )
+		{
+			return Color 
+			{ 
+				(unsigned char)random::generate( 0, 255 ),
+				(unsigned char)random::generate( 0, 255 ),
+				(unsigned char)random::generate( 0, 255 ),
+				should_randomize_alpha 
+					? (unsigned char)random::generate( 0, 255 )
+					: (unsigned char)255
 			};
 		}
 
