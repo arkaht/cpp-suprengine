@@ -201,6 +201,9 @@
     <ClInclude Include="angles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="components\lifetime-component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="assets.cpp">
@@ -294,6 +297,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="angles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\lifetime-component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

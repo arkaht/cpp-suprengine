@@ -207,6 +207,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="components\camera.h" />
     <ClInclude Include="components\collider.fwd.h" />
     <ClInclude Include="components\collider.h" />
+    <ClInclude Include="components\lifetime-component.h" />
     <ClInclude Include="components\mouse-follower.hpp" />
     <ClInclude Include="components\mouse-looker.hpp" />
     <ClInclude Include="components\mover.hpp" />
@@ -270,6 +271,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClCompile Include="components\collider.cpp" />
     <ClCompile Include="components\colliders\box-collider.cpp" />
     <ClCompile Include="components\colliders\sphere-collider.cpp" />
+    <ClCompile Include="components\lifetime-component.cpp" />
     <ClCompile Include="components\renderer.cpp" />
     <ClCompile Include="components\transform.cpp" />
     <ClCompile Include="entity.cpp" />
