@@ -2,6 +2,8 @@
 
 #include <components/stylized-model-renderer.h>
 
+#include <suprengine/components/lifetime-component.h>
+
 namespace puzzle
 {
 	using namespace suprengine;
@@ -17,7 +19,6 @@ namespace puzzle
 
 	public:
 		float move_speed = 750.0f;
-		float life_time = 2.5f;
 
 		float damage_amount = 5.0f; 
 		float knockback_force = 80.0f;
@@ -27,11 +28,15 @@ namespace puzzle
 		void _on_hit( const RayHit& result );
 
 	private:
+		const float LIFETIME = 3.0f;
+	
+	private:
 		Color _color;
 
 		Spaceship* _owner;
 
-		std::shared_ptr<StylizedModelRenderer> model_renderer;
+		std::shared_ptr<StylizedModelRenderer> _model_renderer;
+		std::shared_ptr<LifetimeComponent> _lifetime_component;
 	};
 }
 

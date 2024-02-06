@@ -8,11 +8,15 @@ using namespace puzzle;
 Projectile::Projectile( Spaceship* owner, Color color )
 	: _owner( owner ), _color( color )
 {
-	model_renderer = create_component<StylizedModelRenderer>(
+	_model_renderer = create_component<StylizedModelRenderer>(
 		Assets::get_model( "projectile" ),
 		color
 	);
-	model_renderer->draw_only_outline = true;
+	_model_renderer->draw_only_outline = true;
+
+	_lifetime_component = create_component<LifetimeComponent>( LIFETIME );
+	_lifetime_component->on_time_out.listen( "owner", 
+		std::bind( &Projectile::kill, this ) );
 }
 
 void Projectile::update_this( float dt )
@@ -24,13 +28,6 @@ void Projectile::update_this( float dt )
 
 	//  movement
 	transform->set_location( new_location );
-
-	//  life time
-	life_time -= dt;
-	if ( life_time <= 0.0f )
-	{
-		kill();
-	}
 }
 
 bool Projectile::_check_collisions( float movement_speed )
