@@ -42,7 +42,7 @@ namespace puzzle
 		void _damage( std::shared_ptr<HealthComponent> target );
 
 	private:
-		const float LIFETIME = 3.0f;
+		const float LIFETIME = 6.0f;
 
 	private:
 		float _current_move_speed { 0.0f };
