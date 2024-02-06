@@ -50,9 +50,9 @@ namespace puzzle
 		const float KILL_SCALE_TIME = 0.16f;
 		const float KILL_COLOR_IN_SPEED = 4.0f;
 		const float KILL_ALPHA_IN_SPEED = 12.0f;
-		const float KILL_COLOR_OUT_SPEED = 6.0f;
+		const float KILL_ALPHA_OUT_SPEED = 6.0f;
 		const float KILL_ICON_SIZE = 48.0f;
-		float KILL_ICON_TEXTURE_SCALE = -1.0f;  //  auto-filled
+			  float KILL_ICON_TEXTURE_SCALE = -1.0f;  //  auto-filled
 		const float KILL_X_GAP = 8.0f;
 		const float KILL_X_SPEED = 6.0f;
 

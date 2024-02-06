@@ -77,7 +77,7 @@ void PlayerHUD::update( float dt )
 			data.color.a = math::lerp( 
 				data.color.a, 
 				(uint8_t)0,
-				dt * KILL_COLOR_OUT_SPEED
+				dt * KILL_ALPHA_OUT_SPEED
 			);
 
 			if ( data.color.a == 0 )
