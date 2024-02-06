@@ -94,8 +94,11 @@ void GuidedMissile::_check_impact()
 	RayHit hit {};
 	if ( !physics->raycast( ray, &hit, params ) ) return;
 	
-	//  check entity has health component
+	//  check entity is not owner
 	auto entity = hit.collider->get_owner();
+	if ( entity == _owner ) return;
+
+	//  check entity has health component
 	auto health = entity->get_component<HealthComponent>();
 	if ( !health ) return;
 	
