@@ -60,11 +60,13 @@ void PlayerHUD::update( float dt )
 		if ( data.life_time > 0.0f )
 		{
 			data.life_time = math::max( 0.0f, data.life_time - dt );
-			data.color = Color::lerp(
-				data.color,
-				data.target_color,
-				dt * KILL_COLOR_IN_SPEED
-			);
+
+			float color_speed = dt * KILL_COLOR_IN_SPEED;
+			data.color.r = math::lerp( data.color.r, data.target_color.r, color_speed );
+			data.color.g = math::lerp( data.color.g, data.target_color.g, color_speed );
+			data.color.b = math::lerp( data.color.b, data.target_color.b, color_speed );
+			data.color.a = math::lerp( data.color.a, data.target_color.a, dt * KILL_ALPHA_IN_SPEED );
+
 			data.scale = easing::out_expo( 
 				math::min( KILL_SCALE_TIME, KILL_TIME - data.life_time ) / KILL_SCALE_TIME );
 			
