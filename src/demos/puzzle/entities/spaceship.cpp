@@ -131,7 +131,6 @@ void Spaceship::die()
 
 		auto effect = new ExplosionEffect( size, _color );
 		effect->transform->location = transform->location;
-		effect->transform->rotation = transform->rotation;
 	}
 	printf( "Spaceship[%d] is killed!\n", get_unique_id() );
 

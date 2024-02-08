@@ -30,6 +30,8 @@ namespace puzzle
 		bool draw_only_outline = false;
 		bool draw_outline_ccw = true;
 
+		Color inner_modulate = Color::black;
+
 		CameraDynamicDistanceSettings dynamic_camera_distance_settings;
 	};
 }

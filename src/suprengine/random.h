@@ -3,6 +3,7 @@
 
 #include "vec3.h"
 #include "color.h"
+#include "quaternion.h"
 
 namespace suprengine
 {
@@ -21,6 +22,11 @@ namespace suprengine
 			static std::mt19937 _generator( (unsigned int)std::time( nullptr ) );
 			std::uniform_real_distribution<> dist( (double)min, (double)max );
 			return (float)dist( _generator );
+		}
+
+		static float generate( const Vec2& bounds )
+		{
+			return generate( bounds.x, bounds.y );
 		}
 
 		static Vec3 generate_location( 
@@ -47,6 +53,11 @@ namespace suprengine
 				m * math::sin( angle ),
 				z,	
 			};
+		}
+
+		static Quaternion generate_rotation()
+		{
+			return Quaternion::look_at( generate_direction(), Vec3::up );
 		}
 
 		static Color generate_color( bool should_randomize_alpha = false )

@@ -67,7 +67,6 @@ void GuidedMissile::explode()
 
 		auto effect = new ExplosionEffect( explosion_size, color );
 		effect->transform->location = transform->location;
-		effect->transform->rotation = transform->rotation;
 	}
 
 	kill();

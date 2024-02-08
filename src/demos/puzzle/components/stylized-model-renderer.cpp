@@ -35,23 +35,26 @@ void StylizedModelRenderer::render()
 		offset_scale += outline_scale;
 	}
 
-	//  compute outline matrix
-	Mtx4 outline_matrix = Mtx4::create_from_transform( 
-		transform->scale * offset_scale,
-		transform->rotation,
-		transform->location
-	);
-
 	//  draw outline
-	glFrontFace( draw_outline_ccw ? GL_CCW : GL_CW );
-	_render_batch->draw_model(
-		outline_matrix,
-		model,
-		shader_name,
-		modulate
-	);
+	if ( !math::near( offset_scale, 1.0f ) )
+	{
+		//  compute outline matrix
+		Mtx4 outline_matrix = Mtx4::create_from_transform( 
+			transform->scale * offset_scale,
+			transform->rotation,
+			transform->location
+		);
 
-	//  draw mesh on top of outline
+		glFrontFace( draw_outline_ccw ? GL_CCW : GL_CW );
+		_render_batch->draw_model(
+			outline_matrix,
+			model,
+			shader_name,
+			modulate
+		);
+	}
+
+	//  draw inner
 	if ( !draw_only_outline )
 	{
 		glFrontFace( GL_CW );
@@ -59,7 +62,7 @@ void StylizedModelRenderer::render()
 			transform->get_matrix(),
 			model,
 			shader_name,
-			Color::black
+			inner_modulate
 		);
 	}
 }
