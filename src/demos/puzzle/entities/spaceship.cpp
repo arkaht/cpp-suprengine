@@ -1,6 +1,9 @@
 #include "spaceship.h"
 
 #include <entities/guided-missile.h>
+#include <entities/explosion-effect.h>
+
+#include <suprengine/random.h>
 
 using namespace puzzle;
 
@@ -100,6 +103,55 @@ void Spaceship::launch_missiles(
 			}
 		} );
 	}
+}
+
+void Spaceship::die()
+{
+	if ( _health->health > 0.0f )
+	{
+		_health->health = 0.0f;
+	}
+
+	_throttle = 0.0f;
+
+	_model_renderer->is_active = false;
+	_trail_renderer->is_active = false;
+	_collider->is_active = false;
+
+	state = EntityState::Paused;
+
+	//  spawn explosion effect
+	{
+		float size_ratio_over_damage = math::clamp( 
+			math::abs( _health->health / EXPLOSION_DAMAGE_FOR_MAX_SIZE ), 
+			0.0f, 1.0f 
+		);
+		float size = math::lerp( EXPLOSION_SIZE.x, EXPLOSION_SIZE.y, size_ratio_over_damage );
+		size += random::generate( EXPLOSION_SIZE_DEVIATION.x, EXPLOSION_SIZE_DEVIATION.y );
+
+		auto effect = new ExplosionEffect( size, _color );
+		effect->transform->location = transform->location;
+		effect->transform->rotation = transform->rotation;
+	}
+	printf( "Spaceship[%d] is killed!\n", get_unique_id() );
+
+	TIMER( 5.0f, { respawn(); } );
+}
+
+void Spaceship::respawn()
+{
+	transform->set_location( Vec3::zero );
+	transform->set_rotation( Quaternion::identity );
+
+	_model_renderer->is_active = true;
+	_trail_renderer->is_active = true;
+	_collider->is_active = true;
+
+	state = EntityState::Active;
+
+	_health->heal_to_full();
+
+	printf( "Spaceship[%d] has respawned!\n", get_unique_id() );
 }
 
 Vec3 Spaceship::get_shoot_location( const Vec3& axis_scale ) const
@@ -215,29 +267,6 @@ void Spaceship::_on_damage( const DamageResult& result )
 {
 	if ( !result.is_alive )
 	{
-		_throttle = 0.0f;
-
-		_model_renderer->is_active = false;
-		_trail_renderer->is_active = false;
-		_collider->is_active = false;
-
-		state = EntityState::Paused;
-
-		printf( "Spaceship[%d] is killed!\n", get_unique_id() );
-
-		TIMER( 5.0f, {
-			transform->set_location( Vec3::zero );
-			transform->set_rotation( Quaternion::identity );
-
-			_model_renderer->is_active = true;
-			_trail_renderer->is_active = true;
-			_collider->is_active = true;
-
-			state = EntityState::Active;
-
-			_health->heal_to_full();
-
-			printf( "Spaceship[%d] has respawned!\n", get_unique_id() );
-		} );
+		die();
 	}
 }

@@ -21,6 +21,9 @@ namespace puzzle
 
 		void shoot();
 		void launch_missiles( std::weak_ptr<Transform> wk_target );
+		
+		void die();
+		void respawn();
 
 		Vec3 get_shoot_location( const Vec3& axis_scale ) const;
 		float get_shoot_time() const { return _shoot_time; }
@@ -73,6 +76,14 @@ namespace puzzle
 
 		//  Shoot time interval
 		const float SHOOT_TIME = 0.15f;
+
+		//  Explosion size bounds evaluated by a linear 
+		//  interpolation of last damage dealt
+		const Vec2  EXPLOSION_SIZE { 9.0f, 15.0f };
+		//  Explosion last max damage used to calculate its size
+		const float EXPLOSION_DAMAGE_FOR_MAX_SIZE = 15.0f;
+		//  Explosion random size deviation
+		const Vec2  EXPLOSION_SIZE_DEVIATION { -1.0f, 2.0f };
 
 	private:
 		void _update_movement( float dt );

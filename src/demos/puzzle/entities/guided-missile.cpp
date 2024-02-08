@@ -2,6 +2,9 @@
 
 #include <components/health-component.h>
 #include <entities/spaceship.h>
+#include <entities/explosion-effect.h>
+
+#include <suprengine/random.h>
 
 using namespace puzzle;
 
@@ -21,7 +24,7 @@ GuidedMissile::GuidedMissile(
 
 	_lifetime_component = create_component<LifetimeComponent>( LIFETIME );
 	_lifetime_component->on_time_out.listen( "owner", 
-		std::bind( &GuidedMissile::kill, this ) );
+		std::bind( &GuidedMissile::explode, this ) );
 }
 
 void GuidedMissile::update_this( float dt )
@@ -47,6 +50,27 @@ void GuidedMissile::update_this( float dt )
 	);
 
 	_check_impact();
+}
+
+void GuidedMissile::explode()
+{
+	//  spawn explosion effect
+	{
+		Color color = Color::white;
+		if ( _owner )
+		{
+			color = _owner->get_color();
+		}
+
+		float size = explosion_size
+			+ random::generate( EXPLOSION_SIZE_DEVIATION.x, EXPLOSION_SIZE_DEVIATION.y );
+
+		auto effect = new ExplosionEffect( explosion_size, color );
+		effect->transform->location = transform->location;
+		effect->transform->rotation = transform->rotation;
+	}
+
+	kill();
 }
 
 void GuidedMissile::_update_target( float dt )
@@ -126,6 +150,6 @@ void GuidedMissile::_damage( std::shared_ptr<HealthComponent> target )
 		_owner->on_hit.invoke( result );
 	}
 
-	kill();
+	explode();
 	//printf( "boom\n" );
 }

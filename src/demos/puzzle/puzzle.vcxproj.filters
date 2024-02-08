@@ -54,6 +54,9 @@
     <ClCompile Include="entities\guided-missile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="entities\explosion-effect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scenes\game-scene.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="entities\guided-missile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="entities\explosion-effect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -22,6 +22,8 @@ namespace puzzle
 
 		void update_this( float dt ) override;
 
+		void explode();
+
 	public:
 		float move_speed = 150.0f;
 		float move_acceleration = 16.0f;
@@ -33,6 +35,8 @@ namespace puzzle
 		float damage_amount = 15.0f;
 		float knockback_force = 45.0f;
 
+		float explosion_size = 2.0f;
+
 		Vec3 up_direction { Vec3::up };
 
 	private:
@@ -43,6 +47,8 @@ namespace puzzle
 
 	private:
 		const float LIFETIME = 6.0f;
+
+		const Vec2 EXPLOSION_SIZE_DEVIATION { -1.0f, 1.5f };
 
 	private:
 		float _current_move_speed { 0.0f };
