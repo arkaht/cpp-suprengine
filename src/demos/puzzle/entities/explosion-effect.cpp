@@ -12,8 +12,8 @@ ExplosionEffect::ExplosionEffect(
 	: explosion_size( explosion_size )
 {
 	_model_renderer = create_component<StylizedModelRenderer>(
-		Assets::get_model( suprengine::MESH_SPHERE ),
 		color
+		Assets::get_model( "explosion" + std::to_string( random::generate( 0, 2 ) ) ),
 	);
 
 	_max_lifetime = LIFETIME

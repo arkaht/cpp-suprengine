@@ -34,6 +34,12 @@ void GameInstance::load_assets()
 		"asteroid0", "assets/puzzle/models/asteroid0.fbx" );
 	Assets::load_model( 
 		"asteroid1", "assets/puzzle/models/asteroid1.fbx" );
+	Assets::load_model( 
+		"explosion0", "assets/puzzle/models/explosion0.fbx" );
+	Assets::load_model( 
+		"explosion1", "assets/puzzle/models/explosion1.fbx" );
+	Assets::load_model( 
+		"explosion2", "assets/puzzle/models/explosion2.fbx" );
 }
 
 void GameInstance::init()
