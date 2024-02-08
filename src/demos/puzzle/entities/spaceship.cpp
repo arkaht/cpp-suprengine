@@ -86,7 +86,7 @@ void Spaceship::shoot()
 }
 
 void Spaceship::launch_missiles( 
-	std::weak_ptr<Transform> wk_target 
+	std::weak_ptr<HealthComponent> wk_target 
 )
 {
 	for ( int i = 0; i < 6; i++ )

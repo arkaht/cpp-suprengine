@@ -20,7 +20,7 @@ namespace puzzle
 
 	public:
 		//  TODO: remove and replace by auto-target system
-		std::weak_ptr<Transform> wk_missile_target;
+		std::weak_ptr<HealthComponent> wk_missile_target;
 
 	private:
 		//  Aim sensitivity for each axis

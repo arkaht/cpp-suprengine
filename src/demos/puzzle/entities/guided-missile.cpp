@@ -10,7 +10,7 @@ using namespace puzzle;
 
 GuidedMissile::GuidedMissile( 
 	Spaceship* owner, 
-	std::weak_ptr<Transform> wk_target,
+	std::weak_ptr<HealthComponent> wk_target,
 	Color color 
 )
 	: _owner( owner ), _wk_target( wk_target ),
@@ -25,6 +25,15 @@ GuidedMissile::GuidedMissile(
 	_lifetime_component = create_component<LifetimeComponent>( LIFETIME );
 	_lifetime_component->on_time_out.listen( "owner", 
 		std::bind( &GuidedMissile::explode, this ) );
+
+	_current_move_speed = move_speed * STARTING_MOVE_SPEED_RATIO;
+
+	//  set initial target direction
+	if ( auto target = _wk_target.lock() )
+	{
+		_desired_direction = 
+			( target->transform->location - transform->location ).normalized();
+	}
 }
 
 void GuidedMissile::update_this( float dt )
@@ -35,11 +44,14 @@ void GuidedMissile::update_this( float dt )
 		move_speed, 
 		dt * move_acceleration 
 	);
-	_current_rotation_speed = math::lerp(
-		_current_rotation_speed,
-		rotation_speed,
-		dt * rotation_acceleration
-	);
+	if ( LIFETIME - _lifetime_component->life_time > TIME_LOCKED_ROTATION ) 
+	{
+		_current_rotation_speed = math::lerp(
+			_current_rotation_speed,
+			rotation_speed,
+			dt * rotation_acceleration
+		);
+	}
 
 	_update_target( dt );
 
@@ -74,23 +86,24 @@ void GuidedMissile::explode()
 
 void GuidedMissile::_update_target( float dt )
 {
-	auto target = _wk_target.lock();
-	if ( !target ) return;
-
-	Vec3 diff = target->location - transform->location;
-
-	//  explode if close enough
-	float distance = diff.length();
-	/*if ( distance <= impact_distance )
+	if ( auto target = _wk_target.lock() )
 	{
-		auto health = target->get_owner()->get_component<HealthComponent>();
-		_damage( health );
-		return;
-	}*/
+		//  invalidate target if dead
+		if ( !target->is_alive() )
+		{
+			_wk_target.reset();
+		}
+		else
+		{
+			//  update direction
+			_desired_direction = 
+				( target->transform->location - transform->location ).normalized();
+		}
+	}
 
 	//  rotate towards target
-	Vec3 direction = diff * ( 1.0f / distance );
-	Quaternion look_rotation = Quaternion::look_at( direction, up_direction );
+	Quaternion look_rotation = Quaternion::look_at( 
+		_desired_direction, up_direction );
 	transform->set_rotation(
 		Quaternion::slerp(
 			transform->rotation,

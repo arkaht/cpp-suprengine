@@ -1,6 +1,7 @@
 #pragma once
 
 #include <components/stylized-model-renderer.h>
+#include <components/health-component.h>
 
 #include <suprengine/components/lifetime-component.h>
 
@@ -16,7 +17,7 @@ namespace puzzle
 	public:
 		GuidedMissile( 
 			Spaceship* owner,
-			std::weak_ptr<Transform> wk_target, 
+			std::weak_ptr<HealthComponent> wk_target, 
 			Color color 
 		);
 
@@ -25,11 +26,11 @@ namespace puzzle
 		void explode();
 
 	public:
-		float move_speed = 150.0f;
+		float move_speed = 175.0f;
 		float move_acceleration = 16.0f;
 
 		float rotation_speed = 30.0f;
-		float rotation_acceleration = 2.0f;
+		float rotation_acceleration = 6.0f;
 
 		float impact_distance = 4.0f;
 		float damage_amount = 15.0f;
@@ -48,13 +49,19 @@ namespace puzzle
 	private:
 		const float LIFETIME = 6.0f;
 
+		//  Time during which rotation is locked
+		const float TIME_LOCKED_ROTATION = 0.04f;
+		//  Ratio of move speed to apply at start
+		const float STARTING_MOVE_SPEED_RATIO = 0.6f;
+
 		const Vec2 EXPLOSION_SIZE_DEVIATION { -1.0f, 1.5f };
 
 	private:
 		float _current_move_speed { 0.0f };
 		float _current_rotation_speed { 0.0f };
-
-		std::weak_ptr<Transform> _wk_target;
+		
+		Vec3 _desired_direction { Vec3::forward };
+		std::weak_ptr<HealthComponent> _wk_target;
 		Spaceship* _owner;
 
 		std::shared_ptr<StylizedModelRenderer> _model_renderer;

@@ -20,7 +20,7 @@ namespace puzzle
 		void update_this( float dt ) override;
 
 		void shoot();
-		void launch_missiles( std::weak_ptr<Transform> wk_target );
+		void launch_missiles( std::weak_ptr<HealthComponent> wk_target );
 		
 		void die();
 		void respawn();
@@ -32,6 +32,8 @@ namespace puzzle
 
 		void set_color( const Color& color );
 		Color get_color() const { return _color; }
+
+		std::shared_ptr<HealthComponent> get_health_component() const { return _health; }
 
 	public:
 		/*
