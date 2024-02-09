@@ -7,6 +7,8 @@
 
 using namespace puzzle;
 
+std::vector<Spaceship*> Spaceship::_all_spaceships;
+
 Spaceship::Spaceship()
 {
 	CameraDynamicDistanceSettings dcd_settings {};
@@ -41,6 +43,9 @@ Spaceship::Spaceship()
 	_health = create_component<HealthComponent>();
 	_health->on_damage.listen( "owner", 
 		std::bind( &Spaceship::_on_damage, this, std::placeholders::_1 ) );
+
+	//  add to list
+	_all_spaceships.push_back( this );
 }
 
 Spaceship::~Spaceship()
@@ -51,6 +56,10 @@ Spaceship::~Spaceship()
 	{
 		controller->unpossess();
 	}
+
+	//  remove from list
+	auto itr = std::find( _all_spaceships.begin(), _all_spaceships.end(), this );
+	_all_spaceships.erase( itr );
 }
 
 void Spaceship::update_this( float dt )
@@ -60,6 +69,44 @@ void Spaceship::update_this( float dt )
 
 	//  reduce shoot cooldown
 	_shoot_time = math::max( 0.0f, _shoot_time - dt );
+}
+
+Spaceship* Spaceship::find_lockable_target( 
+	const Vec3& view_direction 
+) const
+{
+	Spaceship* target { nullptr };
+
+	float best_view_alignment = -1.0f;
+	float best_distance = MISSILE_LOCK_MAX_DISTANCE;
+
+	for ( auto ship : _all_spaceships )
+	{
+		if ( ship == this ) continue;
+		
+		//  check health
+		auto health = ship->get_health_component();
+		if ( !health->is_alive() ) continue;
+
+		Vec3 diff = ship->transform->location - transform->location;
+		
+		//  check distance
+		float distance = diff.length();
+		if ( distance >= MISSILE_LOCK_MAX_DISTANCE ) continue;
+
+		//  check direction
+		Vec3 direction = diff * ( 1.0f / distance );
+		float view_alignment = Vec3::dot( direction, view_direction );
+		if ( view_alignment <= MISSILE_LOCK_DOT_THRESHOLD ) continue;
+	
+		if ( distance >= best_distance && view_alignment < best_view_alignment ) continue;
+
+		best_distance = math::min( distance, best_distance );
+		best_view_alignment = math::max( view_alignment, best_view_alignment );
+		target = ship;
+	}
+
+	return target;
 }
 
 void Spaceship::shoot()

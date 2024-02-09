@@ -37,6 +37,7 @@ void PlayerHUD::update( float dt )
 		dt * CROSSHAIR_COLOR_SMOOTH_SPEED 
 	);
 
+	//  update kill icons
 	int column = 0;
 	for ( auto itr = _kill_icons.begin(); itr != _kill_icons.end(); )
 	{
@@ -93,16 +94,16 @@ void PlayerHUD::update( float dt )
 
 void PlayerHUD::render()
 {
-	auto game = owner->get_engine();
-	auto window = game->get_window();
-	auto camera = game->camera;
+	auto engine = owner->get_engine();
+	auto window = engine->get_window();
+	auto camera = engine->camera;
 
 	auto spaceship = _controller->get_ship();
 	if ( !spaceship ) return;
 
 	Vec2 window_size = window->get_size();
 
-	//  crosshair
+	//  render crosshair
 	{
 		Vec3 aim_location = spaceship->get_shoot_location( Vec3 { 1.0f, 0.0f, 1.0f } );
 		aim_location += spaceship->transform->get_forward() * CROSSHAIR_DISTANCE;
@@ -114,6 +115,7 @@ void PlayerHUD::render()
 		}
 	}
 
+	//  render kill icons
 	int count = _kill_icons.size();
 	for ( int i = 0; i < count; i++ )
 	{
@@ -130,6 +132,24 @@ void PlayerHUD::render()
 			_kill_icon_texture,
 			data.color
 		);
+	}
+
+	//  render missile-locking target
+	Spaceship* target = _controller->get_locked_target();
+	if ( target )
+	{
+		Vec3 target_pos = camera->world_to_viewport( target->transform->location );
+		if ( target_pos.z > 0.0f )
+		{
+			_render_batch->draw_texture( 
+				(Vec2)target_pos,
+				Vec2::one * 1.0f,
+				engine->get_timer()->get_accumulated_seconds() * 3.0f,
+				Vec2 { 0.5f, 0.5f },
+				_crosshair_line_texture,
+				target->get_color()
+			);
+		}
 	}
 }
 

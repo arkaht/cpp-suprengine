@@ -120,9 +120,14 @@ void PlayerSpaceshipController::_update_shoot( float dt )
 		_possessed_ship->shoot();
 	}
 
-	if ( input_manager->is_mouse_button_just_pressed( MouseButton::Right ) )
+	//  missile
+	_locked_target = _possessed_ship->find_lockable_target( camera->transform->get_forward() );
+
+	if ( _locked_target && input_manager->is_mouse_button_just_pressed( MouseButton::Right ) )
 	{
-		_possessed_ship->launch_missiles( wk_missile_target );
+		_possessed_ship->launch_missiles( 
+			_locked_target->get_health_component() 
+		);
 	}
 }
 

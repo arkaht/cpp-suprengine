@@ -19,6 +19,10 @@ namespace puzzle
 
 		void update_this( float dt ) override;
 
+		Spaceship* find_lockable_target(
+			const Vec3& view_direction 
+		) const;
+
 		void shoot();
 		void launch_missiles( std::weak_ptr<HealthComponent> wk_target );
 		
@@ -79,6 +83,11 @@ namespace puzzle
 		//  Shoot time interval
 		const float SHOOT_TIME = 0.15f;
 
+		//  Maximum distance for locking missiles to a target
+		const float MISSILE_LOCK_MAX_DISTANCE = 500.0f;
+		//  View-Direction dot product threshold for locking a target
+		const float MISSILE_LOCK_DOT_THRESHOLD = 0.95f;
+
 		//  Explosion size bounds evaluated by a linear 
 		//  interpolation of last damage dealt
 		const Vec2  EXPLOSION_SIZE { 9.0f, 15.0f };
@@ -104,5 +113,7 @@ namespace puzzle
 		std::shared_ptr<StylizedModelRenderer> _trail_renderer;
 		std::shared_ptr<BoxCollider> _collider;
 		std::shared_ptr<HealthComponent> _health;
+
+		static std::vector<Spaceship*> _all_spaceships;
 	};
 }

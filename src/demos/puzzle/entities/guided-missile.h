@@ -33,7 +33,7 @@ namespace puzzle
 		float rotation_acceleration = 6.0f;
 
 		float impact_distance = 4.0f;
-		float damage_amount = 15.0f;
+		float damage_amount = 17.0f;
 		float knockback_force = 45.0f;
 
 		float explosion_size = 2.0f;

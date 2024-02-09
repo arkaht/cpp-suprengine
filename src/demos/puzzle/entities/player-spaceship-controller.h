@@ -18,9 +18,7 @@ namespace puzzle
 
 		void update_inputs( float dt ) override;
 
-	public:
-		//  TODO: remove and replace by auto-target system
-		std::weak_ptr<HealthComponent> wk_missile_target;
+		Spaceship* get_locked_target() const { return _locked_target; }
 
 	private:
 		//  Aim sensitivity for each axis
@@ -70,5 +68,7 @@ namespace puzzle
 		Vec3 _aim_velocity = Vec3::zero;
 
 		std::shared_ptr<Camera> camera;
+
+		Spaceship* _locked_target;
 	};
 }

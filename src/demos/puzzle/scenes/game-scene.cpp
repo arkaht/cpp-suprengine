@@ -43,8 +43,7 @@ void GameScene::init()
 	//  possess it by player
 	player_controller = new PlayerSpaceshipController();
 	player_controller->possess( spaceship1 );
-	player_controller->wk_missile_target = spaceship1->transform;
-
+	
 	ai_controller = new AISpaceshipController();
 	ai_controller->possess( spaceship2 );
 	ai_controller->target = spaceship1;
@@ -101,7 +100,6 @@ void GameScene::generate_ai_spaceships( int count )
 
 		auto controller = new AISpaceshipController();
 		controller->possess( spaceship );
-		controller->target = spaceship1;
 		controllers.push_back( controller );
 	}
 
