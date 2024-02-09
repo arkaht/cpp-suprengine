@@ -30,8 +30,9 @@ namespace puzzle
 		//  Lifetime ratio representing maximum explosion scale
 		const float FULL_SCALE_AT_LIFETIME_RATIO = 0.35f;
 
-		//  Shrinking speed when lifetime is out 
-		//  (affecting time before the entity get killed)
+		//  Shrinking speed when lifetime is out
+		//  (divided by explosion's size)
+		//  (the time it takes delays the entity's death)
 		const float LIFETIME_OUT_SHRINK_SPEED = 50.0f;
 		//  Speed for lerping outline color (white -> custom color)
 		const float COLOR_OUTLINE_SPEED = 8.0f;
