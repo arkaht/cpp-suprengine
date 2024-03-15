@@ -156,8 +156,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)external/assimp-5.3.1/lib/;$(SolutionDir)external\glew-2.1.0\lib\Release\x64;$(SolutionDir)external\SDL2_image-2.0.5\lib\x64;$(SolutionDir)external\SDL2_mixer-2.0.4\lib\x64;$(SolutionDir)external\SDL2_ttf-2.0.15\lib\x64;$(SolutionDir)external\SDL2-2.0.12\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;opengl32.lib;glew32.lib;SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)external/curve-x/lib/;$(SolutionDir)external/assimp-5.3.1/lib/;$(SolutionDir)external\glew-2.1.0\lib\Release\x64;$(SolutionDir)external\SDL2_image-2.0.5\lib\x64;$(SolutionDir)external\SDL2_mixer-2.0.4\lib\x64;$(SolutionDir)external\SDL2_ttf-2.0.15\lib\x64;$(SolutionDir)external\SDL2-2.0.12\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>curve-x.lib;assimp-vc143-mt.lib;opengl32.lib;glew32.lib;SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
       <Command>rd /S /Q "$(TargetDir)assets/$(ProjectName)/"
