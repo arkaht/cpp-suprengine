@@ -56,5 +56,7 @@ namespace puzzle
 
 		std::shared_ptr<LifetimeComponent> _lifetime_component;
 		std::shared_ptr<StylizedModelRenderer> _model_renderer;
+
+		ref<Curve> _curve_scale_over_time;
 	};
 }

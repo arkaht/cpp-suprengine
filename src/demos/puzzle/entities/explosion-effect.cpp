@@ -33,6 +33,9 @@ ExplosionEffect::ExplosionEffect(
 		random::generate( RANDOM_SCALE[2] ),
 	};
 	transform->rotation = random::generate_rotation();
+
+	//  get curves
+	_curve_scale_over_time = Assets::get_curve( "explosion-scale-over-time" );
 }
 
 void ExplosionEffect::update_this( float dt )
@@ -40,27 +43,22 @@ void ExplosionEffect::update_this( float dt )
 	const float lifetime = _max_lifetime - _lifetime_component->life_time;
 	if ( lifetime < _max_lifetime )
 	{
-		//  compute scale over lifetime
-		float scale_over_lifetime = 0.0f;
-		if ( lifetime / LIFETIME <= FULL_SCALE_AT_LIFETIME_RATIO )
-		{
-			scale_over_lifetime = easing::out_expo( 
-				lifetime / FULL_SCALE_AT_LIFETIME_RATIO );
-		}
-		else
-		{
-			//const float in_time = _max_lifetime * FULL_SCALE_AT_LIFETIME_RATIO;
-			//const float ratio = ( lifetime - in_time ) / ( _max_lifetime - in_time );
-			//scale_over_lifetime = 0.8f + 0.2f * easing::in_out_cubic( ratio );
-			//scale_over_lifetime = 1.0f - easing::in_cubic( ratio );
-			scale_over_lifetime = 1.0f;
-		}
+		//  evaluate curve
+		float t = lifetime / _max_lifetime;
+		float scale_over_lifetime = 
+			_curve_scale_over_time->evaluate_by_time( t );
 
 		//  lerp colors
 		_model_renderer->modulate = Color::lerp(
-			_model_renderer->modulate, color, dt * COLOR_OUTLINE_SPEED );
+			_model_renderer->modulate, 
+			color, 
+			dt * COLOR_OUTLINE_SPEED 
+		);
 		_model_renderer->inner_modulate = Color::lerp( 
-			_model_renderer->inner_modulate, Color::black, dt * COLOR_INNER_SPEED );
+			_model_renderer->inner_modulate, 
+			Color::black, 
+			dt * COLOR_INNER_SPEED 
+		);
 		
 		//  progressively shrink outline
 		_model_renderer->outline_scale = math::lerp( 

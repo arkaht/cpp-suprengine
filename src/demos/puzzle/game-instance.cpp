@@ -40,6 +40,10 @@ void GameInstance::load_assets()
 		"explosion1", "assets/puzzle/models/explosion1.fbx" );
 	Assets::load_model( 
 		"explosion2", "assets/puzzle/models/explosion2.fbx" );
+
+	//  curves
+	Assets::load_curve(
+		"explosion-scale-over-time", "assets/puzzle/curves/explosion-scale-over-time.cvx" );
 }
 
 void GameInstance::init()
