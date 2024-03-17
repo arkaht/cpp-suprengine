@@ -19,6 +19,7 @@ namespace suprengine
 
 	class VertexArray;
 
+	//  TODO: handle assets with ref<>
 	class Assets
 	{
 	public:
