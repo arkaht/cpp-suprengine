@@ -17,10 +17,12 @@ std::map<std::string, Texture*> Assets::_textures;
 std::map<std::string, Font*> Assets::_fonts;
 std::map<std::string, Shader*> Assets::_shaders;
 std::map<std::string, Model*> Assets::_models;
+std::map<std::string, ref<Curve>> Assets::_curves;
 
 RenderBatch* Assets::_render_batch { nullptr };
 std::string Assets::_resources_path { "" };
 Assimp::Importer Assets::_importer;
+curve_x::CurveSerializer Assets::_curve_serializer;
 
 const std::string Assets::CUBE_PATH { "assets/suprengine/meshes/cube.fbx" };
 const std::string Assets::SPHERE_PATH { "assets/suprengine/meshes/sphere.fbx" };
@@ -132,6 +134,34 @@ Model* Assets::get_model( rconst_str name )
 	return (*itr).second;
 }
 
+ref<Curve> Assets::load_curve( 
+	rconst_str name, 
+	rconst_str path 
+)
+{
+	//  read curve file
+	std::string data;
+	if ( !_read_file( path, &data ) ) return nullptr;
+
+	//  unserialize curve and store it
+	Curve temporary = _curve_serializer.unserialize( data );
+	_curves[name] = std::make_shared<Curve>( temporary );
+
+	return _curves[name];
+}
+
+ref<Curve> Assets::get_curve( rconst_str name )
+{
+	auto itr = _curves.find( name );
+	if ( itr == _curves.end() )
+	{
+		Logger::error( "Failed to get curve '" + name + "', either not loaded or the name is wrong!" );
+		return nullptr;
+	}
+
+	return (*itr).second;
+}
+
 void Assets::release()
 {
 	//  release textures
@@ -153,9 +183,39 @@ void Assets::release()
 	for ( auto& pair : _models )
 		delete pair.second;
 	_models.clear();
+
+	//  release curves
+	_curves.clear();
 }
 
-Shader* Assets::load_shader_from_file( 
+bool Assets::_read_file( rconst_str path, std::string* data )
+{
+	const char* c_path = path.c_str();
+	std::ifstream file;
+	file.open( c_path );
+
+	//  prepare output
+	*data = "";
+
+	//  check file exists
+	if ( !file.is_open() )
+	{
+		Logger::error( "File '" + path + "' doesn't exists, aborting reading from file!" );
+		return false;
+	}
+
+	//  read file's content
+	for ( std::string line; std::getline( file, line ); )
+	{
+		*data += line + '\n';
+	}
+	file.close();
+
+	Logger::info( "Read file '" + path + "'." );
+	return true;
+}
+
+Shader* Assets::load_shader_from_file(
 	rconst_str vtx_filename, 
 	rconst_str frg_filename, 
 	rconst_str tsc_filename, 

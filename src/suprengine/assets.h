@@ -9,10 +9,14 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 
+#include <curve-x/curve-serializer.h>
+
 #include <map>
 
 namespace suprengine
 {
+	using curve_x::Curve;
+
 	class VertexArray;
 
 	class Assets
@@ -40,6 +44,12 @@ namespace suprengine
 		static Model* load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
 		static Model* get_model( rconst_str name );
 
+		static ref<Curve> load_curve( 
+			rconst_str name, 
+			rconst_str path 
+		);
+		static ref<Curve> get_curve( rconst_str name );
+
 		static void release();
 
 	private:
@@ -47,10 +57,14 @@ namespace suprengine
 		static std::map<std::string, Font*> _fonts;
 		static std::map<std::string, Shader*> _shaders;
 		static std::map<std::string, Model*> _models;
+		static std::map<std::string, ref<Curve>> _curves;
 
 		static RenderBatch* _render_batch;
 		static std::string _resources_path;
 		static Assimp::Importer _importer;
+		static curve_x::CurveSerializer _curve_serializer;
+
+		static bool _read_file( rconst_str path, std::string* data );
 
 		static Shader* load_shader_from_file( rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path, rconst_str tse_path, rconst_str geo_path );
 		
