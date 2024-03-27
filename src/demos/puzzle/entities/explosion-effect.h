@@ -27,19 +27,8 @@ namespace puzzle
 		const float LIFETIME = 1.5f;
 		//  Lifetime random deviation to add
 		const float LIFETIME_DEVIATION = 0.2f;
-		//  Lifetime ratio representing maximum explosion scale
-		const float FULL_SCALE_AT_LIFETIME_RATIO = 0.35f;
 
-		//  Shrinking speed when lifetime is out
-		//  (divided by explosion's size)
-		//  (the time it takes delays the entity's death)
-		const float LIFETIME_OUT_SHRINK_SPEED = 50.0f;
-		//  Speed for lerping outline color (white -> custom color)
-		const float COLOR_OUTLINE_SPEED = 8.0f;
-		//  Speed for lerping inner color (custom color -> black)
-		const float COLOR_INNER_SPEED = 4.0f;
-
-		//  Starting outline scale (progressively shrinking to zero over lifetime)
+		//  Maximum outline scale
 		const float OUTLINE_SCALE = 0.3f;
 
 		//  Random scale-bounds per axis to apply
@@ -57,6 +46,9 @@ namespace puzzle
 		std::shared_ptr<LifetimeComponent> _lifetime_component;
 		std::shared_ptr<StylizedModelRenderer> _model_renderer;
 
-		ref<Curve> _curve_scale_over_time;
+		ref<Curve> _curve_transform_scale;
+		ref<Curve> _curve_outline_scale;
+		ref<Curve> _curve_outline_color;
+		ref<Curve> _curve_inner_color;
 	};
 }

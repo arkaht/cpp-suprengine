@@ -43,7 +43,13 @@ void GameInstance::load_assets()
 
 	//  curves
 	Assets::load_curve(
-		"explosion-scale-over-time", "assets/puzzle/curves/explosion-scale-over-time.cvx" );
+		"explosion-transform-scale", "assets/puzzle/curves/explosion-transform-scale.cvx" );
+	Assets::load_curve(
+		"explosion-outline-scale", "assets/puzzle/curves/explosion-outline-scale.cvx" );
+	Assets::load_curve(
+		"explosion-outline-color", "assets/puzzle/curves/explosion-outline-color.cvx" );
+	Assets::load_curve(
+		"explosion-inner-color", "assets/puzzle/curves/explosion-inner-color.cvx" );
 }
 
 void GameInstance::init()
