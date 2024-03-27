@@ -35,10 +35,10 @@ ExplosionEffect::ExplosionEffect(
 	transform->rotation = random::generate_rotation();
 
 	//  get curves
-	_curve_transform_scale = Assets::get_curve( "explosion-transform-scale" );
-	_curve_outline_scale = Assets::get_curve( "explosion-outline-scale" );
-	_curve_outline_color = Assets::get_curve( "explosion-outline-color" );
-	_curve_inner_color = Assets::get_curve( "explosion-inner-color" );
+	_curve_transform_scale = Assets::get_curve( "explosion/transform-scale" );
+	_curve_outline_scale = Assets::get_curve( "explosion/outline-scale" );
+	_curve_outline_color = Assets::get_curve( "explosion/outline-color" );
+	_curve_inner_color = Assets::get_curve( "explosion/inner-color" );
 }
 
 void ExplosionEffect::update_this( float dt )
