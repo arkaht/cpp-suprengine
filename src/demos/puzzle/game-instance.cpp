@@ -42,14 +42,7 @@ void GameInstance::load_assets()
 		"explosion2", "assets/puzzle/models/explosion2.fbx" );
 
 	//  curves
-	Assets::load_curve(
-		"explosion-transform-scale", "assets/puzzle/curves/explosion-transform-scale.cvx" );
-	Assets::load_curve(
-		"explosion-outline-scale", "assets/puzzle/curves/explosion-outline-scale.cvx" );
-	Assets::load_curve(
-		"explosion-outline-color", "assets/puzzle/curves/explosion-outline-color.cvx" );
-	Assets::load_curve(
-		"explosion-inner-color", "assets/puzzle/curves/explosion-inner-color.cvx" );
+	Assets::load_curves_in_folder( "assets/puzzle/curves/", true );
 }
 
 void GameInstance::init()

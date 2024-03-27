@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <filesystem>
 
 #include <rapidjson/document.h>
 
@@ -134,6 +135,42 @@ Model* Assets::get_model( rconst_str name )
 	return (*itr).second;
 }
 
+void Assets::load_curves_in_folder( 
+	rconst_str path, 
+	bool is_recursive,
+	rconst_str name_prefix
+)
+{
+	Logger::info( "Loading curves in folder '" + path + "':" );
+
+	std::filesystem::directory_iterator itr( path );
+	for ( const auto& entry : itr )
+	{
+		auto& path = entry.path();
+
+		//  ignore directories
+		if ( entry.is_directory() )
+		{
+			//  if is recursive loading, load the folder
+			if ( is_recursive )
+			{
+				load_curves_in_folder( 
+					path.string(), 
+					true, 
+					path.filename().string() + "/"
+				);
+			}
+			continue;
+		}
+
+		//  load curve file
+		load_curve( 
+			name_prefix + path.filename().replace_extension().string(),
+			path.string()
+		);
+	}
+}
+
 ref<Curve> Assets::load_curve( 
 	rconst_str name, 
 	rconst_str path 
@@ -147,6 +184,7 @@ ref<Curve> Assets::load_curve(
 	Curve temporary = _curve_serializer.unserialize( data );
 	_curves[name] = std::make_shared<Curve>( temporary );
 
+	Logger::info( "Registered Curve asset as '" + name + "'." );
 	return _curves[name];
 }
 

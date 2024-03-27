@@ -45,6 +45,11 @@ namespace suprengine
 		static Model* load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
 		static Model* get_model( rconst_str name );
 
+		static void load_curves_in_folder( 
+			rconst_str path, 
+			bool is_recursive = false,
+			rconst_str name_prefix = ""
+		);
 		static ref<Curve> load_curve( 
 			rconst_str name, 
 			rconst_str path 
