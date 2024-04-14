@@ -127,7 +127,7 @@ namespace suprengine::math
 	template <typename T>
 	inline T lerp( T a, T b, float f )
 	{
-		return a + f * ( b - a );
+		return a + (T)( f * ( b - a ) );
 	}
 
 	inline float sqrt( float value )
