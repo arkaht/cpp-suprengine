@@ -1,5 +1,6 @@
 #include "spaceship.h"
 
+#include <suprengine/assets.h>
 #include <entities/guided-missile.h>
 #include <entities/explosion-effect.h>
 

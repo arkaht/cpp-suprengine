@@ -1,5 +1,6 @@
 #include "player-hud.h"
 
+#include <suprengine/assets.h>
 #include <suprengine/easing.h>
 
 #include <entities/player-spaceship-controller.h>

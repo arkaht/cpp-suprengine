@@ -84,7 +84,7 @@ bool BoxCollider::raycast( _RAYCAST_FUNC_PARAMS )
 
 void BoxCollider::debug_render( RenderBatch* render_batch )
 {
-	auto model = Assets::get_model( "suprengine::cube" );
+	auto model = Assets::get_model( Assets::CUBE_PATH );
 	Mtx4 matrix = Mtx4::create_from_transform( 
 		shape.max * transform->scale,
 		Quaternion::identity/*transform->rotation*/,  //  rotation is not handled yet

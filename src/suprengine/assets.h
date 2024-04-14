@@ -5,18 +5,16 @@
 
 #include <suprengine/shader.h>
 #include <suprengine/model.h>
+#include <suprengine/curve.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 
-#include <curve-x/curve-serializer.h>
 
 #include <map>
 
 namespace suprengine
 {
-	using curve_x::Curve;
-
 	class VertexArray;
 
 	//  TODO: handle assets with ref<>

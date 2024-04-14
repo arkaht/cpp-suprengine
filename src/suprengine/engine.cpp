@@ -1,5 +1,7 @@
 #include "engine.h"
 
+#include <suprengine/vec2.h>
+#include <suprengine/assets.h>
 #include <suprengine/entity.h>
 #include <suprengine/components/transform.h>
 #include <suprengine/components/collider.h>
@@ -31,6 +33,43 @@ Engine::~Engine()
 
 	//  quit sdl
 	SDL_Quit();
+}
+
+bool Engine::init( IGame* game )
+{
+	game->set_engine( this );
+	_game = std::unique_ptr<IGame>( game );
+
+	//  get game infos
+	auto infos = _game->get_infos();
+
+	//  init window
+	_window = std::make_unique<Window>( 
+		infos.title, 
+		infos.width, 
+		infos.height
+	);
+	if ( !_window->init() ) return false;
+
+	//  init render batch
+	_render_batch = std::unique_ptr<RenderBatch>( 
+		game->create_render_batch( get_window() ) 
+	);
+	Assets::set_render_batch( get_render_batch() );
+	if ( !_render_batch->init() ) return false;
+
+	//  setup window size on render batch
+	_render_batch->on_window_resized( _window->get_size() );
+
+	//  init managers
+	_inputs = std::make_unique<InputManager>();
+	_physics = std::make_unique<Physics>();
+
+	//  init game
+	_game->load_assets();
+	_game->init();
+
+	return true;
 }
 
 void Engine::loop()

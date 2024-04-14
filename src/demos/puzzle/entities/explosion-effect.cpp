@@ -1,5 +1,6 @@
 #include "explosion-effect.h"
 
+#include <suprengine/assets.h>
 #include <suprengine/easing.h>
 #include <suprengine/random.h>
 

@@ -209,6 +209,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="components\target-rotator.h" />
     <ClInclude Include="components\transform.fwd.h" />
     <ClInclude Include="components\transform.h" />
+    <ClInclude Include="curve.h" />
     <ClInclude Include="easing.h" />
     <ClInclude Include="entity.fwd.h" />
     <ClInclude Include="entity.h" />

@@ -2,6 +2,7 @@
 
 #include <components/stylized-model-renderer.h>
 
+#include <suprengine/curve.h>
 #include <suprengine/components/lifetime-component.h>
 
 namespace puzzle

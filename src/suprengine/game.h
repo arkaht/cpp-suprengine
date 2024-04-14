@@ -24,8 +24,11 @@ namespace suprengine
 		virtual void init() = 0;
 		virtual void release() = 0;
 
+		virtual RenderBatch* create_render_batch( Window* window ) = 0;
+
 		virtual GameInfos get_infos() const = 0;
 
+		virtual void set_engine( Engine* ) = 0;
 		virtual Engine* get_engine() const = 0;
 	};
 
@@ -39,18 +42,21 @@ namespace suprengine
 
 	public:
 		Game() {}
-		Engine* get_engine() const { return _engine; }
+
+		RenderBatch* create_render_batch( Window* window ) override
+		{
+			_render_batch = new TRenderBatch( window );
+			return _render_batch;
+		}
+
+		void set_engine( Engine* engine ) override { _engine = engine; };
+
+		Engine* get_engine() const override { return _engine; }
 		TRenderBatch* get_render_batch() const { return _render_batch; }
 		
 	private:
 		TRenderBatch* _render_batch { nullptr };
 		Engine* _engine { nullptr };
-
-		TRenderBatch* _create_render_batch( Window* window )
-		{
-			_render_batch = new TRenderBatch( window );
-			return _render_batch;
-		}
 
 		friend class Engine;
 	};

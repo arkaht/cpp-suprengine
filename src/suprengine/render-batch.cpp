@@ -1,5 +1,6 @@
 #include "render-batch.h"
 
+#include <suprengine/texture.h>
 #include <suprengine/game.h>
 #include <suprengine/components/renderer.h>
 
