@@ -26,5 +26,7 @@ namespace puzzle
 
 		PlayerSpaceshipController* player_controller { nullptr };
 		AISpaceshipController* ai_controller { nullptr };
+
+		float spawn_time { 0.0f };
 	};
 }

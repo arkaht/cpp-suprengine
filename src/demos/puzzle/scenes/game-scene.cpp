@@ -1,5 +1,7 @@
 #include "game-scene.h"
 
+#include "entities/explosion-effect.h"
+
 using namespace puzzle;
 
 void GameScene::init()
@@ -79,6 +81,13 @@ void GameScene::update( float dt )
 	if ( inputs->is_key_just_pressed( SDL_SCANCODE_2 ) )
 	{
 		player_controller->possess( spaceship2 );
+	}
+
+	if ( ( spawn_time -= dt ) <= 0.0f )
+	{
+		auto explosion = new ExplosionEffect( 15.0f, random::generate_color() );
+		explosion->transform->location = Vec3 { 0.0f, 100.0f, 0.0f };
+		spawn_time += 2.5f;
 	}
 }
 
