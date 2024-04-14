@@ -59,7 +59,6 @@ namespace suprengine
 		static void release();
 
 	private:
-		using path = std::filesystem::path;
 		using filewatcher = filewatch::FileWatch<std::string>;
 
 		static std::map<std::string, Texture*> _textures;
