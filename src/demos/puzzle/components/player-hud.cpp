@@ -116,7 +116,7 @@ void PlayerHUD::render()
 	}
 
 	//  render kill icons
-	int count = _kill_icons.size();
+	int count = (int)_kill_icons.size();
 	for ( int i = 0; i < count; i++ )
 	{
 		const auto& data = _kill_icons[i];

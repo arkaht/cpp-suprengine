@@ -24,7 +24,7 @@ bool Window::init()
 	_sdl_window = SDL_CreateWindow( 
 		_title.c_str(), 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
-		_size.x, _size.y,
+		(int)_size.x, (int)_size.y,
 		SDL_WINDOW_OPENGL
 	);
 	if ( _sdl_window == nullptr )
@@ -68,7 +68,7 @@ void Window::set_mode( WindowMode mode )
 			break;
 		case WindowMode::BorderlessFullscreen:
 			SDL_SetWindowBordered( _sdl_window, SDL_FALSE );
-			SDL_SetWindowPosition( _sdl_window, 0.0f, 0.0f );
+			SDL_SetWindowPosition( _sdl_window, 0, 0 );
 			set_size( Vec2 { (float)display.w, (float)display.h }, false );
 			break;
 	}
@@ -85,7 +85,7 @@ void Window::set_size( Vec2 size, bool is_new_size )
 	_current_size = size;
 
 	//  resize window
-	SDL_SetWindowSize( _sdl_window, size.x, size.y );
+	SDL_SetWindowSize( _sdl_window, (int)size.x, (int)size.y );
 
 	//  broadcast event
 	on_size_changed.invoke( size );
