@@ -33,7 +33,7 @@ namespace suprengine::math
 		return fabs( val ) <= epsilon;
 	}
 
-	static bool near( float value, float target, float epsilon = EPSILON )
+	static bool near_value( float value, float target, float epsilon = EPSILON )
 	{
 		float diff = abs( value - target );
 		return diff <= epsilon;

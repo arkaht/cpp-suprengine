@@ -118,16 +118,16 @@ namespace suprengine
 
 		bool operator==( const Vec2& vec2 )
 		{
-			return math::near( x, vec2.x ) 
-				&& math::near( y, vec2.y )
-				&& math::near( z, 0.0f );
+			return math::near_value( x, vec2.x ) 
+			    && math::near_value( y, vec2.y )
+			    && math::near_value( z, 0.0f );
 		}
 
 		bool operator==( const Vec3& vec3 )
 		{
-			return math::near( x, vec3.x )
-				&& math::near( y, vec3.y )
-				&& math::near( z, vec3.z );
+			return math::near_value( x, vec3.x )
+			    && math::near_value( y, vec3.y )
+			    && math::near_value( z, vec3.z );
 		}
 	};
 }

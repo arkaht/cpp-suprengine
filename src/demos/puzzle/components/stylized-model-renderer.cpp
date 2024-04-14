@@ -36,7 +36,7 @@ void StylizedModelRenderer::render()
 	}
 
 	//  draw outline
-	if ( !math::near( offset_scale, 1.0f ) )
+	if ( !math::near_value( offset_scale, 1.0f ) )
 	{
 		//  compute outline matrix
 		Mtx4 outline_matrix = Mtx4::create_from_transform( 
