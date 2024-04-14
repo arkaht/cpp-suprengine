@@ -42,7 +42,7 @@ void GameInstance::load_assets()
 		"explosion2", "assets/puzzle/models/explosion2.fbx" );
 
 	//  curves
-	Assets::load_curves_in_folder( "assets/puzzle/curves/", true );
+	Assets::load_curves_in_folder( "assets/puzzle/curves/", true, true );
 }
 
 void GameInstance::init()

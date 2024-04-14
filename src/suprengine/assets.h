@@ -10,6 +10,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 
+#include <filewatch/FileWatch.hpp>
 
 #include <map>
 
@@ -23,7 +24,7 @@ namespace suprengine
 	public:
 		static const std::string CUBE_PATH;
 		static const std::string SPHERE_PATH;
-
+		
 		Assets() = delete;
 
 		static void set_render_batch( RenderBatch* render_batch ) { _render_batch = render_batch; }
@@ -46,6 +47,7 @@ namespace suprengine
 		static void load_curves_in_folder( 
 			rconst_str path, 
 			bool is_recursive = false,
+			bool should_auto_reload = false,
 			rconst_str name_prefix = ""
 		);
 		static ref<Curve> load_curve( 
@@ -57,11 +59,16 @@ namespace suprengine
 		static void release();
 
 	private:
+		using path = std::filesystem::path;
+		using filewatcher = filewatch::FileWatch<std::string>;
+
 		static std::map<std::string, Texture*> _textures;
 		static std::map<std::string, Font*> _fonts;
 		static std::map<std::string, Shader*> _shaders;
 		static std::map<std::string, Model*> _models;
 		static std::map<std::string, ref<Curve>> _curves;
+
+		static std::vector<ref<filewatcher>> _filewatchers;
 
 		static RenderBatch* _render_batch;
 		static std::string _resources_path;

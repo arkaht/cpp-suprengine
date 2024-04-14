@@ -20,6 +20,8 @@ std::map<std::string, Shader*> Assets::_shaders;
 std::map<std::string, Model*> Assets::_models;
 std::map<std::string, ref<Curve>> Assets::_curves;
 
+std::vector<ref<Assets::filewatcher>> Assets::_filewatchers;
+
 RenderBatch* Assets::_render_batch { nullptr };
 std::string Assets::_resources_path { "" };
 Assimp::Importer Assets::_importer;
@@ -138,6 +140,7 @@ Model* Assets::get_model( rconst_str name )
 void Assets::load_curves_in_folder( 
 	rconst_str path, 
 	bool is_recursive,
+	bool should_auto_reload,
 	rconst_str name_prefix
 )
 {
@@ -146,7 +149,7 @@ void Assets::load_curves_in_folder(
 	std::filesystem::directory_iterator itr( path );
 	for ( const auto& entry : itr )
 	{
-		auto& path = entry.path();
+		auto& file_path = entry.path();
 
 		//  ignore directories
 		if ( entry.is_directory() )
@@ -155,9 +158,10 @@ void Assets::load_curves_in_folder(
 			if ( is_recursive )
 			{
 				load_curves_in_folder( 
-					path.string(), 
+					file_path.string(), 
 					true, 
-					path.filename().string() + "/"
+					false,
+					file_path.filename().string() + "/"
 				);
 			}
 			continue;
@@ -165,9 +169,54 @@ void Assets::load_curves_in_folder(
 
 		//  load curve file
 		load_curve( 
-			name_prefix + path.filename().replace_extension().string(),
-			path.string()
+			name_prefix + file_path.filename().replace_extension().string(),
+			file_path.string()
 		);
+	}
+
+	if ( should_auto_reload )
+	{
+		//  setup file watcher and auto reload
+		auto watcher = std::make_shared<filewatcher>(
+			path,
+			[name_prefix, path]( const std::string& file, const filewatch::Event event )
+			{
+				//  concatenate the file path with the directory
+				const std::filesystem::path file_path = path + file;
+
+				//  get asset name prefix from file path
+				const std::string file_name = file_path.filename().string();
+				std::string prefix = name_prefix + file;
+				std::replace( prefix.begin(), prefix.end(), '\\', '/' );
+				if ( auto index = prefix.find( file_name ) )
+				{
+					prefix.erase( index );
+				}
+
+				/*const auto last_write_time = std::filesystem::last_write_time( file_path );
+				std::cout << "File event on '" 
+						  << file_path << "', prefix: '"
+						  << prefix << "', last write time: " 
+						  << last_write_time << std::endl;*/
+
+				switch( event )
+				{
+					//  TODO: Find a workaround because of the modified 
+					//		  event always being called twice.
+					case filewatch::Event::modified:
+
+						Logger::info( "Auto-reloading Curve file '" + file_path.string() + "'" );
+
+						load_curve( 
+							prefix + file_path.filename().replace_extension().string(),
+							file_path.string()
+						);
+						break;
+				}
+			}
+		);
+		_filewatchers.push_back( watcher );
+		Logger::info( "Added a file watcher on directory '" + path + "'" );
 	}
 }
 
@@ -182,6 +231,10 @@ ref<Curve> Assets::load_curve(
 
 	//  unserialize curve and store it
 	Curve temporary = _curve_serializer.unserialize( data );
+	/*if ( _curves.find( name ) != _curves.end() )
+	{
+		Logger::info( "Replacing existing Curve asset named '" + name + "'." );
+	}*/
 	_curves[name] = std::make_shared<Curve>( temporary );
 
 	Logger::info( "Registered Curve asset as '" + name + "'." );
