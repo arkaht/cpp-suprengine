@@ -24,8 +24,8 @@ ExplosionEffect::ExplosionEffect(
 		+ random::generate( -LIFETIME_DEVIATION, LIFETIME_DEVIATION );
 
 	_lifetime_component = create_component<LifetimeComponent>( _max_lifetime );
-	/*_lifetime_component->on_time_out.listen( "owner",
-		std::bind( &ExplosionEffect::kill, this ) );*/
+	_lifetime_component->on_time_out.listen( "owner",
+		std::bind( &ExplosionEffect::kill, this ) );
 	
 	_scale = Vec3 {
 		random::generate( RANDOM_SCALE[0] ),
@@ -44,12 +44,6 @@ ExplosionEffect::ExplosionEffect(
 void ExplosionEffect::update_this( float dt )
 {
 	const float lifetime = _max_lifetime - _lifetime_component->life_time;
-	if ( lifetime >= _max_lifetime )
-	{
-		kill();
-		return;
-	}
-
 	const float t = lifetime / _max_lifetime;
 
 	//  lerp outline color
