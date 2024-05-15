@@ -12,16 +12,14 @@ namespace suprengine
 	public:
 		static int generate( int min, int max )
 		{
-			static std::mt19937 _generator( (unsigned int)std::time( nullptr ) );
 			std::uniform_int_distribution<> dist( min, max );
-			return dist( _generator );
+			return dist( get_generator() );
 		}
 
 		static float generate( float min, float max )
 		{
-			static std::mt19937 _generator( (unsigned int)std::time( nullptr ) );
 			std::uniform_real_distribution<> dist( (double)min, (double)max );
-			return (float)dist( _generator );
+			return (float)dist( get_generator() );
 		}
 
 		static float generate( const Vec2& bounds )
@@ -82,6 +80,18 @@ namespace suprengine
 		static const T& generate( const std::vector<T>& list )
 		{
 			return list[generate( 0, (int)list.size() - 1 )];
+		}
+
+		static void seed( unsigned int seed )
+		{
+			auto& generator = get_generator();
+			generator.seed( seed );
+		}
+
+		static std::mt19937& get_generator()
+		{
+			static std::mt19937 generator( (unsigned int)std::time( nullptr ) );
+			return generator;
 		}
 	};
 }

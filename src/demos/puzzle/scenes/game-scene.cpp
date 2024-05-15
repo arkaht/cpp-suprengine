@@ -6,6 +6,8 @@ using namespace puzzle;
 
 void GameScene::init()
 {
+	random::seed( _seed );
+
 	//  setup planet
 	auto planet = new Entity();
 	planet->transform->location = Vec3 { 2000.0f, 500.0f, 30.0f };

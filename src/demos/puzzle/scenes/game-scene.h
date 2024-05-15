@@ -28,5 +28,7 @@ namespace puzzle
 		AISpaceshipController* ai_controller { nullptr };
 
 		float spawn_time { 0.0f };
+
+		unsigned int _seed = (unsigned int)std::time( nullptr );
 	};
 }
