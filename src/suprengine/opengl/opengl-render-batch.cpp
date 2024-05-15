@@ -104,13 +104,6 @@ bool OpenGLRenderBatch::init()
 
 void OpenGLRenderBatch::begin_render()
 {
-	_camera = _engine->camera;
-	if ( _camera == nullptr )
-	{
-		Logger::error( "no main camera, rendering aborted!" );
-		return;
-	}
-
 	//  clear screen
 	glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
 	glClearColor(
@@ -120,6 +113,14 @@ void OpenGLRenderBatch::begin_render()
 		_background_color.a / 255.0f
 	);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	//  check camera
+	_camera = _engine->camera;
+	if ( _camera == nullptr )
+	{
+		Logger::error( "no main camera, rendering aborted!" );
+		return;
+	}
 
 	//  activate shader & vertex array
 	_view_matrix = _camera->get_view_matrix() * _camera->get_projection_matrix();
