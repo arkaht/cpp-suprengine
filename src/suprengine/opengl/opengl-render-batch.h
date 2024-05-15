@@ -73,6 +73,11 @@ namespace suprengine
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;
 
+		void set_samples( unsigned int samples );
+		void update_framebuffers();
+
+		unsigned int get_samples() { return _samples; }
+
 	private:
 		void _load_assets();
 
@@ -83,10 +88,14 @@ namespace suprengine
 		void _draw_elements( int indices_count );
 	
 	private:
+		Vec2 _viewport_size;
+
 		SDL_GLContext _gl_context { nullptr };
 
 		unsigned int _fbo = 0, _pp_fbo = 0, _rbo = 0;
 		unsigned int _framebuffer_texture = 0, _pp_texture = 0;
+
+		unsigned int _samples = 8;
 
 		VertexArray* _rect_vertex_array { nullptr };
 		VertexArray* _quad_vertex_array { nullptr };

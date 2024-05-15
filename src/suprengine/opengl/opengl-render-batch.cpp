@@ -29,8 +29,6 @@ constexpr unsigned int RECT_INDICES[] = {
 	2, 3, 0
 };
 
-int samples = 8;
-
 OpenGLRenderBatch::~OpenGLRenderBatch()
 {
 	SDL_GL_DeleteContext( _gl_context );
@@ -211,10 +209,10 @@ void OpenGLRenderBatch::end_render()
 
 void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 {
-	int width = (int)size.x, height = (int)size.y;
+	_viewport_size = size;
 
 	//  update viewport
-	glViewport( 0, 0, width, height );
+	glViewport( 0, 0, (int)_viewport_size.x, (int)_viewport_size.y );
 
 	//  update screen offset
 	_screen_offset = Vec3( size * 0.5f, 0.0f );
@@ -224,9 +222,7 @@ void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 		size.x, size.y
 	);
 
-	//  update framebuffers
-	_release_framebuffers();
-	_create_framebuffers( width, height );
+	update_framebuffers();
 }
 
 void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
@@ -402,6 +398,18 @@ void OpenGLRenderBatch::clip( const Rect& region )
 	//  TODO: support clipping
 }
 
+void OpenGLRenderBatch::set_samples( unsigned int samples )
+{
+	_samples = samples;
+	update_framebuffers();
+}
+
+void OpenGLRenderBatch::update_framebuffers()
+{
+	_release_framebuffers();
+	_create_framebuffers( (int)_viewport_size.x, (int)_viewport_size.y );
+}
+
 void OpenGLRenderBatch::_load_assets()
 {
 	//  create vertex array
@@ -487,11 +495,19 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 	glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
 
 	//  create framebuffer texture
-	int target = GL_TEXTURE_2D_MULTISAMPLE;
+	int target = _samples > 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	glGenTextures( 1, &_framebuffer_texture );
 	glBindTexture( target, _framebuffer_texture );
-	glTexImage2DMultisample(
-		target, samples, GL_RGB, width, height, GL_TRUE );
+	if ( _samples > 0 )
+	{
+		glTexImage2DMultisample(
+			target, _samples, GL_RGB, width, height, GL_TRUE );
+	}
+	else
+	{
+		glTexImage2D(
+				target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
+	}
 	glTexParameteri(
 		target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri(
@@ -502,7 +518,7 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 		target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
-		GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+		GL_COLOR_ATTACHMENT0, target,
 		_framebuffer_texture,
 		0
 	);
@@ -510,12 +526,23 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 	//  create renderbuffer object
 	glGenRenderbuffers( 1, &_rbo );
 	glBindRenderbuffer( GL_RENDERBUFFER, _rbo );
-	glRenderbufferStorageMultisample(
-		GL_RENDERBUFFER,
-		samples,
-		GL_DEPTH24_STENCIL8,
-		width, height
-	);
+	if ( _samples > 0 )
+	{
+		glRenderbufferStorageMultisample(
+			GL_RENDERBUFFER,
+			_samples,
+			GL_DEPTH24_STENCIL8,
+			width, height
+		);
+	}
+	else
+	{
+		glRenderbufferStorage(
+			GL_RENDERBUFFER,
+			GL_DEPTH24_STENCIL8,
+			width, height
+		);
+	}
 	glFramebufferRenderbuffer(
 		GL_FRAMEBUFFER,
 		GL_DEPTH_STENCIL_ATTACHMENT,
