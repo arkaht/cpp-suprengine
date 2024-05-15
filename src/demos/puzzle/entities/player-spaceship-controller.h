@@ -3,6 +3,8 @@
 
 namespace puzzle
 {
+	class PlayerHUD;
+	
 	using namespace suprengine;
 
 	class PlayerSpaceshipController : public SpaceshipController
@@ -19,6 +21,11 @@ namespace puzzle
 		void update_inputs( float dt ) override;
 
 		Spaceship* get_locked_target() const { return _locked_target; }
+		ref<Camera> get_camera() const { return camera; }
+		ref<PlayerHUD> get_hud() const { return hud; }
+
+	public:
+		bool is_inputs_enabled = true;
 
 	private:
 		//  Aim sensitivity for each axis
@@ -67,8 +74,9 @@ namespace puzzle
 	private:
 		Vec3 _aim_velocity = Vec3::zero;
 
-		std::shared_ptr<Camera> camera;
+		ref<Camera> camera;
+		ref<PlayerHUD> hud;
 
-		Spaceship* _locked_target;
+		Spaceship* _locked_target { nullptr };
 	};
 }

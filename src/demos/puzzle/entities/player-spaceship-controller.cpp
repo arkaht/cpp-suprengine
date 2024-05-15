@@ -8,7 +8,7 @@ using namespace puzzle;
 
 PlayerSpaceshipController::PlayerSpaceshipController()
 {
-	create_component_pro<PlayerHUD>( this );
+	hud = create_component_pro<PlayerHUD>( this );
 
 	//  setup camera settings
 	CameraProjectionSettings projection_settings {};
@@ -49,6 +49,7 @@ void PlayerSpaceshipController::on_unpossess()
 void PlayerSpaceshipController::update_inputs( float dt )
 {
 	auto input_manager = _engine->get_inputs();
+	if ( !is_inputs_enabled ) return;
 
 	//  movement inputs
 	_inputs.throttle_delta = input_manager->get_keys_as_axis( 

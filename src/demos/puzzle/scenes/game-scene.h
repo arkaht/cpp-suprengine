@@ -12,9 +12,13 @@
 
 namespace puzzle 
 {
+	class GameInstance;
+
 	class GameScene : public Scene
 	{
 	public:
+		GameScene( GameInstance* game_instance );
+
 		void init() override;
 		void update( float dt ) override;
 
@@ -24,11 +28,19 @@ namespace puzzle
 		Spaceship* spaceship1 { nullptr };
 		Spaceship* spaceship2 { nullptr };
 
+		GameInstance* _game_instance { nullptr };
+
 		PlayerSpaceshipController* player_controller { nullptr };
 		AISpaceshipController* ai_controller { nullptr };
 
 		float spawn_time { 0.0f };
 
 		unsigned int _seed = (unsigned int)std::time( nullptr );
+
+		ref<Camera> _temporary_camera;
+		ref<ModelRenderer> _temporary_camera_model;
+
+		Vec3 _player_location = Vec3::zero;
+		Quaternion _player_rotation = Quaternion::identity;
 	};
 }

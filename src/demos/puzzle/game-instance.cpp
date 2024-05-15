@@ -58,7 +58,7 @@ void GameInstance::init()
 	render_batch->set_background_color( Color::from_0x( 0x00000000 ) );
 
     //  load scene
-	engine.create_scene<GameScene>();
+	engine.create_scene<GameScene>( this );
 }
 
 void GameInstance::release()
