@@ -130,6 +130,9 @@ void Engine::clear_entities()
 	{
 		delete _entities.back();
 	}
+
+	//  clear camera
+	camera = nullptr;
 }
 
 void Engine::add_timer( const Timer& timer )
