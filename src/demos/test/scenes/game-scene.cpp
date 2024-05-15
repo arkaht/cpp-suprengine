@@ -1,6 +1,7 @@
 #include "game-scene.h"
 
 #include <suprengine/opengl/opengl-render-batch.h>
+#include <suprengine/assets.h>
 
 using namespace test;
 
@@ -35,7 +36,7 @@ void GameScene::init()
 	auto camera_owner = new CameraDemo( sphere );
 	camera_owner->transform->location = Vec3 { 5.0f, 3.0f, 7.0f };
 	camera_owner->transform->look_at( cylinder->transform->location );
-	camera_owner->create_component<Mover>();
+	//camera_owner->create_component<Mover>();
 	//camera_owner->create_component<MouseLooker>( 2.0f );
 	auto camera = camera_owner->create_component<Camera>( CameraProjectionSettings {} );
 	camera->activate();
