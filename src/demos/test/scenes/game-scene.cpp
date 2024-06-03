@@ -7,9 +7,10 @@ using namespace test;
 
 void GameScene::init()
 {
-	Model* cube_model = Assets::get_model( MESH_CUBE );
-	Model* cylinder_model = Assets::get_model( MESH_CYLINDER );
-	Model* sphere_model = Assets::get_model( MESH_SPHERE );
+	auto cube_model = Assets::get_model( MESH_CUBE );
+	auto cylinder_model = Assets::get_model( MESH_CYLINDER );
+	auto sphere_model = Assets::get_model( MESH_SPHERE );
+
 
 	//  setup ground
 	auto ground = new Entity();

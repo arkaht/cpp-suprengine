@@ -41,8 +41,8 @@ namespace suprengine
 		static Shader* load_shader( rconst_str name, rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path = "", rconst_str tse_path = "", rconst_str geo_path = "", bool append_resources_path = true );
 		static Shader* get_shader( rconst_str name );
 
-		static Model* load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
-		static Model* get_model( rconst_str name );
+		static ref<Model> load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
+		static ref<Model> get_model( rconst_str name );
 
 		static void load_curves_in_folder( 
 			rconst_str path, 
@@ -64,7 +64,7 @@ namespace suprengine
 		static std::map<std::string, Texture*> _textures;
 		static std::map<std::string, Font*> _fonts;
 		static std::map<std::string, Shader*> _shaders;
-		static std::map<std::string, Model*> _models;
+		static std::map<std::string, ref<Model>> _models;
 		static std::map<std::string, ref<Curve>> _curves;
 
 		static std::vector<ref<filewatcher>> _filewatchers;

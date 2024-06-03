@@ -320,7 +320,7 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 
 void OpenGLRenderBatch::draw_model( 
 	const Mtx4& matrix, 
-	Model* model, 
+	const ref<Model>& model, 
 	rconst_str shader_name,
 	const Color& color
 )
@@ -370,7 +370,7 @@ void OpenGLRenderBatch::draw_model(
 
 void OpenGLRenderBatch::draw_debug_model( 
 	const Mtx4& matrix, 
-	Model* model, 
+	const ref<Model>& model, 
 	const Color& color 
 )
 {
@@ -459,28 +459,28 @@ void OpenGLRenderBatch::_load_assets()
 	auto texture = Assets::get_texture( TEXTURE_MEDIUM_GRID );
 
 	//  load models
-	Model* arrow_model = Assets::load_model(
+	auto arrow_model = Assets::load_model(
 		MESH_ARROW,
 		"assets/suprengine/models/arrow.fbx",
 		SHADER_LIT_MESH
 	);
 	arrow_model->get_mesh( 0 )->add_texture( texture );
 
-	Model* cube_model = Assets::load_model(
+	auto cube_model = Assets::load_model(
 		MESH_CUBE,
 		"assets/suprengine/models/cube.fbx",
 		SHADER_LIT_MESH
 	);
 	cube_model->get_mesh( 0 )->add_texture( texture );
 
-	Model* cylinder_model = Assets::load_model(
+	auto cylinder_model = Assets::load_model(
 		MESH_CYLINDER,
 		"assets/suprengine/models/cylinder.fbx",
 		SHADER_LIT_MESH
 	);
 	cylinder_model->get_mesh( 0 )->add_texture( texture );
 
-	Model* sphere_model = Assets::load_model(
+	auto sphere_model = Assets::load_model(
 		MESH_SPHERE,
 		"assets/suprengine/models/sphere.fbx",
 		SHADER_LIT_MESH

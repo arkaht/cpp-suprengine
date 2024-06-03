@@ -18,7 +18,7 @@ namespace puzzle
 	public:
 		StylizedModelRenderer(
 			Entity* owner,
-			Model* model,
+			ref<Model> model,
 			Color modulate = Color::white,
 			int priority_order = 0
 		);

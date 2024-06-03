@@ -17,7 +17,7 @@ using namespace suprengine;
 std::map<std::string, Texture*> Assets::_textures;
 std::map<std::string, Font*> Assets::_fonts;
 std::map<std::string, Shader*> Assets::_shaders;
-std::map<std::string, Model*> Assets::_models;
+std::map<std::string, ref<Model>> Assets::_models;
 std::map<std::string, ref<Curve>> Assets::_curves;
 
 std::vector<ref<Assets::filewatcher>> Assets::_filewatchers;
@@ -93,7 +93,7 @@ Shader* Assets::get_shader( rconst_str name )
 	return (*itr).second;
 }
 
-Model* Assets::load_model( rconst_str name, rconst_str path, rconst_str shader_name )
+ref<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_str shader_name )
 {
 	//  set import flags
 	int flags = aiProcess_Triangulate 
@@ -118,14 +118,14 @@ Model* Assets::load_model( rconst_str name, rconst_str path, rconst_str shader_n
 	}
 
 	//  create model
-	auto model = new Model( std::move( meshes ), shader_name );
+	auto model = std::make_shared<Model>( std::move( meshes ), shader_name );
 	
 	//  register and return
 	_models[name] = model;
 	return model;
 }
 
-Model* Assets::get_model( rconst_str name )
+ref<Model> Assets::get_model( rconst_str name )
 {
 	auto itr = _models.find( name );
 	if ( itr == _models.end() )
@@ -271,8 +271,6 @@ void Assets::release()
 	_shaders.clear();
 
 	//  release meshes
-	for ( auto& pair : _models )
-		delete pair.second;
 	_models.clear();
 
 	//  release curves

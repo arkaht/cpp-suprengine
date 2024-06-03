@@ -2,8 +2,19 @@
 
 using namespace puzzle;
 
-StylizedModelRenderer::StylizedModelRenderer( Entity* owner, Model* model, Color modulate, int priority_order )
-	: ModelRenderer( owner, model, "stylized", modulate, priority_order ) {}
+StylizedModelRenderer::StylizedModelRenderer( 
+	Entity* owner, 
+	ref<Model> model, 
+	Color modulate, 
+	int priority_order 
+)
+	: ModelRenderer( 
+		owner, 
+		model, 
+		"stylized", 
+		modulate, 
+		priority_order 
+	) {}
 
 void StylizedModelRenderer::render()
 {
