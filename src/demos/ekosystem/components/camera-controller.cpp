@@ -1,0 +1,53 @@
+#include "camera-controller.h"
+
+#include <suprengine/entity.h>
+
+using namespace eks;
+
+CameraController::CameraController( 
+	Entity* owner, 
+	float move_speed,
+	const Vec3& offset
+)
+	: move_speed( move_speed ),
+	  offset( offset ),
+	  Component( owner )
+{
+	transform->location += offset;
+}
+
+void CameraController::update( float dt )
+{
+	auto inputs = owner->get_engine()->get_inputs();
+
+	Vec3 pos = transform->location;
+	if ( auto target = focus_target.lock() )
+	{
+		pos = target->location + offset;
+	}
+	else
+	{
+		//  Retrieve input direction
+		Vec3 dir {};
+		dir.y = inputs->get_keys_as_axis( SDL_SCANCODE_S, SDL_SCANCODE_W );
+		dir.x = inputs->get_keys_as_axis( SDL_SCANCODE_A, SDL_SCANCODE_D );
+		dir.normalize2d();
+
+		//  Flatten forward (get rid of camera's pitch)
+		Vec3 forward = transform->get_forward();
+		forward.normalize2d();
+
+		Vec3 right = transform->get_right();
+
+		//  Transform direction according to camera's orientation
+		dir = dir.x * right 
+			+ dir.y * forward;
+
+		//  Compute final movement vector 
+		Vec3 movement = dir * ( move_speed * dt );
+		pos = transform->location + movement;
+	}
+
+	//  Apply new location
+	transform->set_location( pos );
+}
