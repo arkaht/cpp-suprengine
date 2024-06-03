@@ -114,7 +114,7 @@ Vec3 Vec3::approach( const Vec3& current, const Vec3& target, float delta )
 	return Vec3 {
 		math::approach( current.x, target.x, delta ),
 		math::approach( current.y, target.y, delta ),
-		math::approach( current.y, target.y, delta )
+		math::approach( current.z, target.z, delta )
 	};
 }
 
