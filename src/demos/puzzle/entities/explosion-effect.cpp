@@ -8,14 +8,21 @@ using namespace puzzle;
 
 ExplosionEffect::ExplosionEffect( 
 	float explosion_size,
-	Color color
+	Color color,
+	int model_id
 )
 	: explosion_size( explosion_size ),
 	  color( color ),
 	  Entity()
 {
+	//  randomize model if unspecified
+	if ( model_id < 0 )
+	{
+		model_id = random::generate( 0, 2 );
+	}
+
 	_model_renderer = create_component<StylizedModelRenderer>(
-		Assets::get_model( "explosion" + std::to_string( random::generate( 0, 2 ) ) ),
+		Assets::get_model( "explosion" + std::to_string( model_id ) ),
 		Color::white/*color*/
 	);
 	_model_renderer->inner_modulate = color/*Color::white*/;

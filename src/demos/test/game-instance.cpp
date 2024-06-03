@@ -2,10 +2,14 @@
 
 #include <scenes/game-scene.h>
 
+#include <suprengine/assets.h>
+
 using namespace test;
 
 void GameInstance::load_assets()
 {
+    Assets::load_model( 
+		"cool-mesh", "assets/test/models/monkey.fbx" );
 }
 
 void GameInstance::init()

@@ -18,5 +18,8 @@ namespace test
 		void init() override;
 
 		void update( float dt ) override;
+
+	private:
+		ref<ModelRenderer> model_renderer;
 	};
 }

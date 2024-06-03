@@ -14,7 +14,8 @@ namespace puzzle
 	public:
 		ExplosionEffect( 
 			float explosion_size = 1.0f, 
-			Color color = Color::white
+			Color color = Color::white,
+			int model_id = -1
 		);
 
 		void update_this( float dt ) override;

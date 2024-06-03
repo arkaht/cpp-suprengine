@@ -43,23 +43,25 @@ void GameScene::init()
 		asteroid->update_collision_to_transform();
 	}
 
-	//  spawn spaceships
+	//  spawn player spaceship
 	spaceship1 = new Spaceship();
 	spaceship1->set_color( Color::from_0x( 0xf2cd13FF ) );
 	spaceship1->transform->location = _player_location;
 	spaceship1->transform->rotation = _player_rotation;
 
-	spaceship2 = new Spaceship();
-	spaceship2->set_color( Color::from_0x( 0x9213f2FF ) );
-	spaceship2->transform->location = Vec3 { 50.0f, 0.0f, 0.0f };
-
 	//  possess it by player
 	player_controller = new PlayerSpaceshipController();
 	player_controller->possess( spaceship1 );
 	
-	ai_controller = new AISpaceshipController();
+	//  spawn second spaceship
+	/*spaceship2 = new Spaceship();
+	spaceship2->set_color( Color::from_0x( 0x9213f2FF ) );
+	spaceship2->transform->location = Vec3 { 50.0f, 0.0f, 0.0f };*/
+
+	//  possess it by AI
+	/*ai_controller = new AISpaceshipController();
 	ai_controller->possess( spaceship2 );
-	ai_controller->target = spaceship1;
+	ai_controller->target = spaceship1;*/
 
 	//  instantiate temporary camera
 	auto projection_settings = player_controller->get_camera()->projection_settings;
@@ -70,7 +72,7 @@ void GameScene::init()
 	_temporary_camera = camera_owner->create_component<Camera>( projection_settings );
 	_temporary_camera_model = camera_owner->create_component<ModelRenderer>( Assets::get_model( MESH_ARROW ) );
 
-	generate_ai_spaceships( 10 );
+	//generate_ai_spaceships( 10 );
 }
 
 void GameScene::update( float dt )
@@ -91,8 +93,10 @@ void GameScene::update( float dt )
 
 	if ( ( spawn_time -= dt ) <= 0.0f )
 	{
-		auto explosion = new ExplosionEffect( 15.0f, random::generate_color() );
+		auto explosion = new ExplosionEffect( 15.0f, random::generate_color() /*spaceship1->get_color(), 0*/ );
 		explosion->transform->location = Vec3 { 0.0f, 100.0f, 0.0f };
+		/*explosion->transform->rotation = Quaternion::identity;
+		explosion->transform->scale = Vec3 { 0.8f, 1.2f, 1.0f };*/
 		spawn_time += 2.5f;
 	}
 	
@@ -164,6 +168,31 @@ void GameScene::update( float dt )
 	if ( inputs->is_key_just_pressed( SDL_SCANCODE_F7 ) )
 	{
 		player_controller->is_inputs_enabled = !player_controller->is_inputs_enabled;
+	}
+	//  F8: generate explosions around the player
+	if ( inputs->is_key_just_pressed( SDL_SCANCODE_F8 ) )
+	{
+		auto _engine = _game->get_engine();
+		
+		int count = random::generate( 7, 14 );
+		for ( int i = 0; i < count; i++ )
+		{
+			TIMER( 
+				i * random::generate( 0.1f, 0.25f ), 
+				{
+					auto spaceship = player_controller->get_ship();
+
+					auto effect = new ExplosionEffect( 
+						random::generate( 15.0f, 20.0f ), 
+						random::generate_color() 
+					);
+					effect->transform->location = 
+						spaceship->transform->location 
+					  + random::generate_direction() * random::generate( 100.0f, 200.0f );
+
+				} 
+			);
+		}
 	}
 }
 
