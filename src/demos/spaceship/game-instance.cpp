@@ -9,40 +9,40 @@ void GameInstance::load_assets()
     //  shaders
 	Assets::load_shader(
 		"stylized",
-		"assets/puzzle/shaders/stylized.vert",
-		"assets/puzzle/shaders/stylized.frag"
+		"assets/spaceship/shaders/stylized.vert",
+		"assets/spaceship/shaders/stylized.frag"
 	);
 
 	//  textures
 	Assets::load_texture( 
 		"crosshair-line", 
-		"assets/puzzle/sprites/crosshair-line.png" 
+		"assets/spaceship/sprites/crosshair-line.png" 
 	);
 	Assets::load_texture( 
 		"kill-icon", 
-		"assets/puzzle/sprites/kill-icon.png" 
+		"assets/spaceship/sprites/kill-icon.png" 
 	);
 
 	//  models
 	Assets::load_model( 
-		"spaceship", "assets/puzzle/models/spaceship2.fbx" );
+		"spaceship", "assets/spaceship/models/spaceship2.fbx" );
 	Assets::load_model( 
-		"projectile", "assets/puzzle/models/projectile.fbx" );
+		"projectile", "assets/spaceship/models/projectile.fbx" );
 	Assets::load_model( 
-		"planet-ring", "assets/puzzle/models/planet-ring.fbx" );
+		"planet-ring", "assets/spaceship/models/planet-ring.fbx" );
 	Assets::load_model( 
-		"asteroid0", "assets/puzzle/models/asteroid0.fbx" );
+		"asteroid0", "assets/spaceship/models/asteroid0.fbx" );
 	Assets::load_model( 
-		"asteroid1", "assets/puzzle/models/asteroid1.fbx" );
+		"asteroid1", "assets/spaceship/models/asteroid1.fbx" );
 	Assets::load_model( 
-		"explosion0", "assets/puzzle/models/explosion0.fbx" );
+		"explosion0", "assets/spaceship/models/explosion0.fbx" );
 	Assets::load_model( 
-		"explosion1", "assets/puzzle/models/explosion1.fbx" );
+		"explosion1", "assets/spaceship/models/explosion1.fbx" );
 	Assets::load_model( 
-		"explosion2", "assets/puzzle/models/explosion2.fbx" );
+		"explosion2", "assets/spaceship/models/explosion2.fbx" );
 
 	//  curves
-	Assets::load_curves_in_folder( "assets/puzzle/curves/", true, true );
+	Assets::load_curves_in_folder( "assets/spaceship/curves/", true, true );
 }
 
 void GameInstance::init()

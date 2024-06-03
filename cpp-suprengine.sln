@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "suprengine", "src\suprengine\engine.vcxproj", "{92F36A71-0E80-4CB3-BBE1-8B00BA311551}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "puzzle", "src\demos\puzzle\puzzle.vcxproj", "{199DF87A-F677-474C-AB29-BE05DD21ED10}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spaceship", "src\demos\spaceship\spaceship.vcxproj", "{199DF87A-F677-474C-AB29-BE05DD21ED10}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "src\demos\test\test.vcxproj", "{1A2044F4-226F-4A28-9F29-5316B9C4513A}"
 	ProjectSection(ProjectDependencies) = postProject

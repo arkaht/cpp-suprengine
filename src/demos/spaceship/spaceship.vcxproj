@@ -70,7 +70,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{199df87a-f677-474c-ab29-be05dd21ed10}</ProjectGuid>
-    <RootNamespace>puzzle</RootNamespace>
+    <RootNamespace>spaceship</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
