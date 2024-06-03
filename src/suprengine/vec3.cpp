@@ -46,10 +46,17 @@ float Vec3::length_sqr() const
 
 float Vec3::length() const
 {
-	float len = length_sqr();
-	if ( len == 0.0f ) return 0.0f;
+	return math::sqrt( length_sqr() );
+}
 
-	return math::sqrt( len );
+float Vec3::length2d_sqr() const
+{
+	return x * x + y * y;
+}
+
+float Vec3::length2d() const
+{
+	return math::sqrt( length2d_sqr() );
 }
 
 void Vec3::normalize()
@@ -62,6 +69,16 @@ void Vec3::normalize()
 	z /= len;
 }
 
+void Vec3::normalize2d()
+{
+	float len = length2d();
+	if ( len == 0.0f ) return;
+
+	x /= len;
+	y /= len;
+	z = 0.0f;
+}
+
 Vec3 Vec3::normalized() const
 {
 	Vec3 v( x, y, z );
@@ -69,9 +86,36 @@ Vec3 Vec3::normalized() const
 	return v;
 }
 
+std::string Vec3::to_string() const
+{
+	return "x="  + std::to_string( x ) 
+		 + ";y=" + std::to_string( y )
+		 + ";z=" + std::to_string( z );
+}
+
 const float* Vec3::get_as_float_ptr() const
 {
 	return reinterpret_cast<const float*>( &x );
+}
+
+float Vec3::distance( const Vec3& from, const Vec3& to )
+{
+	return ( from - to ).length();
+}
+
+float Vec3::distance_sqr( const Vec3& from, const Vec3& to )
+{
+	return ( from - to ).length_sqr();
+}
+
+float Vec3::distance2d( const Vec3& from, const Vec3& to )
+{
+	return ( from - to ).length2d();
+}
+
+float Vec3::distance2d_sqr( const Vec3& from, const Vec3& to )
+{
+	return ( from - to ).length2d_sqr();
 }
 
 Vec3 Vec3::normalize( const Vec3& vec )

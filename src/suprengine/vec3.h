@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "math.h"
 #include "vec2.h"
 
@@ -27,15 +29,55 @@ namespace suprengine
 		explicit Vec3( const Vec2& vec, float z );
 
 	public:
+		/*  
+		 * Returns the vector squared magnitude within 3-dimensions.
+		 */
 		float length_sqr() const;
+		/* 
+		 * Returns the vector magnitude within 3-dimensions.
+		 */
 		float length() const;
-		void normalize();
 
+		/*  
+		 * Returns the vector squared magnitude within 2-dimensions
+		 * (X and Y).
+		 */
+		float length2d_sqr() const;
+		/*
+		 * Returns the vector magnitude within 2-dimensions 
+		 * (X and Y).
+		 */
+		float length2d() const;
+
+		/*
+		 * Normalizes the vector within 3-dimensions.
+		 */
+		void normalize();
+		/*
+		 * Normalizes the vector within 2-dimensions.
+		 * Z-axis is set to 0.0f.
+		 */
+		void normalize2d();
+
+		/*
+		 * Returns a copy of the vector normalized within 3-dimensions.
+		 */
 		Vec3 normalized() const;
+		
+		/*
+		 * Returns a string representing the vector.
+		 */
+		std::string to_string() const;
 
 		const float* get_as_float_ptr() const;
 
 	public:
+		static float distance( const Vec3& from, const Vec3& to );
+		static float distance_sqr( const Vec3& from, const Vec3& to );
+		
+		static float distance2d( const Vec3& from, const Vec3& to );
+		static float distance2d_sqr( const Vec3& from, const Vec3& to );
+
 		// Normalize the provided vector
 		static Vec3 normalize( const Vec3& vec );
 		// Dot product between two vectors (a dot b)
@@ -91,6 +133,13 @@ namespace suprengine
 			x *= scalar;
 			y *= scalar;
 			z *= scalar;
+			return *this;
+		}
+		Vec3& operator*=( const Vec3& v )
+		{
+			x *= v.x;
+			y *= v.y;
+			z *= v.z;
 			return *this;
 		}
 
