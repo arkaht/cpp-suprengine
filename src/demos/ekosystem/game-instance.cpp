@@ -33,7 +33,7 @@ void GameInstance::release()
 GameInfos GameInstance::get_infos() const
 {
     GameInfos infos {};
-    infos.title = "Suprengine Test";
+    infos.title = "EkoSystem";
     infos.width = 1280;
 	infos.height = 720;
     return infos;

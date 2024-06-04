@@ -2,7 +2,8 @@
 
 using namespace eks;
 
-Pawn::Pawn( const ref<Model>& model )
+Pawn::Pawn( World* world, const ref<Model>& model )
+	: _world( world )
 {
 	_renderer = create_component<ModelRenderer>( model, SHADER_LIT_MESH, Color::blue );
 }
@@ -27,7 +28,7 @@ void Pawn::update_this( float dt )
 		}
 		//printf( "%s\n", new_tile_pos.to_string().c_str() );
 
-		transform->set_location( new_tile_pos * TILE_SIZE );
+		transform->set_location( new_tile_pos * _world->TILE_SIZE );
 	}
 }
 
@@ -38,9 +39,15 @@ void Pawn::move_to( const Vec3& target )
 	_move_progress = 0.0f;
 }
 
+void Pawn::set_tile_pos( const Vec3& tile_pos )
+{
+	transform->location = tile_pos * _world->TILE_SIZE;
+	update_tile_pos();
+}
+
 void Pawn::update_tile_pos()
 {
-	_tile_pos = Vec3::snap_to_grid( transform->location, TILE_SIZE );
+	_tile_pos = Vec3::world_to_grid( transform->location, _world->TILE_SIZE );
 	_move_to = _tile_pos;
 }
 

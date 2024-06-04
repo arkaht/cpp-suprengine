@@ -14,11 +14,14 @@ namespace eks
 	class GameScene : public Scene
 	{
 	public:
+		virtual ~GameScene();
+
 		void init() override;
 
 		void update( float dt ) override;
 
 	private:
+		World* _world { nullptr };
 		Pawn* _test_pawn { nullptr };
 		ref<CameraController> _camera_controller { nullptr };
 	};

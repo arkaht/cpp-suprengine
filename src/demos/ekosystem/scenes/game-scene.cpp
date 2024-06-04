@@ -6,31 +6,34 @@
 
 using namespace eks;
 
+GameScene::~GameScene()
+{
+	if ( _world != nullptr )
+	{
+		delete _world;
+	}
+}
+
 void GameScene::init()
 {
 	auto cube_model = Assets::get_model( MESH_CUBE );
 	auto cylinder_model = Assets::get_model( MESH_CYLINDER );
 	auto sphere_model = Assets::get_model( MESH_SPHERE );
 
-	//  setup ground
-	auto ground = new Entity();
-	ground->transform->location = Vec3 { 0.0f, 0.0f, -5.0f };
-	ground->transform->scale = Vec3 { 100.0f, 100.0f, 1.0f };
-	ground->create_component<ModelRenderer>( cube_model, SHADER_LIT_MESH );
-	ground->create_component<BoxCollider>( Box::HALF );
-
-	//  setup cube
-	_test_pawn = new Pawn( cube_model );
-	_test_pawn->transform->location = Vec3 { 0.0f, 0.0f, 0.0f };
-	_test_pawn->update_tile_pos();
+	//  create world
+	_world = new World( Vec2 { 10.0f, 10.0f } );
+	_test_pawn = _world->create_pawn( Vec3 { _world->get_size() * 0.5f, 0.0f } );
+	_world->create_pawn( _world->find_random_tile_pos() );
+	_world->create_pawn( _world->find_random_tile_pos() );
+	_world->create_pawn( _world->find_random_tile_pos() );
 
 	//  setup camera
 	auto camera_owner = new Entity();
-	camera_owner->transform->location = Vec3 { 0.0f, 0.0f, 0.0f };
-	camera_owner->transform->rotation = Quaternion( DegAngles { -45.0f, 45.0f, 0.0f } );
+	camera_owner->transform->location = _test_pawn->transform->location;
+	camera_owner->transform->rotation = Quaternion( DegAngles { -45.0f, -135.0f, 0.0f } );
 	_camera_controller = camera_owner->create_component<CameraController>( 
 		50.0f, 
-		Vec3 { -10.0f, -10.0f, 13.0f } 
+		Vec3 { 10.0f, 10.0f, 13.0f } 
 	);
 	auto camera = camera_owner->create_component<Camera>( CameraProjectionSettings {} );
 	camera->activate();
@@ -67,5 +70,10 @@ void GameScene::update( float dt )
 		{
 			_camera_controller->focus_target = _test_pawn->transform;
 		}
+	}
+
+	if ( auto target = _camera_controller->focus_target.lock() )
+	{
+		printf( "Target Location: %s\n", target->location.to_string().c_str() );
 	}
 }
