@@ -16,6 +16,9 @@ namespace eks
 
 		void move_to( const Vec3& target );
 
+		void update_tile_pos();
+		Vec3 get_tile_pos() const;
+
 	public:
 		const float TILE_SIZE = 10.0f;
 		//  In tile per seconds, how fast the pawn is?
@@ -24,7 +27,11 @@ namespace eks
 	private:
 		ref<ModelRenderer> _renderer; 
 
-		bool _is_moving = false;
-		Vec3 _move_target;
+		float _move_progress = 1.0f;
+		Vec3 _move_to;
+		Vec3 _move_from;
+
+		//  Position in tile coordinates
+		Vec3 _tile_pos;
 	};
 }

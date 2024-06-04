@@ -2,6 +2,7 @@
 
 #include <suprengine/opengl/opengl-render-batch.h>
 #include <suprengine/assets.h>
+#include <suprengine/random.h>
 
 using namespace eks;
 
@@ -13,13 +14,15 @@ void GameScene::init()
 
 	//  setup ground
 	auto ground = new Entity();
+	ground->transform->location = Vec3 { 0.0f, 0.0f, -5.0f };
 	ground->transform->scale = Vec3 { 100.0f, 100.0f, 1.0f };
 	ground->create_component<ModelRenderer>( cube_model, SHADER_LIT_MESH );
 	ground->create_component<BoxCollider>( Box::HALF );
 
 	//  setup cube
 	_test_pawn = new Pawn( cube_model );
-	_test_pawn->transform->location = Vec3 { 0.0f, 0.0f, 4.0f };
+	_test_pawn->transform->location = Vec3 { 0.0f, 0.0f, 0.0f };
+	_test_pawn->update_tile_pos();
 
 	//  setup camera
 	auto camera_owner = new Entity();
@@ -45,8 +48,13 @@ void GameScene::update( float dt )
 
 	if ( inputs->is_key_just_pressed( SDL_SCANCODE_SPACE ) )
 	{
+		Vec3 dirs[] { 
+			Vec3::forward, -Vec3::forward,
+			Vec3::right, -Vec3::right 
+		};
+
 		_test_pawn->move_to( 
-			_test_pawn->transform->location + Vec3::forward
+			_test_pawn->get_tile_pos() + dirs[random::generate( 0, 3 )]
 		);
 	}
 	if ( inputs->is_key_just_pressed( SDL_SCANCODE_F ) )
