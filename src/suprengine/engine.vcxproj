@@ -264,6 +264,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="input-manager.cpp" />
     <ClCompile Include="logger.cpp" />
+    <ClCompile Include="math.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mtx4.cpp" />
     <ClCompile Include="opengl\opengl-render-batch.cpp" />

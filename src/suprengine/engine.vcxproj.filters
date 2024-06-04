@@ -305,6 +305,9 @@
     <ClCompile Include="components\lifetime-component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="opengl\shaders\color.frag" />
