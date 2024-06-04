@@ -16,60 +16,34 @@ namespace suprengine::math
 
 	constexpr float EPSILON = 0.001f;
 
-	static float approach( float current, float target, float delta )
-	{
-		delta = abs( delta );
+	float abs( float value );
+	float sign( float value );
+	
+	float pow( float value, float exp );
+	float sqrt( float value );
+	float fmod( float value, float div );
+	float modulo( float value, float div );
+	int   round( float num );
 
-		if ( current < target )
-			return fmin( current + delta, target );
-		else if ( current > target )
-			return fmax( current - delta, target );
+	float cos( float angle );
+	float sin( float angle );
+	float tan( float angle );
 
-		return target;
-	}
+	float acos( float value );
+	float atan2( float y, float x );
+	float cot( float angle );
+	
+	float approach( float current, float target, float delta );
 
-	static bool near_zero( float val, float epsilon = EPSILON )
-	{
-		return fabs( val ) <= epsilon;
-	}
+	bool near_zero( float val, float epsilon = EPSILON );
+	bool near_value( float value, float target, float epsilon = EPSILON );
 
-	static bool near_value( float value, float target, float epsilon = EPSILON )
-	{
-		float diff = abs( value - target );
-		return diff <= epsilon;
-	}
-
-	static float modulo( float value, float div )
-	{
-		if ( value >= 0 )
-			return fmodf( value, div );
-
-		return value - floor( value / div ) * div;
-	}
-
-	static float normalize_angle( float ang )
-	{
-		return modulo( ang + PI, DOUBLE_PI ) - PI;
-	}
-
-	static float sign( float value )
-	{
-		return value >= 0.0f ? 1.0f : -1.0f;
-	}
-
-	static float pow( float value, float exp )
-	{
-		return powf( value, exp );
-	}
-
-	static float remap( 
+	float normalize_angle( float ang );
+	float remap( 
 		float value, 
 		float low1, float high1, 
 		float low2, float high2 
-	)
-	{
-		return low2 + ( value - low1 ) * ( high2 - low2 ) / ( high1 - low1 );
-	}
+	);
 
 	template <typename T>
 	T max( const T& a, const T& b )
@@ -88,60 +62,10 @@ namespace suprengine::math
 	{
 		return min( upper, max( lower, value ) );
 	}
-
-	inline float abs( float value )
-	{
-		return fabs( value );
-	}
-
-	inline float cos( float angle )
-	{
-		return cosf( angle );
-	}
-
-	inline float sin( float angle )
-	{
-		return sinf( angle );
-	}
-
-	inline float tan( float angle )
-	{
-		return tanf( angle );
-	}
-
-	inline float acos( float value )
-	{
-		return acosf( value );
-	}
-
-	inline float atan2( float y, float x )
-	{
-		return atan2f( y, x );
-	}
-
-	inline float cot( float angle )
-	{
-		return 1.0f / tan( angle );
-	}
-
+	
 	template <typename T>
-	inline T lerp( T a, T b, float f )
+	T lerp( T a, T b, float f )
 	{
 		return a + (T)( f * ( b - a ) );
-	}
-
-	inline float sqrt( float value )
-	{
-		return sqrtf( value );
-	}
-
-	inline float fmod( float numer, float denom )
-	{
-		return std::fmod( numer, denom );
-	}
-
-	inline int round( float num )
-	{
-		return static_cast<int>( std::round( num ) );
 	}
 }
