@@ -34,6 +34,7 @@ namespace suprengine::math
 	float cot( float angle );
 	
 	float approach( float current, float target, float delta );
+	float snap_to_grid( float value, float grid_size );
 
 	bool near_zero( float val, float epsilon = EPSILON );
 	bool near_value( float value, float target, float epsilon = EPSILON );

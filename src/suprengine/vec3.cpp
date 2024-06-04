@@ -118,6 +118,26 @@ float Vec3::distance2d_sqr( const Vec3& from, const Vec3& to )
 	return ( from - to ).length2d_sqr();
 }
 
+Vec3 Vec3::snap_to_grid( const Vec3& v, float grid_size )
+{
+	return Vec3 
+	{
+		math::snap_to_grid( v.x, grid_size ),
+		math::snap_to_grid( v.y, grid_size ),
+		math::snap_to_grid( v.z, grid_size ),
+	};
+}
+
+Vec3 Vec3::snap_to_grid( const Vec3& v, const Vec3& grid_size )
+{
+	return Vec3 
+	{
+		math::snap_to_grid( v.x, grid_size.x ),
+		math::snap_to_grid( v.y, grid_size.y ),
+		math::snap_to_grid( v.z, grid_size.z ),
+	};
+}
+
 Vec3 Vec3::normalize( const Vec3& vec )
 {
 	Vec3 temp = vec;

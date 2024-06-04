@@ -92,6 +92,11 @@ float math::approach( float current, float target, float delta )
 	return target;
 }
 
+float math::snap_to_grid( float value, float grid_size )
+{
+	return floor( value / grid_size ) * grid_size;
+}
+
 bool math::near_zero( float val, float epsilon )
 {
 	return fabs( val ) <= epsilon;

@@ -78,6 +78,9 @@ namespace suprengine
 		static float distance2d( const Vec3& from, const Vec3& to );
 		static float distance2d_sqr( const Vec3& from, const Vec3& to );
 
+		static Vec3 snap_to_grid( const Vec3& v, float grid_size );
+		static Vec3 snap_to_grid( const Vec3& v, const Vec3& grid_size );
+
 		// Normalize the provided vector
 		static Vec3 normalize( const Vec3& vec );
 		// Dot product between two vectors (a dot b)
@@ -125,6 +128,15 @@ namespace suprengine
 		friend Vec3 operator*( float scalar, const Vec3& vec )
 		{
 			return Vec3( vec.x * scalar, vec.y * scalar, vec.z * scalar );
+		}
+
+		Vec3 operator/( const Vec3& v )
+		{
+			return Vec3( x / v.x, y / v.y, z / v.z );
+		}
+		Vec3 operator/( float scalar )
+		{
+			return Vec3( x / scalar, y / scalar, z / scalar );
 		}
 
 		// Scalar *=
