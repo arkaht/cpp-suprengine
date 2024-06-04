@@ -22,7 +22,10 @@ namespace suprengine::math
 	float sqrt( float value );
 	float fmod( float value, float div );
 	float modulo( float value, float div );
-	int   round( float num );
+
+	float floor( float value );
+	float ceil( float value );
+	float round( float value );
 
 	float cos( float angle );
 	float sin( float angle );

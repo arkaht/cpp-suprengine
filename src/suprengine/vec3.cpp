@@ -118,6 +118,16 @@ float Vec3::distance2d_sqr( const Vec3& from, const Vec3& to )
 	return ( from - to ).length2d_sqr();
 }
 
+Vec3 Vec3::world_to_grid( const Vec3& v, float grid_size )
+{
+	return Vec3 
+	{
+		math::floor( v.x / grid_size ),
+		math::floor( v.y / grid_size ),
+		math::floor( v.z / grid_size ),
+	};
+}
+
 Vec3 Vec3::snap_to_grid( const Vec3& v, float grid_size )
 {
 	return Vec3 

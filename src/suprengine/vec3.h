@@ -78,6 +78,8 @@ namespace suprengine
 		static float distance2d( const Vec3& from, const Vec3& to );
 		static float distance2d_sqr( const Vec3& from, const Vec3& to );
 
+		static Vec3 world_to_grid( const Vec3& v, float grid_size );
+
 		static Vec3 snap_to_grid( const Vec3& v, float grid_size );
 		static Vec3 snap_to_grid( const Vec3& v, const Vec3& grid_size );
 

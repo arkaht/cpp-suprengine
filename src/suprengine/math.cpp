@@ -47,9 +47,19 @@ float math::modulo( float value, float div )
 	return value - floor( value / div ) * div;
 }
 
-int math::round( float num )
+float math::floor( float value )
 {
-	return static_cast<int>( std::round( num ) );
+	return std::floor( value );
+}
+
+float math::ceil( float value )
+{
+	return std::ceil( value );
+}
+
+float math::round( float num )
+{
+	return std::round( num );
 }
 
 float math::cos( float angle )
@@ -101,7 +111,7 @@ float math::snap_to_grid( float value, float grid_size )
 
 bool math::near_zero( float val, float epsilon )
 {
-	return fabs( val ) <= epsilon;
+	return abs( val ) <= epsilon;
 }
 
 bool math::near_value( float value, float target, float epsilon )
