@@ -1,5 +1,7 @@
 #include "math.h"
 
+#include <cmath>
+
 using namespace suprengine;
 
 float math::abs( float value )
