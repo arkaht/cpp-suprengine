@@ -5,16 +5,14 @@
 
 using namespace suprengine;
 
-Camera::Camera( Entity* owner )
-	: Component( owner )
-{
-	setup_vars();
-	setup_simple_projection();
-}
+Camera::Camera()
+{}
 
-Camera::Camera( Entity* owner, const CameraProjectionSettings& projection_settings )
-	: projection_settings( projection_settings ),
-	  Component( owner )
+Camera::Camera( const CameraProjectionSettings& projection_settings )
+	: projection_settings( projection_settings )
+{}
+
+void Camera::setup()
 {
 	setup_vars();
 	update_projection_from_settings();
@@ -54,7 +52,7 @@ void Camera::set_fov( float fov )
 	update_projection_from_settings();
 }
 
-Vec3 Camera::world_to_viewport( const Vec3& location )
+Vec3 Camera::world_to_viewport( const Vec3& location ) const
 {
 	Vec3 pos = location;
 
@@ -109,13 +107,13 @@ void Camera::reset( float width, float height )
 
 void Camera::activate()
 {
-	Engine* game = owner->get_engine();
+	Engine* game = get_owner()->get_engine();
 	game->camera = this;
 }
 
 bool Camera::is_active()
 {
-	return owner->get_engine()->camera == this;
+	return get_owner()->get_engine()->camera == this;
 }
 
 void Camera::set_view_matrix( const Mtx4& matrix )
@@ -152,17 +150,17 @@ const Mtx4& Camera::get_projection_matrix()
 
 void Camera::setup_vars()
 {
-	Window* _window = owner->get_engine()->get_window();
+	auto window = Engine::instance().get_window();
 
 	//  listen to window updates
-	_window->on_size_changed.listen( 
-		"suprengine::camera" + std::to_string( owner->get_unique_id() ), 
+	window->on_size_changed.listen( 
+		"suprengine::camera" + std::to_string( get_owner()->get_unique_id() ), 
 		[&]( const Vec2& size ) {
 			_viewport_size = size;
 			update_projection_from_settings();
 		}
 	);
 
-	_viewport_size = _window->get_size();
+	_viewport_size = window->get_size();
 	viewport.w, viewport.h = _viewport_size.x, _viewport_size.y;  //  TODO: remove obsolete camera code
 }

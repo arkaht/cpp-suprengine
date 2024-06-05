@@ -31,11 +31,12 @@ namespace suprengine
 		Vec3 up_direction = Vec3::up;
 		
 	public:
-		Camera( Entity* owner );
-		Camera( 
-			Entity* owner, 
+		Camera();
+		Camera(
 			const CameraProjectionSettings& projection_settings
 		);
+
+		void setup() override;
 
 		void setup_simple_projection();
 		void setup_perspective( float fov, float znear, float zfar );
@@ -48,7 +49,7 @@ namespace suprengine
 		 * Translate a 3D-world location into a 2D-viewport position.
 		 * Returns a Vec3 where Z > 0.0f helps to determine visibility.
 		 */
-		Vec3 world_to_viewport( const Vec3& location );
+		Vec3 world_to_viewport( const Vec3& location ) const;
 		
 		void look_at( const Vec3& target );
 

@@ -3,11 +3,9 @@
 using namespace suprengine;
 
 LifetimeComponent::LifetimeComponent( 
-	Entity* owner, 
 	float life_time 
 )
-	: life_time( life_time ),
-	  Component( owner )
+	: life_time( life_time )
 {}
 
 void LifetimeComponent::update( float dt )

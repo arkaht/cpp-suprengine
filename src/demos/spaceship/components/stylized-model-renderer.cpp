@@ -4,7 +4,7 @@ using namespace puzzle;
 
 StylizedModelRenderer::StylizedModelRenderer( 
 	Entity* owner, 
-	ref<Model> model, 
+	shared_ptr<Model> model, 
 	Color modulate, 
 	int priority_order 
 )

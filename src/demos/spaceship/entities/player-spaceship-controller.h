@@ -21,8 +21,8 @@ namespace puzzle
 		void update_inputs( float dt ) override;
 
 		Spaceship* get_locked_target() const { return _locked_target; }
-		ref<Camera> get_camera() const { return camera; }
-		ref<PlayerHUD> get_hud() const { return hud; }
+		shared_ptr<Camera> get_camera() const { return camera; }
+		shared_ptr<PlayerHUD> get_hud() const { return hud; }
 
 	public:
 		bool is_inputs_enabled = true;
@@ -74,8 +74,8 @@ namespace puzzle
 	private:
 		Vec3 _aim_velocity = Vec3::zero;
 
-		ref<Camera> camera;
-		ref<PlayerHUD> hud;
+		shared_ptr<Camera> camera;
+		shared_ptr<PlayerHUD> hud;
 
 		Spaceship* _locked_target { nullptr };
 	};

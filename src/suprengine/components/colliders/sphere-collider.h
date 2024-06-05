@@ -12,8 +12,7 @@ namespace suprengine
 	public:
 		float radius { 0.0f };
 
-		SphereCollider( Entity* owner, float radius ) 
-			: radius( radius ), Collider( owner ) {};
+		SphereCollider( float radius );;
 
 		//  TODO: implement this
 		bool intersects( std::shared_ptr<Collider> other ) override;

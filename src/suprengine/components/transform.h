@@ -16,7 +16,7 @@ namespace suprengine
 		Vec3 scale { Vec3::one };
 
 	public:
-		Transform( Entity* owner ) : Component( owner ) {}
+		Transform() {}
 
 		Rect get_rect( const Rect& rect );
 

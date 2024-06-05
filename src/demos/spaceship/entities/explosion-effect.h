@@ -48,9 +48,9 @@ namespace puzzle
 		std::shared_ptr<LifetimeComponent> _lifetime_component;
 		std::shared_ptr<StylizedModelRenderer> _model_renderer;
 
-		ref<Curve> _curve_transform_scale;
-		ref<Curve> _curve_outline_scale;
-		ref<Curve> _curve_outline_color;
-		ref<Curve> _curve_inner_color;
+		shared_ptr<Curve> _curve_transform_scale;
+		shared_ptr<Curve> _curve_outline_scale;
+		shared_ptr<Curve> _curve_outline_color;
+		shared_ptr<Curve> _curve_inner_color;
 	};
 }

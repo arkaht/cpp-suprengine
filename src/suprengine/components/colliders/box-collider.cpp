@@ -11,7 +11,11 @@ const Vec3 normals[6] =
 	Vec3 { 0.0f, 0.0f, -1.0f }, Vec3 { 0.0f, 0.0f, 1.0f },
 };
 
-bool BoxCollider::intersects( std::shared_ptr<Collider> other ) 
+BoxCollider::BoxCollider( const Box& shape ) 
+	: shape( shape ) 
+{}
+
+bool BoxCollider::intersects( std::shared_ptr<Collider> other )
 {
 	return false; 
 }

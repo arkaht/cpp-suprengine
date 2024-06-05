@@ -18,11 +18,13 @@ namespace eks
 
 		void init() override;
 
+		void setup_world();
+
 		void update( float dt ) override;
 
 	private:
 		World* _world { nullptr };
-		Pawn* _test_pawn { nullptr };
-		ref<CameraController> _camera_controller { nullptr };
+		weak_ptr<Pawn> _test_pawn;
+		shared_ptr<CameraController> _camera_controller { nullptr };
 	};
 }

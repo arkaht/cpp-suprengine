@@ -11,8 +11,7 @@ namespace suprengine
 	public:
 		Box shape;
 
-		BoxCollider( Entity* owner, const Box& shape ) 
-			: shape( shape ), Collider( owner ) {};
+		BoxCollider( const Box& shape );
 
 		//  TODO: implement this
 		bool intersects( std::shared_ptr<Collider> other ) override;

@@ -37,8 +37,8 @@ namespace puzzle
 
 		unsigned int _seed = (unsigned int)std::time( nullptr );
 
-		ref<Camera> _temporary_camera;
-		ref<ModelRenderer> _temporary_camera_model;
+		shared_ptr<Camera> _temporary_camera;
+		shared_ptr<ModelRenderer> _temporary_camera_model;
 
 		Vec3 _player_location = Vec3::zero;
 		Quaternion _player_rotation = Quaternion::identity;

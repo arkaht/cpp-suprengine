@@ -152,15 +152,15 @@ void GameScene::update( float dt )
 		if ( _temporary_camera->is_active() )
 		{
 			player_controller->get_camera()->activate();
-			player_controller->get_hud()->should_render = true;
-			_temporary_camera_model->should_render = true;
+			player_controller->get_hud()->is_active = true;
+			_temporary_camera_model->is_active = true;
 			printf( "Switch camera to spaceship camera!\n" );
 		}
 		else
 		{
 			_temporary_camera->activate();
-			player_controller->get_hud()->should_render = false;
-			_temporary_camera_model->should_render = false;
+			player_controller->get_hud()->is_active = false;
+			_temporary_camera_model->is_active = false;
 			printf( "Switch camera to temporary camera!\n" );
 		}
 	}

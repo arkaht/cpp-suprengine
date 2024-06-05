@@ -12,8 +12,9 @@ namespace eks
 	class Pawn : public Entity
 	{
 	public:
-		Pawn( World* world, const ref<Model>& model );
+		Pawn( World* world, const shared_ptr<Model>& model );
 
+		void setup() override;
 		void update_this( float dt ) override;
 
 		void move_to( const Vec3& target );
@@ -28,7 +29,8 @@ namespace eks
 
 	private:
 		World* _world;
-		ref<ModelRenderer> _renderer; 
+		shared_ptr<Model> _model;
+		shared_ptr<ModelRenderer> _renderer; 
 
 		float _move_progress = 1.0f;
 		Vec3 _move_to;

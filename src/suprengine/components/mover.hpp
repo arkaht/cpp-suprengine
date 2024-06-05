@@ -13,11 +13,11 @@ namespace suprengine
 		float sprint_speed = 25.0f;
 		bool should_collide = true;
 
-		Mover( Entity* owner ) : Component( owner ) {}
+		Mover( shared_ptr<Entity> owner ) : Component( owner ) {}
 
 		void update( float dt ) override
 		{
-			InputManager* _inputs = owner->get_engine()->get_inputs();
+			auto _inputs = get_owner()->get_engine()->get_inputs();
 			Vec3 dir {};
 
 			//  forward/backward
@@ -48,7 +48,7 @@ namespace suprengine
 			//  check collisions
 			if ( should_collide )
 			{
-				Physics* _physics = owner->get_engine()->get_physics();
+				Physics* _physics = get_owner()->get_engine()->get_physics();
 				
 				//  setup raycast
 				Ray ray( transform->location, move_dir );

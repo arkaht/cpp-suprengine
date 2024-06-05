@@ -285,10 +285,10 @@ void Spaceship::_update_trail( float dt )
 		trail_intensity_target,
 		dt * TRAIL_INTENSITY_SPEED
 	);
-	_trail_renderer->should_render = _trail_intensity > 0.01f;
+	_trail_renderer->is_active = _trail_intensity > 0.01f;
 
 	//  update visual
-	if ( _trail_renderer->should_render )
+	if ( _trail_renderer->is_active )
 	{
 		auto& trail_transform = _trail_renderer->transform;
 

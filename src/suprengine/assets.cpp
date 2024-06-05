@@ -17,10 +17,10 @@ using namespace suprengine;
 std::map<std::string, Texture*> Assets::_textures;
 std::map<std::string, Font*> Assets::_fonts;
 std::map<std::string, Shader*> Assets::_shaders;
-std::map<std::string, ref<Model>> Assets::_models;
-std::map<std::string, ref<Curve>> Assets::_curves;
+std::map<std::string, shared_ptr<Model>> Assets::_models;
+std::map<std::string, shared_ptr<Curve>> Assets::_curves;
 
-std::vector<ref<Assets::filewatcher>> Assets::_filewatchers;
+std::vector<shared_ptr<Assets::filewatcher>> Assets::_filewatchers;
 
 RenderBatch* Assets::_render_batch { nullptr };
 std::string Assets::_resources_path { "" };
@@ -93,7 +93,7 @@ Shader* Assets::get_shader( rconst_str name )
 	return (*itr).second;
 }
 
-ref<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_str shader_name )
+shared_ptr<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_str shader_name )
 {
 	//  set import flags
 	int flags = aiProcess_Triangulate 
@@ -125,7 +125,7 @@ ref<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_str shad
 	return model;
 }
 
-ref<Model> Assets::get_model( rconst_str name )
+shared_ptr<Model> Assets::get_model( rconst_str name )
 {
 	auto itr = _models.find( name );
 	if ( itr == _models.end() )
@@ -220,7 +220,7 @@ void Assets::load_curves_in_folder(
 	}
 }
 
-ref<Curve> Assets::load_curve( 
+shared_ptr<Curve> Assets::load_curve( 
 	rconst_str name, 
 	rconst_str path 
 )
@@ -241,7 +241,7 @@ ref<Curve> Assets::load_curve(
 	return _curves[name];
 }
 
-ref<Curve> Assets::get_curve( rconst_str name )
+shared_ptr<Curve> Assets::get_curve( rconst_str name )
 {
 	auto itr = _curves.find( name );
 	if ( itr == _curves.end() )

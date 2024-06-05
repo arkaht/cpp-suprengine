@@ -1,5 +1,6 @@
 #pragma once
 #include <suprengine/components/renderer.h>
+#include <suprengine/texture.h>
 
 namespace suprengine
 {
@@ -12,7 +13,7 @@ namespace suprengine
 		Vec2 origin { 0.5f, 0.5f };
 
 		SpriteRenderer( 
-			Entity* owner, 
+			shared_ptr<Entity> owner, 
 			Texture* texture, 
 			Color modulate = Color::white, 
 			int priority_order = 0 
@@ -39,14 +40,17 @@ namespace suprengine
 
 			_render_batch->draw_texture( 
 				source,
-				owner->transform->get_rect( dest ),
-				owner->transform->rotation.get_z_angle(),
+				transform->get_rect( dest ),
+				transform->rotation.get_z_angle(),
 				origin,
 				texture,
 				modulate
 			);
 		}
 
-		RenderPhase get_render_phase() const override { return RenderPhase::SPRITE; }
+		RenderPhase get_render_phase() const override 
+		{ 
+			return RenderPhase::Viewport; 
+		}
 	};
 }

@@ -2,7 +2,11 @@
 
 using namespace suprengine;
 
-bool SphereCollider::intersects( std::shared_ptr<Collider> other ) 
+SphereCollider::SphereCollider( float radius )
+	: radius( radius ) 
+{}
+
+bool SphereCollider::intersects( std::shared_ptr<Collider> other )
 { 
 	return false; 
 }

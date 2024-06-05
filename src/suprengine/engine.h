@@ -71,8 +71,23 @@ namespace suprengine
 		}
 		Scene* get_scene() const { return _scene.get(); }
 
-		void add_entity( Entity* entity );
-		void remove_entity( Entity* entity );
+		template <typename TEntity, typename ...Args>
+		shared_ptr<TEntity> create_entity( Args&& ...args )
+		{
+			static_assert( 
+				std::is_base_of<Entity, TEntity>::value, 
+				"Engine::create_entity: used for a non-Entity class!"
+			);
+
+			auto entity = std::make_shared<TEntity>( args... );
+			entity->init();
+			entity->setup();
+			add_entity( entity );
+
+			return entity;
+		}
+		void add_entity( shared_ptr<Entity> entity );
+		void remove_entity( shared_ptr<Entity> entity );
 		void clear_entities();
 
 		void add_timer( const Timer& timer );
@@ -95,8 +110,9 @@ namespace suprengine
 		void update( float dt );
 		void render();
 
+	private:
 		bool _is_running { true }, _is_updating { false };
-		std::vector<Entity*> _pending_entities, _entities, _dead_entities;
+		std::vector<shared_ptr<Entity>> _pending_entities, _entities, _dead_entities;
 
 		std::vector<Timer> _timers;
 

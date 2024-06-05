@@ -2,10 +2,17 @@
 
 using namespace eks;
 
-Pawn::Pawn( World* world, const ref<Model>& model )
-	: _world( world )
+Pawn::Pawn( World* world, const shared_ptr<Model>& model )
+	: _world( world ), _model( model )
+{}
+
+void Pawn::setup()
 {
-	_renderer = create_component<ModelRenderer>( model, SHADER_LIT_MESH, Color::blue );
+	_renderer = create_component<ModelRenderer>( 
+		_model, 
+		SHADER_LIT_MESH, 
+		Color::blue 
+	);
 }
 
 void Pawn::update_this( float dt )

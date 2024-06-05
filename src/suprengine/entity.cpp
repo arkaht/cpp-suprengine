@@ -8,30 +8,19 @@ Entity::Entity()
 	: _engine( &Engine::instance() )
 {
 	_unique_id = _global_id++;
-
-	//  assign a transform
-	transform = create_component<Transform>();
-
-	//  register in game
-	_engine->add_entity( this );
 }
 
 Entity::~Entity()
 {
-	//  remove from game
-	_engine->remove_entity( this );
-
 	//  release components
 	while ( !components.empty() )
 	{
 		auto& component = components.back();
-		component->unsetup();
-
 		remove_component( component );
 	}
 }
 
-void Entity::add_component( std::shared_ptr<Component> component )
+void Entity::add_component( shared_ptr<Component> component )
 {
 	if ( std::find( components.begin(), components.end(), component ) != components.end() ) return;
 
@@ -41,20 +30,34 @@ void Entity::add_component( std::shared_ptr<Component> component )
 	//  search order position
 	auto itr = components.begin();
 	for ( ; itr != components.end(); itr++ )
+	{
 		if ( order >= (*itr)->get_priority_order() )
+		{
 			break;
+		}
+	}
 
 	//  insert it
 	components.insert( itr, component );
+
+	component->setup();
 }
 
-void Entity::remove_component( std::shared_ptr<Component> component )
+void Entity::remove_component( shared_ptr<Component> component )
 {
 	auto itr = std::find( components.begin(), components.end(), component );
 	if ( itr == components.end() ) return;
 
+	component->unsetup();
+
 	//  erase component
 	components.erase( itr );
+}
+
+void Entity::init()
+{
+	//  assign a transform
+	transform = create_component<Transform>();
 }
 
 void Entity::update( float dt )
@@ -63,15 +66,6 @@ void Entity::update( float dt )
 	{
 		if ( !component->is_active ) continue;
 
-		//  init
-		if ( !component->is_initialized )
-		{
-			component->init();
-			component->is_initialized = true;
-		}
-
-		//  update
-		if ( !component->should_update ) continue;
 		component->update( dt );
 	}
 

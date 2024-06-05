@@ -6,6 +6,6 @@
 using rconst_str = const std::string&;
 
 template <class T>
-using ref = std::shared_ptr<T>;
+using shared_ptr = std::shared_ptr<T>;
 template <class T>
-using weak_ref = std::weak_ptr<T>;
+using weak_ptr = std::weak_ptr<T>;

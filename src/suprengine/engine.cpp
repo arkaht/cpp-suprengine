@@ -87,7 +87,7 @@ void Engine::loop()
 	}
 }
 
-void Engine::add_entity( Entity* entity )
+void Engine::add_entity( shared_ptr<Entity> entity )
 {
 	if ( _is_updating )
 	{
@@ -103,7 +103,7 @@ void Engine::add_entity( Entity* entity )
 	}
 }
 
-void Engine::remove_entity( Entity* entity )
+void Engine::remove_entity( shared_ptr<Entity> entity )
 {
 	//  remove from actives
 	auto itr = std::find( _entities.begin(), _entities.end(), entity );
@@ -126,10 +126,7 @@ void Engine::remove_entity( Entity* entity )
 void Engine::clear_entities()
 {
 	//  clear entities
-	while ( !_entities.empty() )
-	{
-		delete _entities.back();
-	}
+	_entities.clear();
 
 	//  clear camera
 	camera = nullptr;
@@ -181,7 +178,7 @@ void Engine::update( float dt )
 	//  add pending entities to active
 	if ( !_pending_entities.empty() )
 	{
-		for ( auto entity : _pending_entities )
+		for ( auto& entity : _pending_entities )
 		{
 			add_entity( entity );
 		}
@@ -195,7 +192,7 @@ void Engine::update( float dt )
 		_scene->update( dt );
 	}
 
-	for ( auto entity : _entities )
+	for ( auto& entity : _entities )
 	{
 		if ( entity->state == EntityState::Active )
 		{
@@ -243,9 +240,9 @@ void Engine::update( float dt )
 	//  delete dead entities
 	if ( !_dead_entities.empty() )
 	{
-		for ( auto entity : _dead_entities )
+		for ( auto& entity : _dead_entities )
 		{
-			delete entity;
+			remove_entity( entity );
 		}
 		_dead_entities.clear();
 	}

@@ -4,21 +4,22 @@
 
 using namespace eks;
 
-CameraController::CameraController( 
-	Entity* owner, 
+CameraController::CameraController(
 	float move_speed,
 	const Vec3& offset
 )
 	: move_speed( move_speed ),
-	  offset( offset ),
-	  Component( owner )
+	  offset( offset )
+{}
+
+void CameraController::setup()
 {
 	transform->location += offset;
 }
 
 void CameraController::update( float dt )
 {
-	auto inputs = owner->get_engine()->get_inputs();
+	auto inputs = get_owner()->get_engine()->get_inputs();
 
 	Vec3 pos = transform->location;
 	if ( auto target = focus_target.lock() )

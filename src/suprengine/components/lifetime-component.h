@@ -7,7 +7,7 @@ namespace suprengine
 	class LifetimeComponent : public Component
 	{
 	public:
-		LifetimeComponent( Entity* owner, float life_time = 3.0f );
+		LifetimeComponent( float life_time = 3.0f );
 
 		void update( float dt ) override;
 

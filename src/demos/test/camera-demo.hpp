@@ -74,16 +74,16 @@ namespace test
 			switch ( mode )
 			{
 				case CameraMode::FPS:
-					mover->should_update = true;
-					mouse_looker->should_update = true;
+					mover->is_active = true;
+					mouse_looker->is_active = true;
 					break;
 				case CameraMode::TPS:
 					player->state = EntityState::Active;
-					spring_arm->should_update = true;
+					spring_arm->is_active = true;
 					break;
 				case CameraMode::STATIC:
 					player->state = EntityState::Active;
-					target_rotator->should_update = true;
+					target_rotator->is_active = true;
 					break;
 			}
 		}
@@ -93,16 +93,16 @@ namespace test
 			switch ( mode )
 			{
 				case CameraMode::FPS:
-					mover->should_update = false;
-					mouse_looker->should_update = false;
+					mover->is_active = false;
+					mouse_looker->is_active = false;
 					break;
 				case CameraMode::TPS:
 					player->state = EntityState::Paused;
-					spring_arm->should_update = false;
+					spring_arm->is_active = false;
 					break;
 				case CameraMode::STATIC:
 					player->state = EntityState::Paused;
-					target_rotator->should_update = false;
+					target_rotator->is_active = false;
 					break;
 			}
 		}

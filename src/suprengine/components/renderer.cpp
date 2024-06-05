@@ -4,19 +4,22 @@
 
 using namespace suprengine;
 
-Renderer::Renderer( Entity* owner, Color modulate, int priority_order )
+Renderer::Renderer(  
+	Color modulate, 
+	int priority_order 
+)
 	: modulate( modulate ),
-	  Component( owner, priority_order )
-{
-	_render_batch = owner->get_engine()->get_render_batch();
-}
+	  Component( priority_order )
+{}
 
 void Renderer::setup()
 {
-	_render_batch->add_renderer( this );
+	auto render_batch = Engine::instance().get_render_batch();
+	render_batch->add_renderer( this );
 }
 
 void Renderer::unsetup()
 {
-	_render_batch->remove_renderer( this );
+	auto render_batch = Engine::instance().get_render_batch();
+	render_batch->remove_renderer( this );
 }

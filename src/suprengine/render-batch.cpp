@@ -33,9 +33,8 @@ void RenderBatch::_render_phase( const RenderPhase phase )
 	for ( auto renderer : list )
 	{
 		if ( !renderer->is_active ) continue;
-		if ( !renderer->should_render ) continue;
 
-		renderer->render();
+		renderer->render( this );
 	}
 }
 

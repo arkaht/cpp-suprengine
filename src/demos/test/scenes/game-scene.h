@@ -20,6 +20,6 @@ namespace test
 		void update( float dt ) override;
 
 	private:
-		ref<ModelRenderer> model_renderer;
+		shared_ptr<ModelRenderer> model_renderer;
 	};
 }
