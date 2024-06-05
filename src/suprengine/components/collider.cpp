@@ -11,7 +11,7 @@ void Collider::setup()
 {
 	auto physics = Engine::instance().get_physics();
 
-	auto ptr = get_shared_from_this<Collider>();
+	auto ptr = as<Collider>();
 	get_owner()->collider = ptr;
 	physics->add_collider( ptr );
 }
@@ -20,7 +20,7 @@ void Collider::unsetup()
 {
 	auto physics = Engine::instance().get_physics();
 
-	auto ptr = get_shared_from_this<Collider>();
+	auto ptr = as<Collider>();
 	physics->remove_collider( ptr );
 }
 

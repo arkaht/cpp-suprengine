@@ -72,7 +72,7 @@ bool BoxCollider::raycast( _RAYCAST_FUNC_PARAMS )
 		return false;
 
 	//  hit result
-	hit->collider = get_shared_from_this<Collider>();
+	hit->collider = as<Collider>();
 	hit->point = ray.origin + ray.direction * result_t;
 
 	//  provide normal

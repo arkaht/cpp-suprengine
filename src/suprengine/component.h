@@ -5,10 +5,11 @@
 #include "components/transform.fwd.h"
 
 #include <suprengine/render-batch.h>
+#include <suprengine/shareable.hpp>
 
 namespace suprengine
 {
-	class Component : public std::enable_shared_from_this<Component>
+	class Component : public Shareable<Component>
 	{
 	public:
 		Component();
@@ -17,12 +18,6 @@ namespace suprengine
 
 		Component( const Component& ) = delete;
 		Component& operator=( const Component& ) = delete;
-
-		template <typename T>
-		std::shared_ptr<T> get_shared_from_this()
-		{
-			return std::static_pointer_cast<T>( shared_from_this() );
-		}
 
 		void init( shared_ptr<Entity> owner );
 
