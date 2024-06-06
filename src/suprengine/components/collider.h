@@ -5,7 +5,7 @@
 #include <suprengine/physics.h>
 #include <suprengine/ray.hpp>
 
-#include <unordered_set>
+#include <set>
 
 namespace suprengine
 {
@@ -54,6 +54,6 @@ namespace suprengine
 		Event<shared_ptr<Collider>, CollisionState> on_collision_update;
 
 	protected:
-		std::unordered_set<shared_ptr<Collider>> collisions;
+		std::set<Collider*> collisions;
 	};
 }

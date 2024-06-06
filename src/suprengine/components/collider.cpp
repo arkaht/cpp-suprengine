@@ -25,13 +25,14 @@ void Collider::unsetup()
 
 void Collider::update_collision_with( shared_ptr<Collider> other, bool is_active )
 {
-	bool is_found = collisions.find( other ) != collisions.end();
+	Collider* other_ptr = other.get();
+	bool is_found = collisions.find( other_ptr ) != collisions.end();
 
 	if ( is_active )
 	{
 		if ( !is_found )
 		{
-			collisions.emplace( other );
+			collisions.emplace( other_ptr );
 			on_collision_update.invoke( other, CollisionState::Enter );
 		}
 		else
@@ -43,7 +44,7 @@ void Collider::update_collision_with( shared_ptr<Collider> other, bool is_active
 	{
 		if ( is_found )
 		{
-			collisions.erase( other );
+			collisions.erase( other_ptr );
 			on_collision_update.invoke( other, CollisionState::Exit );
 		}
 	}
