@@ -1,11 +1,6 @@
 #include "assets.h"
 
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <filesystem>
-
-#include <rapidjson/document.h>
 
 #include <assimp/postprocess.h>
 

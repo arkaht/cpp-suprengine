@@ -1,5 +1,6 @@
 #include "collider.h"
-#include "../entity.h"
+
+#include <suprengine/entity.h>
 
 using namespace suprengine;
 
@@ -9,7 +10,8 @@ Collider::Collider( int priority_order )
 
 void Collider::setup()
 {
-	auto physics = Engine::instance().get_physics();
+	auto& engine = Engine::instance();
+	auto physics = engine.get_physics();
 
 	auto ptr = as<Collider>();
 	physics->add_collider( ptr );
@@ -17,7 +19,8 @@ void Collider::setup()
 
 void Collider::unsetup()
 {
-	auto physics = Engine::instance().get_physics();
+	auto& engine = Engine::instance();
+	auto physics = engine.get_physics();
 
 	auto ptr = as<Collider>();
 	physics->remove_collider( ptr );
