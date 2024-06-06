@@ -32,11 +32,11 @@ void Collider::update_collision_with( shared_ptr<Collider> other, bool is_active
 		if ( !is_found )
 		{
 			collisions.emplace( other );
-			get_owner()->on_trigger_enter( other );
+			on_collision_update.invoke( other, CollisionState::Enter );
 		}
 		else
 		{
-			get_owner()->on_trigger_stay( other );
+			on_collision_update.invoke( other, CollisionState::Stay );
 		}
 	}
 	else
@@ -44,7 +44,7 @@ void Collider::update_collision_with( shared_ptr<Collider> other, bool is_active
 		if ( is_found )
 		{
 			collisions.erase( other );
-			get_owner()->on_trigger_exit( other );
+			on_collision_update.invoke( other, CollisionState::Exit );
 		}
 	}
 }

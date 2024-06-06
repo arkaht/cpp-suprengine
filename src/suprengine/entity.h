@@ -81,11 +81,6 @@ namespace suprengine
 		virtual void update_this( float dt ) {}
 		virtual void debug_render( RenderBatch* _render_batch ) {}
 
-		//  TODO: Move trigger callbacks into an interface/component
-		virtual void on_trigger_enter( shared_ptr<Collider> collider ) {}
-		virtual void on_trigger_stay( shared_ptr<Collider> collider ) {}
-		virtual void on_trigger_exit( shared_ptr<Collider> collider ) {}
-
 		int get_unique_id() const { return _unique_id; }
 
 	public:
