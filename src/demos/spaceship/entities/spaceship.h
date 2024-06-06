@@ -37,7 +37,7 @@ namespace puzzle
 		void set_color( const Color& color );
 		Color get_color() const { return _color; }
 
-		std::shared_ptr<HealthComponent> get_health_component() const { return _health; }
+		shared_ptr<HealthComponent> get_health_component() const { return _health; }
 
 	public:
 		/*
@@ -109,10 +109,10 @@ namespace puzzle
 
 		float _shoot_time = 0.0f;
 
-		std::shared_ptr<StylizedModelRenderer> _model_renderer;
-		std::shared_ptr<StylizedModelRenderer> _trail_renderer;
-		std::shared_ptr<BoxCollider> _collider;
-		std::shared_ptr<HealthComponent> _health;
+		shared_ptr<StylizedModelRenderer> _model_renderer;
+		shared_ptr<StylizedModelRenderer> _trail_renderer;
+		shared_ptr<BoxCollider> _collider;
+		shared_ptr<HealthComponent> _health;
 
 		static std::vector<Spaceship*> _all_spaceships;
 	};

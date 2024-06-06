@@ -15,7 +15,7 @@ BoxCollider::BoxCollider( const Box& shape )
 	: shape( shape ) 
 {}
 
-bool BoxCollider::intersects( std::shared_ptr<Collider> other )
+bool BoxCollider::intersects( shared_ptr<Collider> other )
 {
 	return false; 
 }
@@ -77,11 +77,13 @@ bool BoxCollider::raycast( _RAYCAST_FUNC_PARAMS )
 
 	//  provide normal
 	for ( int i = 0; i < 6; i++ )
+	{
 		if ( result_t == t[i] )
 		{
 			hit->normal = normals[i];
 			break;
 		}
+	}
 
 	return true;
 }

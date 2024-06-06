@@ -45,8 +45,8 @@ namespace puzzle
 		float _max_lifetime = 0.0f;
 		Vec3 _scale = Vec3::one;
 
-		std::shared_ptr<LifetimeComponent> _lifetime_component;
-		std::shared_ptr<StylizedModelRenderer> _model_renderer;
+		shared_ptr<LifetimeComponent> _lifetime_component;
+		shared_ptr<StylizedModelRenderer> _model_renderer;
 
 		shared_ptr<Curve> _curve_transform_scale;
 		shared_ptr<Curve> _curve_outline_scale;

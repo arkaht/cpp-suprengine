@@ -144,7 +144,7 @@ void GuidedMissile::_check_impact()
 	//printf( "hit %p (self:%p)\n", hit.collider->get_owner(), this );
 }
 
-void GuidedMissile::_damage( std::shared_ptr<HealthComponent> target )
+void GuidedMissile::_damage( shared_ptr<HealthComponent> target )
 {
 	if ( !target ) return;
 	

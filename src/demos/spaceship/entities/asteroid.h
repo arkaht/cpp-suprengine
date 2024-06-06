@@ -28,8 +28,8 @@ namespace puzzle
 		void _on_damage( const DamageResult& result );
 
 	private:
-		std::shared_ptr<StylizedModelRenderer> _model_renderer;
-		std::shared_ptr<SphereCollider> _collider;
-		std::shared_ptr<HealthComponent> _health;
+		shared_ptr<StylizedModelRenderer> _model_renderer;
+		shared_ptr<SphereCollider> _collider;
+		shared_ptr<HealthComponent> _health;
 	};
 }

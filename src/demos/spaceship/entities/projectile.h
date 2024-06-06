@@ -35,8 +35,8 @@ namespace puzzle
 
 		Spaceship* _owner;
 
-		std::shared_ptr<StylizedModelRenderer> _model_renderer;
-		std::shared_ptr<LifetimeComponent> _lifetime_component;
+		shared_ptr<StylizedModelRenderer> _model_renderer;
+		shared_ptr<LifetimeComponent> _lifetime_component;
 	};
 }
 

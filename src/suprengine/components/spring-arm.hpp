@@ -9,14 +9,14 @@ namespace suprengine
 	{
 	private:
 	public:
-		std::shared_ptr<Transform> target;
+		shared_ptr<Transform> target;
 		Vec3 spring_offset;
 		Vec3 look_offset;
 		float hit_normal_offset { 0.1f };
 
 		SpringArm( 
 			shared_ptr<Entity> owner, 
-			std::shared_ptr<Transform> target, 
+			shared_ptr<Transform> target, 
 			const Vec3& spring_offset = Vec3 { 0.0f, 1.0f, 5.0f }, 
 			const Vec3& look_offset = Vec3::zero 
 		)

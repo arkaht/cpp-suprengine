@@ -44,7 +44,7 @@ namespace puzzle
 		void _update_target( float dt );
 		void _check_impact();
 
-		void _damage( std::shared_ptr<HealthComponent> target );
+		void _damage( shared_ptr<HealthComponent> target );
 
 	private:
 		const float LIFETIME = 6.0f;
@@ -64,7 +64,7 @@ namespace puzzle
 		std::weak_ptr<HealthComponent> _wk_target;
 		Spaceship* _owner;
 
-		std::shared_ptr<StylizedModelRenderer> _model_renderer;
-		std::shared_ptr<LifetimeComponent> _lifetime_component;
+		shared_ptr<StylizedModelRenderer> _model_renderer;
+		shared_ptr<LifetimeComponent> _lifetime_component;
 	};
 }
