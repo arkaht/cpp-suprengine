@@ -5,7 +5,7 @@
 
 #include <suprengine/components/lifetime-component.h>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 
@@ -16,11 +16,12 @@ namespace puzzle
 	{
 	public:
 		GuidedMissile( 
-			Spaceship* owner,
-			std::weak_ptr<HealthComponent> wk_target, 
+			shared_ptr<Spaceship> owner,
+			weak_ptr<HealthComponent> wk_target, 
 			Color color 
 		);
 
+		void setup() override;
 		void update_this( float dt ) override;
 
 		void explode();
@@ -61,8 +62,10 @@ namespace puzzle
 		float _current_rotation_speed { 0.0f };
 		
 		Vec3 _desired_direction { Vec3::forward };
-		std::weak_ptr<HealthComponent> _wk_target;
-		Spaceship* _owner;
+		weak_ptr<HealthComponent> _wk_target;
+		weak_ptr<Spaceship> _wk_owner;
+
+		Color _color;
 
 		shared_ptr<StylizedModelRenderer> _model_renderer;
 		shared_ptr<LifetimeComponent> _lifetime_component;

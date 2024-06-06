@@ -125,8 +125,15 @@ void Engine::remove_entity( shared_ptr<Entity> entity )
 
 void Engine::clear_entities()
 {
+	for ( auto& entity : _entities )
+	{
+		entity->kill();
+	}
+
 	//  clear entities
+	_pending_entities.clear();
 	_entities.clear();
+	_dead_entities.clear();
 
 	//  clear camera
 	camera = nullptr;

@@ -7,5 +7,5 @@ using namespace suprengine;
 int main( int arg_count, char** args )
 {
 	auto& engine = Engine::instance();
-	return engine.run<puzzle::GameInstance>();
+	return engine.run<spaceship::GameInstance>();
 }

@@ -68,8 +68,8 @@ namespace suprengine
 		void set_ambient_scale( float scale );
 		void set_ambient_color( Color color );
 
-		void add_renderer( Renderer* renderer );
-		void remove_renderer( Renderer* renderer );
+		void add_renderer( shared_ptr<Renderer> renderer );
+		void remove_renderer( shared_ptr<Renderer> renderer );
 
 	public:
 		virtual bool init() = 0;
@@ -140,12 +140,10 @@ namespace suprengine
 
 	protected:
 		Window* _window;
-		std::unordered_map<RenderPhase, std::vector<Renderer*>> _renderers;
+		std::unordered_map<RenderPhase, std::vector<shared_ptr<Renderer>>> _renderers;
 
 		AmbientLightInfos _ambient_light;
 
 		Color _background_color { Color::black };
-		Engine* _engine { nullptr };
-
 	};
 }

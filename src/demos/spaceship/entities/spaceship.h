@@ -7,7 +7,7 @@
 
 #include <suprengine/components/colliders/box-collider.h>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 
@@ -17,14 +17,15 @@ namespace puzzle
 		Spaceship();
 		~Spaceship();
 
+		void setup() override;
 		void update_this( float dt ) override;
 
-		Spaceship* find_lockable_target(
+		shared_ptr<Spaceship> find_lockable_target(
 			const Vec3& view_direction 
 		) const;
 
 		void shoot();
-		void launch_missiles( std::weak_ptr<HealthComponent> wk_target );
+		void launch_missiles( weak_ptr<HealthComponent> wk_target );
 		
 		void die();
 		void respawn();
@@ -49,7 +50,7 @@ namespace puzzle
 		Event<const DamageResult&> on_hit;
 
 	public:
-		SpaceshipController* controller { nullptr };
+		weak_ptr<SpaceshipController> wk_controller;
 
 	private:
 		//  Outline scale on models renderers
@@ -114,6 +115,6 @@ namespace puzzle
 		shared_ptr<BoxCollider> _collider;
 		shared_ptr<HealthComponent> _health;
 
-		static std::vector<Spaceship*> _all_spaceships;
+		static std::vector<weak_ptr<Spaceship>> _all_spaceships;
 	};
 }

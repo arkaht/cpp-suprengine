@@ -2,7 +2,7 @@
 
 #include <suprengine/components/renderers/model-renderer.hpp>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 
@@ -17,13 +17,12 @@ namespace puzzle
 	{
 	public:
 		StylizedModelRenderer(
-			Entity* owner,
 			shared_ptr<Model> model,
 			Color modulate = Color::white,
 			int priority_order = 0
 		);
 
-		void render() override;
+		void render( RenderBatch* render_batch ) override;
 
 	public:
 		float outline_scale = 0.025f;

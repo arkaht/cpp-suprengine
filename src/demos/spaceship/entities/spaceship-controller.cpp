@@ -1,16 +1,16 @@
 #include "spaceship-controller.h"
 #include "entities/spaceship.h"
 
-using namespace puzzle;
+using namespace spaceship;
 
 SpaceshipController::~SpaceshipController()
 {
 	unpossess();
 }
 
-void SpaceshipController::possess( Spaceship* ship )
+void SpaceshipController::possess( shared_ptr<Spaceship> ship )
 {
-	auto old = _possessed_ship;
+	auto previous_ship = get_ship();
 
 	//  unpossess
 	_suppress_event = true;
@@ -20,39 +20,38 @@ void SpaceshipController::possess( Spaceship* ship )
 	//auto ptr = get_shared_from_this<SpaceshipController>();
 
 	//  force unpossess previous controller
-	if ( ship->controller )
+	if ( auto controller = ship->wk_controller.lock() )
 	{
-		ship->controller->unpossess();
+		controller->unpossess();
 	}
 
 	//  possess
 	_possessed_ship = ship;
-	_possessed_ship->controller = this;
+	ship->wk_controller = as<SpaceshipController>();
 	on_possess();
 
 	//  invoke event
-	event_on_possess_changed.invoke( old, _possessed_ship );
+	on_possess_changed.invoke( previous_ship, ship );
 }
 
 void SpaceshipController::unpossess()
 {
-	//auto ptr = get_shared_from_this<SpaceshipController>();
-	if ( !_possessed_ship ) return;
+	auto previous_ship = get_ship();
+	if ( !previous_ship ) return;
 
 	//  reset controller of owned ship
-	if ( _possessed_ship->controller == this )
+	if ( previous_ship->wk_controller.lock().get() == this )
 	{
-		_possessed_ship->controller = nullptr;
+		previous_ship->wk_controller.reset();
 	}
 
 	//  reset pointer
-	auto old = _possessed_ship;
 	on_unpossess();
-	_possessed_ship = nullptr;
+	_possessed_ship.reset();
 
 	//  invoke event
 	if ( !_suppress_event )
 	{
-		event_on_possess_changed.invoke( old, nullptr );
+		on_possess_changed.invoke( previous_ship, nullptr );
 	}
 }

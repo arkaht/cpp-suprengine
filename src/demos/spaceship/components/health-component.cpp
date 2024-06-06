@@ -1,10 +1,9 @@
 #include "health-component.h"
 
-using namespace puzzle;
+using namespace spaceship;
 
-HealthComponent::HealthComponent( Entity* owner, float health )
-	: health( health ), max_health( health ),
-	  Component( owner )
+HealthComponent::HealthComponent( float health )
+	: health( health ), max_health( health )
 {}
 
 DamageResult HealthComponent::damage( const DamageInfo& info )
@@ -27,7 +26,7 @@ DamageResult HealthComponent::damage( const DamageInfo& info )
 
 	//  validate result
 	result.is_valid = true;
-	result.victim = get_shared_from_this<HealthComponent>();
+	result.victim = as<HealthComponent>();
 	result.is_alive = is_alive();
 
 	//  trigger event

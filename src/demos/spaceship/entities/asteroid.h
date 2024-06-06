@@ -4,7 +4,7 @@
 #include <components/stylized-model-renderer.h>
 #include <components/health-component.h>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 
@@ -14,6 +14,7 @@ namespace puzzle
 		Asteroid();
 		~Asteroid();
 
+		void setup() override;
 		void update_this( float dt ) override;
 
 		void update_collision_to_transform();

@@ -6,12 +6,41 @@
 
 #include <suprengine/random.h>
 
-using namespace puzzle;
+using namespace spaceship;
 
-std::vector<Spaceship*> Spaceship::_all_spaceships;
+std::vector<weak_ptr<Spaceship>> Spaceship::_all_spaceships;
 
-Spaceship::Spaceship()
+Spaceship::Spaceship() 
+{}
+
+Spaceship::~Spaceship()
 {
+	if ( auto entity = _trail_renderer->get_owner() )
+	{
+		entity->kill();
+	}
+
+	if ( auto controller = wk_controller.lock() )
+	{
+		controller->unpossess();
+	}
+
+	//  remove from list
+	std::erase_if( _all_spaceships, 
+		[this]( weak_ptr<Spaceship> wk_ship )
+		{
+			auto ship = wk_ship.lock();
+			if ( ship == nullptr ) return false;
+			
+			return ship.get() == this;
+		}
+	);
+}
+
+void Spaceship::setup()
+{
+	auto& engine = Engine::instance();
+
 	CameraDynamicDistanceSettings dcd_settings {};
 	dcd_settings.is_active = true;
 	dcd_settings.max_distance_sqr = math::pow( 256.0f, 2.0f );
@@ -30,7 +59,7 @@ Spaceship::Spaceship()
 	} );
 
 	//  initialize trail
-	auto trail_entity = new Entity();
+	auto trail_entity = engine.create_entity<Entity>();
 	_trail_renderer = trail_entity->create_component<StylizedModelRenderer>(
 		_model_renderer->model,
 		_color
@@ -46,21 +75,7 @@ Spaceship::Spaceship()
 		std::bind( &Spaceship::_on_damage, this, std::placeholders::_1 ) );
 
 	//  add to list
-	_all_spaceships.push_back( this );
-}
-
-Spaceship::~Spaceship()
-{
-	_trail_renderer->get_owner()->kill();
-
-	if ( controller )
-	{
-		controller->unpossess();
-	}
-
-	//  remove from list
-	auto itr = std::find( _all_spaceships.begin(), _all_spaceships.end(), this );
-	_all_spaceships.erase( itr );
+	_all_spaceships.push_back( as<Spaceship>() );
 }
 
 void Spaceship::update_this( float dt )
@@ -72,18 +87,19 @@ void Spaceship::update_this( float dt )
 	_shoot_time = math::max( 0.0f, _shoot_time - dt );
 }
 
-Spaceship* Spaceship::find_lockable_target( 
+shared_ptr<Spaceship> Spaceship::find_lockable_target( 
 	const Vec3& view_direction 
 ) const
 {
-	Spaceship* target { nullptr };
+	shared_ptr<Spaceship> target { nullptr };
 
 	float best_view_alignment = -1.0f;
 	float best_distance = MISSILE_LOCK_MAX_DISTANCE;
 
-	for ( auto ship : _all_spaceships )
+	for ( auto& wk_ship : _all_spaceships )
 	{
-		if ( ship == this ) continue;
+		auto ship = wk_ship.lock();
+		if ( ship == nullptr || ship.get() == this ) continue;
 		
 		//  check health
 		auto health = ship->get_health_component();
@@ -112,10 +128,16 @@ Spaceship* Spaceship::find_lockable_target(
 
 void Spaceship::shoot()
 {
+	auto& engine = Engine::instance();
+	auto shared_this = as<Spaceship>();
+
 	//  spawn projectile
 	for ( int i = 0; i < 2; i++ )
 	{
-		auto projectile = new Projectile( this, _color );
+		auto projectile = engine.create_entity<Projectile>( 
+			shared_this, 
+			_color 
+		);
 		projectile->transform->scale = Vec3( 1.5f );
 		projectile->transform->location = 
 			get_shoot_location( 
@@ -134,27 +156,34 @@ void Spaceship::shoot()
 }
 
 void Spaceship::launch_missiles( 
-	std::weak_ptr<HealthComponent> wk_target 
+	weak_ptr<HealthComponent> wk_target 
 )
 {
+	auto& engine = Engine::instance();
+	auto shared_this = as<Spaceship>();
+
 	for ( int i = 0; i < 6; i++ )
 	{
 		float row = floorf( i / 2.0f );
-		_engine->add_timer( { row * 0.1f, 
-			[wk_target, this, i, row] {
-				auto missile = new GuidedMissile( this, wk_target, _color );
-				missile->transform->location = transform->location 
-					+ transform->get_right() * ( i % 2 == 0 ? 1.0f : -1.0f ) * 2.0f
-					+ transform->get_forward() * row * 3.0f;
-				missile->transform->rotation = Quaternion::look_at( transform->get_up(), Vec3::up );
-				missile->up_direction = transform->get_up();
-			}
-		} );
+		engine.add_timer( { row * 0.1f, [&engine, shared_this, wk_target, this, i, row]{
+			auto missile = engine.create_entity<GuidedMissile>( 
+				shared_this, 
+				wk_target,
+				_color 
+			);
+			missile->transform->location = transform->location 
+				+ transform->get_right() * ( i % 2 == 0 ? 1.0f : -1.0f ) * 2.0f
+				+ transform->get_forward() * row * 3.0f;
+			missile->transform->rotation = Quaternion::look_at( transform->get_up(), Vec3::up );
+			missile->up_direction = transform->get_up();
+		} } );
 	}
 }
 
 void Spaceship::die()
 {
+	auto& engine = Engine::instance();
+
 	if ( _health->health > 0.0f )
 	{
 		_health->health = 0.0f;
@@ -177,7 +206,10 @@ void Spaceship::die()
 		float size = math::lerp( EXPLOSION_SIZE.x, EXPLOSION_SIZE.y, size_ratio_over_damage );
 		size += random::generate( EXPLOSION_SIZE_DEVIATION.x, EXPLOSION_SIZE_DEVIATION.y );
 
-		auto effect = new ExplosionEffect( size, _color );
+		auto effect = engine.create_entity<ExplosionEffect>( 
+			size, 
+			_color 
+		);
 		effect->transform->location = transform->location;
 	}
 	printf( "Spaceship[%d] is killed!\n", get_unique_id() );
@@ -222,7 +254,7 @@ void Spaceship::_update_movement( float dt )
 {
 	//  get inputs
 	auto inputs = SpaceshipControlInputs {};
-	if ( controller )
+	if ( auto controller = wk_controller.lock() )
 	{
 		controller->update_inputs( dt );
 		inputs = controller->get_inputs();
@@ -256,7 +288,8 @@ void Spaceship::_update_movement( float dt )
 	transform->set_location( transform->location + movement );
 
 	//  apply rotation
-	if ( controller )  //  avoid identity rotation when no controller
+	//  avoid identity rotation when no controller
+	if ( auto controller = wk_controller.lock() )
 	{
 		Quaternion rotation = inputs.should_smooth_rotation 
 			? Quaternion::slerp( transform->rotation, inputs.desired_rotation, dt * inputs.smooth_rotation_speed )
@@ -268,7 +301,8 @@ void Spaceship::_update_movement( float dt )
 
 void Spaceship::_update_trail( float dt )
 {
-	float time = _engine->get_timer()->get_accumulated_seconds();
+	auto& engine = Engine::instance();
+	float time = engine.get_timer()->get_accumulated_seconds();
 
 	//  intensity
 	float trail_intensity_target = 0.0f;

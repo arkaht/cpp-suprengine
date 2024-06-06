@@ -1,9 +1,14 @@
 #include "asteroid.h"
 #include <suprengine/random.h>
 
-using namespace puzzle;
+using namespace spaceship;
 
 Asteroid::Asteroid()
+{}
+
+Asteroid::~Asteroid() {}
+
+void Asteroid::setup()
 {
 	_model_renderer = create_component<StylizedModelRenderer>( 
 		Assets::get_model( "asteroid" + std::to_string( random::generate( 0, 1 ) ) ),
@@ -16,8 +21,6 @@ Asteroid::Asteroid()
 		std::bind( &Asteroid::_on_damage, this, std::placeholders::_1 ) 
 	);
 }
-
-Asteroid::~Asteroid() {}
 
 void Asteroid::update_this( float dt )
 {
@@ -57,6 +60,8 @@ void Asteroid::_on_damage( const DamageResult& result )
 
 void Asteroid::split()
 {
+	auto& engine = Engine::instance();
+
 	split_times--;
 
 	float linear_force = linear_direction.length();
@@ -69,7 +74,7 @@ void Asteroid::split()
 	{
 		float angle = 360.0f / COUNT * i;
 
-		auto half = new Asteroid();
+		auto half = engine.create_entity<Asteroid>();
 		half->linear_direction = Vec3::transform( 
 			Vec3 { 
 				math::cos( angle ), 

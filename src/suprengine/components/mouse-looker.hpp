@@ -18,23 +18,26 @@ namespace suprengine
 		Vec2 yaw_range = Vec2 { -180.0f, 180.0f } * math::DEG2RAD;
 		Vec2 pitch_range = Vec2 { -60.0f, 60.0f } * math::DEG2RAD;
 
+	public:
 		MouseLooker( 
-			shared_ptr<Entity> owner, 
 			float sensitivity = 0.25f,
 			int priority_order = 0 
 		)
 			: sensitivity( sensitivity ), 
-			  Component( owner, priority_order ) 
+			  Component( priority_order ) 
+		{}
+
+		void setup() override
 		{
-			yaw = owner->transform->rotation.get_y_angle();
-			//pitch = owner->transform->rotation.get_x_angle();
+			yaw = transform->rotation.get_y_angle();
+			//pitch = transform->rotation.get_x_angle();
 		}
 
 		void update( float dt ) override
 		{
 			//  get mouse delta
-			auto _inputs = get_owner()->get_engine()->get_inputs();
-			Vec2 delta = _inputs->mouse_delta;
+			auto inputs = Engine::instance().get_inputs();
+			Vec2 delta = inputs->mouse_delta;
 			if ( delta == Vec2::zero ) return;
 
 			//  compute yaw

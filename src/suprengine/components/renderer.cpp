@@ -14,12 +14,14 @@ Renderer::Renderer(
 
 void Renderer::setup()
 {
-	auto render_batch = Engine::instance().get_render_batch();
-	render_batch->add_renderer( this );
+	auto& engine = Engine::instance();
+	auto render_batch = engine.get_render_batch();
+	render_batch->add_renderer( as<Renderer>() );
 }
 
 void Renderer::unsetup()
 {
-	auto render_batch = Engine::instance().get_render_batch();
-	render_batch->remove_renderer( this );
+	auto& engine = Engine::instance();
+	auto render_batch = engine.get_render_batch();
+	render_batch->remove_renderer( as<Renderer>() );
 }

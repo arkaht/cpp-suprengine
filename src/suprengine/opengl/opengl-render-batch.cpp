@@ -113,7 +113,8 @@ void OpenGLRenderBatch::begin_render()
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	//  check camera
-	_camera = _engine->camera;
+	auto& engine = Engine::instance();
+	_camera = engine.camera;
 	if ( _camera == nullptr )
 	{
 		Logger::error( "no main camera, rendering aborted!" );

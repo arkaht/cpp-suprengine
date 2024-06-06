@@ -1,29 +1,27 @@
 #include "stylized-model-renderer.h"
 
-using namespace puzzle;
+using namespace spaceship;
 
 StylizedModelRenderer::StylizedModelRenderer( 
-	Entity* owner, 
 	shared_ptr<Model> model, 
 	Color modulate, 
 	int priority_order 
 )
 	: ModelRenderer( 
-		owner, 
 		model, 
 		"stylized", 
 		modulate, 
 		priority_order 
 	) {}
 
-void StylizedModelRenderer::render()
+void StylizedModelRenderer::render( RenderBatch* render_batch )
 {
 	//  get offset scale
 	float offset_scale = 1.0f;
 	if ( dynamic_camera_distance_settings.is_active )
 	{
-		auto engine = owner->get_engine();
-		auto camera = engine->camera;
+		auto& engine = Engine::instance();
+		auto camera = engine.camera;
 
 		//  compute distances
 		Vec3 dist = transform->location - camera->transform->location;
@@ -57,7 +55,7 @@ void StylizedModelRenderer::render()
 		);
 
 		glFrontFace( draw_outline_ccw ? GL_CCW : GL_CW );
-		_render_batch->draw_model(
+		render_batch->draw_model(
 			outline_matrix,
 			model,
 			shader_name,
@@ -69,7 +67,7 @@ void StylizedModelRenderer::render()
 	if ( !draw_only_outline )
 	{
 		glFrontFace( GL_CW );
-		_render_batch->draw_model(
+		render_batch->draw_model(
 			transform->get_matrix(),
 			model,
 			shader_name,

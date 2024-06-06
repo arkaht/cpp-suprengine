@@ -2,7 +2,7 @@
 
 #include <scenes/game-scene.h>
 
-using namespace puzzle;
+using namespace spaceship;
 
 void GameInstance::load_assets()
 {
@@ -47,7 +47,7 @@ void GameInstance::load_assets()
 
 void GameInstance::init()
 {
-    Engine& engine = Engine::instance();
+    auto& engine = Engine::instance();
     auto inputs = engine.get_inputs();
 
     //  setup inputs
@@ -62,8 +62,7 @@ void GameInstance::init()
 }
 
 void GameInstance::release()
-{
-}
+{}
 
 GameInfos GameInstance::get_infos() const
 {

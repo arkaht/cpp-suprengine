@@ -4,7 +4,7 @@
 #include <suprengine/easing.h>
 #include <suprengine/random.h>
 
-using namespace puzzle;
+using namespace spaceship;
 
 ExplosionEffect::ExplosionEffect( 
 	float explosion_size,
@@ -12,17 +12,20 @@ ExplosionEffect::ExplosionEffect(
 	int model_id
 )
 	: explosion_size( explosion_size ),
-	  color( color ),
-	  Entity()
+	  color( color )
 {
 	//  randomize model if unspecified
 	if ( model_id < 0 )
 	{
 		model_id = random::generate( 0, 2 );
 	}
+	_model_id = model_id;
+}
 
+void ExplosionEffect::setup()
+{
 	_model_renderer = create_component<StylizedModelRenderer>(
-		Assets::get_model( "explosion" + std::to_string( model_id ) ),
+		Assets::get_model( "explosion" + std::to_string( _model_id ) ),
 		Color::white/*color*/
 	);
 	_model_renderer->inner_modulate = color/*Color::white*/;

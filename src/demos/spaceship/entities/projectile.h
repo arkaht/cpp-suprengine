@@ -4,7 +4,7 @@
 
 #include <suprengine/components/lifetime-component.h>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 
@@ -13,8 +13,9 @@ namespace puzzle
 	class Projectile : public Entity
 	{
 	public:
-		Projectile( Spaceship* owner, Color color );
+		Projectile( shared_ptr<Spaceship> owner, Color color );
 
+		void setup() override;
 		void update_this( float dt ) override;
 
 	public:
@@ -33,7 +34,7 @@ namespace puzzle
 	private:
 		Color _color;
 
-		Spaceship* _owner;
+		weak_ptr<Spaceship> _wk_owner;
 
 		shared_ptr<StylizedModelRenderer> _model_renderer;
 		shared_ptr<LifetimeComponent> _lifetime_component;

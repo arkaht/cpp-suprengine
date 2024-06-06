@@ -2,7 +2,7 @@
 
 #include <suprengine/entity.h>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 
@@ -22,10 +22,10 @@ namespace puzzle
 	public:
 		virtual ~SpaceshipController();
 
-		void possess( Spaceship* ship );
+		void possess( shared_ptr<Spaceship> ship );
 		void unpossess();
 
-		Spaceship* get_ship() const { return _possessed_ship; }
+		shared_ptr<Spaceship> get_ship() const { return _possessed_ship.lock(); }
 		const SpaceshipControlInputs& get_inputs() const { return _inputs; }
 
 	public:
@@ -39,13 +39,13 @@ namespace puzzle
 		 * Called when the possessed spaceship has been changed.
 		 * 
 		 * Params:
-		 * - Spaceship* previous
-		 * - Spaceship* current
+		 * - shared_ptr<Spaceship> previous
+		 * - shared_ptr<Spaceship> current
 		 */
-		Event<Spaceship*, Spaceship*> event_on_possess_changed;
+		Event<shared_ptr<Spaceship>, shared_ptr<Spaceship>> on_possess_changed;
 
 	protected:
-		Spaceship* _possessed_ship { nullptr };
+		weak_ptr<Spaceship> _possessed_ship;
 		SpaceshipControlInputs _inputs {};
 
 	private:

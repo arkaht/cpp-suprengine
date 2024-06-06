@@ -2,7 +2,7 @@
 
 #include <suprengine/component.h>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 
@@ -10,7 +10,7 @@ namespace puzzle
 
 	struct DamageInfo
 	{
-		Entity* attacker { nullptr };
+		shared_ptr<Entity> attacker;
 
 		float damage { 0.0f };
 		Vec3 knockback { Vec3::zero };
@@ -22,7 +22,7 @@ namespace puzzle
 			: info( info ) {}
 
 		const DamageInfo& info;
-		std::weak_ptr<HealthComponent> victim;
+		weak_ptr<HealthComponent> victim;
 		bool is_alive { false };
 		bool is_valid { false };
 	};
@@ -30,7 +30,7 @@ namespace puzzle
 	class HealthComponent : public Component
 	{
 	public:
-		HealthComponent( Entity* owner, float health = 100.0f );
+		HealthComponent( float health = 100.0f );
 
 		void heal( float amount );
 		void heal_to_full();

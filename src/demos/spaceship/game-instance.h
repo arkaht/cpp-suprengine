@@ -3,7 +3,7 @@
 #include <suprengine/game.h>
 #include <suprengine/opengl/opengl-render-batch.h>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 

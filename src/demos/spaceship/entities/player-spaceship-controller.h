@@ -1,7 +1,7 @@
 #pragma once
 #include <entities/spaceship.h>
 
-namespace puzzle
+namespace spaceship
 {
 	class PlayerHUD;
 	
@@ -13,6 +13,7 @@ namespace puzzle
 		PlayerSpaceshipController();
 		~PlayerSpaceshipController();
 
+		void setup() override;
 		void update_this( float dt ) override;
 
 		void on_possess() override;
@@ -20,7 +21,7 @@ namespace puzzle
 
 		void update_inputs( float dt ) override;
 
-		Spaceship* get_locked_target() const { return _locked_target; }
+		shared_ptr<Spaceship> get_locked_target() const { return _wk_locked_target.lock(); }
 		shared_ptr<Camera> get_camera() const { return camera; }
 		shared_ptr<PlayerHUD> get_hud() const { return hud; }
 
@@ -77,6 +78,6 @@ namespace puzzle
 		shared_ptr<Camera> camera;
 		shared_ptr<PlayerHUD> hud;
 
-		Spaceship* _locked_target { nullptr };
+		weak_ptr<Spaceship> _wk_locked_target;
 	};
 }

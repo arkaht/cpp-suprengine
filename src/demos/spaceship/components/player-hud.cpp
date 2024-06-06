@@ -5,16 +5,15 @@
 
 #include <entities/player-spaceship-controller.h>
 
-using namespace puzzle;
+using namespace spaceship;
 
 PlayerHUD::PlayerHUD( 
-	PlayerSpaceshipController* owner
+	shared_ptr<PlayerSpaceshipController> owner
 )
-	: _controller( owner ),
-	  Renderer( owner )
+	: _controller( owner )
 {
-	_controller->event_on_possess_changed.listen( "player-hud",
-		[&]( Spaceship* previous, Spaceship* current )
+	_controller->on_possess_changed.listen( "player-hud",
+		[&]( shared_ptr<Spaceship> previous, shared_ptr<Spaceship> current )
 		{
 			_unbind_from_spaceship( previous );
 			_bind_to_spaceship( current );
@@ -93,11 +92,11 @@ void PlayerHUD::update( float dt )
 	}
 }
 
-void PlayerHUD::render()
+void PlayerHUD::render( RenderBatch* render_batch )
 {
-	auto engine = owner->get_engine();
-	auto window = engine->get_window();
-	auto camera = engine->camera;
+	auto& engine = Engine::instance();
+	auto window = engine.get_window();
+	auto camera = engine.camera;
 
 	auto spaceship = _controller->get_ship();
 	if ( !spaceship ) return;
@@ -112,7 +111,7 @@ void PlayerHUD::render()
 		Vec3 crosshair_pos = camera->world_to_viewport( aim_location );
 		if ( crosshair_pos.z > 0.0f )
 		{
-			_draw_crosshair( crosshair_pos );
+			_draw_crosshair( render_batch, crosshair_pos );
 		}
 	}
 
@@ -122,7 +121,7 @@ void PlayerHUD::render()
 	{
 		const auto& data = _kill_icons[i];
 
-		_render_batch->draw_texture( 
+		render_batch->draw_texture( 
 			Vec2 { 
 				window_size.x * 0.5f + data.x_offset,
 				window_size.y * 0.25f,
@@ -136,16 +135,16 @@ void PlayerHUD::render()
 	}
 
 	//  render missile-locking target
-	Spaceship* target = _controller->get_locked_target();
+	shared_ptr<Spaceship> target = _controller->get_locked_target();
 	if ( target )
 	{
 		Vec3 target_pos = camera->world_to_viewport( target->transform->location );
 		if ( target_pos.z > 0.0f )
 		{
-			_render_batch->draw_texture( 
+			render_batch->draw_texture( 
 				(Vec2)target_pos,
 				Vec2::one * 1.0f,
-				engine->get_timer()->get_accumulated_seconds() * 3.0f,
+				engine.get_timer()->get_accumulated_seconds() * 3.0f,
 				Vec2 { 0.5f, 0.5f },
 				_crosshair_line_texture,
 				target->get_color()
@@ -154,7 +153,7 @@ void PlayerHUD::render()
 	}
 }
 
-void PlayerHUD::_bind_to_spaceship( Spaceship* spaceship )
+void PlayerHUD::_bind_to_spaceship( shared_ptr<Spaceship> spaceship )
 {
 	if ( !spaceship ) return;
 
@@ -166,14 +165,17 @@ void PlayerHUD::_bind_to_spaceship( Spaceship* spaceship )
 		std::bind( &PlayerHUD::_on_spaceship_hit, this, std::placeholders::_1 ) );
 }
 
-void PlayerHUD::_unbind_from_spaceship( Spaceship* spaceship )
+void PlayerHUD::_unbind_from_spaceship( shared_ptr<Spaceship> spaceship )
 {
 	if ( !spaceship ) return;
 
 	spaceship->on_hit.unlisten( "player-hud" );
 }
 
-void PlayerHUD::_draw_crosshair( const Vec2& pos )
+void PlayerHUD::_draw_crosshair( 
+	RenderBatch* render_batch, 
+	const Vec2& pos
+)
 {
 	auto spaceship = _controller->get_ship();
 
@@ -197,7 +199,7 @@ void PlayerHUD::_draw_crosshair( const Vec2& pos )
 			math::sin( angle ) * distance,
 		};
 
-		_render_batch->draw_texture( 
+		render_batch->draw_texture( 
 			pos + offset,
 			scale,
 			angle,
@@ -217,7 +219,7 @@ void PlayerHUD::_on_spaceship_hit( const DamageResult& result )
 	auto health = result.victim.lock();
 	if ( !health ) return;
 
-	auto spaceship = dynamic_cast<Spaceship*>( health->get_owner() );
+	auto spaceship = health->get_owner()->cast<Spaceship>();
 	if ( spaceship && !result.is_alive )
 	{
 		KillIconData data {};

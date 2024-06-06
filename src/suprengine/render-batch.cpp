@@ -9,8 +9,6 @@ using namespace suprengine;
 RenderBatch::RenderBatch( Window* _window )
 	: _window( _window )
 {
-	_engine = &Engine::instance();
-
 	//  setup ambient light
 	_ambient_light.color = Color::white;
 	_ambient_light.direction = Vec3 { 0.3f, 1.0f, 0.3f }.normalized();
@@ -30,7 +28,7 @@ void RenderBatch::_render_phase( const RenderPhase phase )
 	if ( _renderers.find( phase ) == _renderers.end() ) return;
 
 	auto& list = _renderers.at( phase );
-	for ( auto renderer : list )
+	for ( auto& renderer : list )
 	{
 		if ( !renderer->is_active ) continue;
 
@@ -85,7 +83,7 @@ void RenderBatch::set_ambient_color( Color color )
 	_ambient_light.color = color;
 }
 
-void RenderBatch::add_renderer( Renderer* renderer )
+void RenderBatch::add_renderer( shared_ptr<Renderer> renderer )
 {
 	//  get priority order
 	int order = renderer->get_priority_order();
@@ -93,7 +91,7 @@ void RenderBatch::add_renderer( Renderer* renderer )
 	//  check phase creation
 	RenderPhase phase = renderer->get_render_phase();
 	if ( _renderers.find( phase ) == _renderers.end() )
-		_renderers.insert( std::pair( phase, std::vector<Renderer*>() ) );
+		_renderers.insert( std::pair( phase, std::vector<shared_ptr<Renderer>>() ) );
 
 	//  search order position
 	auto& list = _renderers.at( phase );
@@ -106,7 +104,7 @@ void RenderBatch::add_renderer( Renderer* renderer )
 	list.insert( itr, renderer );
 }
 
-void RenderBatch::remove_renderer( Renderer* renderer )
+void RenderBatch::remove_renderer( shared_ptr<Renderer> renderer )
 {
 	//  check phase
 	RenderPhase phase = renderer->get_render_phase();

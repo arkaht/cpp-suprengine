@@ -3,14 +3,17 @@
 #include <entities/asteroid.h>
 #include <entities/spaceship.h>
 
-using namespace puzzle;
+using namespace spaceship;
 
-Projectile::Projectile( Spaceship* owner, Color color )
-	: _owner( owner ), _color( color )
+Projectile::Projectile( shared_ptr<Spaceship> owner, Color color )
+	: _wk_owner( owner ), _color( color )
+{}
+
+void Projectile::setup()
 {
 	_model_renderer = create_component<StylizedModelRenderer>(
 		Assets::get_model( "projectile" ),
-		color
+		_color
 	);
 	_model_renderer->draw_only_outline = true;
 
@@ -32,7 +35,8 @@ void Projectile::update_this( float dt )
 
 bool Projectile::_check_collisions( float movement_speed )
 {
-	auto physics = _engine->get_physics();
+	auto& engine = Engine::instance();
+	auto physics = engine.get_physics();
 
 	//  setup ray
 	Ray ray( 
@@ -46,7 +50,7 @@ bool Projectile::_check_collisions( float movement_speed )
 	RayHit result;
 	if ( physics->raycast( ray, &result, params ) )
 	{
-		if ( result.collider->get_owner() != _owner )
+		if ( result.collider->get_owner() != _wk_owner.lock() )
 		{
 			_on_hit( result );
 			kill();
@@ -65,16 +69,19 @@ void Projectile::_on_hit( const RayHit& result )
 	if ( auto health = entity->get_component<HealthComponent>() )
 	{
 		DamageInfo info {};
-		info.attacker = _owner;
+		info.attacker = _wk_owner.lock();
 		info.damage = damage_amount;
 		info.knockback = -result.normal * knockback_force;
 
 		DamageResult result = health->damage( info );
 
 		//  alert owner
-		if ( result.is_valid && _owner )
+		if ( result.is_valid )
 		{
-			_owner->on_hit.invoke( result );
+			if ( auto owner = _wk_owner.lock() )
+			{
+				owner->on_hit.invoke( result );
+			}
 		}
 	}
 }

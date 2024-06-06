@@ -7,19 +7,21 @@
 
 #include <suprengine/random.h>
 
-using namespace puzzle;
+using namespace spaceship;
 
 GuidedMissile::GuidedMissile( 
-	Spaceship* owner, 
-	std::weak_ptr<HealthComponent> wk_target,
+	shared_ptr<Spaceship> owner, 
+	weak_ptr<HealthComponent> wk_target,
 	Color color 
 )
-	: _owner( owner ), _wk_target( wk_target ),
-	  Entity()
+	: _wk_owner( owner ), _wk_target( wk_target ), _color( color )
+{}
+
+void GuidedMissile::setup()
 {
 	_model_renderer = create_component<StylizedModelRenderer>(
 		Assets::get_model( "projectile" ),
-		color
+		_color
 	);
 	_model_renderer->draw_only_outline = true;
 
@@ -35,6 +37,7 @@ GuidedMissile::GuidedMissile(
 		_desired_direction = 
 			( target->transform->location - transform->location ).normalized();
 	}
+
 }
 
 void GuidedMissile::update_this( float dt )
@@ -70,15 +73,16 @@ void GuidedMissile::explode()
 	//  spawn explosion effect
 	{
 		Color color = Color::white;
-		if ( _owner )
+		if ( auto owner = _wk_owner.lock() )
 		{
-			color = _owner->get_color();
+			color = owner->get_color();
 		}
 
 		float size = explosion_size
 			+ random::generate( EXPLOSION_SIZE_DEVIATION.x, EXPLOSION_SIZE_DEVIATION.y );
 
-		auto effect = new ExplosionEffect( explosion_size, color );
+		auto& engine = Engine::instance();
+		auto effect = engine.create_entity<ExplosionEffect>( explosion_size, color );
 		effect->transform->location = transform->location;
 	}
 
@@ -116,7 +120,8 @@ void GuidedMissile::_update_target( float dt )
 
 void GuidedMissile::_check_impact()
 {
-	auto physics = _engine->get_physics();
+	auto& engine = Engine::instance();
+	auto physics = engine.get_physics();
 
 	//  setup raycast
 	Ray ray( 
@@ -133,7 +138,7 @@ void GuidedMissile::_check_impact()
 	
 	//  check entity is not owner
 	auto entity = hit.collider->get_owner();
-	if ( entity == _owner ) return;
+	if ( entity == _wk_owner.lock() ) return;
 
 	//  check entity has health component
 	auto health = entity->get_component<HealthComponent>();
@@ -152,15 +157,18 @@ void GuidedMissile::_damage( shared_ptr<HealthComponent> target )
 
 	//  damage
 	DamageInfo info {};
-	info.attacker = _owner;
+	info.attacker = _wk_owner.lock();
 	info.damage = damage_amount;
 	info.knockback = diff.normalized() * knockback_force;
 	DamageResult result = target->damage( info );
 
 	//  alert owner
-	if ( result.is_valid && _owner )
+	if ( result.is_valid )
 	{
-		_owner->on_hit.invoke( result );
+		if ( auto owner = _wk_owner.lock() )
+		{
+			owner->on_hit.invoke( result );
+		}
 	}
 
 	explode();

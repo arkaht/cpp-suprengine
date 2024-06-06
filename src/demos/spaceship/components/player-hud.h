@@ -3,7 +3,7 @@
 
 #include <components/health-component.h>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 
@@ -25,11 +25,11 @@ namespace puzzle
 	{
 	public:
 		PlayerHUD( 
-			PlayerSpaceshipController* owner
+			shared_ptr<PlayerSpaceshipController> owner
 		);
 
 		void update( float dt ) override;
-		void render() override;
+		void render( RenderBatch* render_batch ) override;
 
 		RenderPhase get_render_phase() const override 
 		{
@@ -59,10 +59,13 @@ namespace puzzle
 		const float HIT_TIME = 0.25f;
 
 	private:
-		void _bind_to_spaceship( Spaceship* spaceship );
-		void _unbind_from_spaceship( Spaceship* spaceship );
+		void _bind_to_spaceship( shared_ptr<Spaceship> spaceship );
+		void _unbind_from_spaceship( shared_ptr<Spaceship> spaceship );
 
-		void _draw_crosshair( const Vec2& pos );
+		void _draw_crosshair( 
+			RenderBatch* render_batch, 
+			const Vec2& pos 
+		);
 
 		void _on_spaceship_hit( const DamageResult& result );
 
@@ -74,6 +77,6 @@ namespace puzzle
 		std::vector<KillIconData> _kill_icons;
 		float _hit_time = 0.0f;
 
-		PlayerSpaceshipController* _controller;
+		shared_ptr<PlayerSpaceshipController> _controller;
 	};
 }

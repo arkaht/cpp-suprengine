@@ -5,7 +5,7 @@
 #include <suprengine/curve.h>
 #include <suprengine/components/lifetime-component.h>
 
-namespace puzzle
+namespace spaceship
 {
 	using namespace suprengine;
 
@@ -18,6 +18,7 @@ namespace puzzle
 			int model_id = -1
 		);
 
+		void setup() override;
 		void update_this( float dt ) override;
 
 	public:
@@ -44,6 +45,7 @@ namespace puzzle
 	private:
 		float _max_lifetime = 0.0f;
 		Vec3 _scale = Vec3::one;
+		int _model_id;
 
 		shared_ptr<LifetimeComponent> _lifetime_component;
 		shared_ptr<StylizedModelRenderer> _model_renderer;

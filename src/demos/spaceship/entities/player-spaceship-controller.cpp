@@ -4,11 +4,21 @@
 
 #include <components/player-hud.h>
 
-using namespace puzzle;
+using namespace spaceship;
 
 PlayerSpaceshipController::PlayerSpaceshipController()
+{}
+
+PlayerSpaceshipController::~PlayerSpaceshipController()
 {
-	hud = create_component_pro<PlayerHUD>( this );
+	camera->get_owner()->kill();
+}
+
+void PlayerSpaceshipController::setup()
+{
+	auto& engine = Engine::instance();
+
+	hud = create_component<PlayerHUD>( as<PlayerSpaceshipController>() );
 
 	//  setup camera settings
 	CameraProjectionSettings projection_settings {};
@@ -16,23 +26,19 @@ PlayerSpaceshipController::PlayerSpaceshipController()
 	projection_settings.zfar = 10000.0f;
 
 	//  initialize camera
-	auto camera_owner = new Entity();
+	auto camera_owner = engine.create_entity<Entity>();
 	camera = camera_owner->create_component<Camera>( projection_settings );
 	camera->activate();
 
 	//  test: second camera
-	camera_owner = new Entity();
+	camera_owner = engine.create_entity<Entity>();
 	camera_owner->transform->scale = Vec3( 10.0f );
-}
-
-PlayerSpaceshipController::~PlayerSpaceshipController()
-{
-	camera->get_owner()->kill();
 }
 
 void PlayerSpaceshipController::update_this( float dt )
 {
-	if ( !_possessed_ship || _possessed_ship->state != EntityState::Active ) return;
+	auto ship = get_ship();
+	if ( !ship || ship->state != EntityState::Active ) return;
 
 	_update_shoot( dt );
 	_update_camera( dt );
@@ -48,16 +54,19 @@ void PlayerSpaceshipController::on_unpossess()
 
 void PlayerSpaceshipController::update_inputs( float dt )
 {
-	auto input_manager = _engine->get_inputs();
 	if ( !is_inputs_enabled ) return;
 
+	auto& engine = Engine::instance();
+	auto inputs = engine.get_inputs();
+	auto ship = get_ship();
+
 	//  movement inputs
-	_inputs.throttle_delta = input_manager->get_keys_as_axis( 
+	_inputs.throttle_delta = inputs->get_keys_as_axis( 
 		SDL_SCANCODE_S, SDL_SCANCODE_W, 1.0f );
 
 	//  rotation inputs
-	Vec2 mouse_delta = -input_manager->mouse_delta;
-	float yaw_delta = input_manager->get_keys_as_axis( 
+	Vec2 mouse_delta = -inputs->mouse_delta;
+	float yaw_delta = inputs->get_keys_as_axis( 
 		SDL_SCANCODE_A, SDL_SCANCODE_D, 1.0f );
 	float roll_delta = mouse_delta.x;
 	float pitch_delta = mouse_delta.y;
@@ -90,17 +99,17 @@ void PlayerSpaceshipController::update_inputs( float dt )
 	}
 
 	//  input rotation
-	Quaternion rotation = _possessed_ship->transform->rotation;
+	Quaternion rotation = ship->transform->rotation;
 	rotation = rotation + Quaternion( 
-		_possessed_ship->transform->get_forward(), 
+		ship->transform->get_forward(), 
 		_aim_velocity.x * dt 
 	);
 	rotation = rotation + Quaternion( 
-		_possessed_ship->transform->get_right(), 
+		ship->transform->get_right(), 
 		_aim_velocity.y * dt 
 	);
 	rotation = rotation + Quaternion(
-		_possessed_ship->transform->get_up(),
+		ship->transform->get_up(),
 		_aim_velocity.z * dt
 	);
 	_inputs.desired_rotation = rotation;
@@ -112,32 +121,39 @@ void PlayerSpaceshipController::update_inputs( float dt )
 
 void PlayerSpaceshipController::_update_shoot( float dt )
 {
-	auto input_manager = _engine->get_inputs();
+	auto& engine = Engine::instance();
+	auto inputs = engine.get_inputs();
+	auto ship = get_ship();
 
 	//  shoot
-	if ( input_manager->is_mouse_button_down( MouseButton::Left )
-	  && _possessed_ship->get_shoot_time() <= 0.0f ) 
+	if ( inputs->is_mouse_button_down( MouseButton::Left )
+	  && ship->get_shoot_time() <= 0.0f ) 
 	{
-		_possessed_ship->shoot();
+		ship->shoot();
 	}
 
 	//  missile
-	_locked_target = _possessed_ship->find_lockable_target( camera->transform->get_forward() );
+	_wk_locked_target = ship->find_lockable_target( camera->transform->get_forward() );
 
-	if ( _locked_target && input_manager->is_mouse_button_just_pressed( MouseButton::Right ) )
+	if ( inputs->is_mouse_button_just_pressed( MouseButton::Right ) )
 	{
-		_possessed_ship->launch_missiles( 
-			_locked_target->get_health_component() 
-		);
+		if ( auto target = _wk_locked_target.lock() )
+		{
+			ship->launch_missiles( 
+				target->get_health_component() 
+			);
+		}
 	}
 }
 
 void PlayerSpaceshipController::_update_camera( float dt )
 {
-	auto input_manager = _engine->get_inputs();
+	auto& engine = Engine::instance();
+	auto inputs = engine.get_inputs();
+	auto ship = get_ship();
 
 	//  get parameters
-	const float throttle = _possessed_ship->get_throttle();
+	const float throttle = ship->get_throttle();
 	const float throttle_ratio = easing::in_out_cubic( 
 		throttle / 1.0f );
 	const float smooth_move_speed = math::lerp( 
@@ -146,14 +162,14 @@ void PlayerSpaceshipController::_update_camera( float dt )
 		CAMERA_UP_RANGE.x, CAMERA_UP_RANGE.y, throttle_ratio );
 
 	//  get axes
-	const Vec3 up = _possessed_ship->transform->get_up();
-	const Vec3 forward = _possessed_ship->transform->get_forward();
+	const Vec3 up = ship->transform->get_up();
+	const Vec3 forward = ship->transform->get_forward();
 	
 	//  find targets location & rotation
-	Vec3 target_location = _possessed_ship->transform->location
+	Vec3 target_location = ship->transform->location
 	  + up * up_distance;
-	Quaternion target_rotation = _possessed_ship->transform->rotation;
-	if ( input_manager->is_mouse_button_down( MouseButton::Middle ) )
+	Quaternion target_rotation = ship->transform->rotation;
+	if ( inputs->is_mouse_button_down( MouseButton::Middle ) )
 	{
 		float distance = math::lerp( 
 			CAMERA_LOOK_BACKWARD_DISTANCE.x, 

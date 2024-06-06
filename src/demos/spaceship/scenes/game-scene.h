@@ -10,7 +10,7 @@
 #include <entities/ai-spaceship-controller.h>
 #include <entities/asteroid.h>
 
-namespace puzzle 
+namespace spaceship 
 {
 	class GameInstance;
 
@@ -25,13 +25,13 @@ namespace puzzle
 		void generate_ai_spaceships( int count );
 
 	private:
-		Spaceship* spaceship1 { nullptr };
-		Spaceship* spaceship2 { nullptr };
+		shared_ptr<Spaceship> spaceship1;
+		shared_ptr<Spaceship> spaceship2;
 
 		GameInstance* _game_instance { nullptr };
 
-		PlayerSpaceshipController* player_controller { nullptr };
-		AISpaceshipController* ai_controller { nullptr };
+		shared_ptr<PlayerSpaceshipController> player_controller;
+		shared_ptr<AISpaceshipController> ai_controller;
 
 		float spawn_time { 0.0f };
 
