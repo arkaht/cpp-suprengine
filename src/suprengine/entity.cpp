@@ -5,7 +5,6 @@ using namespace suprengine;
 int Entity::_global_id { 0 };
 
 Entity::Entity()
-	: _engine( &Engine::instance() )
 {
 	_unique_id = _global_id++;
 }

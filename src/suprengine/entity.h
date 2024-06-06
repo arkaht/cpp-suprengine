@@ -86,7 +86,6 @@ namespace suprengine
 		virtual void on_trigger_stay( shared_ptr<Collider> collider ) {}
 		virtual void on_trigger_exit( shared_ptr<Collider> collider ) {}
 
-		Engine* get_engine() const { return _engine; }
 		int get_unique_id() const { return _unique_id; }
 
 	public:
@@ -96,12 +95,6 @@ namespace suprengine
 		std::vector<shared_ptr<Component>> components;
 
 		shared_ptr<Transform> transform;
-		//  TODO: Remove if unused
-		shared_ptr<Collider> collider { nullptr };
-
-	protected:
-		//  TODO: Remove as Engine::instance() already work
-		Engine* _engine { nullptr };
 
 	private:
 		int _unique_id = -1;

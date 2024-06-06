@@ -107,13 +107,14 @@ void Camera::reset( float width, float height )
 
 void Camera::activate()
 {
-	Engine* game = get_owner()->get_engine();
-	game->camera = this;
+	auto& engine = Engine::instance();
+	engine.camera = this;
 }
 
 bool Camera::is_active()
 {
-	return get_owner()->get_engine()->camera == this;
+	auto& engine = Engine::instance();
+	return engine.camera == this;
 }
 
 void Camera::set_view_matrix( const Mtx4& matrix )

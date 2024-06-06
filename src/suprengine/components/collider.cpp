@@ -12,7 +12,6 @@ void Collider::setup()
 	auto physics = Engine::instance().get_physics();
 
 	auto ptr = as<Collider>();
-	get_owner()->collider = ptr;
 	physics->add_collider( ptr );
 }
 

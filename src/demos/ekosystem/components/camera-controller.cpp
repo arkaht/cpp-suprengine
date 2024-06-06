@@ -19,7 +19,8 @@ void CameraController::setup()
 
 void CameraController::update( float dt )
 {
-	auto inputs = get_owner()->get_engine()->get_inputs();
+	auto& engine = Engine::instance();
+	auto inputs = engine.get_inputs();
 
 	Vec3 pos = transform->location;
 	if ( auto target = focus_target.lock() )
