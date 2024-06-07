@@ -210,6 +210,12 @@
     <ClInclude Include="shareable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="smart-ptr.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assert.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="assets.cpp">
