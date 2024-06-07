@@ -13,7 +13,7 @@ namespace suprengine
 		 * You should check the result before using it.
 		 */
 		template <typename T>
-		shared_ptr<T> cast()
+		SharedPtr<T> cast()
 		{
 			return std::dynamic_pointer_cast<T>( this->shared_from_this() );
 		}
@@ -22,7 +22,7 @@ namespace suprengine
 		 * You should check the result before using it.
 		 */
 		template <typename T>
-		shared_ptr<T> cast() const
+		SharedPtr<T> cast() const
 		{
 			return std::dynamic_pointer_cast<T>( this->shared_from_this() );
 		}
@@ -31,7 +31,7 @@ namespace suprengine
 		 * The entity must inherit from the given class.
 		 */
 		template <typename T>
-		shared_ptr<T> as()
+		SharedPtr<T> as()
 		{
 			return std::static_pointer_cast<T>( this->shared_from_this() );
 		}
@@ -40,7 +40,7 @@ namespace suprengine
 		 * The entity must inherit from the given class.
 		 */
 		template <typename T>
-		shared_ptr<T> as() const
+		SharedPtr<T> as() const
 		{
 			return std::static_pointer_cast<T>( this->shared_from_this() );
 		}

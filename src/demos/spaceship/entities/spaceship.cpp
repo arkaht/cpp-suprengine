@@ -8,7 +8,7 @@
 
 using namespace spaceship;
 
-std::vector<weak_ptr<Spaceship>> Spaceship::_all_spaceships;
+std::vector<WeakPtr<Spaceship>> Spaceship::_all_spaceships;
 
 Spaceship::Spaceship() 
 {}
@@ -27,7 +27,7 @@ Spaceship::~Spaceship()
 
 	//  remove from list
 	std::erase_if( _all_spaceships, 
-		[this]( weak_ptr<Spaceship> wk_ship )
+		[this]( WeakPtr<Spaceship> wk_ship )
 		{
 			auto ship = wk_ship.lock();
 			if ( ship == nullptr ) return false;
@@ -87,11 +87,11 @@ void Spaceship::update_this( float dt )
 	_shoot_time = math::max( 0.0f, _shoot_time - dt );
 }
 
-shared_ptr<Spaceship> Spaceship::find_lockable_target( 
+SharedPtr<Spaceship> Spaceship::find_lockable_target( 
 	const Vec3& view_direction 
 ) const
 {
-	shared_ptr<Spaceship> target { nullptr };
+	SharedPtr<Spaceship> target { nullptr };
 
 	float best_view_alignment = -1.0f;
 	float best_distance = MISSILE_LOCK_MAX_DISTANCE;
@@ -156,7 +156,7 @@ void Spaceship::shoot()
 }
 
 void Spaceship::launch_missiles( 
-	weak_ptr<HealthComponent> wk_target 
+	WeakPtr<HealthComponent> wk_target 
 )
 {
 	auto& engine = Engine::instance();

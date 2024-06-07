@@ -11,10 +11,10 @@ namespace suprengine
 	public:
 		Rect shape;
 
-		RectCollider( shared_ptr<Entity> owner, Rect shape, int priority_order = 0 )
+		RectCollider( SharedPtr<Entity> owner, Rect shape, int priority_order = 0 )
 			: shape( shape ), Collider( owner, priority_order ) {}
 
-		bool intersects( shared_ptr<Collider> other ) override
+		bool intersects( SharedPtr<Collider> other ) override
 		{
 			Rect rect = transform->get_rect( shape );
 

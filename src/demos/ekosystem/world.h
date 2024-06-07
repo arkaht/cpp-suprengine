@@ -14,7 +14,7 @@ namespace eks
 		World( const Vec2& size );
 		~World();
 
-		shared_ptr<Pawn> create_pawn( const Vec3& tile_pos );
+		SharedPtr<Pawn> create_pawn( const Vec3& tile_pos );
 
 		void clear();
 
@@ -28,7 +28,7 @@ namespace eks
 	private:
 		Vec2 _size;
 
-		weak_ptr<Entity> _wk_ground;
-		std::vector<weak_ptr<Pawn>> _wk_pawns;
+		WeakPtr<Entity> _wk_ground;
+		std::vector<WeakPtr<Pawn>> _wk_pawns;
 	};
 }

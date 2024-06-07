@@ -18,7 +18,7 @@ namespace suprengine
 {
 	class VertexArray;
 
-	//  TODO: handle assets with shared_ptr<>
+	//  TODO: handle assets with SharedPtr<>
 	class Assets
 	{
 	public:
@@ -41,8 +41,8 @@ namespace suprengine
 		static Shader* load_shader( rconst_str name, rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path = "", rconst_str tse_path = "", rconst_str geo_path = "", bool append_resources_path = true );
 		static Shader* get_shader( rconst_str name );
 
-		static shared_ptr<Model> load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
-		static shared_ptr<Model> get_model( rconst_str name );
+		static SharedPtr<Model> load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
+		static SharedPtr<Model> get_model( rconst_str name );
 
 		static void load_curves_in_folder( 
 			rconst_str path, 
@@ -50,11 +50,11 @@ namespace suprengine
 			bool should_auto_reload = false,
 			rconst_str name_prefix = ""
 		);
-		static shared_ptr<Curve> load_curve( 
+		static SharedPtr<Curve> load_curve( 
 			rconst_str name, 
 			rconst_str path 
 		);
-		static shared_ptr<Curve> get_curve( rconst_str name );
+		static SharedPtr<Curve> get_curve( rconst_str name );
 
 		static void release();
 
@@ -64,10 +64,10 @@ namespace suprengine
 		static std::map<std::string, Texture*> _textures;
 		static std::map<std::string, Font*> _fonts;
 		static std::map<std::string, Shader*> _shaders;
-		static std::map<std::string, shared_ptr<Model>> _models;
-		static std::map<std::string, shared_ptr<Curve>> _curves;
+		static std::map<std::string, SharedPtr<Model>> _models;
+		static std::map<std::string, SharedPtr<Curve>> _curves;
 
-		static std::vector<shared_ptr<filewatcher>> _filewatchers;
+		static std::vector<SharedPtr<filewatcher>> _filewatchers;
 
 		static RenderBatch* _render_batch;
 		static std::string _resources_path;

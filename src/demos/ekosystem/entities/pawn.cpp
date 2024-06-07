@@ -2,7 +2,7 @@
 
 using namespace eks;
 
-Pawn::Pawn( World* world, const shared_ptr<Model>& model )
+Pawn::Pawn( World* world, const SharedPtr<Model>& model )
 	: _world( world ), _model( model )
 {}
 

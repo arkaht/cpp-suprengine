@@ -5,7 +5,7 @@
 
 using namespace spaceship;
 
-Projectile::Projectile( shared_ptr<Spaceship> owner, Color color )
+Projectile::Projectile( SharedPtr<Spaceship> owner, Color color )
 	: _wk_owner( owner ), _color( color )
 {}
 

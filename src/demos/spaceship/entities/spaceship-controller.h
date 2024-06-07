@@ -22,10 +22,10 @@ namespace spaceship
 	public:
 		virtual ~SpaceshipController();
 
-		void possess( shared_ptr<Spaceship> ship );
+		void possess( SharedPtr<Spaceship> ship );
 		void unpossess();
 
-		shared_ptr<Spaceship> get_ship() const { return _possessed_ship.lock(); }
+		SharedPtr<Spaceship> get_ship() const { return _possessed_ship.lock(); }
 		const SpaceshipControlInputs& get_inputs() const { return _inputs; }
 
 	public:
@@ -39,13 +39,13 @@ namespace spaceship
 		 * Called when the possessed spaceship has been changed.
 		 * 
 		 * Params:
-		 * - shared_ptr<Spaceship> previous
-		 * - shared_ptr<Spaceship> current
+		 * - SharedPtr<Spaceship> previous
+		 * - SharedPtr<Spaceship> current
 		 */
-		Event<shared_ptr<Spaceship>, shared_ptr<Spaceship>> on_possess_changed;
+		Event<SharedPtr<Spaceship>, SharedPtr<Spaceship>> on_possess_changed;
 
 	protected:
-		weak_ptr<Spaceship> _possessed_ship;
+		WeakPtr<Spaceship> _possessed_ship;
 		SpaceshipControlInputs _inputs {};
 
 	private:

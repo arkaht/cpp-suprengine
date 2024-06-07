@@ -8,7 +8,7 @@ SpaceshipController::~SpaceshipController()
 	unpossess();
 }
 
-void SpaceshipController::possess( shared_ptr<Spaceship> ship )
+void SpaceshipController::possess( SharedPtr<Spaceship> ship )
 {
 	auto previous_ship = get_ship();
 

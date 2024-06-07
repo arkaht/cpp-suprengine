@@ -16,10 +16,10 @@ namespace suprengine
 
 		bool raycast( _RAYCAST_FUNC_PARAMS );
 
-		void add_collider( shared_ptr<Collider> collider );
-		void remove_collider( shared_ptr<Collider> collider );
+		void add_collider( SharedPtr<Collider> collider );
+		void remove_collider( SharedPtr<Collider> collider );
 	
 	private:
-		std::vector<shared_ptr<Collider>> colliders;
+		std::vector<SharedPtr<Collider>> colliders;
 	};
 }

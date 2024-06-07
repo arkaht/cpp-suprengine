@@ -19,7 +19,7 @@ Entity::~Entity()
 	}
 }
 
-void Entity::add_component( shared_ptr<Component> component )
+void Entity::add_component( SharedPtr<Component> component )
 {
 	if ( std::find( components.begin(), components.end(), component ) != components.end() ) return;
 
@@ -42,7 +42,7 @@ void Entity::add_component( shared_ptr<Component> component )
 	component->setup();
 }
 
-void Entity::remove_component( shared_ptr<Component> component )
+void Entity::remove_component( SharedPtr<Component> component )
 {
 	auto itr = std::find( components.begin(), components.end(), component );
 	if ( itr == components.end() ) return;

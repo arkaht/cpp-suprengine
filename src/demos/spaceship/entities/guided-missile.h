@@ -16,8 +16,8 @@ namespace spaceship
 	{
 	public:
 		GuidedMissile( 
-			shared_ptr<Spaceship> owner,
-			weak_ptr<HealthComponent> wk_target, 
+			SharedPtr<Spaceship> owner,
+			WeakPtr<HealthComponent> wk_target, 
 			Color color 
 		);
 
@@ -45,7 +45,7 @@ namespace spaceship
 		void _update_target( float dt );
 		void _check_impact();
 
-		void _damage( shared_ptr<HealthComponent> target );
+		void _damage( SharedPtr<HealthComponent> target );
 
 	private:
 		const float LIFETIME = 6.0f;
@@ -62,12 +62,12 @@ namespace spaceship
 		float _current_rotation_speed { 0.0f };
 		
 		Vec3 _desired_direction { Vec3::forward };
-		weak_ptr<HealthComponent> _wk_target;
-		weak_ptr<Spaceship> _wk_owner;
+		WeakPtr<HealthComponent> _wk_target;
+		WeakPtr<Spaceship> _wk_owner;
 
 		Color _color;
 
-		shared_ptr<StylizedModelRenderer> _model_renderer;
-		shared_ptr<LifetimeComponent> _lifetime_component;
+		SharedPtr<StylizedModelRenderer> _model_renderer;
+		SharedPtr<LifetimeComponent> _lifetime_component;
 	};
 }

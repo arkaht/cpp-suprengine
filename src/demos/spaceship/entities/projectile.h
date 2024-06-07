@@ -13,7 +13,7 @@ namespace spaceship
 	class Projectile : public Entity
 	{
 	public:
-		Projectile( shared_ptr<Spaceship> owner, Color color );
+		Projectile( SharedPtr<Spaceship> owner, Color color );
 
 		void setup() override;
 		void update_this( float dt ) override;
@@ -34,10 +34,10 @@ namespace spaceship
 	private:
 		Color _color;
 
-		weak_ptr<Spaceship> _wk_owner;
+		WeakPtr<Spaceship> _wk_owner;
 
-		shared_ptr<StylizedModelRenderer> _model_renderer;
-		shared_ptr<LifetimeComponent> _lifetime_component;
+		SharedPtr<StylizedModelRenderer> _model_renderer;
+		SharedPtr<LifetimeComponent> _lifetime_component;
 	};
 }
 

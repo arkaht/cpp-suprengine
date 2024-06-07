@@ -8,7 +8,7 @@ namespace suprengine
 	class MouseFollower : Component
 	{
 	public:
-		MouseFollower( shared_ptr<Entity> owner, int priority_order = 0 ) : Component( owner, priority_order ) {}
+		MouseFollower( SharedPtr<Entity> owner, int priority_order = 0 ) : Component( owner, priority_order ) {}
 
 		void update( float dt ) override
 		{

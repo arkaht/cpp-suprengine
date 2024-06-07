@@ -29,8 +29,8 @@ namespace spaceship
 		void _on_damage( const DamageResult& result );
 
 	private:
-		shared_ptr<StylizedModelRenderer> _model_renderer;
-		shared_ptr<SphereCollider> _collider;
-		shared_ptr<HealthComponent> _health;
+		SharedPtr<StylizedModelRenderer> _model_renderer;
+		SharedPtr<SphereCollider> _collider;
+		SharedPtr<HealthComponent> _health;
 	};
 }

@@ -47,12 +47,12 @@ namespace spaceship
 		Vec3 _scale = Vec3::one;
 		int _model_id;
 
-		shared_ptr<LifetimeComponent> _lifetime_component;
-		shared_ptr<StylizedModelRenderer> _model_renderer;
+		SharedPtr<LifetimeComponent> _lifetime_component;
+		SharedPtr<StylizedModelRenderer> _model_renderer;
 
-		shared_ptr<Curve> _curve_transform_scale;
-		shared_ptr<Curve> _curve_outline_scale;
-		shared_ptr<Curve> _curve_outline_color;
-		shared_ptr<Curve> _curve_inner_color;
+		SharedPtr<Curve> _curve_transform_scale;
+		SharedPtr<Curve> _curve_outline_scale;
+		SharedPtr<Curve> _curve_outline_color;
+		SharedPtr<Curve> _curve_inner_color;
 	};
 }

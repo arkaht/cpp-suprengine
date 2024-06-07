@@ -87,7 +87,7 @@ void Engine::loop()
 	}
 }
 
-void Engine::add_entity( shared_ptr<Entity> entity )
+void Engine::add_entity( SharedPtr<Entity> entity )
 {
 	if ( _is_updating )
 	{
@@ -103,7 +103,7 @@ void Engine::add_entity( shared_ptr<Entity> entity )
 	}
 }
 
-void Engine::remove_entity( shared_ptr<Entity> entity )
+void Engine::remove_entity( SharedPtr<Entity> entity )
 {
 	//  remove from actives
 	auto itr = std::find( _entities.begin(), _entities.end(), entity );

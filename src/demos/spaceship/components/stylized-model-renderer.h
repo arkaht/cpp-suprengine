@@ -17,7 +17,7 @@ namespace spaceship
 	{
 	public:
 		StylizedModelRenderer(
-			shared_ptr<Model> model,
+			SharedPtr<Model> model,
 			Color modulate = Color::white,
 			int priority_order = 0
 		);

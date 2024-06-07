@@ -68,8 +68,8 @@ namespace suprengine
 		void set_ambient_scale( float scale );
 		void set_ambient_color( Color color );
 
-		void add_renderer( shared_ptr<Renderer> renderer );
-		void remove_renderer( shared_ptr<Renderer> renderer );
+		void add_renderer( SharedPtr<Renderer> renderer );
+		void remove_renderer( SharedPtr<Renderer> renderer );
 
 	public:
 		virtual bool init() = 0;
@@ -118,13 +118,13 @@ namespace suprengine
 		) = 0;
 		virtual void draw_model( 
 			const Mtx4& matrix, 
-			const shared_ptr<Model>& model, 
+			const SharedPtr<Model>& model, 
 			rconst_str shader_name,
 			const Color& color = Color::white 
 		) = 0;
 		virtual void draw_debug_model( 
 			const Mtx4& matrix, 
-			const shared_ptr<Model>& model, 
+			const SharedPtr<Model>& model, 
 			const Color& color 
 		) = 0;
 
@@ -140,7 +140,7 @@ namespace suprengine
 
 	protected:
 		Window* _window;
-		std::unordered_map<RenderPhase, std::vector<shared_ptr<Renderer>>> _renderers;
+		std::unordered_map<RenderPhase, std::vector<SharedPtr<Renderer>>> _renderers;
 
 		AmbientLightInfos _ambient_light;
 

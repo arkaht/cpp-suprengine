@@ -8,12 +8,12 @@
 using namespace spaceship;
 
 PlayerHUD::PlayerHUD( 
-	shared_ptr<PlayerSpaceshipController> owner
+	SharedPtr<PlayerSpaceshipController> owner
 )
 	: _controller( owner )
 {
 	_controller->on_possess_changed.listen( "player-hud",
-		[&]( shared_ptr<Spaceship> previous, shared_ptr<Spaceship> current )
+		[&]( SharedPtr<Spaceship> previous, SharedPtr<Spaceship> current )
 		{
 			_unbind_from_spaceship( previous );
 			_bind_to_spaceship( current );
@@ -135,7 +135,7 @@ void PlayerHUD::render( RenderBatch* render_batch )
 	}
 
 	//  render missile-locking target
-	shared_ptr<Spaceship> target = _controller->get_locked_target();
+	SharedPtr<Spaceship> target = _controller->get_locked_target();
 	if ( target )
 	{
 		Vec3 target_pos = camera->world_to_viewport( target->transform->location );
@@ -153,7 +153,7 @@ void PlayerHUD::render( RenderBatch* render_batch )
 	}
 }
 
-void PlayerHUD::_bind_to_spaceship( shared_ptr<Spaceship> spaceship )
+void PlayerHUD::_bind_to_spaceship( SharedPtr<Spaceship> spaceship )
 {
 	if ( !spaceship ) return;
 
@@ -165,7 +165,7 @@ void PlayerHUD::_bind_to_spaceship( shared_ptr<Spaceship> spaceship )
 		std::bind( &PlayerHUD::_on_spaceship_hit, this, std::placeholders::_1 ) );
 }
 
-void PlayerHUD::_unbind_from_spaceship( shared_ptr<Spaceship> spaceship )
+void PlayerHUD::_unbind_from_spaceship( SharedPtr<Spaceship> spaceship )
 {
 	if ( !spaceship ) return;
 

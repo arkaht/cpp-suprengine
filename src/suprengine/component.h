@@ -19,7 +19,7 @@ namespace suprengine
 		Component( const Component& ) = delete;
 		Component& operator=( const Component& ) = delete;
 
-		void init( shared_ptr<Entity> owner );
+		void init( SharedPtr<Entity> owner );
 
 		virtual void setup() {}
 		virtual void unsetup() {}
@@ -27,11 +27,11 @@ namespace suprengine
 		virtual void update( float dt ) {}
 		virtual void debug_render( RenderBatch* _render_batch ) {}
 
-		shared_ptr<Entity> get_owner() const;
+		SharedPtr<Entity> get_owner() const;
 		int get_priority_order() const;
 		
 	public:
-		shared_ptr<Transform> transform;
+		SharedPtr<Transform> transform;
 
 		bool is_active { true };
 
@@ -44,6 +44,6 @@ namespace suprengine
 		 * count for the ownership of that entity, preventing its
 		 * deletion inside the memory.
 		 */
-		weak_ptr<Entity> _owner;
+		WeakPtr<Entity> _owner;
 	};
 }

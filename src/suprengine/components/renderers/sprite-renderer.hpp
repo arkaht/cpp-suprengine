@@ -13,7 +13,7 @@ namespace suprengine
 		Vec2 origin { 0.5f, 0.5f };
 
 		SpriteRenderer( 
-			shared_ptr<Entity> owner, 
+			SharedPtr<Entity> owner, 
 			Texture* texture, 
 			Color modulate = Color::white, 
 			int priority_order = 0 

@@ -83,7 +83,7 @@ void RenderBatch::set_ambient_color( Color color )
 	_ambient_light.color = color;
 }
 
-void RenderBatch::add_renderer( shared_ptr<Renderer> renderer )
+void RenderBatch::add_renderer( SharedPtr<Renderer> renderer )
 {
 	//  get priority order
 	int order = renderer->get_priority_order();
@@ -91,7 +91,7 @@ void RenderBatch::add_renderer( shared_ptr<Renderer> renderer )
 	//  check phase creation
 	RenderPhase phase = renderer->get_render_phase();
 	if ( _renderers.find( phase ) == _renderers.end() )
-		_renderers.insert( std::pair( phase, std::vector<shared_ptr<Renderer>>() ) );
+		_renderers.insert( std::pair( phase, std::vector<SharedPtr<Renderer>>() ) );
 
 	//  search order position
 	auto& list = _renderers.at( phase );
@@ -104,7 +104,7 @@ void RenderBatch::add_renderer( shared_ptr<Renderer> renderer )
 	list.insert( itr, renderer );
 }
 
-void RenderBatch::remove_renderer( shared_ptr<Renderer> renderer )
+void RenderBatch::remove_renderer( SharedPtr<Renderer> renderer )
 {
 	//  check phase
 	RenderPhase phase = renderer->get_render_phase();

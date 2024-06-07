@@ -15,7 +15,7 @@ namespace suprengine
 		int texture_id { 0 };
 
 		MeshRenderer( 
-			shared_ptr<Entity> owner, 
+			SharedPtr<Entity> owner, 
 			Mesh* mesh,
 			Color modulate = Color::white,
 			int priority_order = 0

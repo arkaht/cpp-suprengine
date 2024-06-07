@@ -41,7 +41,7 @@ World::~World()
 	}
 }
 
-shared_ptr<Pawn> World::create_pawn( const Vec3& tile_pos )
+SharedPtr<Pawn> World::create_pawn( const Vec3& tile_pos )
 {
 	auto& engine = Engine::instance();
 	auto model = Assets::get_model( MESH_CUBE );

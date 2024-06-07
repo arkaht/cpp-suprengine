@@ -10,8 +10,8 @@
 using namespace spaceship;
 
 GuidedMissile::GuidedMissile( 
-	shared_ptr<Spaceship> owner, 
-	weak_ptr<HealthComponent> wk_target,
+	SharedPtr<Spaceship> owner, 
+	WeakPtr<HealthComponent> wk_target,
 	Color color 
 )
 	: _wk_owner( owner ), _wk_target( wk_target ), _color( color )
@@ -149,7 +149,7 @@ void GuidedMissile::_check_impact()
 	//printf( "hit %p (self:%p)\n", hit.collider->get_owner(), this );
 }
 
-void GuidedMissile::_damage( shared_ptr<HealthComponent> target )
+void GuidedMissile::_damage( SharedPtr<HealthComponent> target )
 {
 	if ( !target ) return;
 	

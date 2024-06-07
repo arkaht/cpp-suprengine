@@ -28,7 +28,7 @@ namespace suprengine
 		Entity& operator=( const Entity& ) = delete;
 		
 		template <typename T, typename... Args>
-		shared_ptr<T> create_component( Args&&... args )
+		SharedPtr<T> create_component( Args&&... args )
 		{
 			static_assert( std::is_base_of<Component, T>::value, "Entity::create_component: used for a non-Component class!" );
 			
@@ -40,7 +40,7 @@ namespace suprengine
 		}
 		//  TODO: Remove
 		template <typename T, typename... Args>
-		shared_ptr<T> create_component_pro( Args&&... args )
+		SharedPtr<T> create_component_pro( Args&&... args )
 		{
 			static_assert( std::is_base_of<Component, T>::value, "Entity::create_component: used for a non-Component class!" );
 			
@@ -50,16 +50,16 @@ namespace suprengine
 			
 			return component;
 		}
-		void add_component( shared_ptr<Component> component );
-		void remove_component( shared_ptr<Component> component );
+		void add_component( SharedPtr<Component> component );
+		void remove_component( SharedPtr<Component> component );
 		template <typename T>
-		shared_ptr<T> get_component()
+		SharedPtr<T> get_component()
 		{
 			static_assert( std::is_base_of<Component, T>::value, "Entity::get_component: used for a non-Component class!" );
 			
-			for ( shared_ptr<Component> component : components )
+			for ( SharedPtr<Component> component : components )
 			{
-				shared_ptr<T> target = std::dynamic_pointer_cast<T>( component );
+				SharedPtr<T> target = std::dynamic_pointer_cast<T>( component );
 				if ( !target ) continue;
 
 				return target;
@@ -87,9 +87,9 @@ namespace suprengine
 		uint32_t layer = 0x1;
 		EntityState state { EntityState::Active };
 
-		std::vector<shared_ptr<Component>> components;
+		std::vector<SharedPtr<Component>> components;
 
-		shared_ptr<Transform> transform;
+		SharedPtr<Transform> transform;
 
 	private:
 		int _unique_id = -1;

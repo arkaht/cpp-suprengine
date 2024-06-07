@@ -15,19 +15,19 @@ namespace suprengine
 	 * the pointer to the object will throw an assertion.
 	 * 
 	 * Internally using STL's smart pointers and especially 
-	 * inheriting std::weak_ptr to handle validity and storage of 
+	 * inheriting std::WeakPtr to handle validity and storage of 
 	 * the underlying object.
 	 */
 	template<typename T>
-	class SafePtr : public weak_ptr<T>
+	class SafePtr : public WeakPtr<T>
 	{
 	public:
 		SafePtr() {}
-		SafePtr( weak_ptr<T> ptr )
-			: weak_ptr<T>( ptr )
+		SafePtr( WeakPtr<T> ptr )
+			: WeakPtr<T>( ptr )
 		{}
-		SafePtr( shared_ptr<T> ptr )
-			: weak_ptr<T>( ptr )
+		SafePtr( SharedPtr<T> ptr )
+			: WeakPtr<T>( ptr )
 		{}
 
 		/*
@@ -35,13 +35,13 @@ namespace suprengine
 		 */
 		_NODISCARD bool is_valid() const
 		{
-			return !weak_ptr<T>::expired();
+			return !WeakPtr<T>::expired();
 		}
 
 		_NODISCARD T* operator->()
 		{
 			ASSERT(is_valid(), "Safe pointer is being used on invalid object.");
-			return weak_ptr<T>::get();
+			return WeakPtr<T>::get();
 		}
 	};
 }

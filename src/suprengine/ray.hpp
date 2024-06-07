@@ -54,7 +54,7 @@ namespace suprengine
 		/*
 		 * Collider hit by the raycast
 		 */
-		shared_ptr<Collider> collider;
+		SharedPtr<Collider> collider;
 	};
 
 	struct RayParams

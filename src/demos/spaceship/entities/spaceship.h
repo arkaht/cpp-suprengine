@@ -20,12 +20,12 @@ namespace spaceship
 		void setup() override;
 		void update_this( float dt ) override;
 
-		shared_ptr<Spaceship> find_lockable_target(
+		SharedPtr<Spaceship> find_lockable_target(
 			const Vec3& view_direction 
 		) const;
 
 		void shoot();
-		void launch_missiles( weak_ptr<HealthComponent> wk_target );
+		void launch_missiles( WeakPtr<HealthComponent> wk_target );
 		
 		void die();
 		void respawn();
@@ -38,7 +38,7 @@ namespace spaceship
 		void set_color( const Color& color );
 		Color get_color() const { return _color; }
 
-		shared_ptr<HealthComponent> get_health_component() const { return _health; }
+		SharedPtr<HealthComponent> get_health_component() const { return _health; }
 
 	public:
 		/*
@@ -50,7 +50,7 @@ namespace spaceship
 		Event<const DamageResult&> on_hit;
 
 	public:
-		weak_ptr<SpaceshipController> wk_controller;
+		WeakPtr<SpaceshipController> wk_controller;
 
 	private:
 		//  Outline scale on models renderers
@@ -110,11 +110,11 @@ namespace spaceship
 
 		float _shoot_time = 0.0f;
 
-		shared_ptr<StylizedModelRenderer> _model_renderer;
-		shared_ptr<StylizedModelRenderer> _trail_renderer;
-		shared_ptr<BoxCollider> _collider;
-		shared_ptr<HealthComponent> _health;
+		SharedPtr<StylizedModelRenderer> _model_renderer;
+		SharedPtr<StylizedModelRenderer> _trail_renderer;
+		SharedPtr<BoxCollider> _collider;
+		SharedPtr<HealthComponent> _health;
 
-		static std::vector<weak_ptr<Spaceship>> _all_spaceships;
+		static std::vector<WeakPtr<Spaceship>> _all_spaceships;
 	};
 }

@@ -9,7 +9,7 @@ namespace suprengine
 	{
 	public:
 		ModelRenderer( 
-			shared_ptr<Model> model, 
+			SharedPtr<Model> model, 
 			rconst_str shader_name = SHADER_LIT_MESH, 
 			Color modulate = Color::white,
 			int priority_order = 0 
@@ -34,7 +34,7 @@ namespace suprengine
 		}
 
 	public:
-		shared_ptr<Model> model { nullptr };
+		SharedPtr<Model> model { nullptr };
 		int texture_id { 0 };
 		std::string shader_name;
 	};

@@ -25,7 +25,7 @@ namespace spaceship
 	{
 	public:
 		PlayerHUD( 
-			shared_ptr<PlayerSpaceshipController> owner
+			SharedPtr<PlayerSpaceshipController> owner
 		);
 
 		void update( float dt ) override;
@@ -59,8 +59,8 @@ namespace spaceship
 		const float HIT_TIME = 0.25f;
 
 	private:
-		void _bind_to_spaceship( shared_ptr<Spaceship> spaceship );
-		void _unbind_from_spaceship( shared_ptr<Spaceship> spaceship );
+		void _bind_to_spaceship( SharedPtr<Spaceship> spaceship );
+		void _unbind_from_spaceship( SharedPtr<Spaceship> spaceship );
 
 		void _draw_crosshair( 
 			RenderBatch* render_batch, 
@@ -77,6 +77,6 @@ namespace spaceship
 		std::vector<KillIconData> _kill_icons;
 		float _hit_time = 0.0f;
 
-		shared_ptr<PlayerSpaceshipController> _controller;
+		SharedPtr<PlayerSpaceshipController> _controller;
 	};
 }

@@ -21,6 +21,6 @@ namespace eks
 	public:
 		float move_speed;
 		Vec3 offset;
-		weak_ptr<Transform> focus_target;
+		WeakPtr<Transform> focus_target;
 	};
 }

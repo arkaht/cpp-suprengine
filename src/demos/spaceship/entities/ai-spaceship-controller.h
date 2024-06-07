@@ -13,6 +13,6 @@ namespace spaceship
 		void update_inputs( float dt ) override;
 
 	public:
-		weak_ptr<Spaceship> wk_target;
+		WeakPtr<Spaceship> wk_target;
 	};
 }

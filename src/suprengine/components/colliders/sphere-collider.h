@@ -15,7 +15,7 @@ namespace suprengine
 		SphereCollider( float radius );;
 
 		//  TODO: implement this
-		bool intersects( shared_ptr<Collider> other ) override;
+		bool intersects( SharedPtr<Collider> other ) override;
 		//  source: https://gdbooks.gitbooks.io/3dcollisions/content/Chapter3/raycast_sphere.html
 		bool raycast( _RAYCAST_FUNC_PARAMS );
 

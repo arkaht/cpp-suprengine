@@ -21,9 +21,9 @@ namespace spaceship
 
 		void update_inputs( float dt ) override;
 
-		shared_ptr<Spaceship> get_locked_target() const { return _wk_locked_target.lock(); }
-		shared_ptr<Camera> get_camera() const { return camera; }
-		shared_ptr<PlayerHUD> get_hud() const { return hud; }
+		SharedPtr<Spaceship> get_locked_target() const { return _wk_locked_target.lock(); }
+		SharedPtr<Camera> get_camera() const { return camera; }
+		SharedPtr<PlayerHUD> get_hud() const { return hud; }
 
 	public:
 		bool is_inputs_enabled = true;
@@ -75,9 +75,9 @@ namespace spaceship
 	private:
 		Vec3 _aim_velocity = Vec3::zero;
 
-		shared_ptr<Camera> camera;
-		shared_ptr<PlayerHUD> hud;
+		SharedPtr<Camera> camera;
+		SharedPtr<PlayerHUD> hud;
 
-		weak_ptr<Spaceship> _wk_locked_target;
+		WeakPtr<Spaceship> _wk_locked_target;
 	};
 }

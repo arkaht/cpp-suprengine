@@ -25,20 +25,20 @@ namespace spaceship
 		void generate_ai_spaceships( int count );
 
 	private:
-		shared_ptr<Spaceship> spaceship1;
-		shared_ptr<Spaceship> spaceship2;
+		SharedPtr<Spaceship> spaceship1;
+		SharedPtr<Spaceship> spaceship2;
 
 		GameInstance* _game_instance { nullptr };
 
-		shared_ptr<PlayerSpaceshipController> player_controller;
-		shared_ptr<AISpaceshipController> ai_controller;
+		SharedPtr<PlayerSpaceshipController> player_controller;
+		SharedPtr<AISpaceshipController> ai_controller;
 
 		float spawn_time { 0.0f };
 
 		unsigned int _seed = (unsigned int)std::time( nullptr );
 
-		shared_ptr<Camera> _temporary_camera;
-		shared_ptr<ModelRenderer> _temporary_camera_model;
+		SharedPtr<Camera> _temporary_camera;
+		SharedPtr<ModelRenderer> _temporary_camera_model;
 
 		Vec3 _player_location = Vec3::zero;
 		Quaternion _player_rotation = Quaternion::identity;

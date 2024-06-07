@@ -57,7 +57,7 @@ bool Physics::raycast( _RAYCAST_FUNC_PARAMS )
 	return false;
 }
 
-void Physics::add_collider( shared_ptr<Collider> collider )
+void Physics::add_collider( SharedPtr<Collider> collider )
 {
 	//  get priority order
 	int order = collider->get_priority_order();
@@ -71,7 +71,7 @@ void Physics::add_collider( shared_ptr<Collider> collider )
 	colliders.push_back( collider );
 }
 
-void Physics::remove_collider( shared_ptr<Collider> collider )
+void Physics::remove_collider( SharedPtr<Collider> collider )
 {
 	auto itr = std::find( colliders.begin(), colliders.end(), collider );
 	if ( itr == colliders.end() ) return;

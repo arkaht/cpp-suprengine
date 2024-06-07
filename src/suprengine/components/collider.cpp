@@ -26,7 +26,7 @@ void Collider::unsetup()
 	physics->remove_collider( ptr );
 }
 
-void Collider::update_collision_with( shared_ptr<Collider> other, bool is_active )
+void Collider::update_collision_with( SharedPtr<Collider> other, bool is_active )
 {
 	Collider* other_ptr = other.get();
 	bool is_found = collisions.find( other_ptr ) != collisions.end();

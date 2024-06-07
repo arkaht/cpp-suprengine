@@ -62,10 +62,10 @@ namespace test
 	private:
 		Entity* player { nullptr };
 
-		shared_ptr<SpringArm> spring_arm;
-		shared_ptr<Mover> mover;
-		shared_ptr<MouseLooker> mouse_looker;
-		shared_ptr<TargetRotator> target_rotator;
+		SharedPtr<SpringArm> spring_arm;
+		SharedPtr<Mover> mover;
+		SharedPtr<MouseLooker> mouse_looker;
+		SharedPtr<TargetRotator> target_rotator;
 
 		CameraMode current_mode = CameraMode::TPS;
 

@@ -33,10 +33,10 @@ namespace suprengine
 		void setup();
 		void unsetup();
 
-		virtual bool intersects( shared_ptr<Collider> other ) = 0;
+		virtual bool intersects( SharedPtr<Collider> other ) = 0;
 		virtual bool raycast( _RAYCAST_FUNC_PARAMS ) = 0;
 
-		void update_collision_with( shared_ptr<Collider> other, bool active );
+		void update_collision_with( SharedPtr<Collider> other, bool active );
 	
 	public:
 		uint32_t mask = 0xFFFFFFFF;
@@ -48,10 +48,10 @@ namespace suprengine
 		 * Called when a collision with another collider is updated.
 		 * 
 		 * Parameters:
-		 * - shared_ptr<Collider> other_collider
+		 * - SharedPtr<Collider> other_collider
 		 * - CollisionState state
 		 */
-		Event<shared_ptr<Collider>, CollisionState> on_collision_update;
+		Event<SharedPtr<Collider>, CollisionState> on_collision_update;
 
 	protected:
 		std::set<Collider*> collisions;

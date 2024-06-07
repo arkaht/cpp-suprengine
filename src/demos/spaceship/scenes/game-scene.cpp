@@ -196,8 +196,8 @@ void GameScene::generate_ai_spaceships( int count )
 {
 	auto& engine = Engine::instance();
 
-	std::vector<shared_ptr<Spaceship>> potential_targets;
-	std::vector<shared_ptr<AISpaceshipController>> controllers;
+	std::vector<SharedPtr<Spaceship>> potential_targets;
+	std::vector<SharedPtr<AISpaceshipController>> controllers;
 
 	for ( int i = 0; i < count; i++ )
 	{

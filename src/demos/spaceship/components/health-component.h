@@ -10,7 +10,7 @@ namespace spaceship
 
 	struct DamageInfo
 	{
-		shared_ptr<Entity> attacker;
+		SharedPtr<Entity> attacker;
 
 		float damage { 0.0f };
 		Vec3 knockback { Vec3::zero };
@@ -22,7 +22,7 @@ namespace spaceship
 			: info( info ) {}
 
 		const DamageInfo& info;
-		weak_ptr<HealthComponent> victim;
+		WeakPtr<HealthComponent> victim;
 		bool is_alive { false };
 		bool is_valid { false };
 	};

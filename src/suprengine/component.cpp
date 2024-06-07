@@ -11,13 +11,13 @@ Component::Component( int priority_order )
 	: _priority_order( priority_order )
 {}
 
-void Component::init( shared_ptr<Entity> owner )
+void Component::init( SharedPtr<Entity> owner )
 {
 	_owner = owner;
 	transform = owner->transform;
 }
 
-shared_ptr<Entity> Component::get_owner() const 
+SharedPtr<Entity> Component::get_owner() const 
 {
 	return _owner.lock();
 }

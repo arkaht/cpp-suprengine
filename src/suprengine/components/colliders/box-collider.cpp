@@ -15,7 +15,7 @@ BoxCollider::BoxCollider( const Box& shape )
 	: shape( shape ) 
 {}
 
-bool BoxCollider::intersects( shared_ptr<Collider> other )
+bool BoxCollider::intersects( SharedPtr<Collider> other )
 {
 	return false; 
 }

@@ -6,7 +6,7 @@ SphereCollider::SphereCollider( float radius )
 	: radius( radius ) 
 {}
 
-bool SphereCollider::intersects( shared_ptr<Collider> other )
+bool SphereCollider::intersects( SharedPtr<Collider> other )
 { 
 	return false; 
 }

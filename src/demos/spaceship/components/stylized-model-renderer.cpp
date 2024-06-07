@@ -3,7 +3,7 @@
 using namespace spaceship;
 
 StylizedModelRenderer::StylizedModelRenderer( 
-	shared_ptr<Model> model, 
+	SharedPtr<Model> model, 
 	Color modulate, 
 	int priority_order 
 )

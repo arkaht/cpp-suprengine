@@ -72,7 +72,7 @@ namespace suprengine
 		Scene* get_scene() const { return _scene.get(); }
 
 		template <typename TEntity, typename ...Args>
-		shared_ptr<TEntity> create_entity( Args&& ...args )
+		SharedPtr<TEntity> create_entity( Args&& ...args )
 		{
 			static_assert( 
 				std::is_base_of<Entity, TEntity>::value, 
@@ -86,8 +86,8 @@ namespace suprengine
 
 			return entity;
 		}
-		void add_entity( shared_ptr<Entity> entity );
-		void remove_entity( shared_ptr<Entity> entity );
+		void add_entity( SharedPtr<Entity> entity );
+		void remove_entity( SharedPtr<Entity> entity );
 		void clear_entities();
 
 		void add_timer( const Timer& timer );
@@ -112,7 +112,7 @@ namespace suprengine
 
 	private:
 		bool _is_running { true }, _is_updating { false };
-		std::vector<shared_ptr<Entity>> _pending_entities, _entities, _dead_entities;
+		std::vector<SharedPtr<Entity>> _pending_entities, _entities, _dead_entities;
 
 		std::vector<Timer> _timers;
 
