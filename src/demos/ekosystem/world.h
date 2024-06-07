@@ -28,7 +28,7 @@ namespace eks
 	private:
 		Vec2 _size;
 
-		WeakPtr<Entity> _wk_ground;
-		std::vector<WeakPtr<Pawn>> _wk_pawns;
+		SafePtr<Entity> _ground;
+		std::vector<SafePtr<Pawn>> _pawns;
 	};
 }

@@ -24,7 +24,7 @@ namespace eks
 
 	private:
 		World* _world { nullptr };
-		weak_ptr<Pawn> _test_pawn;
+		SafePtr<Pawn> _test_pawn;
 		SharedPtr<CameraController> _camera_controller { nullptr };
 	};
 }

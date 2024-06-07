@@ -23,9 +23,9 @@ void CameraController::update( float dt )
 	auto inputs = engine.get_inputs();
 
 	Vec3 pos = transform->location;
-	if ( auto target = focus_target.lock() )
+	if ( focus_target.is_valid() )
 	{
-		pos = target->location + offset;
+		pos = focus_target->location + offset;
 	}
 	else
 	{

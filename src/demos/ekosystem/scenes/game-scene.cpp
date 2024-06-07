@@ -26,7 +26,7 @@ void GameScene::init()
 
 	//  setup camera
 	auto camera_owner = engine.create_entity<Entity>();
-	camera_owner->transform->location = _test_pawn.lock()->transform->location;
+	camera_owner->transform->location = _test_pawn->transform->location;
 	camera_owner->transform->rotation = Quaternion( DegAngles { -45.0f, -135.0f, 0.0f } );
 	_camera_controller = camera_owner->create_component<CameraController>( 
 		50.0f, 
@@ -62,10 +62,10 @@ void GameScene::update( float dt )
 			Vec3::right, -Vec3::right 
 		};
 
-		if ( auto pawn = _test_pawn.lock() )
+		if ( _test_pawn.is_valid() )
 		{
-			pawn->move_to( 
-				pawn->get_tile_pos() + dirs[random::generate( 0, 3 )]
+			_test_pawn->move_to( 
+				_test_pawn->get_tile_pos() + dirs[random::generate( 0, 3 )]
 			);
 		}
 	}
@@ -75,9 +75,9 @@ void GameScene::update( float dt )
 		{
 			_camera_controller->focus_target.reset();
 		}
-		else if ( auto pawn = _test_pawn.lock() )
+		else if ( _test_pawn.is_valid() )
 		{
-			_camera_controller->focus_target = pawn->transform;
+			_camera_controller->focus_target = _test_pawn->transform;
 		}
 	}
 
@@ -102,8 +102,9 @@ void GameScene::update( float dt )
 		}
 	}
 
-	if ( auto target = _camera_controller->focus_target.lock() )
+	if ( _camera_controller->focus_target.is_valid() )
 	{
-		printf( "Target Location: %s\n", target->location.to_string().c_str() );
+		printf( "Target Location: %s\n", 
+			_camera_controller->focus_target->location.to_string().c_str() );
 	}
 }
