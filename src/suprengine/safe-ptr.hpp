@@ -1,7 +1,8 @@
 #pragma once
 
 #include <suprengine/assert.hpp>
-#include <suprengine/usings.h>
+
+#include <memory>
 
 namespace suprengine
 {
@@ -15,19 +16,19 @@ namespace suprengine
 	 * the pointer to the object will throw an assertion.
 	 * 
 	 * Internally using STL's smart pointers and especially 
-	 * inheriting std::WeakPtr to handle validity and storage of 
+	 * inheriting std::weak_ptr to handle validity and storage of 
 	 * the underlying object.
 	 */
 	template<typename T>
-	class SafePtr : public WeakPtr<T>
+	class SafePtr : public std::weak_ptr<T>
 	{
 	public:
 		SafePtr() {}
-		SafePtr( WeakPtr<T> ptr )
-			: WeakPtr<T>( ptr )
+		SafePtr( std::weak_ptr<T> ptr )
+			: std::weak_ptr<T>( ptr )
 		{}
-		SafePtr( SharedPtr<T> ptr )
-			: WeakPtr<T>( ptr )
+		SafePtr( std::shared_ptr<T> ptr )
+			: std::weak_ptr<T>( ptr )
 		{}
 
 		/*
@@ -35,13 +36,13 @@ namespace suprengine
 		 */
 		_NODISCARD bool is_valid() const
 		{
-			return !WeakPtr<T>::expired();
+			return !std::weak_ptr<T>::expired();
 		}
 
 		_NODISCARD T* operator->()
 		{
 			ASSERT(is_valid(), "Safe pointer is being used on invalid object.");
-			return WeakPtr<T>::get();
+			return std::weak_ptr<T>::get();
 		}
 	};
 }

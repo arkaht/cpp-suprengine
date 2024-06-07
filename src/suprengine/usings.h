@@ -1,7 +1,8 @@
 #pragma once
 
+#include <suprengine/safe-ptr.hpp>
+
 #include <string>
-#include <memory>
 
 using rconst_str = const std::string&;
 

@@ -210,7 +210,7 @@
     <ClInclude Include="shareable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="smart-ptr.hpp">
+    <ClInclude Include="safe-ptr.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="assert.hpp">
