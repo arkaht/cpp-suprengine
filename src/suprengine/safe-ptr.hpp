@@ -1,7 +1,5 @@
 #pragma once
 
-#include <suprengine/assert.hpp>
-
 #include <memory>
 
 namespace suprengine
@@ -41,7 +39,7 @@ namespace suprengine
 
 		_NODISCARD T* operator->()
 		{
-			ASSERT(is_valid(), "Safe pointer is being used on invalid object.");
+			if ( !is_valid() ) return nullptr;
 			return std::weak_ptr<T>::get();
 		}
 	};
