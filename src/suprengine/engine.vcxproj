@@ -266,7 +266,6 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClCompile Include="font.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="input-manager.cpp" />
-    <ClCompile Include="logger.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mtx4.cpp" />

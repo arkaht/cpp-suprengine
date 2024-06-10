@@ -3,21 +3,10 @@
 #include <string>
 #include <SDL_log.h>
 
+#include <suprengine/assert.hpp>
+
 namespace suprengine
 {
-	enum class LOG_CATEGORY
-	{
-		APPLICATION = SDL_LOG_CATEGORY_APPLICATION,
-		ASSERT = SDL_LOG_CATEGORY_ASSERT,
-		AUDIO = SDL_LOG_CATEGORY_AUDIO,
-		ERROR = SDL_LOG_CATEGORY_ERROR,
-		INPUT = SDL_LOG_CATEGORY_INPUT,
-		RENDER = SDL_LOG_CATEGORY_RENDER,
-		SYSTEM = SDL_LOG_CATEGORY_SYSTEM,
-		TEST = SDL_LOG_CATEGORY_TEST,
-		VIDEO = SDL_LOG_CATEGORY_VIDEO,
-	};
-
 	class Logger
 	{
 	public:
@@ -25,9 +14,21 @@ namespace suprengine
 		~Logger() = delete;
 		Logger& operator=( const Logger& ) = delete;
 
-		static void info( const std::string& message );
-		static void error( const std::string& message );
-
-		static void sdl_error( LOG_CATEGORY category, const std::string& message );
+		template<typename... Args>
+		static void info( const std::string& message, Args... args )
+		{
+			printf( ( "[INFO] " + message + "\n" ).c_str(), args... );
+		}
+		template<typename... Args>
+		static void error( const std::string& message, Args... args )
+		{
+			printf( ( "[ERROR] " + message + "\n" ).c_str(), args... );
+		}
+		template<typename... Args>
+		static void critical( const std::string& message, Args... args )
+		{
+			printf( ( "[CRITICAL] " + message + "\n" ).c_str(), args... );
+			assert( false );
+		}
 	};
 };
