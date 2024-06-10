@@ -179,18 +179,18 @@ namespace suprengine
 
 		Vec3 operator-() const { return Vec3 { -x, -y, -z }; }
 
-		bool operator==( const Vec2& vec2 )
+		friend bool operator==( const Vec3& a, const Vec2& b )
 		{
-			return math::near_value( x, vec2.x ) 
-			    && math::near_value( y, vec2.y )
-			    && math::near_value( z, 0.0f );
+			return math::near_value( a.x, b.x )
+			    && math::near_value( a.y, b.y )
+			    && math::near_value( a.z, 0.0f );
 		}
 
-		bool operator==( const Vec3& vec3 )
+		friend bool operator==( const Vec3& a, const Vec3& b )
 		{
-			return math::near_value( x, vec3.x )
-			    && math::near_value( y, vec3.y )
-			    && math::near_value( z, vec3.z );
+			return math::near_value( a.x, b.x )
+			    && math::near_value( a.y, b.y )
+			    && math::near_value( a.z, b.z );
 		}
 	};
 }
