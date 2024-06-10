@@ -12,7 +12,7 @@ namespace eks
 	class Pawn : public Entity
 	{
 	public:
-		Pawn( World* world, const SharedPtr<Model>& model );
+		Pawn( World* world, SafePtr<PawnData> data );
 
 		void setup() override;
 		void update_this( float dt ) override;
@@ -23,14 +23,24 @@ namespace eks
 		void update_tile_pos();
 		Vec3 get_tile_pos() const;
 
+		std::string get_name() const;
+
 	public:
-		//  In tile per seconds, how fast the pawn is?
-		const float MOVE_SPEED = 4.0f;
+		SafePtr<PawnData> data;
+
+		float hunger = 0.0f;
+
+	private:
+		void _find_food();
+		void _find_path_to( const Vec3& target );
 
 	private:
 		World* _world;
-		SharedPtr<Model> _model;
 		SharedPtr<ModelRenderer> _renderer; 
+
+		SafePtr<Pawn> _food_target;
+
+		std::vector<Vec3> _move_path;
 
 		float _move_progress = 1.0f;
 		Vec3 _move_to;

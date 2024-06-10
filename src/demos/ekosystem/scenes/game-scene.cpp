@@ -42,10 +42,17 @@ void GameScene::init()
 void GameScene::setup_world()
 {
 	_world = new World( Vec2 { 10.0f, 10.0f } );
-	_test_pawn = _world->create_pawn( Vec3 { _world->get_size() * 0.5f, 0.0f } );
-	_world->create_pawn( _world->find_random_tile_pos() );
-	_world->create_pawn( _world->find_random_tile_pos() );
-	_world->create_pawn( _world->find_random_tile_pos() );
+	
+	auto rabbit_data = _world->get_pawn_data( "rabbit" );
+	auto grass_data = _world->get_pawn_data( "grass" );
+
+	_test_pawn = _world->create_pawn( 
+		rabbit_data, 
+		Vec3 { _world->get_size() * 0.5f, 0.0f }
+	);
+	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
+	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
+	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
 }
 
 void GameScene::update( float dt )
@@ -106,5 +113,6 @@ void GameScene::update( float dt )
 	{
 		printf( "Target Location: %s\n", 
 			_camera_controller->focus_target->location.to_string().c_str() );
+		printf( "Hunger: %f\n", _test_pawn->hunger );
 	}
 }

@@ -162,6 +162,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="components\camera-controller.h" />
+    <ClInclude Include="data\pawn-data.hpp" />
     <ClInclude Include="entities\pawn.h" />
     <ClInclude Include="game-instance.h" />
     <ClInclude Include="scenes\game-scene.h" />
