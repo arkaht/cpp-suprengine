@@ -22,6 +22,7 @@ namespace suprengine
 	{
 	public:
 		SafePtr() {}
+		SafePtr( nullptr_t ) {}
 		SafePtr( std::weak_ptr<T> ptr )
 			: std::weak_ptr<T>( ptr )
 		{}
@@ -36,11 +37,27 @@ namespace suprengine
 		{
 			return !std::weak_ptr<T>::expired();
 		}
+		/*
+		 * Returns the raw pointer to the object.
+		 */
+		_NODISCARD T* get() const
+		{
+			return std::weak_ptr<T>::get();
+		}
 
 		_NODISCARD T* operator->()
 		{
 			if ( !is_valid() ) return nullptr;
-			return std::weak_ptr<T>::get();
+			return get();
+		}
+		_NODISCARD T* operator->() const
+		{
+			if ( !is_valid() ) return nullptr;
+			return get();
+		}
+		_NODISCARD bool operator==( const SafePtr<T>& ptr ) const
+		{
+			return get() == ptr.get();
 		}
 	};
 }
