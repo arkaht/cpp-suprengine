@@ -119,8 +119,8 @@ void World::_init_datas()
 		data->modulate = Color { 100, 100, 100, 255 };
 		data->move_speed = 2.0f;
 		data->food_amount = 1.0f;
-		data->max_hunger = 0.5f;
-		data->min_hunger_to_eat = 0.1f;
+		data->max_hunger = 1.0f;
+		data->min_hunger_to_eat = 0.3f;
 		data->hunger_gain_rate = 0.05f;
 		data->child_spawn_count = 2;
 		data->adjectives = Adjectives::Herbivore
@@ -133,14 +133,14 @@ void World::_init_datas()
 		auto data = std::make_shared<PawnData>();
 		data->name = "wolf";
 		data->model = model;
-		data->modulate = Color { 100, 100, 100, 255 };
+		data->modulate = Color { 255, 10, 100, 255 };
 		data->move_speed = 1.5f;
 		data->food_amount = 1.0f;
-		data->max_hunger = 0.5f;
-		data->min_hunger_to_eat = 0.1f;
-		data->hunger_gain_rate = 0.05f;
-		data->child_spawn_count = 2;
-		data->adjectives = Adjectives::Herbivore
+		data->max_hunger = 1.0f;
+		data->min_hunger_to_eat = 0.3f;
+		data->hunger_gain_rate = 0.07f;
+		data->child_spawn_count = 1;
+		data->adjectives = Adjectives::Carnivore
 						 | Adjectives::Meat;
 		_add_pawn_data( data );
 	}

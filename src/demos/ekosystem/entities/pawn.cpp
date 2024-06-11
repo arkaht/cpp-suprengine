@@ -17,6 +17,7 @@ void Pawn::setup()
 
 void Pawn::update_this( float dt )
 {
+	bool has_just_reached_tile = false;
 	if ( _move_path.size() > 0 )
 	{
 		const Vec3 next_tile = _move_path.at( 0 );
@@ -38,7 +39,9 @@ void Pawn::update_this( float dt )
 			_move_progress = 0.0f;
 			//  TODO: Refactor to erase from end
 			_move_path.erase( _move_path.begin() );
-			printf( "end node %d\n", (int)_move_path.size() );
+
+			has_just_reached_tile = true;
+			//printf( "end node %d\n", (int)_move_path.size() );
 		}
 		//printf( "%s\n", new_tile_pos.to_string().c_str() );
 
@@ -55,27 +58,29 @@ void Pawn::update_this( float dt )
 	{
 		if ( !_food_target.is_valid() )
 		{
+			_move_path.clear();
 			_find_food();
 		}
 		else if ( _food_target->get_tile_pos() == _tile_pos )
 		{
 			hunger -= _food_target->data->food_amount;
-			printf( "'%s' ate '%s'", 
+			printf( "'%s' ate '%s'\n", 
 				get_name().c_str(), _food_target->get_name().c_str() );
 			
 			_food_target->kill();
 			_food_target.reset();
 		}
-		else if ( _move_path.size() == 0 )
+		else if ( _move_path.size() == 0
+			  || ( has_just_reached_tile && _move_path.at( _move_path.size() - 1 ) != _food_target->get_tile_pos() ) )
 		{
 			move_to( _food_target->get_tile_pos() );
 		}
 		else
 		{
-			printf( "%s == %s (%s)\n", 
+			/*printf( "%s == %s (%s)\n", 
 				_food_target->get_tile_pos().to_string().c_str(),
 				_tile_pos.to_string().c_str(),
-				Vec3::world_to_grid( transform->location, _world->TILE_SIZE ).to_string().c_str() );
+				Vec3::world_to_grid( transform->location, _world->TILE_SIZE ).to_string().c_str() );*/
 		}
 	}
 
@@ -88,11 +93,10 @@ void Pawn::update_this( float dt )
 
 void Pawn::move_to( const Vec3& target )
 {
-	_move_from = _move_to;
 	_find_path_to( target );
+	_move_progress = 0.0f;
 
 	_move_to = target;
-	_move_progress = 0.0f;
 }
 
 void Pawn::set_tile_pos( const Vec3& tile_pos )
@@ -139,11 +143,24 @@ void Pawn::_find_food()
 	}
 	else if ( data->has_adjective( Adjectives::Carnivore ) )
 	{
-		printf( "Carnivore '%s' wants to eat!\n",
-			get_name().c_str() );
+		auto target = _world->find_pawn_with( 
+			Adjectives::Meat,
+			as<Pawn>()
+		);
+		if ( !target.is_valid() )
+		{
+			printf( "'%s' can't find any meat to eat!\n", 
+				get_name().c_str() );
+			return;
+		}
+
+		_food_target = target;
+		printf( "Carnivore '%s' wants to eat '%s'!\n",
+			get_name().c_str(), target->get_name().c_str() );
 	}
 	else if ( data->has_adjective( Adjectives::Photosynthesis ) )
 	{
+		hunger = 0.0f;
 		printf( "Photosynthesis '%s' wants to eat!\n", 
 			get_name().c_str() );
 	}

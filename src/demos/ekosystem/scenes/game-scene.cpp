@@ -44,12 +44,14 @@ void GameScene::setup_world()
 	_world = new World( Vec2 { 10.0f, 10.0f } );
 	
 	auto rabbit_data = _world->get_pawn_data( "rabbit" );
-	auto grass_data = _world->get_pawn_data( "grass" );
+	auto grass_data  = _world->get_pawn_data( "grass" );
+	auto wolf_data   = _world->get_pawn_data( "wolf" );
 
-	_test_pawn = _world->create_pawn( 
-		rabbit_data, 
-		Vec3 { _world->get_size() * 0.5f, 0.0f }
-	);
+	_world->create_pawn( rabbit_data, _world->find_random_tile_pos() );
+	_world->create_pawn( rabbit_data, _world->find_random_tile_pos() );
+	_world->create_pawn( rabbit_data, _world->find_random_tile_pos() );
+	_test_pawn = _world->create_pawn( wolf_data, _world->find_random_tile_pos() );
+	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
 	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
 	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
 	_world->create_pawn( grass_data, _world->find_random_tile_pos() );

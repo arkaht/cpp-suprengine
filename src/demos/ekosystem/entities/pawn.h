@@ -44,7 +44,6 @@ namespace eks
 
 		float _move_progress = 1.0f;
 		Vec3 _move_to;
-		Vec3 _move_from;
 
 		//  Position in tile coordinates
 		Vec3 _tile_pos;
