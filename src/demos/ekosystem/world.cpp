@@ -116,10 +116,10 @@ void World::_init_datas()
 {
 	auto model = Assets::get_model( MESH_CUBE );
 
-	//  Rabbit
+	//  Hare
 	{
 		auto data = std::make_shared<PawnData>();
-		data->name = "rabbit";
+		data->name = "hare";
 		data->model = model;
 		data->modulate = Color { 100, 100, 100, 255 };
 		data->move_speed = 2.0f;

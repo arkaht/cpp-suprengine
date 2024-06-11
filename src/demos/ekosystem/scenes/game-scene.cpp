@@ -51,13 +51,13 @@ void GameScene::setup_world()
 {
 	_world = new World( Vec2 { 10.0f, 10.0f } );
 	
-	auto rabbit_data = _world->get_pawn_data( "rabbit" );
-	auto grass_data  = _world->get_pawn_data( "grass" );
-	auto wolf_data   = _world->get_pawn_data( "wolf" );
+	auto hare_data  = _world->get_pawn_data( "hare" );
+	auto grass_data = _world->get_pawn_data( "grass" );
+	auto wolf_data  = _world->get_pawn_data( "wolf" );
 
-	_world->create_pawn( rabbit_data, _world->find_random_tile_pos() );
-	_world->create_pawn( rabbit_data, _world->find_random_tile_pos() );
-	_world->create_pawn( rabbit_data, _world->find_random_tile_pos() );
+	_world->create_pawn( hare_data, _world->find_random_tile_pos() );
+	_world->create_pawn( hare_data, _world->find_random_tile_pos() );
+	_world->create_pawn( hare_data, _world->find_random_tile_pos() );
 	_test_pawn = _world->create_pawn( wolf_data, _world->find_random_tile_pos() );
 	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
 	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
@@ -123,7 +123,6 @@ void GameScene::update( float dt )
 	{
 		printf( "Target Location: %s\n", 
 			_camera_controller->focus_target->location.to_string().c_str() );
-		printf( "Hunger: %f\n", _test_pawn->hunger );
 	}
 }
 
@@ -171,36 +170,109 @@ void GameScene::_show_imgui_menu()
 	}
 	if ( ImGui::CollapsingHeader( "Ecosystem", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
-		ImGui::SeparatorText( "Pawns" );
-
 		static int selected_pawn_id = 0;
 		auto& pawns = _world->get_pawns();
-		for ( int i = 0; i < pawns.size(); i++ )
+
+		//  Populate pawns
+		ImGui::SeparatorText( "Pawns" );
+		if ( ImGui::BeginTable( "eks_pawns", 4 ) )
 		{
-			auto& pawn = pawns[i];
-			if ( pawn.is_valid() )
+			ImGui::TableSetupColumn( "UID", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Name", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Action", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Hunger", ImGuiTableColumnFlags_WidthFixed );
+			//ImGui::TableSetupScrollFreeze( 4, 5 );
+			ImGui::TableHeadersRow();
+
+			ImGuiSelectableFlags selectable_flags = 
+				ImGuiSelectableFlags_SpanAllColumns 
+			  | ImGuiSelectableFlags_AllowOverlap;
+			for ( int i = 0; i < pawns.size(); i++ )
 			{
-				if ( ImGui::Selectable( 
-					pawn->get_name().c_str(), 
-					selected_pawn_id == i 
-				) )
+				ImGui::PushID( i );
+				ImGui::TableNextRow( ImGuiTableRowFlags_None );
+
+				auto& pawn = pawns[i];
+				if ( pawn.is_valid() )
 				{
-					selected_pawn_id = i;
+					//  Column 0: ID
+					ImGui::TableSetColumnIndex( 0 );
+					char buffer[5];
+					sprintf_s( buffer, "%04d", pawn->get_unique_id() );
+					if ( ImGui::Selectable( 
+						buffer, 
+						selected_pawn_id == i,
+						selectable_flags
+					) )
+					{
+						selected_pawn_id = i;
+					}
+
+					//  Column 1: Name
+					ImGui::TableSetColumnIndex( 1 );
+					ImGui::Text( pawn->get_name().c_str() );
+
+					//  Column 2: Action
+					ImGui::TableSetColumnIndex( 2 );
+					if ( ImGui::SmallButton( "Focus" ) )
+					{
+						_camera_controller->focus_target = pawn->transform;
+					}
+					ImGui::SameLine();
+					if ( ImGui::SmallButton( "Kill" ) )
+					{
+						pawn->kill();
+					}
+
+					//  Column 3: Hunger
+					ImGui::TableSetColumnIndex( 3 );
+					float hunger_ratio = math::clamp( pawn->hunger / pawn->data->max_hunger, 0.0f, 1.0f );
+					ImGui::ProgressBar( hunger_ratio, { 0.0f, 0.0f } );
+					//ImGui::Text( "%d%%", (int)( hunger_ratio * 100 ) );
+				
 				}
+				else
+				{
+					ImGui::TableSetColumnIndex( 0 );
+					ImGui::Selectable( "????", selected_pawn_id == i, selectable_flags );
+					
+					ImGui::TableSetColumnIndex( 1 );
+					ImGui::TextUnformatted( "N/A" );
+					
+					ImGui::TableSetColumnIndex( 2 );
+					ImGui::TextUnformatted( "N/A" );
+					
+					ImGui::TableSetColumnIndex( 3 );
+					ImGui::TextUnformatted( "0%" );
+				}
+
+				ImGui::PopID();
 			}
-			else
-			{
-				ImGui::Selectable( "invalid pawn" );
-			}
+
+			ImGui::EndTable();
 		}
 
+		static int selected_pawn_data_id = 0;
+		const char* items[3] {
+			"hare",
+			"wolf",
+			"grass",
+		};
+		ImGui::Combo( "Pawn Data", &selected_pawn_data_id, items, 3 );
+		if ( ImGui::Button( "Create Pawn" ) )
+		{
+			auto data = _world->get_pawn_data( items[selected_pawn_data_id] );
+			_world->create_pawn( data, _world->find_random_tile_pos() );
+		}
+
+		ImGui::Spacing();
+
+		ImGui::SeparatorText( "Selected Pawn" );
 		if ( selected_pawn_id >= 0 && selected_pawn_id < pawns.size() )
 		{
 			auto& pawn = pawns[selected_pawn_id];
 			if ( pawn.is_valid() )
 			{
-				ImGui::Spacing();
-				ImGui::SeparatorText( "Selected Pawn" );
 				ImGui::Text( ( "Name: " + pawn->get_name() ).c_str() );
 
 				//  Compute hunger
@@ -223,6 +295,10 @@ void GameScene::_show_imgui_menu()
 				ImGui::ProgressBar( hunger_ratio, { 0.0f, 0.0f }, buffer );
 				ImGui::SameLine( 0.0f, ImGui::GetStyle().ItemInnerSpacing.x );
 				ImGui::Text( "Hunger" );
+			}
+			else
+			{
+				ImGui::Text( "Name: None" );
 			}
 		}
 	}
