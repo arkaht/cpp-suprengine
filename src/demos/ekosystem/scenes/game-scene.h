@@ -14,6 +14,7 @@ namespace eks
 	class GameScene : public Scene
 	{
 	public:
+		GameScene();
 		virtual ~GameScene();
 
 		void init() override;
@@ -26,5 +27,8 @@ namespace eks
 		World* _world { nullptr };
 		SafePtr<Pawn> _test_pawn;
 		SharedPtr<CameraController> _camera_controller { nullptr };
+
+	private:
+		void _show_imgui_menu();
 	};
 }

@@ -16,7 +16,7 @@ void GameInstance::init()
     auto inputs = engine.get_inputs();
 
     //  setup inputs
-    inputs->set_relative_mouse_mode( true );
+    inputs->set_relative_mouse_mode( false );
 
     //  setup render batch
     auto render_batch = get_render_batch();

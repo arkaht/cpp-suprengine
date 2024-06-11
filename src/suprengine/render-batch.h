@@ -74,6 +74,9 @@ namespace suprengine
 	public:
 		virtual bool init() = 0;
 
+		virtual bool init_imgui() = 0;
+		virtual void begin_imgui_frame() = 0;
+
 		virtual void begin_render() = 0;
 		virtual void render() = 0;
 		virtual void end_render() = 0;

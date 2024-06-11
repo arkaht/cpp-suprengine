@@ -10,6 +10,8 @@
 
 #include <suprengine/components/camera.h>
 
+#include <imgui.h>
+
 #include <vector>
 
 namespace suprengine
@@ -101,7 +103,15 @@ namespace suprengine
 
 	public:
 		Camera* camera { nullptr };
-		bool is_debug { false };
+		bool is_debug = false;
+		bool is_game_paused = false;
+		float time_scale = 1.0f;
+
+	public:
+		/*
+		 * Called when ImGui windows are updating.
+		 */
+		Event<> on_imgui_update;
 
 	private:
 		Engine() {};

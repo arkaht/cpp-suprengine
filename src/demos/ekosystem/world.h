@@ -33,6 +33,8 @@ namespace eks
 			SafePtr<Pawn> pawn_to_ignore 
 		);
 
+		const std::vector<SafePtr<Pawn>>& get_pawns() const;
+
 		Vec2 get_size() const;
 
 	public:

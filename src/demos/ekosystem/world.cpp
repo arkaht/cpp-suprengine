@@ -102,6 +102,11 @@ SafePtr<Pawn> World::find_pawn_with(
 	return nullptr;
 }
 
+const std::vector<SafePtr<Pawn>>& World::get_pawns() const
+{
+	return _pawns;
+}
+
 Vec2 World::get_size() const
 { 
 	return _size; 

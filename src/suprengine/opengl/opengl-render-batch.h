@@ -19,6 +19,9 @@ namespace suprengine
 
 		bool init() override;
 
+		bool init_imgui() override;
+		void begin_imgui_frame() override;
+
 		void begin_render() override;
 		void render() override;
 		void end_render() override;

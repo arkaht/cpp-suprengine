@@ -251,6 +251,14 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\external\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="..\..\external\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\external\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\external\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\external\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\external\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\external\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="angles.cpp" />
     <ClCompile Include="assets.cpp" />
     <ClCompile Include="box.cpp" />

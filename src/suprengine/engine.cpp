@@ -7,6 +7,8 @@
 #include <suprengine/components/collider.h>
 #include <suprengine/scene.h>
 
+#include <backends/imgui_impl_sdl2.h>
+
 #include <unordered_map>
 #include <algorithm>
 
@@ -30,6 +32,10 @@ Engine::~Engine()
 
 	//  release assets
 	Assets::release();
+
+	//  release ImGui
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 
 	//  quit sdl
 	SDL_Quit();
@@ -69,6 +75,17 @@ bool Engine::init( IGame* game )
 	_game->load_assets();
 	_game->init();
 
+	//  init imgui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+	ImGui::StyleColorsDark();
+
+	if ( !_render_batch->init_imgui() ) return false;
+
 	return true;
 }
 
@@ -76,7 +93,7 @@ void Engine::loop()
 {
 	while ( _is_running )
 	{
-		float dt = _updater.compute_dt() / 1000.0f;
+		float dt = _updater.compute_dt() / 1000.0f * time_scale;
 
 		process_input();
 		update( dt );
@@ -152,6 +169,9 @@ void Engine::process_input()
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
 	{
+		//  send event to ImGui
+		ImGui_ImplSDL2_ProcessEvent( &event );
+
 		//  TODO?: move this to the Window class
 		//  TODO: remove dependencies with our Event class
 		switch ( event.type )
@@ -181,6 +201,8 @@ void Engine::process_input()
 void Engine::update( float dt )
 {
 	_inputs->update();
+
+	if ( is_game_paused ) return;
 
 	//  add pending entities to active
 	if ( !_pending_entities.empty() )
@@ -257,6 +279,10 @@ void Engine::update( float dt )
 
 void Engine::render()
 {
+	//  ImGui update
+	_render_batch->begin_imgui_frame();
+	on_imgui_update.invoke();
+
 	//  start rendering
 	_render_batch->begin_render();
 
@@ -281,7 +307,7 @@ void Engine::render()
 	if ( is_debug )
 	{
 		auto _render_batch = get_render_batch();
-		for ( auto entity : _entities )
+		for ( auto& entity : _entities )
 		{
 			entity->debug_render( _render_batch );
 

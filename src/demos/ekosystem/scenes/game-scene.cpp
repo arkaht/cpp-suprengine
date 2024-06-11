@@ -6,6 +6,14 @@
 
 using namespace eks;
 
+GameScene::GameScene()
+{
+	auto& engine = Engine::instance();
+	engine.on_imgui_update.listen( "eks_menu", 
+		std::bind( &GameScene::_show_imgui_menu, this )
+	);
+}
+
 GameScene::~GameScene()
 {
 	if ( _world != nullptr )
@@ -117,4 +125,107 @@ void GameScene::update( float dt )
 			_camera_controller->focus_target->location.to_string().c_str() );
 		printf( "Hunger: %f\n", _test_pawn->hunger );
 	}
+}
+
+void GameScene::_show_imgui_menu()
+{
+	auto& engine = Engine::instance();
+
+	//  Setup default position and size of the window
+	const ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos( { viewport->WorkPos.x + 850, viewport->WorkPos.y + 20 }, ImGuiCond_FirstUseEver );
+	ImGui::SetNextWindowSize( { 400, 680 }, ImGuiCond_FirstUseEver );
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
+
+	if ( !ImGui::Begin( "Ekosystem Debug Menu", nullptr, window_flags ) )
+	{
+		ImGui::End();
+		return;
+	}
+
+	static bool show_demo_menu = false;
+	if ( show_demo_menu ) ImGui::ShowDemoWindow( &show_demo_menu );
+
+	//  Populate menu bar
+	if ( ImGui::BeginMenuBar() )
+	{
+		if ( ImGui::BeginMenu( "Development" ) )
+		{
+			ImGui::MenuItem( "Show Demo Menu", NULL, &show_demo_menu );
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+
+	//  Populate Engine header
+	if ( ImGui::CollapsingHeader( "Engine", ImGuiTreeNodeFlags_DefaultOpen ) )
+	{
+		//  Pause & time scale
+		ImGui::Checkbox( "Pause Game", &engine.is_game_paused );
+		ImGui::SliderFloat( "Time Scale", &engine.time_scale, 0.01f, 4.0f );
+		if ( ImGui::Button( "Reset Time Scale" ) )
+		{
+			engine.time_scale = 1.0f;
+		}
+	}
+	if ( ImGui::CollapsingHeader( "Ecosystem", ImGuiTreeNodeFlags_DefaultOpen ) )
+	{
+		ImGui::SeparatorText( "Pawns" );
+
+		static int selected_pawn_id = 0;
+		auto& pawns = _world->get_pawns();
+		for ( int i = 0; i < pawns.size(); i++ )
+		{
+			auto& pawn = pawns[i];
+			if ( pawn.is_valid() )
+			{
+				if ( ImGui::Selectable( 
+					pawn->get_name().c_str(), 
+					selected_pawn_id == i 
+				) )
+				{
+					selected_pawn_id = i;
+				}
+			}
+			else
+			{
+				ImGui::Selectable( "invalid pawn" );
+			}
+		}
+
+		if ( selected_pawn_id >= 0 && selected_pawn_id < pawns.size() )
+		{
+			auto& pawn = pawns[selected_pawn_id];
+			if ( pawn.is_valid() )
+			{
+				ImGui::Spacing();
+				ImGui::SeparatorText( "Selected Pawn" );
+				ImGui::Text( ( "Name: " + pawn->get_name() ).c_str() );
+
+				//  Compute hunger
+				float hunger = pawn->hunger;
+				float max_hunger = pawn->data->max_hunger;
+				float hunger_ratio = math::clamp( 
+					hunger / max_hunger,
+					0.0f,
+					1.0f
+				);
+
+				//  Create progress text
+				char buffer[32];
+				sprintf_s( 
+					buffer, "%.03f/%.03f (%d%%)",
+					hunger, max_hunger, (int)( hunger_ratio * 100 )
+				);
+
+				//  Display hunger
+				ImGui::ProgressBar( hunger_ratio, { 0.0f, 0.0f }, buffer );
+				ImGui::SameLine( 0.0f, ImGui::GetStyle().ItemInnerSpacing.x );
+				ImGui::Text( "Hunger" );
+			}
+		}
+	}
+
+	ImGui::End();
 }

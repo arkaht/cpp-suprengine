@@ -5,6 +5,10 @@
 #include <suprengine/game.h>
 #include <suprengine/engine.h>
 
+#include <imgui.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_opengl3.h>
+
 #include <filesystem>
 
 using namespace suprengine;
@@ -31,6 +35,8 @@ constexpr unsigned int RECT_INDICES[] = {
 
 OpenGLRenderBatch::~OpenGLRenderBatch()
 {
+	ImGui_ImplOpenGL3_Shutdown();
+
 	SDL_GL_DeleteContext( _gl_context );
 
 	_release_framebuffers();
@@ -100,8 +106,36 @@ bool OpenGLRenderBatch::init()
 	return true;
 }
 
+bool OpenGLRenderBatch::init_imgui()
+{
+	auto sdl_window = _window->get_sdl_window();
+	if ( !ImGui_ImplSDL2_InitForOpenGL( sdl_window, _gl_context ) )
+	{
+		Logger::critical( "RenderBatch::OpenGL: failed to initialize ImGui with SDL2!" );
+		return false;
+	}
+
+	if ( !ImGui_ImplOpenGL3_Init( "#version 130" ) )
+	{
+		Logger::critical( "RenderBatch::OpenGL: failed to initialize ImGui with OpenGL3!" );
+		return false;
+	}
+
+	return true;
+}
+
+void OpenGLRenderBatch::begin_imgui_frame()
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+}
+
 void OpenGLRenderBatch::begin_render()
 {
+	//  begin ImGui rendering
+	ImGui::Render();
+
 	//  clear screen
 	glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
 	glClearColor(
@@ -180,6 +214,9 @@ void OpenGLRenderBatch::render()
 		//  disable options
 		glDisable( GL_BLEND );
 	}
+
+	//  ImGui rendering
+	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
 }
 
 void OpenGLRenderBatch::end_render()
