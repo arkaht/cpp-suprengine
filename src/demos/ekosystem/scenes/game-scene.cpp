@@ -162,10 +162,37 @@ void GameScene::_show_imgui_menu()
 	{
 		//  Pause & time scale
 		ImGui::Checkbox( "Pause Game", &engine.is_game_paused );
-		ImGui::SliderFloat( "Time Scale", &engine.time_scale, 0.01f, 4.0f );
-		if ( ImGui::Button( "Reset Time Scale" ) )
+		ImGui::SliderFloat( "Time Scale", &engine.time_scale, 0.001f, 32.0f );
+
+		std::array<float, 9> numbers {
+			0.25f, 0.5f, 0.75f, 
+			1.0f, 
+			2.0f, 4.0f, 8.0f, 16.0f, 32.0f 
+		};
+		for ( int i = 0; i < numbers.size(); i++ )
 		{
-			engine.time_scale = 1.0f;
+			float scale = numbers[i];
+
+			//  Create string buffer
+			char buffer[6];
+			if ( scale < 1.0f )
+			{
+				sprintf_s( buffer, "x%.02f", scale );
+			}
+			else
+			{
+				sprintf_s( buffer, "x%d", (int)scale );
+			}
+
+			if ( ImGui::Button( buffer ) )
+			{
+				engine.time_scale = scale;
+			}
+
+			if ( i < numbers.size() - 1 )
+			{
+				ImGui::SameLine();
+			}
 		}
 	}
 	if ( ImGui::CollapsingHeader( "Ecosystem", ImGuiTreeNodeFlags_DefaultOpen ) )
