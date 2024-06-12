@@ -202,15 +202,19 @@ void GameScene::_show_imgui_menu()
 		static int selected_pawn_id = 0;
 		auto& pawns = _world->get_pawns();
 
+		ImGuiTableFlags table_flags = 
+			ImGuiTableFlags_ScrollY | ImGuiTableFlags_Borders | 
+			ImGuiTableFlags_RowBg;
+
 		//  Populate pawns
 		ImGui::SeparatorText( "Pawns" );
-		if ( ImGui::BeginTable( "eks_pawns", 4 ) )
+		if ( ImGui::BeginTable( "eks_pawns", 4, table_flags, { 0.0f, 150.0f } ) )
 		{
 			ImGui::TableSetupColumn( "UID", ImGuiTableColumnFlags_WidthFixed );
 			ImGui::TableSetupColumn( "Name", ImGuiTableColumnFlags_WidthFixed );
 			ImGui::TableSetupColumn( "Action", ImGuiTableColumnFlags_WidthFixed );
 			ImGui::TableSetupColumn( "Hunger", ImGuiTableColumnFlags_WidthFixed );
-			//ImGui::TableSetupScrollFreeze( 4, 5 );
+			ImGui::TableSetupScrollFreeze( 0, 1 );
 			ImGui::TableHeadersRow();
 
 			ImGuiSelectableFlags selectable_flags = 
