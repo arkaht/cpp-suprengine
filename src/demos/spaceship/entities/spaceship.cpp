@@ -302,7 +302,7 @@ void Spaceship::_update_movement( float dt )
 void Spaceship::_update_trail( float dt )
 {
 	auto& engine = Engine::instance();
-	float time = engine.get_timer()->get_accumulated_seconds();
+	float time = engine.get_updater()->get_accumulated_seconds();
 
 	//  intensity
 	float trail_intensity_target = 0.0f;

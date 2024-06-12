@@ -144,7 +144,7 @@ void PlayerHUD::render( RenderBatch* render_batch )
 			render_batch->draw_texture( 
 				(Vec2)target_pos,
 				Vec2::one * 1.0f,
-				engine.get_timer()->get_accumulated_seconds() * 3.0f,
+				engine.get_updater()->get_accumulated_seconds() * 3.0f,
 				Vec2 { 0.5f, 0.5f },
 				_crosshair_line_texture,
 				target->get_color()

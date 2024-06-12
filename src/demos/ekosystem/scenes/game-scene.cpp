@@ -68,7 +68,7 @@ void GameScene::setup_world()
 void GameScene::update( float dt )
 {
 	auto engine = _game->get_engine();
-	float time = engine->get_timer()->get_accumulated_seconds();
+	float time = engine->get_updater()->get_accumulated_seconds();
 
 	auto inputs = engine->get_inputs();
 
@@ -129,6 +129,7 @@ void GameScene::update( float dt )
 void GameScene::_show_imgui_menu()
 {
 	auto& engine = Engine::instance();
+	auto updater = engine.get_updater();
 
 	//  Setup default position and size of the window
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -162,8 +163,9 @@ void GameScene::_show_imgui_menu()
 	{
 		//  Pause & time scale
 		ImGui::Checkbox( "Pause Game", &engine.is_game_paused );
-		ImGui::SliderFloat( "Time Scale", &engine.time_scale, 0.001f, 32.0f );
+		ImGui::SliderFloat( "Time Scale", &updater->time_scale, 0.001f, 32.0f );
 
+		//  Time scale presets
 		std::array<float, 9> numbers {
 			0.25f, 0.5f, 0.75f, 
 			1.0f, 
@@ -186,7 +188,7 @@ void GameScene::_show_imgui_menu()
 
 			if ( ImGui::Button( buffer ) )
 			{
-				engine.time_scale = scale;
+				updater->time_scale = scale;
 			}
 
 			if ( i < numbers.size() - 1 )

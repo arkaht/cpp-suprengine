@@ -93,7 +93,16 @@ void Engine::loop()
 {
 	while ( _is_running )
 	{
-		float dt = _updater.compute_dt() / 1000.0f * time_scale;
+		_updater.compute_delta_time();
+		float dt = _updater.get_scaled_delta_time();
+
+		//  Apply time scale modifiers
+		//  NOTE: This won't affect result returned by 
+		//        Update::get_scaled_delta_time.
+		if ( is_game_paused )
+		{
+			dt = 0.0f;
+		}
 
 		process_input();
 		update( dt );
@@ -201,8 +210,6 @@ void Engine::process_input()
 void Engine::update( float dt )
 {
 	_inputs->update();
-
-	if ( is_game_paused ) return;
 
 	//  add pending entities to active
 	if ( !_pending_entities.empty() )

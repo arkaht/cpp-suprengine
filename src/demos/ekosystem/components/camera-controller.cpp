@@ -23,7 +23,7 @@ void CameraController::update( float dt )
 	auto inputs = engine.get_inputs();
 
 	//  Don't use scaled delta time (for dev. menu)
-	dt = dt / engine.time_scale;
+	dt = engine.get_updater()->get_unscaled_delta_time();
 
 	Vec3 pos = transform->location;
 	if ( focus_target.is_valid() )

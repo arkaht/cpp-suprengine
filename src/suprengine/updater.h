@@ -1,26 +1,38 @@
 #pragma once
 
+#include <cstdint>
+
 namespace suprengine
 {
-	constexpr unsigned int FPS = 60;
-	constexpr unsigned int FRAME_DELAY = 1000 / FPS;
-	constexpr unsigned int MAX_DT = 50;
+	constexpr uint32_t FPS = 60;
+	constexpr uint32_t FRAME_DELAY = 1000u / FPS;
+	constexpr uint32_t MAX_DT = 50;
 
 	class Updater
 	{
-	private:
-		unsigned int frame_start { 0u }, last_frame { 0u }, frame_time { 0u };
-		float accumulated_seconds { 0.0f };
 	public:
 		Updater() {};
 		Updater( const Updater& ) = delete;
 		Updater& operator=( const Updater& ) = delete;
 
-		unsigned int compute_dt();
+		void compute_delta_time();
+		float get_scaled_delta_time() const;
+		float get_unscaled_delta_time() const;
 
 		void delay_time();
 
-		void accumulate_seconds( float dt ) { accumulated_seconds += dt; }
-		float get_accumulated_seconds() const { return accumulated_seconds; }
+		void accumulate_seconds( float dt );
+		float get_accumulated_seconds() const;
+
+	public:
+		float time_scale = 1.0f;
+
+	private:
+		uint32_t _frame_start = 0u;
+		uint32_t _last_frame = 0u;
+		uint32_t _frame_time = 0u;
+
+		float _accumulated_seconds = 0.0f;
+		float _delta_time = 0.0f;
 	};
 }

@@ -56,7 +56,7 @@ void GameScene::init()
 void GameScene::update( float dt )
 {
 	auto engine = _game->get_engine();
-	float time = engine->get_timer()->get_accumulated_seconds();
+	float time = engine->get_updater()->get_accumulated_seconds();
 
 	RenderBatch* render_batch = engine->get_render_batch();
 	/*render_batch->set_ambient_direction(

@@ -99,19 +99,22 @@ namespace suprengine
 		RenderBatch* get_render_batch() const { return _render_batch.get(); }
 		InputManager* get_inputs() const { return _inputs.get(); }
 		Physics* get_physics() const { return _physics.get(); }
-		Updater* get_timer() { return &_updater; }
-
-	public:
-		Camera* camera { nullptr };
-		bool is_debug = false;
-		bool is_game_paused = false;
-		float time_scale = 1.0f;
+		Updater* get_updater() { return &_updater; }
 
 	public:
 		/*
 		 * Called when ImGui windows are updating.
 		 */
 		Event<> on_imgui_update;
+
+	public:
+		Camera* camera { nullptr };
+		bool is_debug = false;
+		bool is_game_paused = false;
+
+	private:
+		bool _is_running = true;
+		bool _is_updating = false;
 
 	private:
 		Engine() {};
@@ -121,7 +124,6 @@ namespace suprengine
 		void render();
 
 	private:
-		bool _is_running { true }, _is_updating { false };
 		std::vector<SharedPtr<Entity>> _pending_entities, _entities, _dead_entities;
 
 		std::vector<Timer> _timers;
