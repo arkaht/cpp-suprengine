@@ -149,6 +149,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="components\camera-controller.cpp" />
+    <ClCompile Include="debug-menu.cpp" />
     <ClCompile Include="entities\pawn.cpp" />
     <ClCompile Include="game-instance.cpp" />
     <ClCompile Include="main.cpp" />
@@ -163,6 +164,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
   <ItemGroup>
     <ClInclude Include="components\camera-controller.h" />
     <ClInclude Include="data\pawn-data.hpp" />
+    <ClInclude Include="debug-menu.h" />
     <ClInclude Include="entities\pawn.h" />
     <ClInclude Include="game-instance.h" />
     <ClInclude Include="scenes\game-scene.h" />

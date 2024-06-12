@@ -7,6 +7,8 @@
 
 #include "components/camera-controller.h"
 
+#include "debug-menu.h"
+
 using namespace suprengine;
 
 namespace eks
@@ -25,10 +27,7 @@ namespace eks
 
 	private:
 		World* _world { nullptr };
-		SafePtr<Pawn> _test_pawn;
-		SharedPtr<CameraController> _camera_controller { nullptr };
-
-	private:
-		void _show_imgui_menu();
+		SafePtr<CameraController> _camera_controller;
+		DebugMenu _debug_menu;
 	};
 }
