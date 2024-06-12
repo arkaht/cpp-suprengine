@@ -25,18 +25,24 @@ void CameraController::update( float dt )
 	//  Don't use scaled delta time (for dev. menu)
 	dt = engine.get_updater()->get_unscaled_delta_time();
 
+	//  Retrieve input direction
+	Vec3 dir {};
+	dir.y = inputs->get_keys_as_axis( SDL_SCANCODE_S, SDL_SCANCODE_W );
+	dir.x = inputs->get_keys_as_axis( SDL_SCANCODE_A, SDL_SCANCODE_D );
+	dir.normalize2d();
+
 	Vec3 pos = transform->location;
-	if ( focus_target.is_valid() )
+	if ( dir == Vec3::zero )
 	{
-		pos = focus_target->location + offset;
+		if ( focus_target.is_valid() )
+		{
+			pos = focus_target->location + offset;
+		}
 	}
 	else
 	{
-		//  Retrieve input direction
-		Vec3 dir {};
-		dir.y = inputs->get_keys_as_axis( SDL_SCANCODE_S, SDL_SCANCODE_W );
-		dir.x = inputs->get_keys_as_axis( SDL_SCANCODE_A, SDL_SCANCODE_D );
-		dir.normalize2d();
+		//  Break focus target reference
+		focus_target.reset();
 
 		//  Flatten forward (get rid of camera's pitch)
 		Vec3 forward = transform->get_forward();
