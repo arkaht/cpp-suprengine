@@ -44,6 +44,8 @@ namespace eks
 		void _init_datas();
 		void _add_pawn_data( SharedPtr<PawnData> data );
 
+		void _on_entity_removed( Entity* entity );
+
 	private:
 		Vec2 _size;
 

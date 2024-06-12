@@ -103,6 +103,20 @@ namespace suprengine
 
 	public:
 		/*
+		 * Called when an entity is being added.
+		 * 
+		 * Parameters:
+		 * - SafePtr<Entity> Entity being added
+		 */
+		Event<SafePtr<Entity>> on_entity_added;
+		/*
+		 * Called when an entity is being removed.
+		 * 
+		 * Parameters:
+		 * - Entity* Entity being removed
+		 */
+		Event<Entity*> on_entity_removed;
+		/*
 		 * Called when ImGui windows are updating.
 		 */
 		Event<> on_imgui_update;

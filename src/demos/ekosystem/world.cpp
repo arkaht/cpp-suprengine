@@ -31,6 +31,13 @@ World::World( const Vec2& size )
 	_ground->create_component<BoxCollider>( Box::HALF );
 
 	_init_datas();
+
+	engine.on_entity_removed.listen( "eks_world",
+		std::bind( 
+			&World::_on_entity_removed, this, 
+			std::placeholders::_1 
+		) 
+	);
 }
 
 World::~World()
@@ -179,4 +186,17 @@ void World::_add_pawn_data( SharedPtr<PawnData> data )
 	_pawn_datas[data->name] = data;
 	Logger::info( "A pawn data has been registered as '%s'", 
 		data->name.c_str() );
+}
+
+void World::_on_entity_removed( Entity* entity )
+{
+	if ( auto pawn = entity->cast<Pawn>() )
+	{
+		auto itr = std::find( _pawns.begin(), _pawns.end(), SafePtr<Pawn>( pawn ) );
+		ASSERT( itr != _pawns.end(), "A removed pawn couldn't be erased from the World pawns list!" );
+		
+		_pawns.erase( itr );
+
+		printf( "Pawn '%s' is being removed!\n", pawn->get_name().c_str() );
+	}
 }

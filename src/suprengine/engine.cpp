@@ -126,6 +126,8 @@ void Engine::add_entity( SharedPtr<Entity> entity )
 		if ( std::find( _entities.begin(), _entities.end(), entity ) != _entities.end() ) return;
 
 		_entities.push_back( entity );
+
+		on_entity_added.invoke( entity );
 	}
 }
 
@@ -135,6 +137,8 @@ void Engine::remove_entity( SharedPtr<Entity> entity )
 	auto itr = std::find( _entities.begin(), _entities.end(), entity );
 	if ( itr != _entities.end() )
 	{
+		on_entity_removed.invoke( entity.get() );
+
 		std::iter_swap( itr, _entities.end() - 1 );
 		_entities.pop_back();
 		return;
