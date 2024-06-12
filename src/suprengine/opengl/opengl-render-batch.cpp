@@ -436,6 +436,18 @@ void OpenGLRenderBatch::clip( const Rect& region )
 	//  TODO: support clipping
 }
 
+void OpenGLRenderBatch::set_debug_output( bool is_active )
+{
+	if ( is_active )
+	{
+		glEnable( GL_DEBUG_OUTPUT );
+	}
+	else
+	{
+		glDisable( GL_DEBUG_OUTPUT );
+	}
+}
+
 void OpenGLRenderBatch::set_samples( unsigned int samples )
 {
 	_samples = samples;

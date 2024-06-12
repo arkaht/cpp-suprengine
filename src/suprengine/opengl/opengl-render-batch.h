@@ -76,6 +76,7 @@ namespace suprengine
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;
 
+		void set_debug_output( bool is_active );
 		void set_samples( unsigned int samples );
 		void update_framebuffers();
 
