@@ -220,6 +220,7 @@ xcopy "$(ProjectDir)assets\*.*" "$(TargetDir)assets/$(ProjectName)/" /Y /I /E</C
     <ClInclude Include="font.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="imgui.h" />
     <ClInclude Include="input-manager.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="math.h" />

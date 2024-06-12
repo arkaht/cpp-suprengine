@@ -131,6 +131,8 @@ void GameScene::_show_imgui_menu()
 	auto& engine = Engine::instance();
 	auto updater = engine.get_updater();
 
+	const ImVec4 hunger_color { 255 / 255.0f, 159 / 255.0f, 25 / 255.0f, 1.0f };
+
 	//  Setup default position and size of the window
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos( { viewport->WorkPos.x + 850, viewport->WorkPos.y + 20 }, ImGuiCond_FirstUseEver );
@@ -260,9 +262,8 @@ void GameScene::_show_imgui_menu()
 					//  Column 3: Hunger
 					ImGui::TableSetColumnIndex( 3 );
 					float hunger_ratio = math::clamp( pawn->hunger / pawn->data->max_hunger, 0.0f, 1.0f );
-					ImGui::ProgressBar( hunger_ratio, { 0.0f, 0.0f } );
-					//ImGui::Text( "%d%%", (int)( hunger_ratio * 100 ) );
-				
+					ImGui::Extra::ColoredProgressBar( 
+						hunger_ratio, hunger_color, { 0.0f, 0.0f } );
 				}
 				else
 				{
@@ -285,6 +286,7 @@ void GameScene::_show_imgui_menu()
 			ImGui::EndTable();
 		}
 
+		ImGui::SeparatorText( "Pawn Factory" );
 		static int selected_pawn_data_id = 0;
 		const char* items[3] {
 			"hare",
@@ -325,7 +327,8 @@ void GameScene::_show_imgui_menu()
 				);
 
 				//  Display hunger
-				ImGui::ProgressBar( hunger_ratio, { 0.0f, 0.0f }, buffer );
+				ImGui::Extra::ColoredProgressBar( 
+					hunger_ratio, hunger_color, { 0.0f, 0.0f }, buffer );
 				ImGui::SameLine( 0.0f, ImGui::GetStyle().ItemInnerSpacing.x );
 				ImGui::Text( "Hunger" );
 			}

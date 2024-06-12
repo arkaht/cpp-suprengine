@@ -10,7 +10,7 @@
 
 #include <suprengine/components/camera.h>
 
-#include <imgui.h>
+#include <suprengine/imgui.h>
 
 #include <vector>
 
