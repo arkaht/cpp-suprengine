@@ -34,6 +34,7 @@ namespace eks
 		);
 
 		const std::vector<SafePtr<Pawn>>& get_pawns() const;
+		const std::map<std::string, SharedPtr<PawnData>>& get_pawn_datas() const;
 
 		Vec2 get_size() const;
 

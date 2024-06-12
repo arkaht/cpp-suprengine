@@ -114,6 +114,11 @@ const std::vector<SafePtr<Pawn>>& World::get_pawns() const
 	return _pawns;
 }
 
+const std::map<std::string, SharedPtr<PawnData>>& World::get_pawn_datas() const
+{
+	return _pawn_datas;
+}
+
 Vec2 World::get_size() const
 { 
 	return _size; 
