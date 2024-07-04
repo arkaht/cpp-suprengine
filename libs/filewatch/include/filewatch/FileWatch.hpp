@@ -36,8 +36,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <tchar.h>
-#include <thread>
-//#include <Pathcch.h>
+#include <Pathcch.h>
 #include <shlwapi.h>
 #endif // WIN32
 
