@@ -1,23 +1,31 @@
 cmake_minimum_required(VERSION 3.11)
 
-#  Suprengine
+#  Setup Suprengine
 project(SUPRENGINE)
 set(CMAKE_CXX_STANDARD 20)
+set(SUPRENGINE_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(SUPRENGINE_SOURCE "${SUPRENGINE_INCLUDE}/suprengine")
+set(SUPRENGINE_ASSETS "${SUPRENGINE_SOURCE}/assets" CACHE INTERNAL "")
 
-set(SUPRENGINE_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/src/suprengine")
-set(SUPRENGINE_ASSETS "${SUPRENGINE_SOURCE}/assets")
+message("Suprengine Source Directory: '${SUPRENGINE_SOURCE_DIR}'")
+
+#  List all .cpp files
+file(GLOB_RECURSE SUPRENGINE_SOURCES CONFIGURE_DEPENDS "${SUPRENGINE_SOURCE}/*.cpp")
+message("Suprengine Source Files: '${SUPRENGINE_SOURCES}'")
+#list(FILTER SUPRENGINE_SOURCES EXCLUDE REGEX "src/demos/*")
 
 #  List all .dll files
 file(GLOB_RECURSE SUPRENGINE_DLLS CONFIGURE_DEPENDS "${SUPRENGINE_SOURCE_DIR}/libs/*.dll")
 list(FILTER SUPRENGINE_DLLS EXCLUDE REGEX "x86/")
 
-#  List all .cpp files
-file(GLOB_RECURSE SUPRENGINE_SOURCES CONFIGURE_DEPENDS "${SUPRENGINE_SOURCE}/*.cpp")
-#list(FILTER SUPRENGINE_SOURCES EXCLUDE REGEX "src/demos/*")
+#  Re-apply SUPRENGINE_DLLS variable to be accessible outside of this file scope
+set(SUPRENGINE_DLLS "${SUPRENGINE_DLLS}" CACHE INTERNAL "")
+message("Suprengine DLLs: '${SUPRENGINE_DLLS}'")
 
 #  Declare library with sources and headers
 add_library(SUPRENGINE)
-target_include_directories(SUPRENGINE PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set_target_properties(SUPRENGINE PROPERTIES OUTPUT_NAME "suprengine")
+target_include_directories(SUPRENGINE PUBLIC "${SUPRENGINE_INCLUDE}")
 target_sources(SUPRENGINE PRIVATE "${SUPRENGINE_SOURCES}")
 
 #add_subdirectory("libs")
@@ -58,18 +66,21 @@ set_target_properties(sdl2_image PROPERTIES
 	IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.0.5/lib/x64/SDL2_image.lib"
 	INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.0.5/include"
 )
-target_link_libraries(SUPRENGINE PUBLIC sdl2 sdl2_ttf sdl2_image "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.0.12/lib/x64/SDL2main.lib")
+target_link_libraries(SUPRENGINE PUBLIC 
+	sdl2 sdl2_ttf sdl2_image 
+	"${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.0.12/lib/x64/SDL2main.lib"  #  Required for the main function
+)
 
 #  Link GLEW
-#target_include_directories(SUPRENGINE PUBLIC "libs/glew-2.1.0/include")
-#target_link_libraries(SUPRENGINE PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.lib")
-add_library(glew SHARED IMPORTED)
-set_target_properties(glew PROPERTIES
-    IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/dlls/glew32.dll"
-    IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.lib"
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/include"
-)
-target_link_libraries(SUPRENGINE PUBLIC glew)
+target_include_directories(SUPRENGINE PUBLIC "libs/glew-2.1.0/include")
+target_link_libraries(SUPRENGINE PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.lib")
+#add_library(glew SHARED IMPORTED)
+#set_target_properties(glew PROPERTIES
+#    #IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.dll"
+#    IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.lib"
+#    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/include"
+#)
+#target_link_libraries(SUPRENGINE PUBLIC glew)
 
 #  Link ImGui
 #target_include_directories(SUPRENGINE PUBLIC "libs/imgui")
@@ -98,23 +109,37 @@ target_link_libraries(SUPRENGINE PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libs/curve-
 
 #  Utility macros
 
-# Copy suprengine assets as well as specified project assets to its binary directory
-macro(suprengine_copy_assets project_target project_name)
-	add_custom_command(TARGET ${project_target} POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_directory "${SUPRENGINE_ASSETS}" "${${project_target}_BINARY_DIR}/assets/suprengine"
-	)
-	add_custom_command(TARGET ${project_target} POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/assets" "${${project_target}_BINARY_DIR}/assets/${project_name}"
-	)
-endmacro()
-
 # Copy suprengine DLLs to the specified project's binary directory
 macro(suprengine_copy_dlls project_target)
+	if(NOT SUPRENGINE_DLLS)
+		message(FATAL_ERROR "Couldn't find Suprengine DLLs!")
+	endif()
+	if(NOT ${project_target}_BINARY_DIR)
+		message(FATAL_ERROR "Please set variable '${project_target}_BINARY_DIR'!")
+	endif()
+
 	foreach(dll_path ${SUPRENGINE_DLLS})
 		add_custom_command(TARGET ${project_target} POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${dll_path}" "${${project_target}_BINARY_DIR}"
 		)
 	endforeach()
+endmacro()
+
+# Copy suprengine assets as well as specified project assets to its binary directory
+macro(suprengine_copy_assets project_target project_name)
+	if(NOT ${project_target}_ASSETS)
+		message(FATAL_ERROR "Please set variable '${project_target}_ASSETS'!")
+	endif()
+	if(NOT ${project_target}_BINARY_DIR)
+		message(FATAL_ERROR "Please set variable '${project_target}_BINARY_DIR'!")
+	endif()
+
+	add_custom_command(TARGET ${project_target} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory "${SUPRENGINE_ASSETS}" "${${project_target}_BINARY_DIR}/assets/suprengine"
+	)
+	add_custom_command(TARGET ${project_target} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory "${${project_target}_ASSETS}" "${${project_target}_BINARY_DIR}/assets/${project_name}"
+	)
 endmacro()
 
 #  Declare test executable
