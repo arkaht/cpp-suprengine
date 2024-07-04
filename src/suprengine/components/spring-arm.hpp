@@ -15,16 +15,15 @@ namespace suprengine
 		float hit_normal_offset { 0.1f };
 
 		SpringArm( 
-			SharedPtr<Entity> owner, 
 			SharedPtr<Transform> target, 
 			const Vec3& spring_offset = Vec3 { 0.0f, 1.0f, 5.0f }, 
 			const Vec3& look_offset = Vec3::zero 
 		)
-			: target( target ), spring_offset( spring_offset ), Component( owner ) {}
+			: target( target ), spring_offset( spring_offset ) {}
 
 		void update( float dt ) override
 		{
-			auto physics = get_owner()->get_engine()->get_physics();
+			auto physics = Engine::instance().get_physics();
 
 			//  get ideal new position
 			Vec3 pos = target->location + Vec3::transform( spring_offset, target->rotation );

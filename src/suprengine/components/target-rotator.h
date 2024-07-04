@@ -6,8 +6,8 @@ namespace suprengine
 	class TargetRotator : public Component
 	{
 	public:
-		TargetRotator( SharedPtr<Entity> owner, SharedPtr<Transform> target )
-			: target( target ), Component( owner ) {}
+		TargetRotator( SharedPtr<Transform> target )
+			: target( target ) {}
 
 		void update( float dt ) override
 		{

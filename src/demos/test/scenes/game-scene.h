@@ -6,7 +6,7 @@
 #include <suprengine/components/mouse-looker.hpp>
 #include <suprengine/components/renderers/model-renderer.hpp>
 
-#include "camera-demo.hpp"
+#include <camera-demo.hpp>
 
 using namespace suprengine;
 
@@ -16,7 +16,7 @@ namespace test
 	{
 	public:
 		void init() override;
-
+		
 		void update( float dt ) override;
 
 	private:

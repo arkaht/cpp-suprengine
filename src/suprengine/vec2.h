@@ -91,7 +91,7 @@ namespace suprengine
 
 		float length() const
 		{
-			return sqrtf( length_sqr() );
+			return math::sqrt( length_sqr() );
 		}
 
 		float length_sqr() const
@@ -101,7 +101,7 @@ namespace suprengine
 
 		float get_angle() const
 		{
-			return (float) atan2( y, x );
+			return (float) math::atan2( y, x );
 		}
 
 		static Vec2 lerp( const Vec2& a, const Vec2& b, float f )

@@ -34,4 +34,4 @@
 packages/
 .vs/
 Debug/
-x64/
+out/

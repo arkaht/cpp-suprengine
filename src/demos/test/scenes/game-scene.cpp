@@ -7,6 +7,8 @@ using namespace test;
 
 void GameScene::init()
 {
+	auto& engine = Engine::instance();
+
 	auto cube_model = Assets::get_model( MESH_CUBE );
 	auto cylinder_model = Assets::get_model( MESH_CYLINDER );
 	auto sphere_model = Assets::get_model( MESH_SPHERE );
@@ -16,34 +18,34 @@ void GameScene::init()
 	cool_model->get_mesh( 0 )->add_texture( texture );
 
 	//  setup ground
-	auto ground = new Entity();
+	auto ground = engine.create_entity<Entity>();
 	ground->transform->scale = Vec3 { 100.0f, 100.0f, 1.0f };
 	ground->create_component<ModelRenderer>( cube_model, SHADER_LIT_MESH );
 	ground->create_component<BoxCollider>( Box::HALF );
 
-	auto player = new Entity();
+	auto player = engine.create_entity<Entity>();
 
 	//  setup sphere
-	//auto sphere = new Entity();
+	//auto sphere = engine.create_entity<Entity>();
 	//sphere->transform->location = Vec3 { 0.0f, 0.0f, 4.0f };
 	//sphere->create_component<ModelRenderer>( sphere_model, SHADER_LIT_MESH, Color::blue );
 
 	////  setup cube
-	//auto cube = new Entity();
+	//auto cube = engine.create_entity<Entity>();
 	//cube->transform->location = Vec3 { 0.0f, 4.0f, 4.0f };
 	//cube->create_component<ModelRenderer>( cube_model, SHADER_LIT_MESH, Color::green );
 
 	////  setup cylinder
-	//auto cylinder = new Entity();
+	//auto cylinder = engine.create_entity<Entity>();
 	//cylinder->transform->location = Vec3 { 4.0f, 0.0f, 4.0f };
 	//cylinder->create_component<ModelRenderer>( cylinder_model, SHADER_LIT_MESH, Color::red );
 	
-	auto mesh = new Entity();
+	auto mesh = engine.create_entity<Entity>();
 	mesh->transform->location = Vec3 { 0.0f, 0.0f, 5.0f };
 	model_renderer = mesh->create_component<ModelRenderer>( cool_model, SHADER_LIT_MESH );
 
 	//  setup camera
-	auto camera_owner = new CameraDemo( player );
+	auto camera_owner = engine.create_entity<CameraDemo>( player );
 	camera_owner->transform->location = Vec3 { 5.0f, 3.0f, 7.0f };
 	camera_owner->transform->look_at( mesh->transform->location );
 	auto camera = camera_owner->create_component<Camera>( CameraProjectionSettings {} );

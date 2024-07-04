@@ -33,29 +33,29 @@ namespace suprengine
 		/*
 		 * Returns whenever the pointer to the object is valid.
 		 */
-		_NODISCARD bool is_valid() const
+		[[nodiscard]] bool is_valid() const
 		{
 			return !std::weak_ptr<T>::expired();
 		}
 		/*
 		 * Returns the raw pointer to the object.
 		 */
-		_NODISCARD T* get() const
+		[[nodiscard]] T* get() const
 		{
 			return std::weak_ptr<T>::get();
 		}
 
-		_NODISCARD T* operator->()
+		[[nodiscard]] T* operator->()
 		{
 			if ( !is_valid() ) return nullptr;
 			return get();
 		}
-		_NODISCARD T* operator->() const
+		[[nodiscard]] T* operator->() const
 		{
 			if ( !is_valid() ) return nullptr;
 			return get();
 		}
-		_NODISCARD bool operator==( const SafePtr<T>& ptr ) const
+		[[nodiscard]] bool operator==( const SafePtr<T>& ptr ) const
 		{
 			return get() == ptr.get();
 		}

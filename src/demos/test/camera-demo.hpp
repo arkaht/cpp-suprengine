@@ -23,8 +23,11 @@ namespace test
 			STATIC,
 		};
 
-		CameraDemo( Entity* player ) 
-			: player( player ), Entity()
+		CameraDemo( SafePtr<Entity> player ) 
+			: player( player )
+		{}
+
+		void setup() override
 		{
 			mover = create_component<Mover>();
 			mouse_looker = create_component<MouseLooker>( 1.0f );
@@ -49,7 +52,7 @@ namespace test
 
 		void update_this( float dt ) override
 		{
-			auto inputs = _engine->get_inputs();
+			auto inputs = Engine::instance().get_inputs();
 
 			if ( inputs->is_key_just_pressed( SDL_SCANCODE_1 ) )
 				set_mode( CameraMode::FPS );
@@ -60,7 +63,7 @@ namespace test
 		}
 
 	private:
-		Entity* player { nullptr };
+		SafePtr<Entity> player;
 
 		SharedPtr<SpringArm> spring_arm;
 		SharedPtr<Mover> mover;
