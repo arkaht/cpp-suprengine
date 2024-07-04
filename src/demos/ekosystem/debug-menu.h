@@ -33,7 +33,9 @@ namespace eks
 		void _populate_pawns_table( 
 			const std::vector<SafePtr<Pawn>>& pawns
 		);
-		void _populate_pawn_factory();
+		void _populate_pawn_factory(
+			const std::map<std::string, SharedPtr<PawnData>> pawn_datas
+		);
 		void _populate_selected_pawn(
 			const std::vector<SafePtr<Pawn>>& pawns 
 		);
@@ -42,5 +44,6 @@ namespace eks
 		int _selected_pawn_id = 0;
 		int _selected_pawn_data_id = 0;
 
+		std::vector<const char*> _pawn_datas_names;
 	};
 }

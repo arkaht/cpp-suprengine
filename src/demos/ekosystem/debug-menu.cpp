@@ -39,6 +39,20 @@ void DebugMenu::populate()
 		return;
 	}
 
+	auto& pawns = world->get_pawns();
+	auto& pawn_datas = world->get_pawn_datas();
+
+	//  Construct items list for combo
+	int i = 0;
+	_pawn_datas_names.clear();
+	_pawn_datas_names.resize( pawn_datas.size() );
+	for ( auto& pair : pawn_datas )
+	{
+		_pawn_datas_names[i] = pair.second->name.c_str();
+		i++;
+	}
+
+	//  Show ImGui demo window
 	static bool show_demo_menu = false;
 	if ( show_demo_menu ) ImGui::ShowDemoWindow( &show_demo_menu );
 
@@ -96,12 +110,18 @@ void DebugMenu::populate()
 	}
 	if ( ImGui::CollapsingHeader( "Ecosystem", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
-		auto& pawns = world->get_pawns();
-
 		_populate_pawns_table( pawns );
 		_populate_selected_pawn( pawns );
 
-		_populate_pawn_factory();
+		_populate_pawn_factory( pawn_datas );
+
+		ImGui::Spacing();
+	}
+	if ( ImGui::CollapsingHeader( "Data Assets", ImGuiTreeNodeFlags_DefaultOpen ) )
+	{
+		auto& pawn_datas = world->get_pawn_datas();
+
+		//ImGui::Combo()
 
 		ImGui::Spacing();
 	}
@@ -205,27 +225,18 @@ void DebugMenu::_populate_pawns_table(
 	ImGui::Spacing();
 }
 
-void DebugMenu::_populate_pawn_factory()
+void DebugMenu::_populate_pawn_factory(
+	const std::map<std::string, SharedPtr<PawnData>> pawn_datas
+)
 {
 	ImGui::SeparatorText( "Pawn Factory" );
 
-	auto& pawn_datas = world->get_pawn_datas();
-
-	//  Construct items list for combo
-	int i = 0;
-	std::vector<const char*> items( pawn_datas.size() );
-	for ( auto& pair : pawn_datas )
-	{
-		items[i] = pair.second->name.c_str();
-		i++;
-	}
-
 	ImGui::Combo( "Pawn Data", &_selected_pawn_data_id, 
-		items.data(), (int)items.size() );
+		_pawn_datas_names.data(), (int)_pawn_datas_names.size() );
 
 	if ( ImGui::Button( "Create Pawn" ) )
 	{
-		std::string key = items[_selected_pawn_data_id];
+		std::string key = _pawn_datas_names[_selected_pawn_data_id];
 		auto& data = pawn_datas.at( key );
 		world->create_pawn( data, world->find_random_tile_pos() );
 	}
