@@ -12,7 +12,6 @@ message("Suprengine Source Directory: '${SUPRENGINE_SOURCE_DIR}'")
 #  List all .cpp files
 file(GLOB_RECURSE SUPRENGINE_SOURCES CONFIGURE_DEPENDS "${SUPRENGINE_SOURCE}/*.cpp")
 message("Suprengine Source Files: '${SUPRENGINE_SOURCES}'")
-#list(FILTER SUPRENGINE_SOURCES EXCLUDE REGEX "src/demos/*")
 
 #  List all .dll files
 file(GLOB_RECURSE SUPRENGINE_DLLS CONFIGURE_DEPENDS "${SUPRENGINE_SOURCE_DIR}/libs/*.dll")
@@ -36,18 +35,6 @@ find_package(OpenGL REQUIRED)
 target_link_libraries(SUPRENGINE PUBLIC "${OPENGL_LIBRARIES}")
 
 #  Link SDL2
-#target_include_directories(SUPRENGINE PUBLIC 
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.0.12/include"
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_ttf-2.0.15/include"
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_mixer-2.0.4/include"
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.0.5/include"
-#)
-#target_link_libraries(SUPRENGINE PUBLIC
-#    "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.0.12/lib/x64/SDL2.lib"
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_ttf-2.0.15/lib/x64/SDL2_ttf.lib"
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_mixer-2.0.4/lib/x64/SDL2_mixer.lib"
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.0.5/lib/x64/SDL2_image.lib"
-#)
 add_library(sdl2 SHARED IMPORTED)
 set_target_properties(sdl2 PROPERTIES
     IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.0.12/lib/x64/SDL2.dll"
@@ -72,25 +59,19 @@ target_link_libraries(SUPRENGINE PUBLIC
 )
 
 #  Link GLEW
-target_include_directories(SUPRENGINE PUBLIC "libs/glew-2.1.0/include")
-target_link_libraries(SUPRENGINE PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.lib")
-#add_library(glew SHARED IMPORTED)
-#set_target_properties(glew PROPERTIES
-#    #IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.dll"
-#    IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.lib"
-#    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/include"
-#)
-#target_link_libraries(SUPRENGINE PUBLIC glew)
+add_library(glew SHARED IMPORTED)
+set_target_properties(glew PROPERTIES
+    IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.dll"
+    IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.lib"
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/include"
+)
+target_link_libraries(SUPRENGINE PUBLIC glew)
 
 #  Link ImGui
-#target_include_directories(SUPRENGINE PUBLIC "libs/imgui")
 add_subdirectory("libs/imgui")
 target_link_libraries(SUPRENGINE PUBLIC imgui)
 
 #  Link assimp
-#target_link_libraries(SUPRENGINE PUBLIC sdl2 sdl2_ttf sdl2_image)
-#target_include_directories(SUPRENGINE PUBLIC "libs/assimp-5.3.1/include")
-#target_link_libraries(SUPRENGINE PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libs/assimp-5.3.1/lib/assimp-vc143-mt.lib")
 add_library(assimp SHARED IMPORTED)
 set_target_properties(assimp PROPERTIES
     IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/dlls/assimp-vc143-mt.dll"
@@ -144,12 +125,7 @@ endmacro()
 
 #  Declare test executable
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
-	#file(GLOB_RECURSE SUPRENGINE_TEST_SOURCES CONFIGURE_DEPENDS "src/demos/test/*.cpp")
-
-	#add_executable(SUPRENGINE-test "${CMAKE_CURRENT_SOURCE_DIR}/src/demos/test/main.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/demos/test/scenes/game-scene.cpp")
-	#target_link_libraries(SUPRENGINE-test PRIVATE SUPRENGINE)
     add_subdirectory("src/demos/test")
-
 	message("Included Suprengine test")
 else()
 	message("Skipped Suprengine test")
