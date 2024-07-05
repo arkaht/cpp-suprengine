@@ -82,9 +82,8 @@ target_link_libraries(SUPRENGINE PUBLIC ASSIMP)
 target_include_directories(SUPRENGINE PUBLIC "libs/filewatch/include")
 
 #  Link Curve-X
-target_include_directories(SUPRENGINE PUBLIC "libs/curve-x/include")
-target_link_libraries(SUPRENGINE PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libs/curve-x/lib/curve-x.lib")
-
+add_subdirectory("libs/curve-x")
+target_link_libraries(SUPRENGINE PUBLIC curve-x)
 
 #  Utility macros
 

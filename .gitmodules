@@ -1,0 +1,3 @@
+[submodule "libs/curve-x"]
+	path = libs/curve-x
+	url = git@github.com:arkaht/cpp-curve-x.git
