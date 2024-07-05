@@ -18,6 +18,7 @@ file(GLOB_RECURSE SUPRENGINE_DLLS CONFIGURE_DEPENDS "${SUPRENGINE_SOURCE_DIR}/li
 list(FILTER SUPRENGINE_DLLS EXCLUDE REGEX "x86/")
 
 #  Re-apply SUPRENGINE_DLLS variable to be accessible outside of this file scope
+#  This is required for suprengine_copy_dlls macro to work properly
 set(SUPRENGINE_DLLS "${SUPRENGINE_DLLS}" CACHE INTERNAL "")
 message("Suprengine DLLs: '${SUPRENGINE_DLLS}'")
 
@@ -27,58 +28,55 @@ set_target_properties(SUPRENGINE PROPERTIES OUTPUT_NAME "suprengine")
 target_include_directories(SUPRENGINE PUBLIC "${SUPRENGINE_INCLUDE}")
 target_sources(SUPRENGINE PRIVATE "${SUPRENGINE_SOURCES}")
 
-#add_subdirectory("libs")
-#target_link_libraries(SUPRENGINE PUBLIC sdl2)
-
 #  Link OpenGL
 find_package(OpenGL REQUIRED)
 target_link_libraries(SUPRENGINE PUBLIC "${OPENGL_LIBRARIES}")
 
 #  Link SDL2
-add_library(sdl2 SHARED IMPORTED)
-set_target_properties(sdl2 PROPERTIES
+add_library(SDL2 SHARED IMPORTED)
+set_target_properties(SDL2 PROPERTIES
     IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.0.12/lib/x64/SDL2.dll"
 	IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.0.12/lib/x64/SDL2.lib"
 	INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.0.12/include"
 )
-add_library(sdl2_ttf SHARED IMPORTED)
-set_target_properties(sdl2_ttf PROPERTIES
+add_library(SDL2_TTF SHARED IMPORTED)
+set_target_properties(SDL2_TTF PROPERTIES
     IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_ttf-2.0.15/lib/x64/SDL2_ttf.dll"
 	IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_ttf-2.0.15/lib/x64/SDL2_ttf.lib"
 	INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_ttf-2.0.15/include"
 )
-add_library(sdl2_image SHARED IMPORTED)
-set_target_properties(sdl2_image PROPERTIES
+add_library(SDL2_IMAGE SHARED IMPORTED)
+set_target_properties(SDL2_IMAGE PROPERTIES
     IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.0.5/lib/x64/SDL2_image.dll"
 	IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.0.5/lib/x64/SDL2_image.lib"
 	INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2_image-2.0.5/include"
 )
 target_link_libraries(SUPRENGINE PUBLIC 
-	sdl2 sdl2_ttf sdl2_image 
+	SDL2 SDL2_TTF SDL2_IMAGE 
 	"${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL2-2.0.12/lib/x64/SDL2main.lib"  #  Required for the main function
 )
 
 #  Link GLEW
-add_library(glew SHARED IMPORTED)
-set_target_properties(glew PROPERTIES
+add_library(GLEW SHARED IMPORTED)
+set_target_properties(GLEW PROPERTIES
     IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.dll"
     IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/lib/Release/x64/glew32.lib"
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/glew-2.1.0/include"
 )
-target_link_libraries(SUPRENGINE PUBLIC glew)
+target_link_libraries(SUPRENGINE PUBLIC GLEW)
 
 #  Link ImGui
 add_subdirectory("libs/imgui")
-target_link_libraries(SUPRENGINE PUBLIC imgui)
+target_link_libraries(SUPRENGINE PUBLIC IMGUI)
 
 #  Link assimp
-add_library(assimp SHARED IMPORTED)
-set_target_properties(assimp PROPERTIES
+add_library(ASSIMP SHARED IMPORTED)
+set_target_properties(ASSIMP PROPERTIES
     IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/dlls/assimp-vc143-mt.dll"
 	IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/assimp-5.3.1/lib/assimp-vc143-mt.lib"
 	INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libs/assimp-5.3.1/include"
 )
-target_link_libraries(SUPRENGINE PUBLIC assimp)
+target_link_libraries(SUPRENGINE PUBLIC ASSIMP)
 
 #  Link filewatch
 target_include_directories(SUPRENGINE PUBLIC "libs/filewatch/include")
