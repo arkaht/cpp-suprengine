@@ -1,7 +1,7 @@
 #include "updater.h"
+#include <suprengine/math.h>
 
 #include <SDL_timer.h>
-#include <algorithm>
 
 using namespace suprengine;
 
@@ -11,7 +11,7 @@ void Updater::compute_delta_time()
 	uint32_t dt = _frame_start - _last_frame;
 	_last_frame = _frame_start;
 
-	_delta_time = std::min( dt, MAX_DT ) / 1000.0f;
+	_delta_time = math::min( dt, MAX_DT ) / 1000.0f;
 }
 
 float Updater::get_scaled_delta_time() const
@@ -35,10 +35,23 @@ void Updater::delay_time()
 
 void Updater::accumulate_seconds( float dt ) 
 { 
+	float last_seconds = _accumulated_seconds;
 	_accumulated_seconds += dt;
+
+	//  NOTE: FPS counter is dependent on time scale, which shouldn't be the case!
+	//  TODO: Don't use _accumulated_seconds since it's time scale dependent 
+	if ( (int)math::floor( last_seconds ) != (int)math::floor( _accumulated_seconds ) )
+	{
+		_fps = (uint32_t)math::floor( 1.0f / get_unscaled_delta_time() );
+	}
 }
 
 float Updater::get_accumulated_seconds() const 
 { 
 	return _accumulated_seconds; 
+}
+
+uint32_t suprengine::Updater::get_fps() const
+{
+	return _fps;
 }

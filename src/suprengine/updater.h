@@ -23,6 +23,7 @@ namespace suprengine
 
 		void accumulate_seconds( float dt );
 		float get_accumulated_seconds() const;
+		uint32_t get_fps() const;
 
 	public:
 		float time_scale = 1.0f;
@@ -31,6 +32,7 @@ namespace suprengine
 		uint32_t _frame_start = 0u;
 		uint32_t _last_frame = 0u;
 		uint32_t _frame_time = 0u;
+		uint32_t _fps = 0;
 
 		float _accumulated_seconds = 0.0f;
 		float _delta_time = 0.0f;
