@@ -21,8 +21,7 @@ namespace suprengine
 				(uint8_t) ( pixel >> 24 )
 			};
 		}
-
-		//  big endian version of Color::from_pixel
+		//  Big endian version of Color::from_pixel()
 		static Color from_0x( uint32_t hex )
 		{
 			return Color {
@@ -30,6 +29,21 @@ namespace suprengine
 				(uint8_t) ( hex >> 16 ),
 				(uint8_t) ( hex >> 8 ),
 				(uint8_t) hex
+			};
+		}
+		static Color from_hex( std::string hex )
+		{
+			//  Remove optional hexadecimal indicator
+			if ( hex[0] == '#' )
+			{
+				hex = hex.erase( 0, 1 );
+			}
+
+			return Color {
+				math::from_hex( hex.substr( 0, 2 ) ),
+				math::from_hex( hex.substr( 2, 2 ) ),
+				math::from_hex( hex.substr( 4, 2 ) ),
+				math::from_hex( hex.substr( 6, 2 ) ),
 			};
 		}
 
@@ -45,8 +59,19 @@ namespace suprengine
 
 		uint32_t to_pixel() const
 		{
-			uint32_t pixel = a << 24 | b << 16 | g << 8 | r;
-			return pixel;
+			return a << 24 | b << 16 | g << 8 | r;
+		}
+		uint32_t to_0x() const
+		{
+			return r << 24 | g << 16 | b << 8 | a;
+		}
+		std::string to_hex() const
+		{
+			return "#" 
+				 + math::to_hex( r ) 
+				 + math::to_hex( g ) 
+				 + math::to_hex( b ) 
+				 + math::to_hex( a );
 		}
 
 		bool operator==( const Color& c ) const

@@ -24,9 +24,25 @@ float math::remap( float value, float low1, float high1, float low2, float high2
 	return low2 + ( value - low1 ) * ( high2 - low2 ) / ( high1 - low1 );
 }
 
+uint8_t math::from_hex( std::string hex )
+{
+	//  Remove optional hexadecimal indicator
+	if ( hex[0] == '#' )
+	{
+		hex = hex.erase( 0, 1 );
+	}
+
+	return std::stoi( hex, nullptr, 16 );
+}
+
 float math::pow( float value, float exp )
 {
 	return powf( value, exp );
+}
+
+int math::pow( int value, int exp )
+{
+	return (int)std::pow( value, exp );
 }
 
 float math::sqrt( float value )

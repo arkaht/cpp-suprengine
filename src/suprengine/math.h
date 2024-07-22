@@ -1,6 +1,7 @@
 #pragma once
 
 #include <limits>
+#include <string>
 
 namespace suprengine::math
 {
@@ -19,6 +20,7 @@ namespace suprengine::math
 	float sign( float value );
 	
 	float pow( float value, float exp );
+	int   pow( int value, int exp );
 	float sqrt( float value );
 	float fmod( float value, float div );
 	float modulo( float value, float div );
@@ -47,6 +49,27 @@ namespace suprengine::math
 		float low1, float high1, 
 		float low2, float high2 
 	);
+
+	template <typename T>
+	std::string to_hex( T value, size_t hex_length = sizeof( T ) * 2 )
+	{
+		static const char* DIGITS = "0123456789ABCDEF";
+		std::string hex( hex_length, '0' );
+
+		int i = (int)hex_length - 1;
+		uint8_t quotient = value;
+		do
+		{
+			uint8_t next_quotient = quotient / 16;
+			uint8_t remainder = quotient % 16;
+			hex[i--] = DIGITS[remainder];
+			quotient = next_quotient;
+		}
+		while( quotient != 0 );
+
+		return hex;
+	}
+	uint8_t from_hex( std::string hex );
 
 	template <typename T>
 	T max( const T& a, const T& b )
