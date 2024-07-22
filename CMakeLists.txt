@@ -81,6 +81,9 @@ target_link_libraries(SUPRENGINE PUBLIC ASSIMP)
 #  Link filewatch
 target_include_directories(SUPRENGINE PUBLIC "libs/filewatch/include")
 
+#  Link rapidjson
+target_include_directories(SUPRENGINE PUBLIC "libs/rapidjson/include")
+
 #  Link Curve-X
 add_subdirectory("libs/curve-x")
 target_link_libraries(SUPRENGINE PUBLIC curve-x)
