@@ -11,7 +11,7 @@ Entity::Entity()
 
 Entity::~Entity()
 {
-	//  release components
+	//  Release components
 	while ( !components.empty() )
 	{
 		auto& component = components.back();
@@ -23,10 +23,10 @@ void Entity::add_component( SharedPtr<Component> component )
 {
 	if ( std::find( components.begin(), components.end(), component ) != components.end() ) return;
 
-	//  get update order
+	//  Get update order
 	int order = component->get_priority_order();
 
-	//  search order position
+	//  Search insertion iterator
 	auto itr = components.begin();
 	for ( ; itr != components.end(); itr++ )
 	{
@@ -36,7 +36,7 @@ void Entity::add_component( SharedPtr<Component> component )
 		}
 	}
 
-	//  insert it
+	//  Insert into vector
 	components.insert( itr, component );
 
 	component->setup();
@@ -49,22 +49,22 @@ void Entity::remove_component( SharedPtr<Component> component )
 
 	component->unsetup();
 
-	//  erase component
+	//  Erase component from vector
 	components.erase( itr );
 }
 
 void Entity::init()
 {
-	//  assign a transform
+	//  Create and assign a transform
 	transform = create_component<Transform>();
 }
 
 void Entity::update( float dt )
 {
+	//  Update components first
 	for ( auto& component : components )
 	{
 		if ( !component->is_active ) continue;
-
 		component->update( dt );
 	}
 

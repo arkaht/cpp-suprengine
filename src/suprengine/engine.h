@@ -19,7 +19,9 @@ namespace suprengine
 	class Engine
 	{
 	public:
-		//  ensure singleton
+		/*
+		 * Engine singleton.
+		 */
 		static Engine& instance()
 		{
 			static Engine inst;
@@ -32,6 +34,9 @@ namespace suprengine
 		Engine& operator=( Engine&& ) = delete;
 		~Engine();
 
+		/*
+		 * Create and run the game of given type on the engine.
+		 */
 		template <typename TGame>
 		int run()
 		{
@@ -49,7 +54,7 @@ namespace suprengine
 				"Engine::init: use of an invalid Game class!" 
 			);
 
-			//  create game
+			//  Create game
 			auto game = new TGame();
 			return init( game );
 		}
@@ -64,10 +69,9 @@ namespace suprengine
 				"Engine::create_scene: used for a non-Scene class!"
 			);
 
-			//  reset
 			clear_entities();
 
-			//  set scene
+			//  Change scene
 			_scene = std::make_unique<TScene>( args... );
 			_scene->init();
 		}
@@ -151,6 +155,5 @@ namespace suprengine
 		Updater _updater {};
 
 		std::unique_ptr<Scene> _scene;
-
 	};
 }

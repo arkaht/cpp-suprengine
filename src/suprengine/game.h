@@ -6,6 +6,9 @@ namespace suprengine
 {
 	class Engine;
 
+	/*
+	 * Basic informations given to the engine by the game.
+	 */
 	struct GameInfos
 	{
 		std::string title;

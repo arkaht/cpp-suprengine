@@ -18,26 +18,26 @@ Engine::~Engine()
 {
 	clear_entities();
 
-	//  release game
+	//  Release game
 	_game.reset( nullptr );
 
-	//  release scene
+	//  Release scene
 	_scene.reset( nullptr );
 
-	//  release managers
+	//  Release managers
 	_render_batch.reset( nullptr );
 	_inputs.reset( nullptr );
 	_physics.reset( nullptr );
 	_window.reset( nullptr );
 
-	//  release assets
+	//  Release assets
 	Assets::release();
 
-	//  release ImGui
+	//  Release ImGui
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
-	//  quit sdl
+	//  Quit sdl
 	SDL_Quit();
 }
 
@@ -46,39 +46,39 @@ bool Engine::init( IGame* game )
 	game->set_engine( this );
 	_game = std::unique_ptr<IGame>( game );
 
-	//  get game infos
+	//  Get game infos
 	auto infos = _game->get_infos();
 
-	//  init window
+	//  Init window
 	_window = std::make_unique<Window>( 
-		infos.title, 
-		infos.width, 
+		infos.title,
+		infos.width,
 		infos.height
 	);
 	if ( !_window->init() ) return false;
 
-	//  init render batch
-	_render_batch = std::unique_ptr<RenderBatch>( 
+	//  Init render batch
+	_render_batch = std::unique_ptr<RenderBatch>(
 		game->create_render_batch( get_window() ) 
 	);
 	Assets::set_render_batch( get_render_batch() );
 	if ( !_render_batch->init() ) return false;
 
-	//  setup window size on render batch
+	//  Setup window size on render batch
 	_render_batch->on_window_resized( _window->get_size() );
 
-	//  init managers
+	//  Init managers
 	_inputs = std::make_unique<InputManager>();
 	_physics = std::make_unique<Physics>();
 
-	//  init game
+	//  Init game
 	_game->load_assets();
 	_game->init();
 
-	//  init imgui
+	//  Init imgui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	[[maybe_unused]] ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
@@ -98,7 +98,7 @@ void Engine::loop()
 
 		//  Apply time scale modifiers
 		//  NOTE: This won't affect result returned by 
-		//        Update::get_scaled_delta_time.
+		//  Update::get_scaled_delta_time.
 		if ( is_game_paused )
 		{
 			dt = 0.0f;
@@ -115,12 +115,14 @@ void Engine::loop()
 
 void Engine::add_entity( SharedPtr<Entity> entity )
 {
+	//  Add to pending entities if currently updating...
 	if ( _is_updating )
 	{
 		if ( std::find( _pending_entities.begin(), _pending_entities.end(), entity ) != _pending_entities.end() ) return;
 		
 		_pending_entities.push_back( entity );
 	}
+	//  Otherwise, add directly to active entities
 	else
 	{
 		if ( std::find( _entities.begin(), _entities.end(), entity ) != _entities.end() ) return;
@@ -133,7 +135,7 @@ void Engine::add_entity( SharedPtr<Entity> entity )
 
 void Engine::remove_entity( SharedPtr<Entity> entity )
 {
-	//  remove from actives
+	//  Remove from actives
 	auto itr = std::find( _entities.begin(), _entities.end(), entity );
 	if ( itr != _entities.end() )
 	{
@@ -144,7 +146,7 @@ void Engine::remove_entity( SharedPtr<Entity> entity )
 		return;
 	}
 
-	//  remove from pendings
+	//  Remove from pendings
 	itr = std::find( _pending_entities.begin(), _pending_entities.end(), entity );
 	if ( itr != _pending_entities.end() )
 	{
@@ -155,17 +157,12 @@ void Engine::remove_entity( SharedPtr<Entity> entity )
 
 void Engine::clear_entities()
 {
-	for ( auto& entity : _entities )
-	{
-		entity->kill();
-	}
-
-	//  clear entities
+	//  Clear entities
 	_pending_entities.clear();
 	_entities.clear();
 	_dead_entities.clear();
 
-	//  clear camera
+	//  Reset active camera
 	camera = nullptr;
 }
 
@@ -176,35 +173,38 @@ void Engine::add_timer( const Timer& timer )
 
 void Engine::process_input()
 {
+	//  Reset mouse delta from inputs
 	_inputs->mouse_delta = Vec2::zero;
 
-	//  read window events
+	//  Read window events
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
 	{
-		//  send event to ImGui
+		//  Send event to ImGui
 		ImGui_ImplSDL2_ProcessEvent( &event );
 
-		//  TODO?: move this to the Window class
-		//  TODO: remove dependencies with our Event class
+		//  TODO?: Move this to the Window class
+		//  TODO: Remove dependencies with our Event class
 		switch ( event.type )
 		{
+		//  Store mouse delta for this frame
 		case SDL_MOUSEMOTION:
-			_inputs->mouse_delta = { (float) event.motion.xrel, (float) event.motion.yrel };
+			_inputs->mouse_delta.x = (float) event.motion.xrel;
+			_inputs->mouse_delta.y = (float) event.motion.yrel;
 			break;
-		//  quit game
+		//  Quit game when closing window
 		case SDL_QUIT:
 			_is_running = false;
 			break;
 		}
 	}
 	
-	//  quit
+	//  Quit game when pressing a key
 	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_ESCAPE ) )
 	{
 		_is_running = false;
 	}
-	//  toggle debug
+	//  Toggle debug mode
 	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_COMMA ) )
 	{
 		is_debug = !is_debug;
@@ -215,7 +215,7 @@ void Engine::update( float dt )
 {
 	_inputs->update();
 
-	//  add pending entities to active
+	//  Add pending entities to active
 	if ( !_pending_entities.empty() )
 	{
 		for ( auto& entity : _pending_entities )
@@ -225,13 +225,14 @@ void Engine::update( float dt )
 		_pending_entities.clear();
 	}
 
-	//  update scene & entities
+	//  Update scene
 	_is_updating = true;
 	if ( _scene )
 	{
 		_scene->update( dt );
 	}
 
+	//  Update entities
 	for ( auto& entity : _entities )
 	{
 		if ( entity->state == EntityState::Active )
@@ -239,7 +240,7 @@ void Engine::update( float dt )
 			entity->update( dt );
 		}
 
-		//  kill entity
+		//  Queue dead entity for later erase
 		if ( entity->state == EntityState::Invalid )
 		{
 			_dead_entities.push_back( entity );
@@ -247,12 +248,13 @@ void Engine::update( float dt )
 	}
 	_is_updating = false;
 
-	//  update colliders
+	//  Update colliders
 	_physics->update();
 
-	//  update timer
 	if ( !_timers.empty() )
 	{
+		//  TODO?: Merge both loops into one. Probably using iterators.
+		//  Update timers
 		for ( auto& timer : _timers )
 		{
 			if ( ( timer.time -= dt ) <= 0.0f )
@@ -261,13 +263,13 @@ void Engine::update( float dt )
 			}
 		}
 
-		//  safely-erase expired timers
+		//  Safely-erase expired timers
 		auto itr = _timers.begin();
 		while ( itr != _timers.end() )
 		{
 			if ( itr->time <= 0.0f )
 			{
-				//  remove from vector
+				//  Remove from vector
 				itr = _timers.erase( itr );
 			}
 			else
@@ -277,9 +279,9 @@ void Engine::update( float dt )
 		}
 	}
 
-	//  delete dead entities
 	if ( !_dead_entities.empty() )
 	{
+		//  Delete dead entities
 		for ( auto& entity : _dead_entities )
 		{
 			remove_entity( entity );
@@ -290,31 +292,34 @@ void Engine::update( float dt )
 
 void Engine::render()
 {
-	//  ImGui update
+	//  Update ImGui
 	_render_batch->begin_imgui_frame();
 	on_imgui_update.invoke();
 
-	//  start rendering
+	//  Start rendering
 	_render_batch->begin_render();
 
-	//  apply camera
+	//  Apply camera
+	//  NOTE: This code doesn't do anything when using the OpenGL 
+	//  render-batch. It was orignally here for supporting SDL and 
+	//  2D.
 	if ( camera != nullptr ) 
 	{
-		//  transform
+		//  Apply transform
 		_render_batch->scale( camera->zoom );
 		_render_batch->translate( camera->viewport.get_pos() );
 
-		//  clipping
+		//  Apply clipping
 		if ( camera->clip_enabled )
 		{
 			_render_batch->clip( camera->clip );
 		}
 	}
 
-	//  render components
+	//  Render components
 	_render_batch->render();
 
-	//  debug render entities & components
+	//  Debug render entities & components
 	if ( is_debug )
 	{
 		auto _render_batch = get_render_batch();
@@ -329,6 +334,6 @@ void Engine::render()
 		}
 	}
 
-	//  show rendering
+	//  End rendering
 	_render_batch->end_render();
 }

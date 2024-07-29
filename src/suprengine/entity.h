@@ -27,22 +27,17 @@ namespace suprengine
 		Entity( const Entity& ) = delete;
 		Entity& operator=( const Entity& ) = delete;
 		
+		/*
+		 * Create and add a component of given type on the entity.
+		 * This is the function you want to use inside Entity::setup.
+		 */
 		template <typename T, typename... Args>
 		SharedPtr<T> create_component( Args&&... args )
 		{
-			static_assert( std::is_base_of<Component, T>::value, "Entity::create_component: used for a non-Component class!" );
-			
-			auto component = std::make_shared<T>( args... );
-			component->init( shared_from_this() );
-			add_component( component );
-			
-			return component;
-		}
-		//  TODO: Remove
-		template <typename T, typename... Args>
-		SharedPtr<T> create_component_pro( Args&&... args )
-		{
-			static_assert( std::is_base_of<Component, T>::value, "Entity::create_component: used for a non-Component class!" );
+			static_assert( 
+				std::is_base_of<Component, T>::value,
+				"Entity::create_component: used for a non-Component class!"
+			);
 			
 			auto component = std::make_shared<T>( args... );
 			component->init( shared_from_this() );
@@ -52,10 +47,17 @@ namespace suprengine
 		}
 		void add_component( SharedPtr<Component> component );
 		void remove_component( SharedPtr<Component> component );
+		/*
+		 * Find for a component matching the given type from the
+		 * vector of components of the entity.
+		 */
 		template <typename T>
-		SharedPtr<T> get_component()
+		SharedPtr<T> find_component()
 		{
-			static_assert( std::is_base_of<Component, T>::value, "Entity::get_component: used for a non-Component class!" );
+			static_assert( 
+				std::is_base_of<Component, T>::value, 
+				"Entity::find_component: used for a non-Component class!"
+			);
 			
 			for ( SharedPtr<Component> component : components )
 			{
@@ -68,8 +70,20 @@ namespace suprengine
 			return nullptr;
 		}
 
+		/*
+		 * Initialize the entity with default components such as a
+		 * Transform.
+		 */
 		void init();
+		/*
+		 * Update both the entity components and itself for a frame.
+		 */
 		void update( float dt );
+		/*
+		 * Set entity's state to EntityState::Invalid. 
+		 * Depending on update order, the entity will be deleted
+		 * at the end of, either, the current frame or the next one.
+		 */
 		void kill();
 
 		/*
@@ -78,17 +92,43 @@ namespace suprengine
 		 * You should create your components here.
 		 */
 		virtual void setup() {};
+		/*
+		 * Called when the entity is updated for this frame.
+		 * You can put your own logic here.
+		 */
 		virtual void update_this( float dt ) {}
+		/*
+		 * Called when debug mode is enabled at the end of the 
+		 * rendering frame.
+		 */
 		virtual void debug_render( RenderBatch* _render_batch ) {}
 
+		/*
+		 * Get the entity's unique identifier.
+		 */
 		int get_unique_id() const { return _unique_id; }
 
 	public:
+		/*
+		 * Entity layer, only used by the engine for collision 
+		 * detection optimization.
+		 */
 		uint32_t layer = 0x1;
+		/*
+		 * Entity state, indicating if the entity is either active,
+		 * paused or queued to be destroyed.
+		 */
 		EntityState state { EntityState::Active };
 
+		/*
+		 * Vector of all entity components
+		 */
 		std::vector<SharedPtr<Component>> components;
 
+		/*
+		 * The transform component of the entity, storing location,
+		 * scale and rotation.
+		 */
 		SharedPtr<Transform> transform;
 
 	private:

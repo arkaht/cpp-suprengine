@@ -27,7 +27,7 @@ namespace suprengine
 		bool init();
 
 		void set_mode( WindowMode mode );
-		WindowMode get_mode() { return _mode; }
+		WindowMode get_mode() const { return _mode; }
 
 		void set_size( Vec2 size, bool is_new_size = true );
 		Vec2 get_size() const { return _current_size; }

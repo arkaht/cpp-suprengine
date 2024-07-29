@@ -29,8 +29,8 @@ namespace suprengine
 
 		void setup() override
 		{
-			yaw = transform->rotation.get_y_angle();
-			//pitch = transform->rotation.get_x_angle();
+			yaw = transform->rotation.get_radian_yaw();
+			//pitch = transform->rotation.get_radian_pitch();
 		}
 
 		void update( float dt ) override

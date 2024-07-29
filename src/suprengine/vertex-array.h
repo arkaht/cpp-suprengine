@@ -2,32 +2,36 @@
 
 #include <gl/glew.h>
 
-constexpr float QUAD_VERTICES[] = {
-	//  top-left
-	0.0f, 0.0f, 0.0f,  //  position
-	0.0f, 0.0f, 0.0f,  //  normal
-		  0.0f, 0.0f,  //  uv
-	//  top-right
-	1.0f, 0.0f, 0.0f,  //  position
-	0.0f, 0.0f, 0.0f,  //  normal
-		  1.0f, 0.0f,  //  uv
-	//  bottom-right
-	1.0f, 1.0f, 0.0f,  //  position
-	0.0f, 0.0f, 0.0f,  //  normal
-		  1.0f, 1.0f,  //  uv
-	//  bottom-left
-	0.0f, 1.0f, 0.0f,  //  position
-	0.0f, 0.0f, 0.0f,  //  normal
-		  0.0f, 1.0f   //  uv
-};
-
-constexpr unsigned int QUAD_INDICES[] = {
-	0, 1, 2,
-	2, 3, 0
-};
-
 namespace suprengine
 {
+	constexpr float QUAD_VERTICES[] = {
+		//  Top-left
+		0.0f, 0.0f, 0.0f,  //  Position
+		0.0f, 0.0f, 0.0f,  //  Normal
+			  0.0f, 0.0f,  //  UV
+		//  Top-right
+		1.0f, 0.0f, 0.0f,  //  Position
+		0.0f, 0.0f, 0.0f,  //  Normal
+			  1.0f, 0.0f,  //  UV
+		//  Bottom-right
+		1.0f, 1.0f, 0.0f,  //  Position
+		0.0f, 0.0f, 0.0f,  //  Normal
+			  1.0f, 1.0f,  //  UV
+		//  Bottom-left
+		0.0f, 1.0f, 0.0f,  //  Position
+		0.0f, 0.0f, 0.0f,  //  Normal
+			  0.0f, 1.0f   //  UV
+	};
+
+	constexpr unsigned int QUAD_INDICES[] = {
+		0, 1, 2,
+		2, 3, 0
+	};
+
+	/*
+	 * A preset which define how a VertexArray should be handled
+	 * by OpenGL.
+	 */
 	class VertexArrayPreset
 	{
 	public:
@@ -66,7 +70,10 @@ namespace suprengine
 		unsigned int get_indices_count() const { return indices_count; }
 	
 	private:
-		unsigned int vertices_count { 0 }, indices_count { 0 };
-		unsigned int vao_id { 0 }, vbo_id { 0 }, ibo_id { 0 };
+		unsigned int vertices_count { 0 };
+		unsigned int indices_count { 0 };
+		unsigned int vao_id { 0 };
+		unsigned int vbo_id { 0 };
+		unsigned int ibo_id { 0 };
 	};
 }
