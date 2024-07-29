@@ -27,6 +27,16 @@ namespace suprengine
 			return generate( bounds.x, bounds.y );
 		}
 
+		static bool generate_bool()
+		{
+			return generate( 0, 1 ) == 1;
+		}
+
+		static int generate_sign()
+		{
+			return generate_bool() ? 1 : -1;
+		}
+
 		static Vec3 generate_location( 
 			float min_x, float min_y, float min_z, 
 			float max_x, float max_y, float max_z 
