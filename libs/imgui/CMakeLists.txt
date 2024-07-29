@@ -4,5 +4,7 @@ target_sources(IMGUI PRIVATE
     "imgui.cpp" "imgui_demo.cpp" "imgui_draw.cpp" "imgui_tables.cpp" "imgui_widgets.cpp"
     #  Referencing project backends
     "backends/imgui_impl_opengl3.cpp" "backends/imgui_impl_sdl2.cpp"
+    #  Adding utilities
+    "misc/cpp/imgui_stdlib.cpp"
 )
 target_link_libraries(IMGUI PUBLIC SDL2)
