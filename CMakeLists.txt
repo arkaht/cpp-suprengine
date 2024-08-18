@@ -123,6 +123,19 @@ macro(suprengine_copy_assets project_target project_name)
 	)
 endmacro()
 
+# Symlink suprengine assets as well as specified project assets to its binary directory
+macro(suprengine_symlink_assets project_target project_name)
+	if(NOT ${project_target}_ASSETS)
+		message(FATAL_ERROR "Please set variable '${project_target}_ASSETS'!")
+	endif()
+	if(NOT ${project_target}_BINARY_DIR)
+		message(FATAL_ERROR "Please set variable '${project_target}_BINARY_DIR'!")
+	endif()
+
+	file(CREATE_LINK "${SUPRENGINE_ASSETS}" "${${project_target}_BINARY_DIR}/assets/suprengine" SYMBOLIC)
+	file(CREATE_LINK "${${project_target}_ASSETS}" "${${project_target}_BINARY_DIR}/assets/${project_name}" SYMBOLIC)
+endmacro()
+
 #  Declare test executable
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
     add_subdirectory("src/demos/test")
