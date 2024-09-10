@@ -173,8 +173,9 @@ void Engine::add_timer( const Timer& timer )
 
 void Engine::process_input()
 {
-	//  Reset mouse delta from inputs
+	//  Reset mouse inputs
 	_inputs->mouse_delta = Vec2::zero;
+	_inputs->mouse_wheel = Vec2::zero;
 
 	//  Read window events
 	SDL_Event event;
@@ -189,8 +190,13 @@ void Engine::process_input()
 		{
 		//  Store mouse delta for this frame
 		case SDL_MOUSEMOTION:
-			_inputs->mouse_delta.x = (float) event.motion.xrel;
-			_inputs->mouse_delta.y = (float) event.motion.yrel;
+			_inputs->mouse_delta.x = (float)event.motion.xrel;
+			_inputs->mouse_delta.y = (float)event.motion.yrel;
+			break;
+		//  Store mouse wheel for this frame
+		case SDL_MOUSEWHEEL:
+			_inputs->mouse_wheel.x = (float)event.wheel.x;
+			_inputs->mouse_wheel.y = (float)event.wheel.y;
 			break;
 		//  Quit game when closing window
 		case SDL_QUIT:

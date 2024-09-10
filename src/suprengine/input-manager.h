@@ -59,6 +59,7 @@ namespace suprengine
 
 	public:
 		Vec2 mouse_delta {};
+		Vec2 mouse_wheel {};
 
 	private:
 		uint8_t previous_states[SDL_NUM_SCANCODES];
