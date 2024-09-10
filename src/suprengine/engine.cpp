@@ -78,7 +78,7 @@ bool Engine::init( IGame* game )
 	//  Init imgui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	[[maybe_unused]] ImGuiIO& io = ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
@@ -177,6 +177,8 @@ void Engine::process_input()
 	_inputs->mouse_delta = Vec2::zero;
 	_inputs->mouse_wheel = Vec2::zero;
 
+	ImGuiIO& imgui_io = ImGui::GetIO();
+
 	//  Read window events
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
@@ -190,11 +192,15 @@ void Engine::process_input()
 		{
 		//  Store mouse delta for this frame
 		case SDL_MOUSEMOTION:
+			if ( imgui_io.WantCaptureMouse ) continue;
+
 			_inputs->mouse_delta.x = (float)event.motion.xrel;
 			_inputs->mouse_delta.y = (float)event.motion.yrel;
 			break;
 		//  Store mouse wheel for this frame
 		case SDL_MOUSEWHEEL:
+			if ( imgui_io.WantCaptureMouse ) continue;
+
 			_inputs->mouse_wheel.x = (float)event.wheel.x;
 			_inputs->mouse_wheel.y = (float)event.wheel.y;
 			break;
