@@ -132,6 +132,7 @@ macro(suprengine_symlink_assets project_target project_name)
 		message(FATAL_ERROR "Please set variable '${project_target}_BINARY_DIR'!")
 	endif()
 
+	file(MAKE_DIRECTORY "${${project_target}_BINARY_DIR}/assets")
 	file(CREATE_LINK "${SUPRENGINE_ASSETS}" "${${project_target}_BINARY_DIR}/assets/suprengine" SYMBOLIC)
 	file(CREATE_LINK "${${project_target}_ASSETS}" "${${project_target}_BINARY_DIR}/assets/${project_name}" SYMBOLIC)
 endmacro()
