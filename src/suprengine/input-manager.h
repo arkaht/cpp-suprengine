@@ -24,20 +24,17 @@ namespace suprengine
 	class InputManager
 	{
 	public:
-		Vec2 mouse_delta {};
-
 		InputManager();
 
 		void update();
 
-
-		bool is_key_just_pressed( SDL_Scancode key );
-		bool is_key_just_released( SDL_Scancode key );
-		bool is_key_pressed( SDL_Scancode key );
-		bool is_key_released( SDL_Scancode key );
-		bool is_key_up( SDL_Scancode key );
-		bool is_key_down( SDL_Scancode key );
-		KeyState get_key_state( SDL_Scancode key );
+		bool is_key_just_pressed( SDL_Scancode key ) const;
+		bool is_key_just_released( SDL_Scancode key ) const;
+		bool is_key_pressed( SDL_Scancode key ) const;
+		bool is_key_released( SDL_Scancode key ) const;
+		bool is_key_up( SDL_Scancode key ) const;
+		bool is_key_down( SDL_Scancode key ) const;
+		KeyState get_key_state( SDL_Scancode key ) const;
 		/*
 		 * Returns a value in range [-value; value] representing the input axis
 		 * of both keys. Keys need to be press to change the final value.
@@ -47,17 +44,21 @@ namespace suprengine
 			SDL_Scancode positive_key, 
 			float value = 1.0f,
 			float default_value = 0.0f
-		);
+		) const;
 
 		void set_relative_mouse_mode( bool value );
-		bool is_mouse_button_just_pressed( MouseButton button );
-		bool is_mouse_button_just_released( MouseButton button );
-		bool is_mouse_button_pressed( MouseButton button );
-		bool is_mouse_button_released( MouseButton button );
-		bool is_mouse_button_up( MouseButton button );
-		bool is_mouse_button_down( MouseButton button );
-		KeyState get_mouse_button_state( MouseButton button );
+		bool is_mouse_button_just_pressed( MouseButton button ) const;
+		bool is_mouse_button_just_released( MouseButton button ) const;
+		bool is_mouse_button_pressed( MouseButton button ) const;
+		bool is_mouse_button_released( MouseButton button ) const;
+		bool is_mouse_button_up( MouseButton button ) const;
+		bool is_mouse_button_down( MouseButton button ) const;
+
+		KeyState get_mouse_button_state( MouseButton button ) const;
 		Vec2 get_mouse_pos() const { return current_mouse_pos; }
+
+	public:
+		Vec2 mouse_delta {};
 
 	private:
 		uint8_t previous_states[SDL_NUM_SCANCODES];
