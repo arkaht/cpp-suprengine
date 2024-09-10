@@ -8,6 +8,7 @@ set(SUPRENGINE_SOURCE "${SUPRENGINE_INCLUDE}/suprengine")
 set(SUPRENGINE_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets" CACHE INTERNAL "")
 
 message("Suprengine Source Directory: '${SUPRENGINE_SOURCE_DIR}'")
+message("Suprengine Source Assets: '${SUPRENGINE_ASSETS}'")
 
 #  List all .cpp files
 file(GLOB_RECURSE SUPRENGINE_SOURCES CONFIGURE_DEPENDS "${SUPRENGINE_SOURCE}/*.cpp")
