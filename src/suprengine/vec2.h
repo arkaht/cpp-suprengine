@@ -3,6 +3,8 @@
 #include <SDL.h>
 #include "math.h"
 
+#include "imgui.h"
+
 namespace suprengine
 {
 	struct Vec2
@@ -10,6 +12,14 @@ namespace suprengine
 		static const Vec2 zero, one, up, down, left, right;
 
 		float x { 0.0f }, y { 0.0f };
+
+		Vec2() {}
+		Vec2( float x, float y )
+			: x( x ), y( y )
+		{}
+		Vec2( const ImVec2& vec )
+			: x( vec.x ), y( vec.y )
+		{}
 
 		Vec2 operator-() const
 		{
@@ -82,7 +92,7 @@ namespace suprengine
 		Vec2& normalize()
 		{
 			float mag = length();
-			if ( mag == 0.0f ) 
+			if ( mag == 0.0f )
 				return *this;
 
 			x /= mag, y /= mag;
@@ -101,7 +111,7 @@ namespace suprengine
 
 		float get_angle() const
 		{
-			return (float) math::atan2( y, x );
+			return (float)math::atan2( y, x );
 		}
 
 		static Vec2 lerp( const Vec2& a, const Vec2& b, float f )
@@ -123,8 +133,8 @@ namespace suprengine
 		SDL_Point to_sdl_point() const
 		{
 			return SDL_Point {
-				(int) x,
-				(int) y
+				(int)x,
+				(int)y
 			};
 		}
 	};
