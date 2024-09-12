@@ -78,6 +78,8 @@ void Window::set_mode( WindowMode mode )
 
 void Window::set_size( Vec2 size, bool is_new_size )
 {
+	const Vec2 old_size = _current_size;
+
 	if ( is_new_size )
 	{
 		_size = size;
@@ -88,5 +90,5 @@ void Window::set_size( Vec2 size, bool is_new_size )
 	SDL_SetWindowSize( _sdl_window, (int)size.x, (int)size.y );
 
 	//  broadcast event
-	on_size_changed.invoke( size );
+	on_size_changed.invoke( size, old_size );
 }

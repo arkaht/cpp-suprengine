@@ -156,8 +156,8 @@ void Camera::setup_vars()
 	//  listen to window updates
 	window->on_size_changed.listen( 
 		"suprengine::camera" + std::to_string( get_owner()->get_unique_id() ), 
-		[&]( const Vec2& size ) {
-			_viewport_size = size;
+		[&]( const Vec2& new_size, const Vec2& old_size ) {
+			_viewport_size = new_size;
 			update_projection_from_settings();
 		}
 	);

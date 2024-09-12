@@ -17,8 +17,8 @@ RenderBatch::RenderBatch( Window* _window )
 	//  update viewport on window size change
 	_window->on_size_changed.listen( 
 		"suprengine::render-batch", 
-		[&]( const Vec2& size ) {
-			on_window_resized( size );
+		[&]( const Vec2& new_size, const Vec2& old_size ) {
+			on_window_resized( new_size );
 		}
 	);
 }

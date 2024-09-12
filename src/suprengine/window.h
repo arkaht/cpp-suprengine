@@ -39,9 +39,10 @@ namespace suprengine
 		 * Called when window's size changed
 		 * 
 		 * Parameters:
-		 * - const Vec2& size
+		 * - const Vec2& new_size
+		 * - const Vec2& old_size
 		 */
-		Event<const Vec2&> on_size_changed;
+		Event<const Vec2&, const Vec2&> on_size_changed;
 
 	private:
 		Vec2 _current_size;
