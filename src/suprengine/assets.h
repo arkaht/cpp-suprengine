@@ -24,17 +24,17 @@ namespace suprengine
 	public:
 		static const std::string CUBE_PATH;
 		static const std::string SPHERE_PATH;
-		
+
 		Assets() = delete;
 
 		static void set_render_batch( RenderBatch* render_batch ) { _render_batch = render_batch; }
-		
+
 		static void set_path( rconst_str path ) { _resources_path = path; }
 		static std::string get_path() { return _resources_path; }
 
 		static Texture* load_texture( rconst_str name, rconst_str path, const TextureParams& params = {} );
 		static Texture* get_texture( rconst_str name );
-		
+
 		static Font* load_font( rconst_str name, rconst_str path, int size = 12 );
 		static Font* get_font( rconst_str path, int size );
 
@@ -44,17 +44,57 @@ namespace suprengine
 		static SharedPtr<Model> load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
 		static SharedPtr<Model> get_model( rconst_str name );
 
-		static void load_curves_in_folder( 
-			rconst_str path, 
+		static void load_curves_in_folder(
+			rconst_str path,
 			bool is_recursive = false,
 			bool should_auto_reload = false,
 			rconst_str name_prefix = ""
 		);
-		static SharedPtr<Curve> load_curve( 
-			rconst_str name, 
-			rconst_str path 
+		static SharedPtr<Curve> load_curve(
+			rconst_str name,
+			rconst_str path
 		);
 		static SharedPtr<Curve> get_curve( rconst_str name );
+
+		/*
+		 * Get a list of all assets identifiers of a given type.
+		 */
+		template <typename AssetType, typename IdentifierType>
+		static std::vector<IdentifierType> get_assets_as_ids()
+		{
+			//  TODO: Add a static assert to allow for only 'const char*' and 'std::string'; 
+			//		 I just can't get it working
+			/*if constexpr ( !std::is_same<std::string, AssetType>::value && !std::is_same<const char*, AssetType>::value )
+			{
+				static_assert(
+					false,
+					"AssetType must be either a std::string or a const char*."
+				);
+			}*/
+
+			std::vector<IdentifierType> assets_as_ids {};
+
+			auto get_related_assets_map = [&]() -> std::map<std::string, SharedPtr<AssetType>>&
+			{
+				if constexpr ( std::is_same<Curve, AssetType>::value )
+				{
+					return _curves;
+				}
+				else if constexpr ( std::is_same<Model, AssetType>::value )
+				{
+					return _models;
+				}
+				//  TODO: Add all remaining asset types mapping
+			};
+
+			auto& assets_map = get_related_assets_map();
+			for ( auto& pair : assets_map )
+			{
+				assets_as_ids.emplace_back( pair.first.c_str() );
+			}
+
+			return assets_as_ids;
+		}
 
 		static void release();
 
@@ -77,7 +117,7 @@ namespace suprengine
 		static bool _read_file( rconst_str path, std::string* data );
 
 		static Shader* load_shader_from_file( rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path, rconst_str tse_path, rconst_str geo_path );
-		
+
 		static VertexArray* load_mesh( const aiMesh* mesh );
 		static std::vector<Mesh*> load_node( const aiNode* node, const aiScene* scene );
 	};
