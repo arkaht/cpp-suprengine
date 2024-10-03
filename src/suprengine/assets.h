@@ -62,32 +62,44 @@ namespace suprengine
 		template <typename AssetType, typename IdentifierType>
 		static std::vector<IdentifierType> get_assets_as_ids()
 		{
-			//  TODO: Add a static assert to allow for only 'const char*' and 'std::string'; 
-			//		 I just can't get it working
-			/*if constexpr ( !std::is_same<std::string, AssetType>::value && !std::is_same<const char*, AssetType>::value )
-			{
-				static_assert(
-					false,
-					"AssetType must be either a std::string or a const char*."
-				);
-			}*/
+			static_assert(
+				std::is_same<std::string, IdentifierType>::value || std::is_same<const char*, IdentifierType>::value,
+				"IdentifierType must be either a std::string or a const char*."
+			);
 
-			std::vector<IdentifierType> assets_as_ids {};
-
-			auto get_related_assets_map = [&]() -> std::map<std::string, SharedPtr<AssetType>>&
+			// Create a constexpr lambda to compile the function 
+			// with the map of the given asset type.
+			auto get_related_assets_map = [&]() constexpr -> std::map<std::string, SharedPtr<AssetType>>&
 			{
-				if constexpr ( std::is_same<Curve, AssetType>::value )
+				if constexpr ( std::is_same<Texture, AssetType>::value )
 				{
-					return _curves;
+					return _textures;
+				}
+				else if constexpr ( std::is_same<Font, AssetType>::value )
+				{
+					return _fonts;
+				}
+				else if constexpr ( std::is_same<Shader, AssetType>::value )
+				{
+					return _shaders;
 				}
 				else if constexpr ( std::is_same<Model, AssetType>::value )
 				{
 					return _models;
 				}
-				//  TODO: Add all remaining asset types mapping
+				else if constexpr ( std::is_same<Curve, AssetType>::value )
+				{
+					return _curves;
+				}
 			};
 
+			// Get the map of the asset type
 			auto& assets_map = get_related_assets_map();
+			
+			// Reserve enough elements to only do one allocation
+			std::vector<IdentifierType> assets_as_ids {};
+			assets_as_ids.reserve( assets_map.size() );
+
 			for ( auto& pair : assets_map )
 			{
 				assets_as_ids.emplace_back( pair.first.c_str() );
