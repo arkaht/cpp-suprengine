@@ -58,15 +58,16 @@ namespace suprengine
 
 		/*
 		 * Get a list of all assets identifiers of a given type.
+		 * Only works with 'std::string' and 'const char*' for IdentifierType.
 		 */
 		template <typename AssetType, typename IdentifierType>
-		static std::vector<IdentifierType> get_assets_as_ids()
+		static 
+			std::enable_if_t<
+				std::is_same<std::string, IdentifierType>::value || std::is_same<const char*, IdentifierType>::value, 
+				std::vector<IdentifierType>
+			>
+			get_assets_as_ids()
 		{
-			static_assert(
-				std::is_same<std::string, IdentifierType>::value || std::is_same<const char*, IdentifierType>::value,
-				"IdentifierType must be either a std::string or a const char*."
-			);
-
 			// Create a constexpr lambda to compile the function 
 			// with the map of the given asset type.
 			auto get_related_assets_map = [&]() constexpr -> std::map<std::string, SharedPtr<AssetType>>&
