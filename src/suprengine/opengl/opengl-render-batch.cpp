@@ -59,7 +59,7 @@ bool OpenGLRenderBatch::init()
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 
-	//  request a color buffer w/ 8-bits per RGBA channel
+	//  Request a color buffer w/ 8-bits per RGBA channel
 	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );
 	SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8 );
 	SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8 );
@@ -75,33 +75,39 @@ bool OpenGLRenderBatch::init()
 	glewExperimental = GL_TRUE;
 	if ( glewInit() != GLEW_OK )
 	{
-		Logger::error( "failed to initialize GLEW." );
+		Logger::error( "Failed to initialize GLEW." );
 		return false;
 	}
+	Logger::info( "Initialized GLEW" );
 
-	//  apparently, GLEW emit a beginning error code on some platforms, so we pop it
+	//  Apparently, GLEW emit a beginning error code on some platforms, so we pop it
 	glGetError();
 
-	//  init image library
+	//  Init image library
 	if ( IMG_Init( IMG_INIT_PNG ) == 0 )
 	{
-		Logger::error( "failed to initialize image library" );
+		Logger::error( "Failed to initialize the SDL Image library" );
 		return false;
 	}
+	Logger::info( "Initialized the SDL Image library" );
 
-	//  initialize ttf library
+	//  Initialize ttf library
 	if ( TTF_Init() == -1 )
 	{
-		Logger::error( "failed to initialize TTF library" );
+		Logger::error( "Failed to initialize the SDL TTF library" );
 		return false;
 	}
+	Logger::info( "Initialized the SDL TTF library" );
 
-	//  enable debug output
-	glEnable( GL_DEBUG_OUTPUT );
+	//  Enable debug output
+	set_debug_output( true );
 	glDebugMessageCallback( _message_callback, 0 );
 
-	_load_assets();
+	//  Log OpenGL Version
+	auto opengl_version = glGetString( GL_VERSION );
+	Logger::info( "OpenGL Version: %s", opengl_version );
 
+	_load_assets();
 
 	return true;
 }
@@ -441,27 +447,35 @@ void OpenGLRenderBatch::set_debug_output( bool is_active )
 	if ( is_active )
 	{
 		glEnable( GL_DEBUG_OUTPUT );
+		Logger::info( "OpenGL: Enable debug output" );
 	}
 	else
 	{
 		glDisable( GL_DEBUG_OUTPUT );
+		Logger::info( "OpenGL: Disable debug output" );
 	}
 }
 
 void OpenGLRenderBatch::set_samples( unsigned int samples )
 {
 	_samples = samples;
+	Logger::info( "OpenGL: Setting samples to %d", samples );
+
 	update_framebuffers();
 }
 
 void OpenGLRenderBatch::update_framebuffers()
 {
+	Logger::info( "OpenGL: Updating framebuffers" );
+
 	_release_framebuffers();
 	_create_framebuffers( (int)_viewport_size.x, (int)_viewport_size.y );
 }
 
 void OpenGLRenderBatch::_load_assets()
 {
+	Logger::info( "Loading engine assets" );
+
 	//  create vertex array
 	_quad_vertex_array = new VertexArray(
 		VertexArrayPreset::Position3_Normal3_UV2,
