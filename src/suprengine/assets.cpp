@@ -156,7 +156,7 @@ void Assets::load_curves_in_folder(
 					file_path.string(), 
 					true, 
 					false,
-					file_path.filename().string() + "/"
+					name_prefix + file_path.filename().string() + "/"
 				);
 			}
 			continue;
