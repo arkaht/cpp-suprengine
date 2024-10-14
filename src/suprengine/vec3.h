@@ -21,7 +21,7 @@ namespace suprengine
 		float z { 0.0f };
 
 	public:
-		explicit Vec3();
+		Vec3() {}
 		explicit Vec3( float value );
 		explicit Vec3( float x, float y, float z );
 
@@ -82,6 +82,8 @@ namespace suprengine
 
 		static Vec3 snap_to_grid( const Vec3& v, float grid_size );
 		static Vec3 snap_to_grid( const Vec3& v, const Vec3& grid_size );
+
+		static Vec3 round( const Vec3& v );
 
 		// Normalize the provided vector
 		static Vec3 normalize( const Vec3& vec );

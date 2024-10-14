@@ -20,9 +20,6 @@ const Vec3
 	Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 
 
-Vec3::Vec3()
-{}
-
 Vec3::Vec3( float value ) 
 	: x( value ), y( value ), z( value ) 
 {}
@@ -145,6 +142,15 @@ Vec3 Vec3::snap_to_grid( const Vec3& v, const Vec3& grid_size )
 		math::snap_to_grid( v.x, grid_size.x ),
 		math::snap_to_grid( v.y, grid_size.y ),
 		math::snap_to_grid( v.z, grid_size.z ),
+	};
+}
+
+Vec3 Vec3::round( const Vec3 & v )
+{
+	return Vec3 {
+		math::round( v.x ),
+		math::round( v.y ),
+		math::round( v.z ),
 	};
 }
 
