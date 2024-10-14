@@ -31,9 +31,17 @@ namespace suprengine
 		int get_priority_order() const;
 		
 	public:
-		SharedPtr<Transform> transform;
+		/*
+		 * Component handling the position, rotation and scale
+		 * of the entity.
+		 */
+		SharedPtr<Transform> transform = nullptr;
 
-		bool is_active { true };
+		/*
+		 * Control whenever the component is enabled in order
+		 * for the engine to update and render it in-game.
+		 */
+		bool is_active = true;
 
 	private:
 		int _priority_order;

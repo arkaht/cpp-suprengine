@@ -15,31 +15,31 @@ Rect Transform::get_rect( const Rect& rect )
 void Transform::set_location( const Vec2& vec )
 {
 	location.x = vec.x, location.y = vec.y, location.z = 0.0f;
-	is_matrix_dirty = true;
+	_is_matrix_dirty = true;
 }
 
 void Transform::set_location( const Vec3& vec )
 {
 	location = vec;
-	is_matrix_dirty = true;
+	_is_matrix_dirty = true;
 }
 
 void Transform::set_rotation( const Quaternion& quat )
 {
 	rotation = quat;
-	is_matrix_dirty = true;
+	_is_matrix_dirty = true;
 }
 
 void Transform::set_scale( const Vec2& vec )
 {
 	scale.x = vec.x, scale.y = vec.y, scale.z = 1.0f;
-	is_matrix_dirty = true;
+	_is_matrix_dirty = true;
 }
 
 void Transform::set_scale( const Vec3& vec )
 {
 	scale = vec;
-	is_matrix_dirty = true;
+	_is_matrix_dirty = true;
 }
 
 void Transform::look_at( const Vec3& target )
@@ -49,8 +49,7 @@ void Transform::look_at( const Vec3& target )
 		target,
 		Vec3::up
 	);
-
-	is_matrix_dirty = true;
+	_is_matrix_dirty = true;
 }
 
 Vec3 Transform::get_right() const 
@@ -70,11 +69,16 @@ Vec3 Transform::get_up() const
 
 const Mtx4& Transform::get_matrix()
 {
-	if ( is_matrix_dirty )
+	if ( _is_matrix_dirty )
 	{
-		matrix = Mtx4::create_from_transform( scale, rotation, location );
-		is_matrix_dirty = false;
+		_matrix = Mtx4::create_from_transform( scale, rotation, location );
+		_is_matrix_dirty = false;
 	}
 
-	return matrix;
+	return _matrix;
+}
+
+bool Transform::is_matrix_dirty() const
+{
+	return _is_matrix_dirty;
 }

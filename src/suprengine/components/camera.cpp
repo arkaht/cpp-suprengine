@@ -128,7 +128,7 @@ void Camera::set_view_matrix( const Mtx4& matrix )
 
 const Mtx4& Camera::get_view_matrix()
 {
-	if ( _is_view_matrix_dirty || transform->is_matrix_dirty )
+	if ( _is_view_matrix_dirty || transform->is_matrix_dirty() )
 	{
 		//  TODO: fix this for 2D
 		Vec3 origin = transform->location + _offset;
