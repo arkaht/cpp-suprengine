@@ -83,7 +83,9 @@ namespace suprengine
 		static Vec3 snap_to_grid( const Vec3& v, float grid_size );
 		static Vec3 snap_to_grid( const Vec3& v, const Vec3& grid_size );
 
-		static Vec3 round( const Vec3& v );
+		static Vec3 clamp( const Vec3& value, const Vec3& min, const Vec3& max );
+
+		static Vec3 round( const Vec3& value );
 
 		// Normalize the provided vector
 		static Vec3 normalize( const Vec3& vec );

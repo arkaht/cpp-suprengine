@@ -142,6 +142,12 @@ Vec3 Vec3::snap_to_grid( const Vec3& v, const Vec3& grid_size )
 		math::snap_to_grid( v.x, grid_size.x ),
 		math::snap_to_grid( v.y, grid_size.y ),
 		math::snap_to_grid( v.z, grid_size.z ),
+Vec3 Vec3::clamp( const Vec3& value, const Vec3& min, const Vec3& max )
+{
+	return Vec3 {
+		math::clamp( value.x, min.x, max.x ),
+		math::clamp( value.y, min.y, max.y ),
+		math::clamp( value.z, min.z, max.z ),
 	};
 }
 
