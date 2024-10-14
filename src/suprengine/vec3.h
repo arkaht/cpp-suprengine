@@ -78,10 +78,10 @@ namespace suprengine
 		static float distance2d( const Vec3& from, const Vec3& to );
 		static float distance2d_sqr( const Vec3& from, const Vec3& to );
 
-		static Vec3 world_to_grid( const Vec3& v, float grid_size );
+		static Vec3 world_to_grid( const Vec3& value, float grid_size );
 
-		static Vec3 snap_to_grid( const Vec3& v, float grid_size );
-		static Vec3 snap_to_grid( const Vec3& v, const Vec3& grid_size );
+		static Vec3 snap_to_grid( const Vec3& value, float grid_size );
+		static Vec3 snap_to_grid( const Vec3& value, const Vec3& grid_size );
 
 		static Vec3 clamp( const Vec3& value, const Vec3& min, const Vec3& max );
 
@@ -95,12 +95,12 @@ namespace suprengine
 		static Vec3 cross( const Vec3& a, const Vec3& b );
 		static Vec3 lerp( const Vec3& a, const Vec3& b, float t );
 		// Reflect V about (normalized) N
-		static Vec3 reflect( const Vec3& v, const Vec3& n );
+		static Vec3 reflect( const Vec3& value, const Vec3& n );
 		static Vec3 approach( const Vec3& current, const Vec3& target, float delta );
 		static Vec3 sqrt( const Vec3& current );
 
 		// Transform a Vector3 by a quaternion
-		static Vec3 transform( const Vec3& v, const class Quaternion& q );
+		static Vec3 transform( const Vec3& value, const class Quaternion& q );
 		static Vec3 transform( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );
 		// This will transform the vector and renormalize the w component
 		static Vec3 transform_with_perspective_div( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );
@@ -136,9 +136,9 @@ namespace suprengine
 			return Vec3( vec.x * scalar, vec.y * scalar, vec.z * scalar );
 		}
 
-		Vec3 operator/( const Vec3& v )
+		Vec3 operator/( const Vec3& value )
 		{
-			return Vec3( x / v.x, y / v.y, z / v.z );
+			return Vec3( x / value.x, y / value.y, z / value.z );
 		}
 		Vec3 operator/( float scalar )
 		{
@@ -153,11 +153,11 @@ namespace suprengine
 			z *= scalar;
 			return *this;
 		}
-		Vec3& operator*=( const Vec3& v )
+		Vec3& operator*=( const Vec3& value )
 		{
-			x *= v.x;
-			y *= v.y;
-			z *= v.z;
+			x *= value.x;
+			y *= value.y;
+			z *= value.z;
 			return *this;
 		}
 

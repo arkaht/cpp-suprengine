@@ -5,31 +5,31 @@
 using namespace suprengine;
 
 
-const Vec3 
-	Vec3::zero( 0.0f, 0.0f, 0.0f ), 
-	Vec3::one( 1.0f, 1.0f, 1.0f );
-const Vec3 
-	Vec3::unit_x( 1.0f, 0.0f, 0.0f ), 
-	Vec3::unit_y( 0.0f, 1.0f, 0.0f ), 
-	Vec3::unit_z( 0.0f, 0.0f, 1.0f );
-const Vec3 
-	Vec3::forward( 1.0f, 0.0f, 0.0f ), 
-	Vec3::right( 0.0f, 1.0f, 0.0f ),
-	Vec3::up( 0.0f, 0.0f, 1.0f );
-const Vec3 
-	Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
+const Vec3
+Vec3::zero( 0.0f, 0.0f, 0.0f ),
+Vec3::one( 1.0f, 1.0f, 1.0f );
+const Vec3
+Vec3::unit_x( 1.0f, 0.0f, 0.0f ),
+Vec3::unit_y( 0.0f, 1.0f, 0.0f ),
+Vec3::unit_z( 0.0f, 0.0f, 1.0f );
+const Vec3
+Vec3::forward( 1.0f, 0.0f, 0.0f ),
+Vec3::right( 0.0f, 1.0f, 0.0f ),
+Vec3::up( 0.0f, 0.0f, 1.0f );
+const Vec3
+Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 
 
-Vec3::Vec3( float value ) 
-	: x( value ), y( value ), z( value ) 
+Vec3::Vec3( float value )
+	: x( value ), y( value ), z( value )
 {}
 
-Vec3::Vec3( const Vec2& vec ) 
-	: x( vec.x ), y( vec.y ), z( 0.0f ) 
+Vec3::Vec3( const Vec2& vec )
+	: x( vec.x ), y( vec.y ), z( 0.0f )
 {}
 
-Vec3::Vec3( const Vec2& vec, float z ) 
-	: x( vec.x ), y( vec.y ), z( z ) 
+Vec3::Vec3( const Vec2& vec, float z )
+	: x( vec.x ), y( vec.y ), z( z )
 {}
 
 Vec3::Vec3( float x, float y, float z )
@@ -78,16 +78,16 @@ void Vec3::normalize2d()
 
 Vec3 Vec3::normalized() const
 {
-	Vec3 v( x, y, z );
-	v.normalize();
-	return v;
+	Vec3 value( x, y, z );
+	value.normalize();
+	return value;
 }
 
 std::string Vec3::to_string() const
 {
-	return "x="  + std::to_string( x ) 
-		 + ";y=" + std::to_string( y )
-		 + ";z=" + std::to_string( z );
+	return "x=" + std::to_string( x )
+		+ ";y=" + std::to_string( y )
+		+ ";z=" + std::to_string( z );
 }
 
 const float* Vec3::get_as_float_ptr() const
@@ -115,33 +115,35 @@ float Vec3::distance2d_sqr( const Vec3& from, const Vec3& to )
 	return ( from - to ).length2d_sqr();
 }
 
-Vec3 Vec3::world_to_grid( const Vec3& v, float grid_size )
+Vec3 Vec3::world_to_grid( const Vec3& value, float grid_size )
 {
-	return Vec3 
-	{
-		math::floor( v.x / grid_size ),
-		math::floor( v.y / grid_size ),
-		math::floor( v.z / grid_size ),
+	return Vec3 {
+		math::floor( value.x / grid_size ),
+		math::floor( value.y / grid_size ),
+		math::floor( value.z / grid_size ),
 	};
 }
 
-Vec3 Vec3::snap_to_grid( const Vec3& v, float grid_size )
+Vec3 Vec3::snap_to_grid( const Vec3& value, float grid_size )
 {
-	return Vec3 
+	return Vec3
 	{
-		math::snap_to_grid( v.x, grid_size ),
-		math::snap_to_grid( v.y, grid_size ),
-		math::snap_to_grid( v.z, grid_size ),
+		math::snap_to_grid( value.x, grid_size ),
+		math::snap_to_grid( value.y, grid_size ),
+		math::snap_to_grid( value.z, grid_size ),
 	};
 }
 
-Vec3 Vec3::snap_to_grid( const Vec3& v, const Vec3& grid_size )
+Vec3 Vec3::snap_to_grid( const Vec3& value, const Vec3& grid_size )
 {
-	return Vec3 
+	return Vec3
 	{
-		math::snap_to_grid( v.x, grid_size.x ),
-		math::snap_to_grid( v.y, grid_size.y ),
-		math::snap_to_grid( v.z, grid_size.z ),
+		math::snap_to_grid( value.x, grid_size.x ),
+		math::snap_to_grid( value.y, grid_size.y ),
+		math::snap_to_grid( value.z, grid_size.z ),
+	};
+}
+
 Vec3 Vec3::clamp( const Vec3& value, const Vec3& min, const Vec3& max )
 {
 	return Vec3 {
@@ -151,12 +153,12 @@ Vec3 Vec3::clamp( const Vec3& value, const Vec3& min, const Vec3& max )
 	};
 }
 
-Vec3 Vec3::round( const Vec3 & v )
+Vec3 Vec3::round( const Vec3& value )
 {
 	return Vec3 {
-		math::round( v.x ),
-		math::round( v.y ),
-		math::round( v.z ),
+		math::round( value.x ),
+		math::round( value.y ),
+		math::round( value.z ),
 	};
 }
 
@@ -190,9 +192,9 @@ Vec3 Vec3::lerp( const Vec3& a, const Vec3& b, float f )
 	};
 }
 
-Vec3 Vec3::reflect( const Vec3& v, const Vec3& n )
+Vec3 Vec3::reflect( const Vec3& value, const Vec3& n )
 {
-	return v - 2.0f * Vec3::dot( v, n ) * n;
+	return value - 2.0f * Vec3::dot( value, n ) * n;
 }
 
 Vec3 Vec3::approach( const Vec3& current, const Vec3& target, float delta )
@@ -247,11 +249,11 @@ Vec3 Vec3::transform_with_perspective_div( const Vec3& vec, const Mtx4& mat, flo
 	return retVal;
 }
 
-Vec3 Vec3::transform( const Vec3& v, const Quaternion& q )
+Vec3 Vec3::transform( const Vec3& value, const Quaternion& q )
 {
-	// v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
+	// value + 2.0*cross(q.xyz, cross(q.xyz,value) + q.w*value);
 	Vec3 qv( q.x, q.y, q.z );
-	Vec3 retVal = v;
-	retVal += 2.0f * Vec3::cross( qv, Vec3::cross( qv, v ) + q.w * v );
+	Vec3 retVal = value;
+	retVal += 2.0f * Vec3::cross( qv, Vec3::cross( qv, value ) + q.w * value );
 	return retVal;
 }
