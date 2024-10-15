@@ -171,7 +171,7 @@ void Engine::clear_entities()
 
 void Engine::add_timer( const Timer& timer )
 {
-	_timers.push_back( timer );
+	_timers.emplace_back( timer );
 }
 
 void Engine::process_input()
@@ -268,29 +268,40 @@ void Engine::update( float dt )
 
 	if ( !_timers.empty() )
 	{
-		//  TODO?: Merge both loops into one. Probably using iterators.
 		//  Update timers
-		for ( auto& timer : _timers )
-		{
-			if ( ( timer.time -= dt ) <= 0.0f )
-			{
-				timer.callback();
-			}
-		}
-
-		//  Safely-erase expired timers
 		auto itr = _timers.begin();
-		while ( itr != _timers.end() )
+		for ( itr; itr != _timers.end(); )
 		{
-			if ( itr->time <= 0.0f )
-			{
-				//  Remove from vector
-				itr = _timers.erase( itr );
-			}
-			else
+			auto& timer = *itr;
+
+			//	Increment timer until it exceeds the maximum time
+			if ( ( timer.current_time += dt ) < timer.max_time )
 			{
 				itr++;
+				continue;
 			}
+			
+			//	Call timer's function
+			timer.callback();
+
+			//	Check if timer has repetitions
+			//	NOTE: This condition allows to have infinite looping timers.
+			if ( timer.repetitions > 0 )
+			{
+				//	Delete timer if repetitions reached zero
+				timer.repetitions--;
+				if ( timer.repetitions == 0 )
+				{
+					itr = _timers.erase( itr );
+					continue;
+				}
+			}
+
+			//	Reset timer's time
+			//	NOTE: Substracting maximum time for more accurate results at higher delta time
+			timer.current_time -= timer.max_time;
+
+			itr++;
 		}
 	}
 

@@ -51,7 +51,7 @@ float Updater::get_accumulated_seconds() const
 	return _accumulated_seconds; 
 }
 
-uint32_t suprengine::Updater::get_fps() const
+uint32_t Updater::get_fps() const
 {
 	return _fps;
 }
