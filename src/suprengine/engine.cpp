@@ -8,6 +8,7 @@
 #include <suprengine/scene.h>
 
 #include <backends/imgui_impl_sdl2.h>
+#include <implot.h>
 
 #include <unordered_map>
 #include <algorithm>
@@ -35,6 +36,7 @@ Engine::~Engine()
 
 	//  Release ImGui
 	ImGui_ImplSDL2_Shutdown();
+	ImPlot::DestroyContext();
 	ImGui::DestroyContext();
 
 	//  Quit sdl
@@ -78,6 +80,7 @@ bool Engine::init( IGame* game )
 	//  Init imgui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;

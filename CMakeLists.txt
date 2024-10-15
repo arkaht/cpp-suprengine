@@ -70,6 +70,10 @@ target_link_libraries(SUPRENGINE PUBLIC GLEW)
 add_subdirectory("libs/imgui")
 target_link_libraries(SUPRENGINE PUBLIC IMGUI)
 
+#  Link ImPlot
+add_subdirectory("libs/implot")
+target_link_libraries(SUPRENGINE PUBLIC IMPLOT)
+
 #  Link assimp
 add_library(ASSIMP SHARED IMPORTED)
 set_target_properties(ASSIMP PROPERTIES
