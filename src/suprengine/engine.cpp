@@ -35,9 +35,12 @@ Engine::~Engine()
 	Assets::release();
 
 	//  Release ImGui
-	ImGui_ImplSDL2_Shutdown();
-	ImPlot::DestroyContext();
-	ImGui::DestroyContext();
+	if ( ImGui::GetCurrentContext() != nullptr )
+	{
+		ImGui_ImplSDL2_Shutdown();
+		ImPlot::DestroyContext();
+		ImGui::DestroyContext();
+	}
 
 	//  Quit sdl
 	SDL_Quit();
@@ -57,7 +60,6 @@ bool Engine::init( IGame* game )
 		infos.width,
 		infos.height
 	);
-	if ( !_window->init() ) return false;
 
 	//  Init render batch
 	_render_batch = std::unique_ptr<RenderBatch>(

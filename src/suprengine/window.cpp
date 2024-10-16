@@ -1,25 +1,17 @@
 #include "window.h"
 
+#include <suprengine/assert.hpp>
+
+#include <SDL.h>
+
 using namespace suprengine;
 
 Window::Window( const std::string& title, int width, int height  ) 
 	:	_title( title ), 
 		_size { (float)width, (float)height }
-{}
-
-Window::~Window()
 {
-	if ( _sdl_window == nullptr ) return;
-	SDL_DestroyWindow( _sdl_window );
-}
-
-bool Window::init()
-{
-	if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
-	{
-		Logger::error( "unable to initialize SDL" );
-		return false;
-	}
+	int sdl_init_code = SDL_Init( SDL_INIT_VIDEO );
+	ASSERT( sdl_init_code > -1, SDL_GetError() );
 
 	_sdl_window = SDL_CreateWindow( 
 		_title.c_str(), 
@@ -27,15 +19,15 @@ bool Window::init()
 		(int)_size.x, (int)_size.y,
 		SDL_WINDOW_OPENGL
 	);
-	if ( _sdl_window == nullptr )
-	{
-		Logger::error( "unable to create SDL window" );
-		return false;
-	}
+	ASSERT( _sdl_window != nullptr, "Window couldn't be created!" );
 
 	_current_size = _size;
-	
-	return true;
+}
+
+Window::~Window()
+{
+	if ( _sdl_window == nullptr ) return;
+	SDL_DestroyWindow( _sdl_window );
 }
 
 void Window::set_mode( WindowMode mode )

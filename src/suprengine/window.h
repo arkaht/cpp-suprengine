@@ -1,11 +1,9 @@
 #pragma once
 
-#include <SDL.h>
+#include <suprengine/vec2.h>
+#include <suprengine/event.hpp>
 
-#include "vec2.h"
-#include "logger.h"
-
-#include "event.hpp"
+struct SDL_Window;
 
 namespace suprengine
 {
@@ -23,8 +21,6 @@ namespace suprengine
 		Window( const Window& ) = delete;
 		Window& operator=( const Window& ) = delete;
 		~Window();
-
-		bool init();
 
 		void set_mode( WindowMode mode );
 		WindowMode get_mode() const { return _mode; }
