@@ -1,9 +1,10 @@
 #pragma once
 
-#include <SDL.h>
-#include "math.h"
+#include <suprengine/math.h>
+//	TODO: Implement IM_VEC2_CLASS_EXTRA
+#include <suprengine/imgui.h>
 
-#include "imgui.h"
+#include <SDL.h>
 
 namespace suprengine
 {

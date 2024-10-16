@@ -5,7 +5,7 @@
 #include <suprengine/rect.h>
 #include <suprengine/color.h>
 #include <suprengine/model.h>
-#include <suprengine/font.fwd.h>
+#include <suprengine/vec3.h>
 
 #include <suprengine/components/renderer.fwd.h>
 
@@ -14,13 +14,13 @@
 
 namespace suprengine
 {
-	const static std::string SHADER_LIT_MESH = "suprengine::lit-mesh";
-	const static std::string TEXTURE_LARGE_GRID = "suprengine::large-grid";
-	const static std::string TEXTURE_MEDIUM_GRID = "suprengine::medium-grid";
-	const static std::string MESH_ARROW = "suprengine::arrow";
-	const static std::string MESH_CUBE = "suprengine::cube";
-	const static std::string MESH_CYLINDER = "suprengine::cylinder";
-	const static std::string MESH_SPHERE = "suprengine::sphere";
+	static const std::string SHADER_LIT_MESH = "suprengine::lit-mesh";
+	static const std::string TEXTURE_LARGE_GRID = "suprengine::large-grid";
+	static const std::string TEXTURE_MEDIUM_GRID = "suprengine::medium-grid";
+	static const std::string MESH_ARROW = "suprengine::arrow";
+	static const std::string MESH_CUBE = "suprengine::cube";
+	static const std::string MESH_CYLINDER = "suprengine::cylinder";
+	static const std::string MESH_SPHERE = "suprengine::sphere";
 
 	class Engine;
 
@@ -37,9 +37,9 @@ namespace suprengine
 
 	struct AmbientLightInfos
 	{
-		Color color;
-		Vec3 direction;
-		float scale;
+		Color color = Color::white;
+		Vec3 direction = Vec3::zero;
+		float scale = 1.0f;
 	};
 
 	enum class DrawType

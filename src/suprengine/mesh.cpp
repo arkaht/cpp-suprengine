@@ -1,6 +1,8 @@
 #include "mesh.h"
 
 #include <suprengine/assets.h>
+#include <suprengine/vertex-array.h>
+#include <suprengine/shader.h>
 
 using namespace suprengine;
 

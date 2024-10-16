@@ -3,9 +3,8 @@
 
 #include "sdl-texture.hpp"
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+struct SDL_Renderer;
+struct SDL_Surface;
 
 namespace suprengine
 {

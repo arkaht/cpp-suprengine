@@ -1,5 +1,9 @@
 #include "font.h"
 
+#include <suprengine/logger.h>
+
+#include <SDL_ttf.h>
+
 using namespace suprengine;
 
 Font* Font::load( const std::string& path, int size )

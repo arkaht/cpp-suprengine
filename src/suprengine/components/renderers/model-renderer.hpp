@@ -17,16 +17,7 @@ namespace suprengine
 			: model( model ), shader_name( shader_name ),
 			  Renderer( modulate, priority_order ) {}
 
-		void render( RenderBatch* render_batch ) override
-		{
-			glFrontFace( GL_CW );
-			render_batch->draw_model( 
-				transform->get_matrix(), 
-				model, 
-				shader_name,
-				modulate
-			);
-		}
+		void render( RenderBatch* render_batch ) override;
 
 		RenderPhase get_render_phase() const override 
 		{ 
@@ -34,8 +25,8 @@ namespace suprengine
 		}
 
 	public:
-		SharedPtr<Model> model { nullptr };
-		int texture_id { 0 };
-		std::string shader_name;
+		SharedPtr<Model> model = nullptr;
+		int texture_id = 0;
+		std::string shader_name {};
 	};
 }

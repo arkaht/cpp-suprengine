@@ -1,12 +1,10 @@
 #pragma once
-#include <memory.h>
 
-#include "vec3.h"
-#include "quaternion.h"
+#include <suprengine/vec3.h>
+#include <suprengine/quaternion.h>
 
 namespace suprengine
 {
-
 	class Mtx4
 	{
 	public:

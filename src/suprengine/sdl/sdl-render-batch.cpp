@@ -3,6 +3,10 @@
 #include <suprengine/texture.h>
 #include <suprengine/components/renderer.h>
 
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+
 using namespace suprengine;
 
 SDLRenderBatch::~SDLRenderBatch()
@@ -68,12 +72,12 @@ void SDLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Colo
 
 	switch ( draw_type )
 	{
-	case DrawType::Fill:
-		SDL_RenderFillRect( _sdl_renderer, &sdl_rect );
-		break;
-	case DrawType::Line:
-		SDL_RenderDrawRect( _sdl_renderer, &sdl_rect );
-		break;
+		case DrawType::Fill:
+			SDL_RenderFillRect( _sdl_renderer, &sdl_rect );
+			break;
+		case DrawType::Line:
+			SDL_RenderDrawRect( _sdl_renderer, &sdl_rect );
+			break;
 	}
 }
 

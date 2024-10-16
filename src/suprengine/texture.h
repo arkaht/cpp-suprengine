@@ -1,5 +1,4 @@
 #pragma once
-#include "texture.fwd.h"
 
 #include <suprengine/render-batch.h>
 
@@ -27,8 +26,8 @@ namespace suprengine
 		virtual SDL_Texture* get_sdl_texture() const { return nullptr; }
 
 	private:
-		GLuint texture_id { 0 };
-		std::string path { "" };
-		Vec2 size { 0.0f, 0.0f };
+		uint32 texture_id = 0;
+		std::string path {};
+		Vec2 size = Vec2::zero;
 	};
 }

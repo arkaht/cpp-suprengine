@@ -278,7 +278,7 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
 	Mtx4 location_matrix = _compute_location_matrix( rect.x, rect.y, 0.0f );
 	_color_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
-	_color_shader->set_vec4( "u_modulate", color );
+	_color_shader->set_color( "u_modulate", color );
 
 	//  draw
 	_draw_elements( 6 );
@@ -321,11 +321,12 @@ void OpenGLRenderBatch::draw_texture(
 	_texture_shader->set_mtx4( "u_world_transform", matrix );
 
 	//  set modulate
-	_texture_shader->set_vec4( "u_modulate", color );
+	_texture_shader->set_color( "u_modulate", color );
 
 	//  source rect
 	Vec2 size = texture->get_size();
-	_texture_shader->set_vec4( "u_source_rect",
+	_texture_shader->set_vec4(
+		"u_source_rect",
 		src_rect.x / size.x,
 		src_rect.y / size.y,
 		src_rect.w / size.x,
@@ -348,12 +349,11 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 	{
 		shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
 		shader->set_mtx4( "u_world_transform", matrix );
-		shader->set_vec4( "u_modulate", color );
 
 		//  lighting
 		shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
 		shader->set_float("u_ambient_scale", _ambient_light.scale );
-		shader->set_vec4( "u_ambient_color", _ambient_light.color );
+		shader->set_color( "u_ambient_color", _ambient_light.color );
 	}
 
 	//  draw
@@ -394,12 +394,12 @@ void OpenGLRenderBatch::draw_model(
 			shader->activate();
 			shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
 			shader->set_mtx4( "u_world_transform", matrix );
-			shader->set_vec4( "u_modulate", color );
+			shader->set_color( "u_modulate", color );
 
 			//  lighting
 			shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
 			shader->set_float( "u_ambient_scale", _ambient_light.scale );
-			shader->set_vec4( "u_ambient_color", _ambient_light.color );
+			shader->set_color( "u_ambient_color", _ambient_light.color );
 		}
 
 		//  draw

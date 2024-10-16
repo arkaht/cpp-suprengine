@@ -6,6 +6,7 @@
 
 #include <suprengine/model.h>
 #include <suprengine/vertex-array.h>
+#include <suprengine/logger.h>
 
 using namespace suprengine;
 

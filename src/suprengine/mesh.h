@@ -1,14 +1,15 @@
 #pragma once
 
 #include <suprengine/usings.h>
-#include <suprengine/vertex-array.h>
-#include <suprengine/shader.h>
-#include <suprengine/texture.fwd.h>
 
 #include <vector>
 
 namespace suprengine
 {
+	class VertexArray;
+	class Shader;
+	class Texture;
+	
 	class Mesh
 	{
 	public:

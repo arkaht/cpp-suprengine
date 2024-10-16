@@ -195,24 +195,24 @@ void Engine::process_input()
 		//  TODO: Remove dependencies with our Event class
 		switch ( event.type )
 		{
-		//  Store mouse delta for this frame
-		case SDL_MOUSEMOTION:
-			if ( imgui_io.WantCaptureMouse ) continue;
+			//  Store mouse delta for this frame
+			case SDL_MOUSEMOTION:
+				if ( imgui_io.WantCaptureMouse ) continue;
 
-			_inputs->mouse_delta.x = (float)event.motion.xrel;
-			_inputs->mouse_delta.y = (float)event.motion.yrel;
-			break;
-		//  Store mouse wheel for this frame
-		case SDL_MOUSEWHEEL:
-			if ( imgui_io.WantCaptureMouse ) continue;
+				_inputs->mouse_delta.x = (float)event.motion.xrel;
+				_inputs->mouse_delta.y = (float)event.motion.yrel;
+				break;
+			//  Store mouse wheel for this frame
+			case SDL_MOUSEWHEEL:
+				if ( imgui_io.WantCaptureMouse ) continue;
 
-			_inputs->mouse_wheel.x = (float)event.wheel.x;
-			_inputs->mouse_wheel.y = (float)event.wheel.y;
-			break;
-		//  Quit game when closing window
-		case SDL_QUIT:
-			_is_running = false;
-			break;
+				_inputs->mouse_wheel.x = (float)event.wheel.x;
+				_inputs->mouse_wheel.y = (float)event.wheel.y;
+				break;
+			//  Quit game when closing window
+			case SDL_QUIT:
+				_is_running = false;
+				break;
 		}
 	}
 	

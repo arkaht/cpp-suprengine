@@ -12,6 +12,8 @@
 
 #include <suprengine/imgui.h>
 
+#include <suprengine/assert.hpp>
+
 #include <vector>
 
 namespace suprengine
