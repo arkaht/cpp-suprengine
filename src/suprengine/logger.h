@@ -1,9 +1,6 @@
 #pragma once
 
 #include <string>
-#include <SDL_log.h>
-
-#include <suprengine/assert.hpp>
 
 namespace suprengine
 {
@@ -28,7 +25,6 @@ namespace suprengine
 		static void critical( const std::string& message, Args... args )
 		{
 			printf( ( "[CRITICAL] " + message + "\n" ).c_str(), args... );
-			assert( false );
 		}
 	};
 };

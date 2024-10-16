@@ -1,6 +1,19 @@
 #pragma once
 
-#include <cassert>
+#include <suprengine/logger.h>
 
-//  Debug only: assert with the specified error message
-#define ASSERT(condition, message) assert((message, condition))
+/*
+ * Assert a condition.
+ * If failed, log the given error message and exits the program.
+ */
+#define ASSERT( condition, message )						\
+	if ( !( condition ) ) {									\
+		Logger::critical(									\
+			"Assertion failed: %s: \"%s\" [%s:%d]",			\
+			#condition,										\
+			message,										\
+			__FILE__,										\
+			__LINE__										\
+		);													\
+		__debugbreak();										\
+	}
