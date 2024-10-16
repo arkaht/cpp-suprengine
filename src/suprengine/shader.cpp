@@ -1,226 +1,274 @@
 #include "shader.h"
 
-#include <SDL.h>
 #include <sstream>
 #include <string>
+#include <vector>
+
+#include <SDL.h>
+#include <gl/glew.h>
 
 #include <suprengine/logger.h>
+#include <suprengine/assert.hpp>
 
 using namespace suprengine;
 
+void print_shader_info_log( uint32 shader_id )
+{
+	int log_length = 0;
+	glGetShaderiv( shader_id, GL_INFO_LOG_LENGTH, &log_length );
+
+	std::string info_log;
+	info_log.reserve( log_length );
+	glGetShaderInfoLog( shader_id, log_length, &log_length, info_log.data() );
+
+	Logger::info( "Shader (ID: %d) info log: %s", shader_id, *info_log );
+}
+
+void print_program_info_log( uint32 program_id )
+{
+	int log_length = 0;
+	glGetProgramiv( program_id, GL_INFO_LOG_LENGTH, &log_length );
+
+	std::string info_log;
+	info_log.reserve( log_length );
+	glGetProgramInfoLog( program_id, log_length, &log_length, info_log.data() );
+
+	Logger::info( "Program (ID: %d) info log: %s", program_id, *info_log );
+}
+
+void try_attach_shader( uint32 program_id, uint32 shader_id )
+{
+	if ( shader_id == 0 ) return;
+	glAttachShader( program_id, shader_id );
+}
+
+void try_detach_shader( uint32 program_id, uint32 shader_id )
+{
+	if ( shader_id == 0 ) return;
+	glDetachShader( program_id, shader_id );
+}
+
+void try_delete_shader( uint32 shader_id )
+{
+	if ( shader_id == 0 ) return;
+	glDeleteShader( shader_id );
+}
+
+Shader::Shader(
+	const char* vertex_code,
+	const char* fragment_code,
+	const char* tess_control_code,
+	const char* tess_eval_code,
+	const char* geometry_code
+)
+{
+	ASSERT( strlen( vertex_code ) > 0, "Vertex shader code is empty" );
+	ASSERT( strlen( fragment_code ) > 0, "Fragment shader code is empty" );
+
+	uint32 vertex_shader_id = _create_shader(
+		GL_VERTEX_SHADER, vertex_code, "vertex"
+	);
+	uint32 fragment_shader_id = _create_shader(
+		GL_FRAGMENT_SHADER, fragment_code, "fragment"
+	);
+	uint32 tess_control_shader_id = _create_shader(
+		GL_TESS_CONTROL_SHADER, tess_control_code, "tessellation control"
+	);
+	uint32 tess_evaluation_shader_id = _create_shader(
+		GL_TESS_EVALUATION_SHADER, tess_eval_code, "tessellation evaluation"
+	);
+	uint32 geometry_shader_id = _create_shader(
+		GL_GEOMETRY_SHADER, geometry_code, "geometry"
+	);
+
+	_create_program(
+		vertex_shader_id,
+		fragment_shader_id,
+		tess_control_shader_id,
+		tess_evaluation_shader_id,
+		geometry_shader_id
+	);
+
+	//	TODO: Refactor this function
+	//print_all_params( _program_id );
+}
+
 Shader::~Shader()
 {
-	glDeleteProgram( id );
+	glDeleteProgram( _program_id );
 }
 
 void Shader::activate()
 {
-	glUseProgram( id );
+	glUseProgram( _program_id );
 }
 
-void Shader::compile( const GLchar* vertexSource, const GLchar* fragmentSource,
-	const GLchar* tessControlSource, const GLchar* tessEvalSource, const GLchar* geometrySource )
+bool Shader::is_valid() const
 {
-	if ( strlen( vertexSource ) == 0 )
+	return _program_id != 0;
+}
+
+uint32 Shader::_create_shader( uint32 type, const char* code, const char* name )
+{
+	if ( code == nullptr ) return 0;
+
+	//	Create shader
+	const uint32 shader_id = glCreateShader( type );
+	glShaderSource( shader_id, 1, &code, NULL );
+
+	//	Compile shader
+	if ( !_compile_shader( shader_id, name ) )
 	{
-		Logger::error( "vertex shader code is empty!" );
+		//	Free as soon as possible the shader to avoid memory leak
+		glDeleteShader( shader_id );
+		return 0;
+	}
+
+	Logger::info( "Compiled %s shader (ID: %d)", name, shader_id );
+
+	return shader_id;
+}
+
+void Shader::_create_program(
+	uint32 vertex_shader_id,
+	uint32 fragment_shader_id,
+	uint32 tess_control_shader_id,
+	uint32 tess_evaluation_shader_id,
+	uint32 geometry_shader_id
+)
+{
+	//	Create program
+	_program_id = glCreateProgram();
+	try_attach_shader( _program_id, vertex_shader_id );
+	try_attach_shader( _program_id, fragment_shader_id );
+	try_attach_shader( _program_id, tess_control_shader_id );
+	try_attach_shader( _program_id, tess_evaluation_shader_id );
+	try_attach_shader( _program_id, geometry_shader_id );
+
+	//	Check for errors
+	if ( !_link_and_validate_program() )
+	{
+		glDeleteProgram( _program_id );
+		_program_id = 0;
+
+		//	Delete shaders as they are no longer used
+		try_delete_shader( vertex_shader_id );
+		try_delete_shader( fragment_shader_id );
+		try_delete_shader( tess_control_shader_id );
+		try_delete_shader( tess_evaluation_shader_id );
+		try_delete_shader( geometry_shader_id );
 		return;
 	}
-	if ( strlen( fragmentSource ) == 0 )
+
+	//	Detach shaders after success
+	try_detach_shader( _program_id, vertex_shader_id );
+	try_detach_shader( _program_id, fragment_shader_id );
+	try_detach_shader( _program_id, tess_control_shader_id );
+	try_detach_shader( _program_id, tess_evaluation_shader_id );
+	try_detach_shader( _program_id, geometry_shader_id );
+
+	Logger::info( "Linked and validated shader program (ID: %d)", _program_id );
+}
+
+void Shader::set_float( const char* name, float value )
+{
+	glUniform1f( glGetUniformLocation( _program_id, name ), value );
+}
+
+void Shader::set_int( const char* name, int value )
+{
+	glUniform1i( glGetUniformLocation( _program_id, name ), value );
+}
+
+void Shader::set_vec2( const char* name, float x, float y )
+{
+	glUniform2f( glGetUniformLocation( _program_id, name ), x, y );
+}
+void Shader::set_vec2( const char* name, const Vec2& value )
+{
+	glUniform2f( glGetUniformLocation( _program_id, name ), value.x, value.y );
+}
+
+void Shader::set_vec3( const char* name, float x, float y, float z )
+{
+	glUniform3f( glGetUniformLocation( _program_id, name ), x, y, z );
+}
+void Shader::set_vec3( const char* name, const Vec3& value )
+{
+	set_vec3( name, value.x, value.y, value.z );
+}
+
+void Shader::set_vec4( const char* name, float x, float y, float z, float w )
+{
+	glUniform4f( glGetUniformLocation( _program_id, name ), x, y, z, w );
+}
+
+void Shader::set_color( const char* name, const Color& value )
+{
+	set_vec4(
+		name,
+		value.r / 255.0f,
+		value.g / 255.0f,
+		value.b / 255.0f,
+		value.a / 255.0f
+	);
+}
+
+void Shader::set_mtx4( const char* name, const Mtx4& matrix )
+{
+	glUniformMatrix4fv( glGetUniformLocation( _program_id, name ), 1, GL_TRUE, matrix.get_as_float_pointer() );
+}
+
+bool Shader::_compile_shader( uint32 shader_id, const char* name )
+{
+	int status = GL_FALSE;
+
+	glCompileShader( shader_id );
+	glGetShaderiv( shader_id, GL_COMPILE_STATUS, &status );
+	if ( status != GL_TRUE )
 	{
-		Logger::error( "fragment shader code is empty!" );
-		return;
-	}
-
-	compile_vertex_shader( vertexSource );
-	bool tessExists = compile_tess_control_shader( tessControlSource );
-	tessExists &= compile_tess_eval_shader( tessEvalSource );
-	bool gsExists = compile_geometry_shader( geometrySource );
-	compile_fragment_shader( fragmentSource );
-	create_shader_program( tessExists, gsExists );
-	print_all_params( id );
-}
-
-void Shader::compile_vertex_shader( const GLchar* vertex_source )
-{
-	vs = glCreateShader( GL_VERTEX_SHADER );
-	glShaderSource( vs, 1, &vertex_source, NULL );
-	glCompileShader( vs );
-	check_shader_errors( vs, "vertex" );
-}
-
-void Shader::compile_fragment_shader( const GLchar* fragment_source )
-{
-	fs = glCreateShader( GL_FRAGMENT_SHADER );
-	glShaderSource( fs, 1, &fragment_source, NULL );
-	glCompileShader( fs );
-	check_shader_errors( fs, "fragment" );
-}
-
-bool Shader::compile_tess_control_shader( const GLchar* tessControlSource )
-{
-	if ( tessControlSource == nullptr )
-	{
+		Logger::error(
+			"Failed to compile %s shader (ID: %d), status %d",
+			name, shader_id, status
+		);
+		print_shader_info_log( shader_id );
 		return false;
 	}
 
-	tcs = glCreateShader( GL_TESS_CONTROL_SHADER );
-	glShaderSource( tcs, 1, &tessControlSource, NULL );
-	glCompileShader( tcs );
-	check_shader_errors( tcs, "tessellation control" );
 	return true;
 }
 
-bool Shader::compile_tess_eval_shader( const GLchar* tessEvalSource )
+bool Shader::_link_and_validate_program()
 {
-	if ( tessEvalSource == nullptr )
+	int status = GL_FALSE;
+
+	//	Linking program
+	glLinkProgram( _program_id );
+	glGetProgramiv( _program_id, GL_LINK_STATUS, &status );
+	if ( status != GL_TRUE )
 	{
+		Logger::error(
+			"Failed to link shaders to program (ID: %d), status %d",
+			_program_id, status
+		);
+		print_program_info_log( _program_id );
 		return false;
 	}
 
-	tes = glCreateShader( GL_TESS_EVALUATION_SHADER );
-	glShaderSource( tes, 1, &tessEvalSource, NULL );
-	glCompileShader( tes );
-	check_shader_errors( tes, "tessellation evaluation" );
-	return true;
-}
-
-bool Shader::compile_geometry_shader( const GLchar* geometry_source )
-{
-	if ( geometry_source == nullptr )
+	//	Validate program
+	glValidateProgram( _program_id );
+	glGetProgramiv( _program_id, GL_VALIDATE_STATUS, &status );
+	if ( status != GL_TRUE )
 	{
+		Logger::error(
+			"Failed to validate shader program (ID: %d), status %d",
+			_program_id, status
+		);
+		print_program_info_log( _program_id );
 		return false;
 	}
 
-	gs = glCreateShader( GL_GEOMETRY_SHADER );
-	glShaderSource( gs, 1, &geometry_source, NULL );
-	glCompileShader( gs );
-	check_shader_errors( gs, "geometry" );
-
 	return true;
-}
-
-void Shader::create_shader_program( bool tessShadersExist, bool geometryShaderExists )
-{
-	// Create program
-	id = glCreateProgram();
-	glAttachShader( id, fs );
-	if ( tessShadersExist )
-	{
-		glAttachShader( id, tcs );
-		glAttachShader( id, tes );
-	}
-	if ( geometryShaderExists )
-	{
-		glAttachShader( id, gs );
-	}
-	glAttachShader( id, vs );
-	glLinkProgram( id );
-
-	// Check for linking error
-	int params = -1;
-	glGetProgramiv( id, GL_LINK_STATUS, &params );
-	if ( params != GL_TRUE )
-	{
-		std::ostringstream s;
-		s << "Could not link shader programme GL index " << id;
-		Logger::error( s.str() );
-		print_program_info_log( id );
-	}
-	if ( !is_valid( id ) )
-	{
-		std::ostringstream s;
-		s << "Could not validate shader " << id;
-		Logger::error( s.str() );
-	}
-
-	// Delete shaders for they are no longer used
-	glDeleteShader( vs );
-	if ( tessShadersExist )
-	{
-		glDeleteShader( tcs );
-		glDeleteShader( tes );
-	}
-	if ( geometryShaderExists )
-	{
-		glDeleteShader( gs );
-	}
-	glDeleteShader( fs );
-}
-
-void Shader::set_float( const GLchar* name, GLfloat value )
-{
-	glUniform1f( glGetUniformLocation( id, name ), value );
-}
-void Shader::set_int( const GLchar* name, GLint value )
-{
-	glUniform1i( glGetUniformLocation( id, name ), value );
-}
-void Shader::set_vec2( const GLchar* name, GLfloat x, GLfloat y )
-{
-	glUniform2f( glGetUniformLocation( id, name ), x, y );
-}
-void Shader::set_vec2( const GLchar* name, const Vec2& value )
-{
-	glUniform2f( glGetUniformLocation( id, name ), value.x, value.y );
-}
-
-void Shader::set_vec3( const GLchar* name, GLfloat x, GLfloat y, GLfloat z )
-{
-	glUniform3f( glGetUniformLocation( id, name ), x, y, z );
-}
-void Shader::set_vec3( const GLchar* name, const Vec3& value )
-{
-	glUniform3f( glGetUniformLocation( id, name ), value.x, value.y, value.z );
-}
-
-void Shader::set_vec4( const GLchar* name, GLfloat x, GLfloat y, GLfloat z, GLfloat w )
-{
-	glUniform4f( glGetUniformLocation( id, name ), x, y, z, w );
-}
-void Shader::set_vec4( const GLchar* name, const Color& value )
-{
-	glUniform4f( glGetUniformLocation( id, name ), value.r / 255.0f, value.g / 255.0f, value.b / 255.0f, value.a / 255.0f );
-}
-
-void Shader::set_mtx4( const GLchar* name, const Mtx4& matrix )
-{
-	glUniformMatrix4fv( glGetUniformLocation( id, name ), 1, GL_TRUE, matrix.get_as_float_pointer() );
-}
-
-void Shader::print_shader_info_log( GLuint shaderIndex )
-{
-	int max_length = 2048;
-	int actual_length = 0;
-	char log[2048];
-	glGetShaderInfoLog( shaderIndex, max_length, &actual_length, log );
-	std::ostringstream s;
-	s << "Shader info log for GL index " << shaderIndex;
-	Logger::info( s.str() );
-}
-
-void Shader::print_program_info_log( GLuint id )
-{
-	int max_length = 2048;
-	int actual_length = 0;
-	char log[2048];
-	glGetProgramInfoLog( id, max_length, &actual_length, log );
-	std::ostringstream s;
-	s << "Program info log for GL index " << id;
-	Logger::info( s.str() );
-}
-
-void Shader::check_shader_errors( GLuint shader, std::string shaderType )
-{
-	int params = -1;
-	glGetShaderiv( shader, GL_COMPILE_STATUS, &params );
-	if ( params != GL_TRUE )
-	{
-		std::ostringstream s;
-		s << "GL " << shaderType << " shader index " << shader << " did not compile.";
-		Logger::error( s.str() );
-		print_shader_info_log( shader );
-	}
 }
 
 const char* Shader::gl_type_to_string( GLenum type )
@@ -342,21 +390,4 @@ void Shader::print_all_params( GLuint id )
 		}
 	}
 	print_program_info_log( id );
-}
-
-bool Shader::is_valid( GLuint id )
-{
-	glValidateProgram( id );
-	int params = -1;
-	glGetProgramiv( id, GL_VALIDATE_STATUS, &params );
-	Logger::info( "" );
-	std::ostringstream s;
-	s << "program " << id << " GL_VALIDATE_STATUS = " << params;
-	Logger::info( s.str() );
-	if ( params != GL_TRUE )
-	{
-		print_program_info_log( id );
-		return false;
-	}
-	return true;
 }

@@ -349,6 +349,7 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 	{
 		shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
 		shader->set_mtx4( "u_world_transform", matrix );
+		shader->set_color( "u_modulate", color );
 
 		//  lighting
 		shader->set_vec3( "u_ambient_direction", _ambient_light.direction );

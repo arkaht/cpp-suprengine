@@ -308,12 +308,13 @@ Shader* Assets::load_shader_from_file(
 	rconst_str geo_filename 
 )
 {
+	//	TODO: Refactor this function
 	// 1. Retrieve the vertex/fragment source code from filePath
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::string tcCode;
-	std::string teCode;
-	std::string geometryCode;
+	std::string vertex_code {};
+	std::string fragment_code {};
+	std::string tess_control_code {};
+	std::string tess_eval_code {};
+	std::string geometry_code {};
 	try
 	{
 		// Open files
@@ -337,8 +338,8 @@ Shader* Assets::load_shader_from_file(
 		vertexShaderFile.close();
 		fragmentShaderFile.close();
 		// Convert stream into string
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
+		vertex_code = vShaderStream.str();
+		fragment_code = fShaderStream.str();
 		// If tess control shader path is present, also load a tess control shader
 		if ( tsc_filename != "" )
 		{
@@ -346,7 +347,7 @@ Shader* Assets::load_shader_from_file(
 			std::stringstream tcShaderStream;
 			tcShaderStream << tessControlShaderFile.rdbuf();
 			tessControlShaderFile.close();
-			tcCode = tcShaderStream.str();
+			tess_control_code = tcShaderStream.str();
 		}
 		// If tess evaluation shader path is present, also load a tess evaluation shader
 		if ( tse_filename != "" )
@@ -355,7 +356,7 @@ Shader* Assets::load_shader_from_file(
 			std::stringstream teShaderStream;
 			teShaderStream << tessEvalShaderFile.rdbuf();
 			tessEvalShaderFile.close();
-			teCode = teShaderStream.str();
+			tess_eval_code = teShaderStream.str();
 		}
 		// If geometry shader path is present, also load a geometry shader
 		if ( geo_filename != "" )
@@ -364,7 +365,7 @@ Shader* Assets::load_shader_from_file(
 			std::stringstream gShaderStream;
 			gShaderStream << geometryShaderFile.rdbuf();
 			geometryShaderFile.close();
-			geometryCode = gShaderStream.str();
+			geometry_code = gShaderStream.str();
 		}
 	}
 	catch ( std::exception e )
@@ -372,19 +373,16 @@ Shader* Assets::load_shader_from_file(
 		Logger::error( "SHADER: failed to read shader files (vertex: '" + vtx_filename + "'; fragment: '" + frg_filename + "'): '" + e.what() + "'\n" );
 		return nullptr;
 	}
-	const GLchar* vShaderCode = vertexCode.c_str();
-	const GLchar* fShaderCode = fragmentCode.c_str();
-	const GLchar* tcShaderCode = tcCode.c_str();
-	const GLchar* teShaderCode = teCode.c_str();
-	const GLchar* gShaderCode = geometryCode.c_str();
 
-	// 2. Now create shader object from source code
-	Logger::info( "compiling shaders (vertex: '" + vtx_filename + "'; fragment: '" + frg_filename + "')" );
-	Shader* shader = new Shader();
-	shader->compile( vShaderCode, fShaderCode,
-		tsc_filename != "" ? tcShaderCode : nullptr,
-		tse_filename != "" ? teShaderCode : nullptr,
-		geo_filename != "" ? gShaderCode : nullptr );
+	//	Create and compile shader
+	Logger::info( "Compiling shaders (vertex: '" + vtx_filename + "'; fragment: '" + frg_filename + "')" );
+	Shader* shader = new Shader(
+		*vertex_code,
+		*fragment_code,
+		!tsc_filename.empty() ? *tess_control_code : nullptr,
+		!tse_filename.empty() ? *tess_eval_code : nullptr,
+		!geo_filename.empty() ? *geometry_code : nullptr
+	);
 
 	return shader;
 }
