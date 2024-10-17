@@ -11,6 +11,10 @@ namespace suprengine
 	class Shader
 	{
 	public:
+		/*
+		 * Creates, compiles and links OpenGL shaders into one program.
+		 * The vertex and fragment shaders must succeed or assertion is thrown.
+		 */
 		Shader(
 			const char* vertex_code,
 			const char* fragment_code,
@@ -20,6 +24,9 @@ namespace suprengine
 		);
 		~Shader();
 
+		/*
+		 * Sets program to be used for next rendering operations.
+		 */
 		void activate();
 
 		/*
@@ -37,6 +44,8 @@ namespace suprengine
 		void set_color( const char* name, const Color& value );
 		void set_mtx4( const char* name, const Mtx4& matrix );
 
+		void print_all_params() const;
+
 	private:
 		uint32 _create_shader( uint32 type, const char* code, const char* name );
 		bool _compile_shader( uint32 shader_id, const char* name );
@@ -49,9 +58,6 @@ namespace suprengine
 			uint32 geometry_shader_id
 		);
 		bool _link_and_validate_program();
-
-		const char* gl_type_to_string( uint32 type );
-		void print_all_params( uint32 program );
 
 	private:
 		uint32 _program_id = 0;

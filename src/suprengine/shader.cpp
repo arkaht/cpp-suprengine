@@ -68,9 +68,13 @@ Shader::Shader(
 	uint32 vertex_shader_id = _create_shader(
 		GL_VERTEX_SHADER, vertex_code, "vertex"
 	);
+	ASSERT( vertex_shader_id != 0, "Vertex shader failed to compile" );
+
 	uint32 fragment_shader_id = _create_shader(
 		GL_FRAGMENT_SHADER, fragment_code, "fragment"
 	);
+	ASSERT( fragment_shader_id != 0, "Fragment shader failed to compile" );
+
 	uint32 tess_control_shader_id = _create_shader(
 		GL_TESS_CONTROL_SHADER, tess_control_code, "tessellation control"
 	);
@@ -89,13 +93,15 @@ Shader::Shader(
 		geometry_shader_id
 	);
 
-	//	TODO: Refactor this function
-	//print_all_params( _program_id );
+	print_all_params();
 }
 
 Shader::~Shader()
 {
-	glDeleteProgram( _program_id );
+	if ( _program_id != 0 )
+	{
+		glDeleteProgram( _program_id );
+	}
 }
 
 void Shader::activate()
@@ -106,6 +112,128 @@ void Shader::activate()
 bool Shader::is_valid() const
 {
 	return _program_id != 0;
+}
+
+const char* gl_type_to_string( GLenum type )
+{
+	switch ( type )
+	{
+		case GL_BOOL:
+			return "bool";
+		case GL_INT:
+			return "int";
+		case GL_FLOAT:
+			return "float";
+		case GL_FLOAT_VEC2:
+			return "vec2";
+		case GL_FLOAT_VEC3:
+			return "vec3";
+		case GL_FLOAT_VEC4:
+			return "vec4";
+		case GL_FLOAT_MAT2:
+			return "mat2";
+		case GL_FLOAT_MAT3:
+			return "mat3";
+		case GL_FLOAT_MAT4:
+			return "mat4";
+		case GL_SAMPLER_2D:
+			return "sampler2D";
+		case GL_SAMPLER_3D:
+			return "sampler3D";
+		case GL_SAMPLER_CUBE:
+			return "samplerCube";
+		case GL_SAMPLER_2D_SHADOW:
+			return "sampler2DShadow";
+		default:
+			break;
+	}
+
+	return "N/A";
+}
+
+void Shader::print_all_params() const
+{
+	Logger::info( "Program (ID: %d) parameters:", _program_id );
+
+	int params = -1;
+	glGetProgramiv( _program_id, GL_LINK_STATUS, &params );
+	Logger::info( "GL_LINK_STATUS = %d", params );
+
+	glGetProgramiv( _program_id, GL_ATTACHED_SHADERS, &params );
+	Logger::info( "GL_ATTACHED_SHADERS = %d", params );
+
+	glGetProgramiv( _program_id, GL_ACTIVE_ATTRIBUTES, &params );
+	Logger::info( "GL_ACTIVE_ATTRIBUTES = %d", params );
+
+	//	Print all attributes
+	for ( int i = 0; i < params; i++ )
+	{
+		const int max_length = 64;
+		char name[max_length];
+		int size = 0;
+		GLenum type;
+		glGetActiveAttrib( _program_id, i, max_length, NULL, &size, &type, name );
+
+		if ( size > 1 )
+		{
+			//	Prints arrays attributes
+			for ( int j = 0; j < size; j++ )
+			{
+				char long_name[77];
+				sprintf_s( long_name, "%s[%i]", name, j );
+				int location = glGetAttribLocation( _program_id, long_name );
+				Logger::info(
+					" %d) %s %s (location: %d)",
+					i, gl_type_to_string( type ), long_name, location
+				);
+			}
+		}
+		else
+		{
+			int location = glGetAttribLocation( _program_id, name );
+			Logger::info(
+				" %d) %s %s (location: %d)",
+				i, gl_type_to_string( type ), name, location
+			);
+		}
+	}
+
+	glGetProgramiv( _program_id, GL_ACTIVE_UNIFORMS, &params );
+	Logger::info( "GL_ACTIVE_UNIFORMS = %d", params );
+
+	//	Print all uniforms
+	for ( int i = 0; i < params; i++ )
+	{
+		const int max_length = 64;
+		char name[max_length];
+		int size = 0;
+		GLenum type;
+		glGetActiveUniform( _program_id, i, max_length, NULL, &size, &type, name );
+
+		if ( size > 1 )
+		{
+			//	Prints arrays uniforms
+			for ( int j = 0; j < size; j++ )
+			{
+				char long_name[77];
+				sprintf_s( long_name, "%s[%i]", name, j );
+
+				int location = glGetUniformLocation( _program_id, long_name );
+				Logger::info(
+					" %d) %s %s (location: %d)",
+					i, gl_type_to_string( type ), long_name, location
+				);
+			}
+		}
+		else
+		{
+			int location = glGetUniformLocation( _program_id, name );
+			Logger::info(
+				" %d) %s %s (location: %d)",
+				i, gl_type_to_string( type ), name, location
+			);
+		}
+	}
 }
 
 uint32 Shader::_create_shader( uint32 type, const char* code, const char* name )
@@ -150,24 +278,18 @@ void Shader::_create_program(
 	{
 		glDeleteProgram( _program_id );
 		_program_id = 0;
-
-		//	Delete shaders as they are no longer used
-		try_delete_shader( vertex_shader_id );
-		try_delete_shader( fragment_shader_id );
-		try_delete_shader( tess_control_shader_id );
-		try_delete_shader( tess_evaluation_shader_id );
-		try_delete_shader( geometry_shader_id );
-		return;
+	}
+	else
+	{
+		Logger::info( "Linked and validated shader program (ID: %d)", _program_id );
 	}
 
-	//	Detach shaders after success
-	try_detach_shader( _program_id, vertex_shader_id );
-	try_detach_shader( _program_id, fragment_shader_id );
-	try_detach_shader( _program_id, tess_control_shader_id );
-	try_detach_shader( _program_id, tess_evaluation_shader_id );
-	try_detach_shader( _program_id, geometry_shader_id );
-
-	Logger::info( "Linked and validated shader program (ID: %d)", _program_id );
+	//	Mark shaders to be deleted as soon as possible
+	try_delete_shader( vertex_shader_id );
+	try_delete_shader( fragment_shader_id );
+	try_delete_shader( tess_control_shader_id );
+	try_delete_shader( tess_evaluation_shader_id );
+	try_delete_shader( geometry_shader_id );
 }
 
 void Shader::set_float( const char* name, float value )
@@ -269,125 +391,4 @@ bool Shader::_link_and_validate_program()
 	}
 
 	return true;
-}
-
-const char* Shader::gl_type_to_string( GLenum type )
-{
-	switch ( type )
-	{
-		case GL_BOOL:
-			return "bool";
-		case GL_INT:
-			return "int";
-		case GL_FLOAT:
-			return "float";
-		case GL_FLOAT_VEC2:
-			return "vec2";
-		case GL_FLOAT_VEC3:
-			return "vec3";
-		case GL_FLOAT_VEC4:
-			return "vec4";
-		case GL_FLOAT_MAT2:
-			return "mat2";
-		case GL_FLOAT_MAT3:
-			return "mat3";
-		case GL_FLOAT_MAT4:
-			return "mat4";
-		case GL_SAMPLER_2D:
-			return "sampler2D";
-		case GL_SAMPLER_3D:
-			return "sampler3D";
-		case GL_SAMPLER_CUBE:
-			return "samplerCube";
-		case GL_SAMPLER_2D_SHADOW:
-			return "sampler2DShadow";
-		default:
-			break;
-	}
-	return "other";
-}
-
-void Shader::print_all_params( GLuint id )
-{
-	Logger::info( "-----------------------------" );
-	std::ostringstream s;
-	s << "Shader programme " << id << " info: ";
-	Logger::info( s.str() );
-	int params = -1;
-	glGetProgramiv( id, GL_LINK_STATUS, &params );
-	s.str( "" );
-	s << "GL_LINK_STATUS = " << params;
-	Logger::info( s.str() );
-
-	glGetProgramiv( id, GL_ATTACHED_SHADERS, &params );
-	s.str( "" );
-	s << "GL_ATTACHED_SHADERS = " << params;
-	Logger::info( s.str() );
-
-	glGetProgramiv( id, GL_ACTIVE_ATTRIBUTES, &params );
-	s.str( "" );
-	s << "GL_ACTIVE_ATTRIBUTES = " << params;
-	Logger::info( s.str() );
-	for ( GLuint i = 0; i < (GLuint) params; i++ )
-	{
-		char name[64];
-		int max_length = 64;
-		int actual_length = 0;
-		int size = 0;
-		GLenum type;
-		glGetActiveAttrib( id, i, max_length, &actual_length, &size, &type, name );
-		if ( size > 1 )
-		{
-			for ( int j = 0; j < size; j++ )
-			{
-				char long_name[77];
-				sprintf_s( long_name, "%s[%i]", name, j );
-				int location = glGetAttribLocation( id, long_name );
-				std::ostringstream s;
-				s << "  " << i << ") type:" << gl_type_to_string( type ) << " name:" << long_name << " location:" << location;
-				Logger::info( s.str() );
-			}
-		}
-		else
-		{
-			int location = glGetAttribLocation( id, name );
-			std::ostringstream s;
-			s << "  " << i << ") type:" << gl_type_to_string( type ) << " name:" << name << " location:" << location;
-			Logger::info( s.str() );
-		}
-	}
-
-	glGetProgramiv( id, GL_ACTIVE_UNIFORMS, &params );
-	s.str( "" );
-	s << "GL_ACTIVE_UNIFORMS = " << params;
-	Logger::info( s.str() );
-	for ( GLuint i = 0; i < (GLuint) params; i++ )
-	{
-		char name[64];
-		int max_length = 64;
-		int actual_length = 0;
-		int size = 0;
-		GLenum type;
-		glGetActiveUniform( id, i, max_length, &actual_length, &size, &type, name );
-		if ( size > 1 )
-		{
-			for ( int j = 0; j < size; j++ )
-			{
-				char long_name[77];
-				sprintf_s( long_name, "%s[%i]", name, j );
-				int location = glGetUniformLocation( id, long_name );
-				std::ostringstream s;
-				s << "  " << i << ") type:" << gl_type_to_string( type ) << " name:" << long_name << " location:" << location;
-				Logger::info( s.str() );
-			}
-		}
-		else
-		{
-			int location = glGetUniformLocation( id, name );
-			std::ostringstream s;
-			s << "  " << i << ") type:" << gl_type_to_string( type ) << " name:" << name << " location:" << location;
-			Logger::info( s.str() );
-		}
-	}
-	print_program_info_log( id );
 }
