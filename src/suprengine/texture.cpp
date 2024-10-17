@@ -87,7 +87,7 @@ Texture::Texture( rconst_str path, SDL_Surface* surface, const TextureParams& pa
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter );
 
 	Logger::info(
-		"Created texture from file '%s' (ID: %d; FORMAT: %s)",
+		"Created texture with path '%s' (ID: %d; FORMAT: %s)",
 		*path, texture_id, *format_str
 	);
 }

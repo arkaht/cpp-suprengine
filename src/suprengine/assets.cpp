@@ -28,6 +28,12 @@ const std::string Assets::SPHERE_PATH { "assets/suprengine/meshes/sphere.fbx" };
 
 Texture* Assets::load_texture( rconst_str name, rconst_str path, const TextureParams& params )
 {
+	Logger::info(
+		"Loading texture '%s' at path '%s' (F: %d)",
+		*name, *path,
+		params.filtering
+	);
+
 	_textures[name] = _render_batch->load_texture( path, params );
 	return _textures[name];
 }
@@ -72,6 +78,11 @@ Font* Assets::get_font( rconst_str name, int size )
 
 Shader* Assets::load_shader( rconst_str name, rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename, rconst_str tse_filename, rconst_str geo_filename, bool append_resources_path )
 {
+	Logger::info(
+		"Loading shader '%s' with vertex '%s' and fragment '%s'",
+		*name, *vtx_filename, *frg_filename
+	);
+
 	_shaders[name] = load_shader_from_file( vtx_filename, frg_filename, tsc_filename, tse_filename, geo_filename );
 	return get_shader( name );
 }
@@ -91,32 +102,34 @@ Shader* Assets::get_shader( rconst_str name )
 
 SharedPtr<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_str shader_name )
 {
-	//  set import flags
+	//	Set import flags
 	int flags = aiProcess_Triangulate 
 			  //| aiProcess_MakeLeftHanded
 			  | aiProcess_FlipUVs 
 			  | aiProcess_JoinIdenticalVertices;
 	
-	//  load mesh
+	//	Load mesh
 	auto scene = _importer.ReadFile( path, flags );
 	if ( scene == nullptr ) 
 	{
-		Logger::error( "Failed to load mesh '" + path + "', file path is probably wrong!" );
+		Logger::error( "Failed to load model at path '%s', file not found or corrupted!", *path );
 		return nullptr;
 	}
 
-	//  load model
+	Logger::info( "Loading model '%s' at path '%s'", *name, *path );
+
+	//	Load all meshes from the root node
 	auto meshes = load_node( scene->mRootNode, scene );
-	if ( meshes.size() == 0u )
+	if ( meshes.empty() )
 	{
-		Logger::error( "Failed to load mesh '" + path + "', no mesh couldn't be loaded!" );
+		Logger::error( "Failed to load model at path '%s', the model doesn't contain any meshes!", *path );
 		return nullptr;
 	}
 
-	//  create model
+	//	Create model
 	auto model = std::make_shared<Model>( std::move( meshes ), shader_name );
 	
-	//  register and return
+	//	Register and return
 	_models[name] = model;
 	return model;
 }
@@ -126,7 +139,7 @@ SharedPtr<Model> Assets::get_model( rconst_str name )
 	auto itr = _models.find( name );
 	if ( itr == _models.end() )
 	{
-		Logger::error( "Failed to get model '" + name + "', either not loaded or the name is wrong!" );
+		Logger::error( "Failed to get model '%s', either not loaded or the name is wrong!", *name );
 		return nullptr;
 	}
 
@@ -140,7 +153,7 @@ void Assets::load_curves_in_folder(
 	rconst_str name_prefix
 )
 {
-	Logger::info( "Loading curves in folder '" + path + "':" );
+	Logger::info( "Loading curves in folder '%s':", *path );
 
 	std::filesystem::directory_iterator itr( path );
 	for ( const auto& entry : itr )
@@ -375,7 +388,6 @@ Shader* Assets::load_shader_from_file(
 	}
 
 	//	Create and compile shader
-	Logger::info( "Compiling shaders (vertex: '" + vtx_filename + "'; fragment: '" + frg_filename + "')" );
 	Shader* shader = new Shader(
 		*vertex_code,
 		*fragment_code,
@@ -389,57 +401,46 @@ Shader* Assets::load_shader_from_file(
 
 VertexArray* Assets::load_mesh( const aiMesh* mesh )
 {
-	printf( "| Mesh Name: '%s'\n", mesh->mName.C_Str() );
-
-	const VertexArrayPreset& preset = 
-		VertexArrayPreset::Position3_Normal3_UV2;
+	const VertexArrayPreset& preset = VertexArrayPreset::Position3_Normal3_UV2;
 	
-	//  get vertices count
-	unsigned int vertices_count = mesh->mNumVertices;
-	printf( "> Vertices Count: %d\n", vertices_count );
-
-	//  init vertices and indices containers
+	//	Create vertices and indices containers
+	size_t vertices_count = mesh->mNumVertices;
 	std::vector<float> vertices( vertices_count * preset.stride );
 	std::vector<unsigned int> indices;
 
 	bool has_normals = mesh->HasNormals();
 	bool has_uvs = mesh->HasTextureCoords( 0 );
 
-	printf( "> Normals: %s\n", has_normals ? "true" : "false" );
-	printf( "> UVs: %s\n", has_uvs ? "true" : "false" );
-
-	//  copy vertices
+	//	Copy vertices
 	for ( size_t i = 0; i < vertices_count; i++ )
 	{
 		size_t vertex_id = i * preset.stride;
 
-		//  position
-		//  NOTE: Y and Z axes are swapped, models won't show properly otherwise
-		auto vertex = mesh->mVertices[i];
+		//	Position
+		const aiVector3D& vertex = mesh->mVertices[i];
 		vertices[vertex_id + 0] = vertex.x;
 		vertices[vertex_id + 1] = vertex.y;
 		vertices[vertex_id + 2] = vertex.z;
 		
-		//  normal
+		//	Normal
 		if ( has_normals ) 
 		{
-			//  NOTE: similarly to vertex, Y and Z axes are swapped
-			auto normal = mesh->mNormals[i];
+			const aiVector3D& normal = mesh->mNormals[i];
 			vertices[vertex_id + 3] = normal.x;
 			vertices[vertex_id + 4] = normal.y;
 			vertices[vertex_id + 5] = normal.z;
 		}
 
-		//  uv
+		//	UV
 		if ( has_uvs )
 		{
-			auto uv = mesh->mTextureCoords[0][i];
+			const aiVector3D& uv = mesh->mTextureCoords[0][i];
 			vertices[vertex_id + 6] = uv.x;
 			vertices[vertex_id + 7] = uv.y;
 		}
 	}
 
-	//  copy indices
+	//	Copy indices
 	for ( size_t i = 0; i < mesh->mNumFaces; i++ )
 	{
 		auto& face = mesh->mFaces[i];
@@ -448,38 +449,42 @@ VertexArray* Assets::load_mesh( const aiMesh* mesh )
 			indices.push_back( face.mIndices[j] );
 		}
 	}
-	printf( "> Indices Count: %d\n", (int)indices.size() );
+	size_t indices_count = indices.size();
+
+	Logger::info(
+		"Loaded mesh '%s' (V: %d; I: %d; N: %s; UV: %s)",
+		mesh->mName.C_Str(),
+		vertices_count, indices_count,
+		has_normals ? "true" : "false", has_uvs ? "true" : "false"
+	);
 
 	//  create vertex array
 	auto vertex_array = new VertexArray(
 		preset,
-		vertices.data(),
-		vertices_count,
-		indices.data(),
-		(unsigned int)indices.size()
+		vertices.data(), static_cast<uint32>( vertices_count ),
+		indices.data(), static_cast<uint32>( indices_count )
 	);
 	return vertex_array;
 }
 
 std::vector<Mesh*> Assets::load_node( const aiNode* node, const aiScene* scene )
 {
-	std::vector<Mesh*> meshes;
+	std::vector<Mesh*> meshes {};
+	meshes.reserve( node->mNumMeshes );
 
-	printf( "| Root Name: '%s'\n", node->mName.C_Str() );
-
-	//  load meshes
-	printf( "> Meshes Count: %d\n", node->mNumMeshes );
+	//	Load meshes
 	for ( size_t i = 0; i < node->mNumMeshes; i++ )
 	{
 		auto vertex_array = load_mesh( scene->mMeshes[node->mMeshes[i]] );
 		meshes.push_back( new Mesh( vertex_array ) );
 	}
 
-	//  recursive children loading
-	printf( "> Children Count: %d\n", node->mNumChildren );
+	//	Recursively load children nodes
 	for ( size_t i = 0; i < node->mNumChildren; i++ )
 	{
 		auto new_meshes = load_node( node->mChildren[i], scene );
+		if ( new_meshes.empty() ) continue;
+
 		meshes.insert( meshes.end(), new_meshes.begin(), new_meshes.end() );
 	}
 
