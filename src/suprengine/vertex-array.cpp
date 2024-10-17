@@ -1,5 +1,7 @@
 #include "vertex-array.h"
 
+#include <suprengine/logger.h>
+
 #include <gl/glew.h>
 
 using namespace suprengine;
@@ -107,6 +109,15 @@ VertexArray::VertexArray(
 		offset += preset.uvs;
 		attribute++;
 	}
+
+	Logger::info(
+		"Created vertex array (ID: %d) with associated buffers (VBO: %d; IBO: %d), "
+		"preset (P: %d; N: %d; UV: %d) "
+		"and data (V: %d; I: %d)",
+		_vao_id, _vbo_id, _ibo_id,
+		preset.positions, preset.normals, preset.uvs,
+		vertices_count, indices_count
+	);
 }
 
 VertexArray::~VertexArray()
