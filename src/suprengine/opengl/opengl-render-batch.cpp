@@ -85,11 +85,13 @@ OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
 	glGetError();
 
 	//  Initialize SDL's IMG library
-	ASSERT( IMG_Init( IMG_INIT_PNG ) != 0, IMG_GetError() );
+	int img_status = IMG_Init( IMG_INIT_PNG );
+	ASSERT( img_status != 0, IMG_GetError() );
 	Logger::info( "Initialized SDL Image library" );
 
 	//  Initialize SDL's TTF library
-	ASSERT( TTF_Init() == 0, TTF_GetError() );
+	int ttf_status = TTF_Init();
+	ASSERT( ttf_status == 0, TTF_GetError() );
 	Logger::info( "Initialized SDL TTF library" );
 
 	//  Enable debug output
@@ -127,6 +129,8 @@ void OpenGLRenderBatch::init()
 
 bool OpenGLRenderBatch::init_imgui()
 {
+	//	TODO: Decide whether to force ImGui initialization's success with asserts
+	//		  or to allow the engine to run without
 	auto sdl_window = _window->get_sdl_window();
 	if ( !ImGui_ImplSDL2_InitForOpenGL( sdl_window, _gl_context ) )
 	{
