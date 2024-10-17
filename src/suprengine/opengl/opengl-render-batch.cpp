@@ -48,7 +48,7 @@ void GLAPIENTRY _message_callback(
 {
 	fprintf(
 		stderr,
-		"[%s] OpenGL Debug: %s (type: 0x%x; severity: 0x%x)\n",
+		"[%s] OpenGL: %s (type: 0x%x; severity: 0x%x)\n",
 		type == GL_DEBUG_TYPE_ERROR ? "ERROR" : "INFO",
 		message, type, severity
 	);
@@ -97,12 +97,10 @@ OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
 	glDebugMessageCallback( _message_callback, 0 );
 
 	//  Log OpenGL informations
-	Logger::info( "OpenGL: Vendor: %s", glGetString( GL_VENDOR ) );
-	Logger::info( "OpenGL: Renderer: %s", glGetString( GL_RENDERER ) );
-	Logger::info( "OpenGL: Version: %s", glGetString( GL_VERSION ) );
-	Logger::info( "OpenGL: Shading Language Version: %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
-
-	_load_assets();
+	Logger::info( "RenderBatch: Vendor: %s", glGetString( GL_VENDOR ) );
+	Logger::info( "RenderBatch: Renderer: %s", glGetString( GL_RENDERER ) );
+	Logger::info( "RenderBatch: Version: %s", glGetString( GL_VERSION ) );
+	Logger::info( "RenderBatch: Shading Language Version: %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
 }
 
 OpenGLRenderBatch::~OpenGLRenderBatch()
@@ -116,8 +114,15 @@ OpenGLRenderBatch::~OpenGLRenderBatch()
 
 	_release_framebuffers();
 
-	delete _quad_vertex_array;
 	delete _rect_vertex_array;
+	delete _quad_vertex_array;
+}
+
+void OpenGLRenderBatch::init()
+{
+	RenderBatch::init();
+
+	_load_assets();
 }
 
 bool OpenGLRenderBatch::init_imgui()
@@ -151,7 +156,7 @@ void OpenGLRenderBatch::begin_render()
 	ImGui::Render();
 
 	//  clear screen
-	glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
+	glBindFramebuffer( GL_FRAMEBUFFER, _fbo_id );
 	glClearColor(
 		_background_color.r / 255.0f,
 		_background_color.g / 255.0f,
@@ -236,11 +241,12 @@ void OpenGLRenderBatch::render()
 void OpenGLRenderBatch::end_render()
 {
 	Vec2 window_size = _window->get_size();
-	int width = (int)window_size.x, height = (int)window_size.y;
+	int width = static_cast<int>( window_size.x );
+	int height = static_cast<int>( window_size.y );
 
-	//  copy framebuffer into post-process framebuffer
-	glBindFramebuffer( GL_READ_FRAMEBUFFER, _fbo );
-	glBindFramebuffer( GL_DRAW_FRAMEBUFFER, _pp_fbo );
+	//	Copy framebuffer into post-process framebuffer
+	glBindFramebuffer( GL_READ_FRAMEBUFFER, _fbo_id );
+	glBindFramebuffer( GL_DRAW_FRAMEBUFFER, _pp_fbo_id );
 	glBlitFramebuffer(
 		0, 0, width, height,
 		0, 0, width, height,
@@ -248,14 +254,14 @@ void OpenGLRenderBatch::end_render()
 		GL_NEAREST
 	);
 
-	//  render framebuffer
+	//	Render framebuffer
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 	_rect_vertex_array->activate();
 	_framebuffer_shader->activate();
-	glBindTexture( GL_TEXTURE_2D, _pp_texture );
+	glBindTexture( GL_TEXTURE_2D, _pp_texture_id );
 	_draw_elements( 6 );
 
-	//  populate rendering
+	//	Populate rendering
 	SDL_GL_SwapWindow( _window->get_sdl_window() );
 }
 
@@ -263,16 +269,17 @@ void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 {
 	_viewport_size = size;
 
-	//  update viewport
-	glViewport( 0, 0, (int)_viewport_size.x, (int)_viewport_size.y );
-
-	//  update screen offset
-	_screen_offset = Vec3( size * 0.5f, 0.0f );
-
-	//  update viewport matrix
-	_viewport_matrix = Mtx4::create_simple_view_projection(
-		size.x, size.y
+	//	Update viewport
+	glViewport(
+		0, 0,
+		static_cast<int>( _viewport_size.x ), static_cast<int>( _viewport_size.y )
 	);
+
+	//	Update screen offset
+	_screen_offset = size * 0.5f;
+
+	//	Update viewport matrix
+	_viewport_matrix = Mtx4::create_simple_view_projection( size.x, size.y );
 
 	update_framebuffers();
 }
@@ -282,13 +289,12 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	_quad_vertex_array->activate();
 	_color_shader->activate();
 
-	//  setup matrices
+	//	Setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
 	Mtx4 location_matrix = _compute_location_matrix( rect.x, rect.y, 0.0f );
 	_color_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
 	_color_shader->set_color( "u_modulate", color );
 
-	//  draw
 	_draw_elements( 6 );
 }
 
@@ -301,12 +307,10 @@ void OpenGLRenderBatch::draw_texture(
 	const Color& color
 )
 {
-	//  setup matrices
-	Mtx4 scale_matrix = Mtx4::create_scale(
-		dest_rect.w, dest_rect.h, 1.0f );
+	//	Setup matrices
+	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
 	Mtx4 rotation_matrix = Mtx4::create_rotation_z( rotation );
-	Mtx4 location_matrix = _compute_location_matrix(
-		dest_rect.x, dest_rect.y, 0.0f );
+	Mtx4 location_matrix = _compute_location_matrix( dest_rect.x, dest_rect.y, 0.0f );
 
 	draw_texture(
 		scale_matrix * rotation_matrix * location_matrix,
@@ -350,22 +354,25 @@ void OpenGLRenderBatch::draw_texture(
 
 void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color )
 {
-	//  set matrices
+	//	Update uniforms
 	Shader* shader = mesh->get_shader();
-	shader->activate();
 	if ( shader != nullptr )
 	{
-		shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
+		shader->activate();
+
+		//	TODO: Set the view projection matrix only once per shader
+		shader->set_mtx4( "u_view_projection", _view_matrix );
 		shader->set_mtx4( "u_world_transform", matrix );
 		shader->set_color( "u_modulate", color );
 
-		//  lighting
+		//	Ambient lighting
+		//	TODO: Set these uniforms only once per shader
 		shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
 		shader->set_float( "u_ambient_scale", _ambient_light.scale );
 		shader->set_color( "u_ambient_color", _ambient_light.color );
 	}
 
-	//  draw
+	//	Draw
 	VertexArray* vertex_array = mesh->get_vertex_array();
 	vertex_array->activate();
 	mesh->get_texture( texture_id )->activate();
@@ -385,7 +392,7 @@ void OpenGLRenderBatch::draw_model(
 	{
 		auto mesh = model->get_mesh( i );
 
-		//  get shader
+		//	Get shader to use
 		Shader* shader = nullptr;
 		if ( !shader_name.empty() )
 		{
@@ -398,21 +405,24 @@ void OpenGLRenderBatch::draw_model(
 				: mesh->get_shader();
 		}
 
-		//  update uniforms
+		//	Update uniforms
 		if ( shader != nullptr )
 		{
 			shader->activate();
-			shader->set_mtx4( "u_view_projection", _view_matrix );  //  TODO: pass this matrix only once
+
+			//	TODO: Set the view projection matrix only once per shader
+			shader->set_mtx4( "u_view_projection", _view_matrix );
 			shader->set_mtx4( "u_world_transform", matrix );
 			shader->set_color( "u_modulate", color );
 
-			//  lighting
+			//	Ambient lighting
+			//	TODO: Set these uniforms only once per shader
 			shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
 			shader->set_float( "u_ambient_scale", _ambient_light.scale );
 			shader->set_color( "u_ambient_color", _ambient_light.color );
 		}
 
-		//  draw
+		//	Draw
 		auto vertex_array = mesh->get_vertex_array();
 		vertex_array->activate();
 		if ( auto texture = mesh->get_texture( 0 ) )
@@ -457,36 +467,41 @@ void OpenGLRenderBatch::set_debug_output( bool is_active )
 	if ( is_active )
 	{
 		glEnable( GL_DEBUG_OUTPUT );
-		Logger::info( "OpenGL: Enable debug output" );
+		Logger::info( "RenderBatch: Enable debug output" );
 	}
 	else
 	{
 		glDisable( GL_DEBUG_OUTPUT );
-		Logger::info( "OpenGL: Disable debug output" );
+		Logger::info( "RenderBatch: Disable debug output" );
 	}
 }
 
 void OpenGLRenderBatch::set_samples( unsigned int samples )
 {
 	_samples = samples;
-	Logger::info( "OpenGL: Setting samples to %d", samples );
+	Logger::info( "RenderBatch: Setting samples to %d", samples );
 
 	update_framebuffers();
 }
 
 void OpenGLRenderBatch::update_framebuffers()
 {
-	Logger::info( "OpenGL: Updating framebuffers" );
+	Logger::info( "RenderBatch: Updating framebuffers" );
 
 	_release_framebuffers();
 	_create_framebuffers( (int)_viewport_size.x, (int)_viewport_size.y );
 }
 
+uint32 OpenGLRenderBatch::get_samples() const
+{
+	return _samples;
+}
+
 void OpenGLRenderBatch::_load_assets()
 {
-	Logger::info( "Loading engine assets" );
+	Logger::info( "RenderBatch: Loading engine assets" );
 
-	//  create vertex array
+	//	Create vertex array
 	_quad_vertex_array = new VertexArray(
 		VertexArrayPreset::Position3_Normal3_UV2,
 		QUAD_VERTICES, 4,
@@ -498,7 +513,7 @@ void OpenGLRenderBatch::_load_assets()
 		RECT_INDICES, 6
 	);
 
-	//  load shaders
+	//	Load shaders
 	_framebuffer_shader = Assets::load_shader(
 		"suprengine::framebuffer",
 		"assets/suprengine/shaders/framebuffer.vert",
@@ -520,7 +535,7 @@ void OpenGLRenderBatch::_load_assets()
 		"assets/suprengine/shaders/lit-mesh.frag"
 	);
 
-	//  load textures
+	//	Load textures
 	Assets::load_texture(
 		TEXTURE_LARGE_GRID,
 		"assets/suprengine/textures/large-grid.png"
@@ -532,7 +547,7 @@ void OpenGLRenderBatch::_load_assets()
 
 	auto texture = Assets::get_texture( TEXTURE_MEDIUM_GRID );
 
-	//  load models
+	//	Load models
 	auto arrow_model = Assets::load_model(
 		MESH_ARROW,
 		"assets/suprengine/models/arrow.fbx",
@@ -564,14 +579,14 @@ void OpenGLRenderBatch::_load_assets()
 
 void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 {
-	//  create framebuffer object
-	glGenFramebuffers( 1, &_fbo );
-	glBindFramebuffer( GL_FRAMEBUFFER, _fbo );
+	//	Create framebuffer object
+	glGenFramebuffers( 1, &_fbo_id );
+	glBindFramebuffer( GL_FRAMEBUFFER, _fbo_id );
 
-	//  create framebuffer texture
+	//	Create framebuffer texture
 	int target = _samples > 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
-	glGenTextures( 1, &_framebuffer_texture );
-	glBindTexture( target, _framebuffer_texture );
+	glGenTextures( 1, &_framebuffer_texture_id );
+	glBindTexture( target, _framebuffer_texture_id );
 	if ( _samples > 0 )
 	{
 		glTexImage2DMultisample( target, _samples, GL_RGB, width, height, GL_TRUE );
@@ -587,13 +602,13 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0, target,
-		_framebuffer_texture,
+		_framebuffer_texture_id,
 		0
 	);
 
-	//  create renderbuffer object
-	glGenRenderbuffers( 1, &_rbo );
-	glBindRenderbuffer( GL_RENDERBUFFER, _rbo );
+	//	Create renderbuffer object
+	glGenRenderbuffers( 1, &_rbo_id );
+	glBindRenderbuffer( GL_RENDERBUFFER, _rbo_id );
 	if ( _samples > 0 )
 	{
 		glRenderbufferStorageMultisample(
@@ -615,26 +630,22 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 		GL_FRAMEBUFFER,
 		GL_DEPTH_STENCIL_ATTACHMENT,
 		GL_RENDERBUFFER,
-		_rbo
+		_rbo_id
 	);
 
-	//  error-checking framebuffer
+	//	Error-checking framebuffer
 	auto status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
-	if ( status != GL_FRAMEBUFFER_COMPLETE )
-	{
-		Logger::error( "OpenGL: Framebuffer error: " + std::to_string( status ) );
-		throw std::exception( "OpenGL Framebuffer couldn't be created!" );
-	}
-	Logger::info( "OpenGL: Framebuffer created" );
+	ASSERT( status == GL_FRAMEBUFFER_COMPLETE, glewGetErrorString( glGetError() ) );
+	Logger::info( "RenderBatch: Framebuffer created" );
 
-	//  create post-process framebuffer object
-	glGenFramebuffers( 1, &_pp_fbo );
-	glBindFramebuffer( GL_FRAMEBUFFER, _pp_fbo );
+	//	Create post-process framebuffer object
+	glGenFramebuffers( 1, &_pp_fbo_id );
+	glBindFramebuffer( GL_FRAMEBUFFER, _pp_fbo_id );
 
-	//  create post-process framebuffer texture
+	//	Create post-process framebuffer texture
 	target = GL_TEXTURE_2D;
-	glGenTextures( 1, &_pp_texture );
-	glBindTexture( target, _pp_texture );
+	glGenTextures( 1, &_pp_texture_id );
+	glBindTexture( target, _pp_texture_id );
 	glTexImage2D( target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
 	glTexParameteri( target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri( target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
@@ -643,29 +654,25 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-		_pp_texture,
+		_pp_texture_id,
 		0
 	);
 
-	//  error-checking post-process framebuffer
+	//	Error-checking post-process framebuffer
 	status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
-	if ( status != GL_FRAMEBUFFER_COMPLETE )
-	{
-		Logger::error( "OpenGL: Post-Processing Framebuffer error: " + std::to_string( status ) );
-		throw std::exception( "OpenGL Post-Processing Framebuffer couldn't be created!" );
-	}
-	Logger::info( "OpenGL: Post-Processing Framebuffer created" );
+	ASSERT( status == GL_FRAMEBUFFER_COMPLETE, glewGetErrorString( glGetError() ) );
+	Logger::info( "RenderBatch: Post-Processing Framebuffer created" );
 }
 
 void OpenGLRenderBatch::_release_framebuffers()
 {
-	glDeleteRenderbuffers( 1, &_rbo );
+	glDeleteRenderbuffers( 1, &_rbo_id );
 
-	glDeleteTextures( 1, &_framebuffer_texture );
-	glDeleteTextures( 1, &_pp_texture );
+	glDeleteTextures( 1, &_framebuffer_texture_id );
+	glDeleteTextures( 1, &_pp_texture_id );
 
-	glDeleteFramebuffers( 1, &_fbo );
-	glDeleteFramebuffers( 1, &_pp_fbo );
+	glDeleteFramebuffers( 1, &_fbo_id );
+	glDeleteFramebuffers( 1, &_pp_fbo_id );
 }
 
 Mtx4 OpenGLRenderBatch::_compute_location_matrix( float x, float y, float z )

@@ -41,13 +41,13 @@ namespace suprengine
 		Event<const Vec2&, const Vec2&> on_size_changed;
 
 	private:
-		Vec2 _current_size;
-		Vec2 _size;
-		std::string _title;
+		Vec2 _current_size = Vec2::zero;
+		Vec2 _size = Vec2::zero;
+		std::string _title {};
 
 		WindowMode _mode = WindowMode::Windowed;
 
-		SDL_Window* _sdl_window { nullptr };
+		SDL_Window* _sdl_window = nullptr;
 	};
 };
 

@@ -23,8 +23,6 @@ RenderBatch::RenderBatch( Window* _window )
 			on_window_resized( new_size );
 		}
 	);
-
-	Assets::set_render_batch( this );
 }
 
 void RenderBatch::_render_phase( const RenderPhase phase )
@@ -121,3 +119,10 @@ void RenderBatch::remove_renderer( SharedPtr<Renderer> renderer )
 	list.erase( itr );  //  don't swap or you need to sort again!
 }
 
+void RenderBatch::init()
+{
+	Assets::set_render_batch( this );
+
+	//	Update viewport size 
+	on_window_resized( _window->get_size() );
+}

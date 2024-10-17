@@ -17,6 +17,7 @@ namespace suprengine
 		OpenGLRenderBatch& operator=( const OpenGLRenderBatch& ) = delete;
 		~OpenGLRenderBatch();
 
+		void init() override;
 		bool init_imgui() override;
 		void begin_imgui_frame() override;
 
@@ -75,10 +76,10 @@ namespace suprengine
 		void clip( const Rect& region ) override;
 
 		void set_debug_output( bool is_active );
-		void set_samples( unsigned int samples );
+		void set_samples( uint32 samples );
 		void update_framebuffers();
 
-		unsigned int get_samples() { return _samples; }
+		uint32 get_samples() const;
 
 	private:
 		void _load_assets();
@@ -90,24 +91,27 @@ namespace suprengine
 		void _draw_elements( int indices_count );
 	
 	private:
-		Vec2 _viewport_size;
+		Vec2 _viewport_size = Vec2::zero;
+		Vec2 _screen_offset = Vec2::zero;
 
-		SDL_GLContext _gl_context { nullptr };
+		SDL_GLContext _gl_context = nullptr;
 
-		unsigned int _fbo = 0, _pp_fbo = 0, _rbo = 0;
-		unsigned int _framebuffer_texture = 0, _pp_texture = 0;
+		uint32 _fbo_id = 0;
+		uint32 _pp_fbo_id = 0;
+		uint32 _rbo_id = 0;
+		uint32 _framebuffer_texture_id = 0;
+		uint32 _pp_texture_id = 0;
 
-		unsigned int _samples = 8;
+		uint32 _samples = 8;
 
-		VertexArray* _rect_vertex_array { nullptr };
-		VertexArray* _quad_vertex_array { nullptr };
+		VertexArray* _rect_vertex_array = nullptr;
+		VertexArray* _quad_vertex_array = nullptr;
 
-		Shader* _color_shader { nullptr };
-		Shader* _texture_shader { nullptr };
-		Shader* _framebuffer_shader { nullptr };
+		Shader* _color_shader = nullptr;
+		Shader* _texture_shader = nullptr;
+		Shader* _framebuffer_shader = nullptr;
 
-		Camera* _camera { nullptr };
-		Vec3 _screen_offset;
+		Camera* _camera = nullptr;
 
 		Mtx4 _view_matrix;
 		Mtx4 _viewport_matrix;

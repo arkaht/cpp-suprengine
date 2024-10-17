@@ -48,6 +48,11 @@ Engine::~Engine()
 
 bool Engine::init( IGame* game )
 {
+	//	Init SDL
+	int sdl_status = SDL_Init( SDL_INIT_VIDEO );
+	ASSERT( sdl_status == 0, SDL_GetError() );
+
+	//	Setup game
 	game->set_engine( this );
 	_game = std::unique_ptr<IGame>( game );
 
@@ -65,10 +70,7 @@ bool Engine::init( IGame* game )
 	_render_batch = std::unique_ptr<RenderBatch>(
 		game->create_render_batch( get_window() ) 
 	);
-
-	//  Setup window size on render batch
-	//	TODO: Set this in a init function
-	_render_batch->on_window_resized( _window->get_size() );
+	_render_batch->init();
 
 	//  Init managers
 	_inputs = std::make_unique<InputManager>();
