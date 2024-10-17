@@ -25,45 +25,6 @@ RenderBatch::RenderBatch( Window* _window )
 	);
 }
 
-void RenderBatch::_render_phase( const RenderPhase phase )
-{
-	if ( _renderers.find( phase ) == _renderers.end() ) return;
-
-	auto& list = _renderers.at( phase );
-	for ( auto& renderer : list )
-	{
-		if ( !renderer->is_active ) continue;
-		renderer->render( this );
-	}
-}
-
-void RenderBatch::draw_texture( const Vec2& pos, const Vec2& scale, float rotation, const Vec2& origin, Texture* texture, const Color& color )
-{
-	Rect src_rect { Vec2::zero, texture->get_size() };
-	Rect dest_rect { pos, texture->get_size() * scale };
-
-	draw_texture( 
-		src_rect, dest_rect, 
-		rotation, origin, texture, color 
-	);
-}
-
-Texture* RenderBatch::load_texture( rconst_str path, const TextureParams& params )
-{
-	SDL_Surface* surface = Texture::load_surface( path );
-	if ( surface == nullptr ) return nullptr;
-
-	Texture* texture = load_texture_from_surface( path, surface, params );
-	SDL_FreeSurface( surface );
-
-	return texture;
-}
-
-Texture* RenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
-{
-	return new Texture( path, surface, params );
-}
-
 void RenderBatch::set_background_color( Color color )
 {
 	_background_color = color;
@@ -125,4 +86,43 @@ void RenderBatch::init()
 
 	//	Update viewport size 
 	on_window_resized( _window->get_size() );
+}
+
+void RenderBatch::draw_texture( const Vec2& pos, const Vec2& scale, float rotation, const Vec2& origin, Texture* texture, const Color& color )
+{
+	Rect src_rect { Vec2::zero, texture->get_size() };
+	Rect dest_rect { pos, texture->get_size() * scale };
+
+	draw_texture( 
+		src_rect, dest_rect, 
+		rotation, origin, texture, color 
+	);
+}
+
+Texture* RenderBatch::load_texture( rconst_str path, const TextureParams& params )
+{
+	SDL_Surface* surface = Texture::load_surface( path );
+	if ( surface == nullptr ) return nullptr;
+
+	Texture* texture = load_texture_from_surface( path, surface, params );
+	SDL_FreeSurface( surface );
+
+	return texture;
+}
+
+Texture* RenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
+{
+	return new Texture( path, surface, params );
+}
+
+void RenderBatch::_render_phase( const RenderPhase phase )
+{
+	if ( _renderers.find( phase ) == _renderers.end() ) return;
+
+	auto& list = _renderers.at( phase );
+	for ( auto& renderer : list )
+	{
+		if ( !renderer->is_active ) continue;
+		renderer->render( this );
+	}
 }
