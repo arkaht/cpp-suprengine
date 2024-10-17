@@ -36,7 +36,7 @@ constexpr unsigned int RECT_INDICES[] = {
 };
 
 //  https://www.khronos.org/opengl/wiki/OpenGL_Error
-void GLAPIENTRY _message_callback(
+void GLAPIENTRY message_callback(
 	GLenum source,
 	GLenum type,
 	GLuint id,
@@ -46,12 +46,48 @@ void GLAPIENTRY _message_callback(
 	const void* userParam
 )
 {
-	fprintf(
-		stderr,
-		"[%s] OpenGL: %s (type: 0x%x; severity: 0x%x)\n",
-		type == GL_DEBUG_TYPE_ERROR ? "ERROR" : "INFO",
-		message, type, severity
-	);
+	const char* log_type = "N/A";
+	switch ( type )
+	{
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+			log_type = "DEPRECATED_BEHAVIOR";
+			break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+			log_type = "UNDEFINED_BEHAVIOR";
+			break;
+		case GL_DEBUG_TYPE_PORTABILITY:
+			log_type = "PORTABILITY";
+			break;
+		case GL_DEBUG_TYPE_PERFORMANCE:
+			log_type = "PERFORMANCE";
+			break;
+		case GL_DEBUG_TYPE_OTHER:
+			log_type = "OTHER";
+			break;
+		//	TODO: Add more logs type as they appear
+	}
+
+	const char* log_severity = "NONE";
+	switch ( severity )
+	{
+		case GL_DEBUG_SEVERITY_LOW:
+			log_severity = "LOW";
+			break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			log_severity = "MEDIUM";
+			break;
+		case GL_DEBUG_SEVERITY_HIGH:
+			log_severity = "HIGH";
+			break;
+	}
+
+	if ( type == GL_DEBUG_TYPE_ERROR )
+	{
+		Logger::error( "OpenGL: %s (SEVERITY; %s)", message, log_severity );
+		return;
+	}
+
+	Logger::info( "OpenGL: %s (TYPE: %s; SEVERITY: %s)", message, log_type, log_severity );
 }
 
 OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
@@ -96,7 +132,7 @@ OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
 
 	//  Enable debug output
 	set_debug_output( true );
-	glDebugMessageCallback( _message_callback, 0 );
+	glDebugMessageCallback( message_callback, 0 );
 
 	//  Log OpenGL informations
 	Logger::info( "RenderBatch: Vendor: %s", glGetString( GL_VENDOR ) );
