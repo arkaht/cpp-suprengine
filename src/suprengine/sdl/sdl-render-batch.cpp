@@ -9,40 +9,32 @@
 
 using namespace suprengine;
 
+SDLRenderBatch::SDLRenderBatch( Window* window )
+	: RenderBatch( window )
+{
+	//  Create renderer
+	_sdl_renderer = SDL_CreateRenderer(
+		_window->get_sdl_window(),
+		-1,
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+	);
+	ASSERT( _sdl_renderer != nullptr, "Failed to create SDL renderer" );
+
+	//  Initialize image library
+	ASSERT( IMG_Init( IMG_INIT_PNG ) != 0, "Failed to initialize SDL image library" );
+
+	//  Initialize ttf library
+	ASSERT( TTF_Init() == 0, "Failed to initialize SDL TTF library" );
+}
+
 SDLRenderBatch::~SDLRenderBatch()
 {
 	if ( _sdl_renderer == nullptr ) return;
 
+	IMG_Quit();
 	TTF_Quit();
 
 	SDL_DestroyRenderer( _sdl_renderer );
-}
-
-bool SDLRenderBatch::init()
-{
-	//  create renderer
-	_sdl_renderer = SDL_CreateRenderer( _window->get_sdl_window(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-	if ( _sdl_renderer == nullptr )
-	{
-		Logger::error( "failed to create renderer" );
-		return false;
-	}
-
-	//  initialize image library
-	if ( IMG_Init( IMG_INIT_PNG ) == 0 )
-	{
-		Logger::error( "failed to initialize image library" );
-		return false;
-	}
-
-	//  initialize ttf library
-	if ( TTF_Init() == -1 )
-	{
-		Logger::error( "failed to initialize TTF library" );
-		return false;
-	}
-
-	return true;
 }
 
 void SDLRenderBatch::begin_render()

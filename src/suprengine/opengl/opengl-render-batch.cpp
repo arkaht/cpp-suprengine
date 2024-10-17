@@ -5,6 +5,8 @@
 #include <suprengine/game.h>
 #include <suprengine/engine.h>
 
+#include <gl/glew.h>
+
 #include <imgui.h>
 #include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_opengl3.h>
@@ -17,15 +19,15 @@ constexpr float RECT_VERTICES[] = {
 	//  bottom-left
 	-1.0f, -1.0f,  //  position
 	 0.0f,  0.0f,  //  uv
-	//  bottom-right
-	1.0f, -1.0f,  //  position
-	1.0f,  0.0f,  //  uv
-	//  top-right
-	1.0f, 1.0f,  //  position
-	1.0f, 1.0f,  //  uv
-	//  top-left
-	-1.0f, 1.0f,  //  position
-	0.0f, 1.0f   //  uv
+	 //  bottom-right
+	 1.0f, -1.0f,  //  position
+	 1.0f,  0.0f,  //  uv
+	 //  top-right
+	 1.0f, 1.0f,  //  position
+	 1.0f, 1.0f,  //  uv
+	 //  top-left
+	 -1.0f, 1.0f,  //  position
+	 0.0f, 1.0f   //  uv
 };
 
 constexpr unsigned int RECT_INDICES[] = {
@@ -33,27 +35,27 @@ constexpr unsigned int RECT_INDICES[] = {
 	2, 3, 0
 };
 
-OpenGLRenderBatch::~OpenGLRenderBatch()
-{
-	ImGui_ImplOpenGL3_Shutdown();
-
-	SDL_GL_DeleteContext( _gl_context );
-
-	_release_framebuffers();
-
-	delete _quad_vertex_array;
-	delete _rect_vertex_array;
-}
-
 //  https://www.khronos.org/opengl/wiki/OpenGL_Error
-void GLAPIENTRY _message_callback( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam )
+void GLAPIENTRY _message_callback(
+	GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar* message,
+	const void* userParam
+)
 {
-	fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-		( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
-		type, severity, message );
+	fprintf(
+		stderr,
+		"[%s] OpenGL Debug: %s (type: 0x%x; severity: 0x%x)\n",
+		type == GL_DEBUG_TYPE_ERROR ? "ERROR" : "INFO",
+		message, type, severity
+	);
 }
 
-bool OpenGLRenderBatch::init()
+OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
+	: RenderBatch( window )
 {
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
@@ -69,47 +71,53 @@ bool OpenGLRenderBatch::init()
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );  //  enable double buffering
 	SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );  //  force OpenGL to use hardware acceleration
 
+	//	Create OpenGL context
 	_gl_context = SDL_GL_CreateContext( _window->get_sdl_window() );
+	ASSERT( _gl_context != nullptr, "Failed to create OpenGL context for SDL window" );
 
 	//  GLEW
 	glewExperimental = GL_TRUE;
-	if ( glewInit() != GLEW_OK )
-	{
-		Logger::error( "Failed to initialize GLEW." );
-		return false;
-	}
+	GLenum glew_status = glewInit();
+	ASSERT( glew_status == GLEW_OK, glewGetErrorString( glew_status ) );
 	Logger::info( "Initialized GLEW" );
 
 	//  Apparently, GLEW emit a beginning error code on some platforms, so we pop it
 	glGetError();
 
-	//  Init image library
-	if ( IMG_Init( IMG_INIT_PNG ) == 0 )
-	{
-		Logger::error( "Failed to initialize the SDL Image library" );
-		return false;
-	}
-	Logger::info( "Initialized the SDL Image library" );
+	//  Initialize SDL's IMG library
+	ASSERT( IMG_Init( IMG_INIT_PNG ) != 0, IMG_GetError() );
+	Logger::info( "Initialized SDL Image library" );
 
-	//  Initialize ttf library
-	if ( TTF_Init() == -1 )
-	{
-		Logger::error( "Failed to initialize the SDL TTF library" );
-		return false;
-	}
-	Logger::info( "Initialized the SDL TTF library" );
+	//  Initialize SDL's TTF library
+	ASSERT( TTF_Init() == 0, TTF_GetError() );
+	Logger::info( "Initialized SDL TTF library" );
 
 	//  Enable debug output
 	set_debug_output( true );
 	glDebugMessageCallback( _message_callback, 0 );
 
-	//  Log OpenGL Version
-	auto opengl_version = glGetString( GL_VERSION );
-	Logger::info( "OpenGL Version: %s", opengl_version );
+	//  Log OpenGL informations
+	Logger::info( "OpenGL: Vendor: %s", glGetString( GL_VENDOR ) );
+	Logger::info( "OpenGL: Renderer: %s", glGetString( GL_RENDERER ) );
+	Logger::info( "OpenGL: Version: %s", glGetString( GL_VERSION ) );
+	Logger::info( "OpenGL: Shading Language Version: %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
 
 	_load_assets();
+}
 
-	return true;
+OpenGLRenderBatch::~OpenGLRenderBatch()
+{
+	ImGui_ImplOpenGL3_Shutdown();
+
+	IMG_Quit();
+	TTF_Quit();
+
+	SDL_GL_DeleteContext( _gl_context );
+
+	_release_framebuffers();
+
+	delete _quad_vertex_array;
+	delete _rect_vertex_array;
 }
 
 bool OpenGLRenderBatch::init_imgui()
@@ -117,13 +125,13 @@ bool OpenGLRenderBatch::init_imgui()
 	auto sdl_window = _window->get_sdl_window();
 	if ( !ImGui_ImplSDL2_InitForOpenGL( sdl_window, _gl_context ) )
 	{
-		Logger::critical( "RenderBatch::OpenGL: failed to initialize ImGui with SDL2!" );
+		Logger::critical( "Failed to initialize ImGui with SDL2!" );
 		return false;
 	}
 
 	if ( !ImGui_ImplOpenGL3_Init( "#version 130" ) )
 	{
-		Logger::critical( "RenderBatch::OpenGL: failed to initialize ImGui with OpenGL3!" );
+		Logger::critical( "Failed to initialize ImGui with OpenGL3!" );
 		return false;
 	}
 
@@ -157,7 +165,7 @@ void OpenGLRenderBatch::begin_render()
 	_camera = engine.camera;
 	if ( _camera == nullptr )
 	{
-		Logger::error( "no main camera, rendering aborted!" );
+		Logger::error( "No main camera, rendering aborted!" );
 		return;
 	}
 
@@ -183,10 +191,10 @@ void OpenGLRenderBatch::render()
 		glFrontFace( GL_CW );
 
 		//  enable face culling
-		glEnable( GL_CULL_FACE );	
+		glEnable( GL_CULL_FACE );
 
 		//  enable depth testing
-		glEnable( GL_DEPTH_TEST );  
+		glEnable( GL_DEPTH_TEST );
 		glDepthFunc( GL_LEQUAL );
 
 		//  render
@@ -213,7 +221,7 @@ void OpenGLRenderBatch::render()
 		glEnable( GL_BLEND );
 		glBlendEquationSeparate( GL_FUNC_ADD, GL_FUNC_ADD );
 		glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO );
-		
+
 		//  render
 		_render_phase( RenderPhase::Viewport );
 
@@ -233,11 +241,11 @@ void OpenGLRenderBatch::end_render()
 	//  copy framebuffer into post-process framebuffer
 	glBindFramebuffer( GL_READ_FRAMEBUFFER, _fbo );
 	glBindFramebuffer( GL_DRAW_FRAMEBUFFER, _pp_fbo );
-	glBlitFramebuffer( 
-		0, 0, width, height, 
-		0, 0, width, height, 
-		GL_COLOR_BUFFER_BIT, 
-		GL_NEAREST 
+	glBlitFramebuffer(
+		0, 0, width, height,
+		0, 0, width, height,
+		GL_COLOR_BUFFER_BIT,
+		GL_NEAREST
 	);
 
 	//  render framebuffer
@@ -246,7 +254,7 @@ void OpenGLRenderBatch::end_render()
 	_framebuffer_shader->activate();
 	glBindTexture( GL_TEXTURE_2D, _pp_texture );
 	_draw_elements( 6 );
-	
+
 	//  populate rendering
 	SDL_GL_SwapWindow( _window->get_sdl_window() );
 }
@@ -262,7 +270,7 @@ void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 	_screen_offset = Vec3( size * 0.5f, 0.0f );
 
 	//  update viewport matrix
-	_viewport_matrix = Mtx4::create_simple_view_projection( 
+	_viewport_matrix = Mtx4::create_simple_view_projection(
 		size.x, size.y
 	);
 
@@ -284,34 +292,34 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	_draw_elements( 6 );
 }
 
-void OpenGLRenderBatch::draw_texture( 
-	const Rect& src_rect, 
-	const Rect& dest_rect, 
-	float rotation, 
-	const Vec2& origin, 
-	Texture* texture, 
+void OpenGLRenderBatch::draw_texture(
+	const Rect& src_rect,
+	const Rect& dest_rect,
+	float rotation,
+	const Vec2& origin,
+	Texture* texture,
 	const Color& color
 )
 {
 	//  setup matrices
-	Mtx4 scale_matrix = Mtx4::create_scale( 
+	Mtx4 scale_matrix = Mtx4::create_scale(
 		dest_rect.w, dest_rect.h, 1.0f );
 	Mtx4 rotation_matrix = Mtx4::create_rotation_z( rotation );
-	Mtx4 location_matrix = _compute_location_matrix( 
+	Mtx4 location_matrix = _compute_location_matrix(
 		dest_rect.x, dest_rect.y, 0.0f );
 
 	draw_texture(
-		scale_matrix * rotation_matrix * location_matrix, 
-		texture, origin, src_rect, color 
+		scale_matrix * rotation_matrix * location_matrix,
+		texture, origin, src_rect, color
 	);
 }
 
 void OpenGLRenderBatch::draw_texture(
-	const Mtx4& matrix, 
-	Texture* texture, 
-	const Vec2& origin, 
+	const Mtx4& matrix,
+	Texture* texture,
+	const Vec2& origin,
 	const Rect& src_rect,
-	const Color& color 
+	const Color& color
 )
 {
 	_quad_vertex_array->activate();
@@ -332,7 +340,7 @@ void OpenGLRenderBatch::draw_texture(
 		src_rect.w / size.x,
 		src_rect.h / size.y
 	);
-	
+
 	//  origin
 	_texture_shader->set_vec2( "u_origin", origin );
 
@@ -353,19 +361,20 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 
 		//  lighting
 		shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
-		shader->set_float("u_ambient_scale", _ambient_light.scale );
+		shader->set_float( "u_ambient_scale", _ambient_light.scale );
 		shader->set_color( "u_ambient_color", _ambient_light.color );
 	}
 
 	//  draw
-	mesh->get_vertex_array()->activate();
+	VertexArray* vertex_array = mesh->get_vertex_array();
+	vertex_array->activate();
 	mesh->get_texture( texture_id )->activate();
-	_draw_elements( mesh->get_indices_count() );
+	_draw_elements( vertex_array->get_indices_count() );
 }
 
-void OpenGLRenderBatch::draw_model( 
-	const Mtx4& matrix, 
-	const SharedPtr<Model>& model, 
+void OpenGLRenderBatch::draw_model(
+	const Mtx4& matrix,
+	const SharedPtr<Model>& model,
 	rconst_str shader_name,
 	const Color& color
 )
@@ -378,13 +387,13 @@ void OpenGLRenderBatch::draw_model(
 
 		//  get shader
 		Shader* shader = nullptr;
-		if ( shader_name != "" )
+		if ( !shader_name.empty() )
 		{
 			shader = Assets::get_shader( shader_name );
 		}
 		else
 		{
-			shader = mesh->shader_name == ""
+			shader = mesh->shader_name.empty()
 				? Assets::get_shader( model->shader_name )
 				: mesh->get_shader();
 		}
@@ -404,19 +413,20 @@ void OpenGLRenderBatch::draw_model(
 		}
 
 		//  draw
-		mesh->get_vertex_array()->activate();
+		auto vertex_array = mesh->get_vertex_array();
+		vertex_array->activate();
 		if ( auto texture = mesh->get_texture( 0 ) )
 		{
 			texture->activate();
 		}
-		_draw_elements( mesh->get_indices_count() );
+		_draw_elements( vertex_array->get_indices_count() );
 	}
 }
 
-void OpenGLRenderBatch::draw_debug_model( 
-	const Mtx4& matrix, 
-	const SharedPtr<Model>& model, 
-	const Color& color 
+void OpenGLRenderBatch::draw_debug_model(
+	const Mtx4& matrix,
+	const SharedPtr<Model>& model,
+	const Color& color
 )
 {
 	if ( model == nullptr ) return;
@@ -432,8 +442,7 @@ void OpenGLRenderBatch::draw_debug_model(
 }
 
 void OpenGLRenderBatch::translate( const Vec2& pos )
-{
-}
+{}
 
 void OpenGLRenderBatch::scale( float zoom )
 {}
@@ -565,22 +574,16 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 	glBindTexture( target, _framebuffer_texture );
 	if ( _samples > 0 )
 	{
-		glTexImage2DMultisample(
-			target, _samples, GL_RGB, width, height, GL_TRUE );
+		glTexImage2DMultisample( target, _samples, GL_RGB, width, height, GL_TRUE );
 	}
 	else
 	{
-		glTexImage2D(
-				target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
+		glTexImage2D( target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
+		glTexParameteri( target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+		glTexParameteri( target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+		glTexParameteri( target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 	}
-	glTexParameteri(
-		target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-	glTexParameteri(
-		target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-	glTexParameteri(
-		target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameteri(
-		target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0, target,
@@ -632,16 +635,11 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 	target = GL_TEXTURE_2D;
 	glGenTextures( 1, &_pp_texture );
 	glBindTexture( target, _pp_texture );
-	glTexImage2D(
-		target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
-	glTexParameteri(
-		target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-	glTexParameteri(
-		target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-	glTexParameteri(
-		target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameteri(
-		target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+	glTexImage2D( target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
+	glTexParameteri( target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri( target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	glTexParameteri( target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri( target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
@@ -662,7 +660,7 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 void OpenGLRenderBatch::_release_framebuffers()
 {
 	glDeleteRenderbuffers( 1, &_rbo );
-	
+
 	glDeleteTextures( 1, &_framebuffer_texture );
 	glDeleteTextures( 1, &_pp_texture );
 

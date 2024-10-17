@@ -65,10 +65,9 @@ bool Engine::init( IGame* game )
 	_render_batch = std::unique_ptr<RenderBatch>(
 		game->create_render_batch( get_window() ) 
 	);
-	Assets::set_render_batch( get_render_batch() );
-	if ( !_render_batch->init() ) return false;
 
 	//  Setup window size on render batch
+	//	TODO: Set this in a init function
 	_render_batch->on_window_resized( _window->get_size() );
 
 	//  Init managers

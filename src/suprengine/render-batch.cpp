@@ -4,6 +4,8 @@
 #include <suprengine/game.h>
 #include <suprengine/components/renderer.h>
 
+#include <suprengine/assets.h>
+
 using namespace suprengine;
 
 RenderBatch::RenderBatch( Window* _window )
@@ -21,6 +23,8 @@ RenderBatch::RenderBatch( Window* _window )
 			on_window_resized( new_size );
 		}
 	);
+
+	Assets::set_render_batch( this );
 }
 
 void RenderBatch::_render_phase( const RenderPhase phase )

@@ -12,7 +12,7 @@ namespace suprengine
 	{
 	public:
 		/*
-		 * Creates, compiles and links OpenGL shaders into one program.
+		 * Creates, compiles and links GLSL shaders into one program.
 		 * The vertex and fragment shaders must succeed or assertion is thrown.
 		 */
 		Shader(

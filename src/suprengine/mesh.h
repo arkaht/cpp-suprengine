@@ -13,24 +13,20 @@ namespace suprengine
 	class Mesh
 	{
 	public:
-		std::string shader_name;
-
-		Mesh() {}
-		Mesh( VertexArray* _vertex_array )
-			: _vertex_array( _vertex_array ) {}
-		Mesh( VertexArray* _vertex_array, rconst_str shader_name )
-			: _vertex_array( _vertex_array ) {}
+		Mesh( VertexArray* vertex_array, rconst_str shader_name = "" );
 		Mesh( const Mesh& mesh ) = delete;
-		void operator=( const Mesh& mesh ) = delete;
 		~Mesh();
+
+		void operator=( const Mesh& mesh ) = delete;
 
 		int add_texture( Texture* texture );
 		Texture* get_texture( int id );
 
-		Shader* get_shader();
-		int get_indices_count();
+		Shader* get_shader() const;
+		VertexArray* get_vertex_array() const;
 
-		VertexArray* get_vertex_array() const { return _vertex_array; }
+	public:
+		std::string shader_name {};
 
 	private:
 		VertexArray* _vertex_array { nullptr };

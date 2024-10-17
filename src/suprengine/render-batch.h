@@ -72,8 +72,6 @@ namespace suprengine
 		void remove_renderer( SharedPtr<Renderer> renderer );
 
 	public:
-		virtual bool init() = 0;
-
 		virtual bool init_imgui() = 0;
 		virtual void begin_imgui_frame() = 0;
 

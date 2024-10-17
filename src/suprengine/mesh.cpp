@@ -6,6 +6,10 @@
 
 using namespace suprengine;
 
+Mesh::Mesh( VertexArray* vertex_array, rconst_str shader_name )
+	: _vertex_array( vertex_array ), shader_name( shader_name )
+{}
+
 Mesh::~Mesh()
 {
 	delete _vertex_array;
@@ -23,12 +27,12 @@ Texture* Mesh::get_texture( int id )
 	return _textures[id];
 }
 
-Shader* Mesh::get_shader()
+Shader* Mesh::get_shader() const
 {
 	return Assets::get_shader( shader_name );
 }
 
-int Mesh::get_indices_count()
+VertexArray* Mesh::get_vertex_array() const
 {
-	return _vertex_array->get_indices_count();
+	return _vertex_array;
 }

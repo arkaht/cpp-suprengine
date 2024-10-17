@@ -1,5 +1,7 @@
 #include "vertex-array.h"
 
+#include <gl/glew.h>
+
 using namespace suprengine;
 
 /*
@@ -11,9 +13,9 @@ const VertexArrayPreset
 	VertexArrayPreset::Position2_UV2( 2, 0, 2 );
 
 VertexArrayPreset::VertexArrayPreset( 
-	unsigned int positions, 
-	unsigned int normals, 
-	unsigned int uvs 
+	uint32 positions, 
+	uint32 normals, 
+	uint32 uvs 
 )
 	: positions( positions ),
 	  normals( normals ),
@@ -28,79 +30,79 @@ VertexArrayPreset::VertexArrayPreset(
 VertexArray::VertexArray( 
 	const VertexArrayPreset& preset,
 	const float* vertices, 
-	unsigned int vertices_count, 
-	const unsigned int* indices, 
-	unsigned int indices_count 
+	uint32 vertices_count, 
+	const uint32* indices, 
+	uint32 indices_count 
 )
-	: vertices_count( vertices_count ), 
-	  indices_count( indices_count )
+	: _vertices_count( vertices_count ), 
+	  _indices_count( indices_count )
 {
-	//  create vao
-	glGenVertexArrays( 1, &vao_id );
-	glBindVertexArray( vao_id );
+	//	Create vertex array object
+	glGenVertexArrays( 1, &_vao_id );
+	glBindVertexArray( _vao_id );
 
-	//  create vbo
-	glGenBuffers( 1, &vbo_id );
-	glBindBuffer( GL_ARRAY_BUFFER, vbo_id );
-	glBufferData( 
-		GL_ARRAY_BUFFER, 
-		vertices_count * preset.stride * sizeof( float ), 
-		vertices, 
-		GL_STATIC_DRAW 
+	//	Create vertex buffer object
+	glGenBuffers( 1, &_vbo_id );
+	glBindBuffer( GL_ARRAY_BUFFER, _vbo_id );
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		vertices_count * preset.stride * sizeof( float ),
+		vertices,
+		GL_STATIC_DRAW
 	);
 
-	//  create ibo
-	glGenBuffers( 1, &ibo_id );
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibo_id );
-	glBufferData( 
-		GL_ELEMENT_ARRAY_BUFFER, 
-		indices_count * sizeof( unsigned int ), 
-		indices, 
-		GL_STATIC_DRAW 
+	//	Create indices buffer object
+	glGenBuffers( 1, &_ibo_id );
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _ibo_id );
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		indices_count * sizeof( uint32 ),
+		indices,
+		GL_STATIC_DRAW
 	);
 
 	const GLsizei byte_stride = sizeof( float ) * preset.stride;
 	
-	int attribute = 0;
-	int offset = 0;
+	uint32 attribute = 0;
+	uint32 offset = 0;
 
-	//  positions
+	//	Positions
 	glEnableVertexAttribArray( attribute );
 	glVertexAttribPointer(
-		attribute, 
-		preset.positions, 
-		GL_FLOAT, GL_FALSE, 
-		byte_stride, 
-		0 
+		attribute,
+		preset.positions,
+		GL_FLOAT, GL_FALSE,
+		byte_stride,
+		0
 	);
 	offset += preset.positions;
 	attribute++;
 
-	//  normals
+	//	Normals
 	if ( preset.normals > 0 )
 	{
 		glEnableVertexAttribArray( attribute );
 		glVertexAttribPointer( 
-			attribute, 
-			preset.normals, 
-			GL_FLOAT, GL_FALSE, 
-			byte_stride, 
-			reinterpret_cast<void*>( sizeof( float ) * offset ) 
+			attribute,
+			preset.normals,
+			GL_FLOAT, GL_FALSE,
+			byte_stride,
+			reinterpret_cast<void*>( sizeof( float ) * offset )
 		);
 		offset += preset.normals;
 		attribute++;
 	}
 
-	//  uvs
+	//	UVs
 	if ( preset.uvs > 0 )
 	{
 		glEnableVertexAttribArray( attribute );
 		glVertexAttribPointer( 
-			attribute, 
-			preset.uvs, 
-			GL_FLOAT, GL_FALSE, 
-			byte_stride, 
-			reinterpret_cast<void*>( sizeof( float ) * offset ) 
+			attribute,
+			preset.uvs,
+			GL_FLOAT, GL_FALSE,
+			byte_stride,
+			reinterpret_cast<void*>( sizeof( float ) * offset )
 		);
 		offset += preset.uvs;
 		attribute++;
@@ -109,12 +111,15 @@ VertexArray::VertexArray(
 
 VertexArray::~VertexArray()
 {
-	glDeleteBuffers( 1, &vao_id );
-	glDeleteBuffers( 1, &vbo_id );
-	glDeleteBuffers( 1, &ibo_id );
+	glDeleteBuffers( 1, &_vao_id );
+	glDeleteBuffers( 1, &_vbo_id );
+	glDeleteBuffers( 1, &_ibo_id );
 }
 
 void VertexArray::activate()
 {
-	glBindVertexArray( vao_id );
+	glBindVertexArray( _vao_id );
 }
+
+uint32 VertexArray::get_vertices_count() const { return _vertices_count; }
+uint32 VertexArray::get_indices_count() const { return _indices_count; }

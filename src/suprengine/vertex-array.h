@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gl/glew.h>
+#include <suprengine/usings.h>
 
 namespace suprengine
 {
@@ -23,7 +23,7 @@ namespace suprengine
 			  0.0f, 1.0f   //  UV
 	};
 
-	constexpr unsigned int QUAD_INDICES[] = {
+	constexpr uint32 QUAD_INDICES[] = {
 		0, 1, 2,
 		2, 3, 0
 	};
@@ -40,40 +40,48 @@ namespace suprengine
 
 	public:
 		VertexArrayPreset( 
-			unsigned int positions,
-			unsigned int normals,
-			unsigned int uvs
+			uint32 positions,
+			uint32 normals,
+			uint32 uvs
 		);
 
 	public:
-		unsigned int stride;
-		unsigned int positions;
-		unsigned int normals;
-		unsigned int uvs;
+		uint32 stride;
+		uint32 positions;
+		uint32 normals;
+		uint32 uvs;
 	};
 
+	/*
+	 * Class handling buffers creation and binding to an OpenGL vertex array object.
+	 * This allows to store vertices and indices of 3D models for OpenGL to render.
+	 */
 	class VertexArray
 	{
 	public:
-		VertexArray( 
+		VertexArray(
 			const VertexArrayPreset& preset,
-			const float* vertices, 
-			unsigned int vertices_count, 
-			const unsigned int* indices, 
-			unsigned int indices_count
+			const float* vertices,
+			uint32 vertices_count,
+			const uint32* indices,
+			uint32 indices_count
 		);
 		~VertexArray();
 
+		/*
+		 * Sets vertex array object to be used for next rendering operations.
+		 */
 		void activate();
 
-		unsigned int get_vertices_count() const { return vertices_count; }
-		unsigned int get_indices_count() const { return indices_count; }
+		uint32 get_vertices_count() const;
+		uint32 get_indices_count() const;
 	
 	private:
-		unsigned int vertices_count { 0 };
-		unsigned int indices_count { 0 };
-		unsigned int vao_id { 0 };
-		unsigned int vbo_id { 0 };
-		unsigned int ibo_id { 0 };
+		uint32 _vao_id = 0;
+		uint32 _vbo_id = 0;
+		uint32 _ibo_id = 0;
+
+		uint32 _vertices_count = 0;
+		uint32 _indices_count = 0;
 	};
 }

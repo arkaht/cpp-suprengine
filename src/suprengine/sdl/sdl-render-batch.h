@@ -11,12 +11,10 @@ namespace suprengine
 	class SDLRenderBatch : public RenderBatch
 	{
 	public:
-		SDLRenderBatch( Window* _window ) : RenderBatch( _window ) {};
+		SDLRenderBatch( Window* window );
 		SDLRenderBatch( const SDLRenderBatch& ) = delete;
 		SDLRenderBatch& operator=( const SDLRenderBatch& ) = delete;
 		~SDLRenderBatch();
-
-		bool init() override;
 
 		void begin_render() override;
 		void end_render() override;

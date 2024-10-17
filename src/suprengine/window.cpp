@@ -11,7 +11,7 @@ Window::Window( const std::string& title, int width, int height  )
 		_size { (float)width, (float)height }
 {
 	int sdl_init_code = SDL_Init( SDL_INIT_VIDEO );
-	ASSERT( sdl_init_code > -1, SDL_GetError() );
+	ASSERT( sdl_init_code == 0, SDL_GetError() );
 
 	_sdl_window = SDL_CreateWindow( 
 		_title.c_str(), 

@@ -12,12 +12,10 @@ namespace suprengine
 	class OpenGLRenderBatch : public RenderBatch
 	{
 	public:
-		OpenGLRenderBatch( Window* _window ) : RenderBatch( _window ) {};
+		OpenGLRenderBatch( Window* window );
 		OpenGLRenderBatch( const OpenGLRenderBatch& ) = delete;
 		OpenGLRenderBatch& operator=( const OpenGLRenderBatch& ) = delete;
 		~OpenGLRenderBatch();
-
-		bool init() override;
 
 		bool init_imgui() override;
 		void begin_imgui_frame() override;
