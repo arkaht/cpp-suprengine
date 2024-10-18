@@ -1,6 +1,7 @@
 #include "window.h"
 
 #include <suprengine/assert.hpp>
+#include <suprengine/profiler.h>
 
 #include <SDL.h>
 
@@ -9,6 +10,8 @@ using namespace suprengine;
 Window::Window( const std::string& title, int width, int height  ) 
 	:	_title( title )
 {
+	PROFILE_SCOPE( "Window::Window" );
+
 	_size.x = static_cast<float>( width );
 	_size.y = static_cast<float>( height );
 

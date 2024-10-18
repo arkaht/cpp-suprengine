@@ -6,6 +6,7 @@
  * Assert a condition.
  * If failed, log the given error message and exits the program.
  */
+//	TODO: Replace __debugbreak
 #define ASSERT( condition, message )						\
 	if ( !( condition ) ) {									\
 		Logger::critical(									\

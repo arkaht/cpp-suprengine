@@ -9,6 +9,7 @@
 
 #include <suprengine/logger.h>
 #include <suprengine/assert.hpp>
+#include <suprengine/profiler.h>
 
 using namespace suprengine;
 
@@ -292,28 +293,34 @@ void Shader::_create_program(
 	try_delete_shader( geometry_shader_id );
 }
 
+GLint get_uniform_location( GLuint id, const GLchar* name )
+{
+	PROFILE_SCOPE( "Shader::get_uniform_location" );
+	return glGetUniformLocation( id, name );
+}
+
 void Shader::set_float( const char* name, float value )
 {
-	glUniform1f( glGetUniformLocation( _program_id, name ), value );
+	glUniform1f( get_uniform_location( _program_id, name ), value );
 }
 
 void Shader::set_int( const char* name, int value )
 {
-	glUniform1i( glGetUniformLocation( _program_id, name ), value );
+	glUniform1i( get_uniform_location( _program_id, name ), value );
 }
 
 void Shader::set_vec2( const char* name, float x, float y )
 {
-	glUniform2f( glGetUniformLocation( _program_id, name ), x, y );
+	glUniform2f( get_uniform_location( _program_id, name ), x, y );
 }
 void Shader::set_vec2( const char* name, const Vec2& value )
 {
-	glUniform2f( glGetUniformLocation( _program_id, name ), value.x, value.y );
+	glUniform2f( get_uniform_location( _program_id, name ), value.x, value.y );
 }
 
 void Shader::set_vec3( const char* name, float x, float y, float z )
 {
-	glUniform3f( glGetUniformLocation( _program_id, name ), x, y, z );
+	glUniform3f( get_uniform_location( _program_id, name ), x, y, z );
 }
 void Shader::set_vec3( const char* name, const Vec3& value )
 {
@@ -322,7 +329,7 @@ void Shader::set_vec3( const char* name, const Vec3& value )
 
 void Shader::set_vec4( const char* name, float x, float y, float z, float w )
 {
-	glUniform4f( glGetUniformLocation( _program_id, name ), x, y, z, w );
+	glUniform4f( get_uniform_location( _program_id, name ), x, y, z, w );
 }
 
 void Shader::set_color( const char* name, const Color& value )
@@ -338,7 +345,7 @@ void Shader::set_color( const char* name, const Color& value )
 
 void Shader::set_mtx4( const char* name, const Mtx4& matrix )
 {
-	glUniformMatrix4fv( glGetUniformLocation( _program_id, name ), 1, GL_TRUE, matrix.get_as_float_pointer() );
+	glUniformMatrix4fv( get_uniform_location( _program_id, name ), 1, GL_TRUE, matrix.get_as_float_pointer() );
 }
 
 bool Shader::_compile_shader( uint32 shader_id, const char* name )

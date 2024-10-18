@@ -3,16 +3,14 @@
 #include <suprengine/updater.h>
 #include <suprengine/scene.h>
 #include <suprengine/timer.hpp>
-
 #include <suprengine/input-manager.h>
 #include <suprengine/physics.h>
 #include <suprengine/game.h>
+#include <suprengine/profiler.h>
+#include <suprengine/imgui.h>
+#include <suprengine/assert.hpp>
 
 #include <suprengine/components/camera.h>
-
-#include <suprengine/imgui.h>
-
-#include <suprengine/assert.hpp>
 
 #include <vector>
 
@@ -106,6 +104,7 @@ namespace suprengine
 		InputManager* get_inputs() const { return _inputs.get(); }
 		Physics* get_physics() const { return _physics.get(); }
 		Updater* get_updater() { return &_updater; }
+		Profiler* get_profiler() { return &_profiler; }
 
 	public:
 		/*
@@ -154,6 +153,7 @@ namespace suprengine
 		std::unique_ptr<InputManager> _inputs;
 		std::unique_ptr<Physics> _physics;
 
+		Profiler _profiler {};
 		Updater _updater {};
 
 		std::unique_ptr<Scene> _scene;

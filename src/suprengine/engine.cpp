@@ -6,6 +6,7 @@
 #include <suprengine/components/transform.h>
 #include <suprengine/components/collider.h>
 #include <suprengine/scene.h>
+#include <suprengine/profiler.h>
 
 #include <backends/imgui_impl_sdl2.h>
 #include <implot.h>
@@ -48,6 +49,8 @@ Engine::~Engine()
 
 bool Engine::init( IGame* game )
 {
+	PROFILE_SCOPE( "Engine::init" );
+
 	//	Init SDL
 	int sdl_status = SDL_Init( SDL_INIT_VIDEO );
 	ASSERT( sdl_status == 0, SDL_GetError() );
@@ -77,20 +80,28 @@ bool Engine::init( IGame* game )
 	_physics = std::make_unique<Physics>();
 
 	//  Init game
-	_game->load_assets();
-	_game->init();
+	{
+		PROFILE_SCOPE( "Game Initialization" );
+
+		_game->load_assets();
+		_game->init();
+	}
 
 	//  Init imgui
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImPlot::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+	{
+		PROFILE_SCOPE( "ImGui Initialization" );
 
-	ImGui::StyleColorsDark();
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImPlot::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-	if ( !_render_batch->init_imgui() ) return false;
+		ImGui::StyleColorsDark();
+
+		if ( !_render_batch->init_imgui() ) return false;
+	}
 
 	return true;
 }
@@ -99,22 +110,29 @@ void Engine::loop()
 {
 	while ( _is_running )
 	{
-		_updater.compute_delta_time();
-		float dt = _updater.get_scaled_delta_time();
+		PROFILE_SCOPE( "Engine::loop" );
 
-		//  Apply time scale modifiers
-		//  NOTE: This won't affect result returned by 
-		//  Update::get_scaled_delta_time.
-		if ( is_game_paused )
 		{
-			dt = 0.0f;
+			PROFILE_SCOPE( "Engine::loop::no_delay" );
+
+			_updater.compute_delta_time();
+			float dt = _updater.get_scaled_delta_time();
+
+			//  Apply time scale modifiers
+			//  NOTE: This won't affect result returned by 
+			//  Update::get_scaled_delta_time.
+			if ( is_game_paused )
+			{
+				dt = 0.0f;
+			}
+
+			process_input();
+			update( dt );
+			render();
+
+			_updater.accumulate_seconds( dt );
 		}
 
-		process_input();
-		update( dt );
-		render();
-
-		_updater.accumulate_seconds( dt );
 		_updater.delay_time();
 	}
 }
@@ -231,11 +249,15 @@ void Engine::process_input()
 
 void Engine::update( float dt )
 {
+	PROFILE_SCOPE( "Engine::update" );
+
 	_inputs->update();
 
 	//  Add pending entities to active
 	if ( !_pending_entities.empty() )
 	{
+		PROFILE_SCOPE( "Engine::update::pending_entities" );
+
 		for ( auto& entity : _pending_entities )
 		{
 			add_entity( entity );
@@ -251,17 +273,20 @@ void Engine::update( float dt )
 	}
 
 	//  Update entities
-	for ( auto& entity : _entities )
 	{
-		if ( entity->state == EntityState::Active )
+		PROFILE_SCOPE( "Engine::update::entities" );
+		for ( auto& entity : _entities )
 		{
-			entity->update( dt );
-		}
+			if ( entity->state == EntityState::Active )
+			{
+				entity->update( dt );
+			}
 
-		//  Queue dead entity for later erase
-		if ( entity->state == EntityState::Invalid )
-		{
-			_dead_entities.push_back( entity );
+			//  Queue dead entity for later erase
+			if ( entity->state == EntityState::Invalid )
+			{
+				_dead_entities.push_back( entity );
+			}
 		}
 	}
 	_is_updating = false;
@@ -271,6 +296,8 @@ void Engine::update( float dt )
 
 	if ( !_timers.empty() )
 	{
+		PROFILE_SCOPE( "Engine::update::timers" );
+
 		//  Update timers
 		auto itr = _timers.begin();
 		for ( itr; itr != _timers.end(); )
@@ -310,6 +337,8 @@ void Engine::update( float dt )
 
 	if ( !_dead_entities.empty() )
 	{
+		PROFILE_SCOPE( "Engine::update::dead_entities" );
+
 		//  Delete dead entities
 		for ( auto& entity : _dead_entities )
 		{
@@ -321,6 +350,8 @@ void Engine::update( float dt )
 
 void Engine::render()
 {
+	PROFILE_SCOPE( "Engine::render" );
+
 	//  Update ImGui
 	_render_batch->begin_imgui_frame();
 	on_imgui_update.invoke();
@@ -351,6 +382,8 @@ void Engine::render()
 	//  Debug render entities & components
 	if ( is_debug )
 	{
+		PROFILE_SCOPE( "Engine::render::debug" );
+
 		auto _render_batch = get_render_batch();
 		for ( auto& entity : _entities )
 		{
