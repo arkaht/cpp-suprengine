@@ -51,4 +51,29 @@ namespace ImGui::Extra
 
 		return false;
 	}
+
+	static bool ColoredTreeNode(
+		const char* label,
+		ImGuiTreeNodeFlags flags,
+		const ImVec4& color
+	)
+	{
+		int to_pop = 1;
+		if ( flags & ImGuiTreeNodeFlags_Framed )
+		{
+			ImGui::PushStyleColor( ImGuiCol_Header, color );
+			ImGui::PushStyleColor( ImGuiCol_HeaderHovered, color );
+			ImGui::PushStyleColor( ImGuiCol_HeaderActive, color );
+			to_pop = 3;
+		}
+		else
+		{
+			ImGui::PushStyleColor( ImGuiCol_Text, color );
+		}
+
+		bool is_pressed = ImGui::TreeNodeEx( label, flags );
+		ImGui::PopStyleColor( to_pop );
+
+		return is_pressed;
+	}
 }
