@@ -294,8 +294,37 @@ void Profiler::populate_imgui()
 			);
 		}
 
+		//	Inspect timeline under mouse position
+		if ( ImPlot::IsPlotHovered() && ImGui::GetIO().KeyCtrl )
+		{
+			ImPlotPoint mouse_pos = ImPlot::GetPlotMousePos();
+
+			const char* nearest_name = "None";
+			double nearest_y = mouse_pos.y;
+			for ( auto& pair : _timelines )
+			{
+				auto& timeline = pair.second;
+
+				for ( const Vec2& pos : timeline.data )
+				{
+					if ( pos.x < mouse_pos.x - TIMELINE_BAR_SIZE * 0.5 ) continue;
+
+					if ( pos.y > mouse_pos.y )
+					{
+						nearest_name = pair.first;
+						nearest_y = pos.y;
+					}
+
+					break;
+				}
+			}
+
+			constexpr ImVec4 SELECTOR_COLOR { 1.0f, 0.0f, 0.0f, 1.0f };
+			ImPlot::Annotation( mouse_pos.x, nearest_y, SELECTOR_COLOR, ImVec2 { 0.0f, -15.0f }, true, nearest_name );
+		}
+
 		//	Draw time target
-		constexpr ImVec4 TIME_TARGET_COLOR = ImVec4 { 1.0f, 0.3f, 0.3f, 0.75f };
+		constexpr ImVec4 TIME_TARGET_COLOR { 1.0f, 0.3f, 0.3f, 0.75f };
 		double time_target = 1.0 / TIMELINE_FPS_TARGET * 1000.0;
 		ImPlot::TagY( time_target, TIME_TARGET_COLOR, "Target" );
 		ImPlot::DragLineY( 0, &time_target, TIME_TARGET_COLOR, 2.0f, ImPlotDragToolFlags_NoInputs );
