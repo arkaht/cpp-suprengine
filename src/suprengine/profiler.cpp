@@ -150,7 +150,8 @@ void Profiler::update()
 void Profiler::populate_imgui()
 {
 	const auto& results = get_results();
-	const float profile_time = get_profile_time() * 0.001f;
+	const float profile_time_ms = get_profile_time();
+	const float profile_time_seconds = profile_time_ms * 0.001f;
 
 	auto& engine = Engine::instance();
 	auto renderer = engine.get_render_batch();
@@ -241,7 +242,7 @@ void Profiler::populate_imgui()
 
 			//	Usage
 			ImGui::TableNextColumn();
-			ImGui::Text( "%.1f%%", result.total_time / profile_time * 100.0f );
+			ImGui::Text( "%.1f%%", result.total_time / profile_time_ms * 100.0f );
 
 			ImGui::PopID();
 		}
@@ -257,8 +258,8 @@ void Profiler::populate_imgui()
 		ImPlot::SetupAxesLimits( 0, TIMELINE_MAX_TIME, 0, 50 );
 		ImPlot::SetupAxisLimitsConstraints(
 			ImAxis_X1, 
-			math::max( 0.0f, profile_time - TIMELINE_MAX_TIME ),
-			math::max( static_cast<float>( TIMELINE_MAX_TIME ), profile_time )
+			math::max( 0.0f, profile_time_seconds - TIMELINE_MAX_TIME ),
+			math::max( static_cast<float>( TIMELINE_MAX_TIME ), profile_time_seconds )
 		);
 		ImPlot::SetupAxisLimitsConstraints( ImAxis_Y1, 0.0, 200.0 );
 
@@ -315,7 +316,7 @@ void Profiler::populate_imgui()
 		clear();
 	}
 	ImGui::SameLine();
-	ImGui::Text( "Profile Time: %.1fs", profile_time );
+	ImGui::Text( "Profile Time: %.1fs", profile_time_seconds );
 
 	if ( is_profiling() )
 	{
