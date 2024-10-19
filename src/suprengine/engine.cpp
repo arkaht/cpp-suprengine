@@ -63,17 +63,25 @@ bool Engine::init( IGame* game )
 	auto infos = _game->get_infos();
 
 	//  Init window
-	_window = std::make_unique<Window>( 
-		infos.title,
-		infos.width,
-		infos.height
-	);
+	{
+		PROFILE_SCOPE( "Engine::init::Window" );
+
+		_window = std::make_unique<Window>( 
+			infos.title,
+			infos.width,
+			infos.height
+		);
+	}
 
 	//  Init render batch
-	_render_batch = std::unique_ptr<RenderBatch>(
-		game->create_render_batch( get_window() ) 
-	);
-	_render_batch->init();
+	{
+		PROFILE_SCOPE( "Engine::init::RenderBatch" );
+
+		_render_batch = std::unique_ptr<RenderBatch>(
+			game->create_render_batch( get_window() ) 
+		);
+		_render_batch->init();
+	}
 
 	//  Init managers
 	_inputs = std::make_unique<InputManager>();
@@ -81,7 +89,7 @@ bool Engine::init( IGame* game )
 
 	//  Init game
 	{
-		PROFILE_SCOPE( "Game Initialization" );
+		PROFILE_SCOPE( "Engine::init::Game" );
 
 		_game->load_assets();
 		_game->init();
@@ -89,7 +97,7 @@ bool Engine::init( IGame* game )
 
 	//  Init imgui
 	{
-		PROFILE_SCOPE( "ImGui Initialization" );
+		PROFILE_SCOPE( "Engine::init::ImGui" );
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
