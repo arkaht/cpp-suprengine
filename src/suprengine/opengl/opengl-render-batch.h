@@ -115,6 +115,8 @@ namespace suprengine
 
 		Mtx4 _view_matrix;
 		Mtx4 _viewport_matrix;
+
+		uint32 _render_tick = 0;
 	};
 }
 

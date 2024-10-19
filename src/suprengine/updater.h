@@ -25,6 +25,8 @@ namespace suprengine
 		float get_accumulated_seconds() const;
 		uint32_t get_fps() const;
 
+		uint32_t get_frame_tick() const;
+
 	public:
 		float time_scale = 1.0f;
 

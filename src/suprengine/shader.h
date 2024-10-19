@@ -32,6 +32,15 @@ namespace suprengine
 		void activate();
 
 		/*
+		 * Attempts to prepare the shader for the given frame tick.
+		 * Returns whenever the shader has already been prepared for this frame.
+		 * 
+		 * This avoids sending uniforms that have already been sent earlier
+		 * during the rendering.
+		 */
+		bool prepare( uint32 frame_tick );
+
+		/*
 		 * Returns whenever the shader is in a usable state.
 		 */
 		bool is_valid() const;
@@ -66,6 +75,7 @@ namespace suprengine
 
 	private:
 		uint32 _program_id = 0;
+		uint32 _last_preparation_tick = 0;
 
 		std::unordered_map<std::string, int> _uniform_locations {};
 	};

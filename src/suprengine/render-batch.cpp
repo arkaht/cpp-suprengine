@@ -115,6 +115,14 @@ Texture* RenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* s
 	return new Texture( path, surface, params );
 }
 
+int RenderBatch::get_renderers_count( RenderPhase phase ) const
+{
+	auto itr = _renderers.find( phase );
+	if ( itr == _renderers.end() ) return 0;
+
+	return static_cast<int>( itr->second.size() );
+}
+
 void RenderBatch::_render_phase( const RenderPhase phase )
 {
 	if ( _renderers.find( phase ) == _renderers.end() ) return;

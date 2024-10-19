@@ -111,6 +111,14 @@ void Shader::activate()
 	glUseProgram( _program_id );
 }
 
+bool Shader::prepare( uint32 frame_tick )
+{
+	if ( frame_tick == _last_preparation_tick ) return false;
+
+	_last_preparation_tick = frame_tick;
+	return true;
+}
+
 bool Shader::is_valid() const
 {
 	return _program_id != 0;

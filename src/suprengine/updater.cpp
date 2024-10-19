@@ -55,3 +55,8 @@ uint32_t Updater::get_fps() const
 {
 	return _fps;
 }
+
+uint32_t Updater::get_frame_tick() const
+{
+	return _frame_start;
+}

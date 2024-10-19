@@ -137,6 +137,8 @@ namespace suprengine
 		virtual Texture* load_texture( rconst_str path, const TextureParams& params = {} );
 		virtual Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params = {} );
 
+		int get_renderers_count( RenderPhase phase ) const;
+
 	protected:
 		void _render_phase( RenderPhase phase );
 

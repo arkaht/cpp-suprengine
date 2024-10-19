@@ -218,22 +218,19 @@ void OpenGLRenderBatch::begin_render()
 
 	//  activate shader & vertex array
 	_view_matrix = _camera->get_view_matrix() * _camera->get_projection_matrix();
-	if ( _color_shader != nullptr )
-	{
-		_color_shader->activate();
-		_color_shader->set_mtx4( "u_view_projection", _view_matrix );
-	}
-	if ( _texture_shader != nullptr )
-	{
-		_texture_shader->activate();
-		_texture_shader->set_mtx4( "u_view_projection", _view_matrix );
-	}
+
+	//	Store render frame for later use
+	Updater* updater = engine.get_updater();
+	_render_tick = updater->get_frame_tick();
 }
 
 void OpenGLRenderBatch::render()
 {
 	//  draw meshes
+	if ( get_renderers_count( RenderPhase::World ) > 0 )
 	{
+		PROFILE_SCOPE( "OpenGL::render::World" );
+
 		//  enable clockwise
 		glFrontFace( GL_CW );
 
@@ -253,7 +250,10 @@ void OpenGLRenderBatch::render()
 	}
 
 	//  draw sprites
+	if ( get_renderers_count( RenderPhase::Viewport ) > 0 )
 	{
+		PROFILE_SCOPE( "OpenGL::render::Viewport" );
+
 		//  setup shaders
 		if ( _texture_shader != nullptr )
 		{
@@ -277,7 +277,10 @@ void OpenGLRenderBatch::render()
 	}
 
 	//  ImGui rendering
-	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+	{
+		PROFILE_SCOPE( "OpenGL::render::ImGui" );
+		ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+	}
 }
 
 void OpenGLRenderBatch::end_render()
@@ -285,7 +288,7 @@ void OpenGLRenderBatch::end_render()
 	Vec2 window_size = _window->get_size();
 	int width = static_cast<int>( window_size.x );
 	int height = static_cast<int>( window_size.y );
-
+	
 	//	Copy framebuffer into post-process framebuffer
 	glBindFramebuffer( GL_READ_FRAMEBUFFER, _fbo_id );
 	glBindFramebuffer( GL_DRAW_FRAMEBUFFER, _pp_fbo_id );
@@ -328,8 +331,13 @@ void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 
 void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
 {
-	_quad_vertex_array->activate();
 	_color_shader->activate();
+
+	//	Prepare shader only once per frame
+	if ( _color_shader->prepare( _render_tick ) )
+	{
+		_color_shader->set_mtx4( "u_view_projection", _viewport_matrix );
+	}
 
 	//	Setup matrices
 	Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
@@ -337,6 +345,7 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	_color_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
 	_color_shader->set_color( "u_modulate", color );
 
+	_quad_vertex_array->activate();
 	_draw_elements( 6 );
 }
 
@@ -368,13 +377,15 @@ void OpenGLRenderBatch::draw_texture(
 	const Color& color
 )
 {
-	_quad_vertex_array->activate();
 	_texture_shader->activate();
-	texture->activate();
+
+	//	Prepare shader only once per frame
+	if ( _texture_shader->prepare( _render_tick ) )
+	{
+		_texture_shader->set_mtx4( "u_view_projection", _viewport_matrix );
+	}
 
 	_texture_shader->set_mtx4( "u_world_transform", matrix );
-
-	//  set modulate
 	_texture_shader->set_color( "u_modulate", color );
 
 	//  source rect
@@ -391,6 +402,8 @@ void OpenGLRenderBatch::draw_texture(
 	_texture_shader->set_vec2( "u_origin", origin );
 
 	//  draw
+	_quad_vertex_array->activate();
+	texture->activate();
 	_draw_elements( 6 );
 }
 
@@ -398,21 +411,24 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 {
 	//	Update uniforms
 	Shader* shader = mesh->get_shader();
-	if ( shader != nullptr )
-	{
-		shader->activate();
+	ASSERT( shader != nullptr, "Shader is invalid" );
 
-		//	TODO: Set the view projection matrix only once per shader
+	shader->activate();
+
+	//	Prepare shader only once per frame
+	if ( shader->prepare( _render_tick ) )
+	{
 		shader->set_mtx4( "u_view_projection", _view_matrix );
-		shader->set_mtx4( "u_world_transform", matrix );
-		shader->set_color( "u_modulate", color );
 
 		//	Ambient lighting
-		//	TODO: Set these uniforms only once per shader
 		shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
 		shader->set_float( "u_ambient_scale", _ambient_light.scale );
 		shader->set_color( "u_ambient_color", _ambient_light.color );
 	}
+
+	//	Update mesh-specific uniforms
+	shader->set_mtx4( "u_world_transform", matrix );
+	shader->set_color( "u_modulate", color );
 
 	//	Draw
 	VertexArray* vertex_array = mesh->get_vertex_array();
@@ -448,21 +464,23 @@ void OpenGLRenderBatch::draw_model(
 		}
 
 		//	Update uniforms
-		if ( shader != nullptr )
-		{
-			shader->activate();
+		ASSERT( shader != nullptr, "Shader is invalid" );
 
-			//	TODO: Set the view projection matrix only once per shader
+		shader->activate();
+
+		if ( shader->prepare( _render_tick ) )
+		{
 			shader->set_mtx4( "u_view_projection", _view_matrix );
-			shader->set_mtx4( "u_world_transform", matrix );
-			shader->set_color( "u_modulate", color );
 
 			//	Ambient lighting
-			//	TODO: Set these uniforms only once per shader
 			shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
 			shader->set_float( "u_ambient_scale", _ambient_light.scale );
 			shader->set_color( "u_ambient_color", _ambient_light.color );
 		}
+
+		//	Update mesh-specific uniforms
+		shader->set_mtx4( "u_world_transform", matrix );
+		shader->set_color( "u_modulate", color );
 
 		//	Draw
 		auto vertex_array = mesh->get_vertex_array();
