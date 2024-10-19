@@ -6,6 +6,8 @@
 #include <suprengine/vec2.h>
 #include <suprengine/mtx4.h>
 
+#include <unordered_map>
+
 namespace suprengine
 {
 	class Shader
@@ -59,7 +61,12 @@ namespace suprengine
 		);
 		bool _link_and_validate_program();
 
+		void _retrieve_uniform_locations();
+		int _get_uniform_location( const char* name ) const;
+
 	private:
 		uint32 _program_id = 0;
+
+		std::unordered_map<std::string, int> _uniform_locations {};
 	};
 }

@@ -94,6 +94,7 @@ Shader::Shader(
 		geometry_shader_id
 	);
 
+	_retrieve_uniform_locations();
 	print_all_params();
 }
 
@@ -199,6 +200,7 @@ void Shader::print_all_params() const
 		}
 	}
 
+	//	TODO: Use _uniform_locations
 	glGetProgramiv( _program_id, GL_ACTIVE_UNIFORMS, &params );
 	Logger::info( "GL_ACTIVE_UNIFORMS = %d", params );
 
@@ -293,34 +295,38 @@ void Shader::_create_program(
 	try_delete_shader( geometry_shader_id );
 }
 
-GLint get_uniform_location( GLuint id, const GLchar* name )
+int Shader::_get_uniform_location( const char* name ) const
 {
 	PROFILE_SCOPE( "Shader::get_uniform_location" );
-	return glGetUniformLocation( id, name );
+
+	auto itr = _uniform_locations.find( name );
+	if ( itr == _uniform_locations.end() ) return -1;
+
+	return itr->second;
 }
 
 void Shader::set_float( const char* name, float value )
 {
-	glUniform1f( get_uniform_location( _program_id, name ), value );
+	glUniform1f( _get_uniform_location( name ), value );
 }
 
 void Shader::set_int( const char* name, int value )
 {
-	glUniform1i( get_uniform_location( _program_id, name ), value );
+	glUniform1i( _get_uniform_location( name ), value );
 }
 
 void Shader::set_vec2( const char* name, float x, float y )
 {
-	glUniform2f( get_uniform_location( _program_id, name ), x, y );
+	glUniform2f( _get_uniform_location( name ), x, y );
 }
 void Shader::set_vec2( const char* name, const Vec2& value )
 {
-	glUniform2f( get_uniform_location( _program_id, name ), value.x, value.y );
+	glUniform2f( _get_uniform_location( name ), value.x, value.y );
 }
 
 void Shader::set_vec3( const char* name, float x, float y, float z )
 {
-	glUniform3f( get_uniform_location( _program_id, name ), x, y, z );
+	glUniform3f( _get_uniform_location( name ), x, y, z );
 }
 void Shader::set_vec3( const char* name, const Vec3& value )
 {
@@ -329,7 +335,7 @@ void Shader::set_vec3( const char* name, const Vec3& value )
 
 void Shader::set_vec4( const char* name, float x, float y, float z, float w )
 {
-	glUniform4f( get_uniform_location( _program_id, name ), x, y, z, w );
+	glUniform4f( _get_uniform_location( name ), x, y, z, w );
 }
 
 void Shader::set_color( const char* name, const Color& value )
@@ -345,7 +351,7 @@ void Shader::set_color( const char* name, const Color& value )
 
 void Shader::set_mtx4( const char* name, const Mtx4& matrix )
 {
-	glUniformMatrix4fv( get_uniform_location( _program_id, name ), 1, GL_TRUE, matrix.get_as_float_pointer() );
+	glUniformMatrix4fv( _get_uniform_location( name ), 1, GL_TRUE, matrix.get_as_float_pointer() );
 }
 
 bool Shader::_compile_shader( uint32 shader_id, const char* name )
@@ -398,4 +404,38 @@ bool Shader::_link_and_validate_program()
 	}
 
 	return true;
+}
+
+void Shader::_retrieve_uniform_locations()
+{
+	int count = 0;
+	glGetProgramiv( _program_id, GL_ACTIVE_UNIFORMS, &count );
+	_uniform_locations.reserve( count );
+	
+	for ( int id = 0; id < count; id++ )
+	{
+		const int max_length = 64;
+		char name[max_length] {};
+		int size = 0;
+		GLenum type;
+		glGetActiveUniform( _program_id, id, max_length, NULL, &size, &type, name );
+
+		if ( size > 1 )
+		{
+			//	Prints arrays uniforms
+			for ( int j = 0; j < size; j++ )
+			{
+				char long_name[77];
+				sprintf_s( long_name, "%s[%d]", name, j );
+
+				int location = glGetUniformLocation( _program_id, long_name );
+				_uniform_locations.emplace( long_name, location );
+			}
+		}
+		else
+		{
+			int location = glGetUniformLocation( _program_id, name );
+			_uniform_locations.emplace( name, location );
+		}
+	}
 }
