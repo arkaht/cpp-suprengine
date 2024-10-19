@@ -308,13 +308,10 @@ void Profiler::populate_imgui()
 				for ( const Vec2& pos : timeline.data )
 				{
 					if ( pos.x < mouse_pos.x - TIMELINE_BAR_SIZE * 0.5 ) continue;
+					if ( pos.y < mouse_pos.y ) break;
 
-					if ( pos.y > mouse_pos.y )
-					{
-						nearest_name = pair.first;
-						nearest_y = pos.y;
-					}
-
+					nearest_name = pair.first;
+					nearest_y = pos.y;
 					break;
 				}
 			}
