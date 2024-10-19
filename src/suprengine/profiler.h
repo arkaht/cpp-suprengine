@@ -66,7 +66,12 @@ namespace suprengine
 		void start();
 		void stop();
 
+		void populate_imgui();
+
 		bool is_profiling() const;
+		/*
+		 * Returns the current profiling time in milliseconds.
+		 */
 		float get_profile_time() const;
 
 		const ProfileResultsMap& get_results() const;
