@@ -332,7 +332,7 @@ void Profiler::populate_imgui()
 			ImPlotPoint mouse_pos = ImPlot::GetPlotMousePos();
 
 			const char* hovered_timeline_name = nullptr;
-			double hovered_timeline_y = mouse_pos.y;
+			ImPlotPoint hovered_timeline_pos = mouse_pos;
 			int hovered_timeline_id = -1;
 
 			//	Find the hovered timeline
@@ -343,14 +343,20 @@ void Profiler::populate_imgui()
 
 				//	Skip empty timelines
 				auto& timeline = pair.second;
-				if ( timeline.data.empty() ) continue;
+				int data_size = static_cast<int>( timeline.data.size() );
+				if ( data_size == 0 ) continue;
 
 				//	Skip hidden timelines (by user)
 				TimelineImData& data = timelines_data.at( id );
 				if ( data.is_hidden ) continue;
 
-				for ( const Vec2& pos : timeline.data )
+				for ( int data_id = 0; data_id < data_size; data_id++ )
 				{
+					//	TODO: Fix bug where it seems to select the incorrect timeline
+					//		  for small-sized buffers. Is it caused by no account of offset?
+					//int i = ( timeline.offset + data_id ) % timeline.max_size;
+					const Vec2& pos = timeline.data[data_id];
+
 					//	Skip all positions before the mouse X-pos
 					if ( pos.x < mouse_pos.x - TIMELINE_BAR_SIZE * 0.5 ) continue;
 					//	Then, stop if Y-pos is not high enough to have the mouse Y-pos under it
@@ -358,7 +364,8 @@ void Profiler::populate_imgui()
 
 					//	We have a potential winner, let's see the other timelines
 					hovered_timeline_name = pair.first;
-					hovered_timeline_y = pos.y;
+					hovered_timeline_pos.x = pos.x;
+					hovered_timeline_pos.y = pos.y;
 					hovered_timeline_id = id;
 					break;
 				}
@@ -370,13 +377,13 @@ void Profiler::populate_imgui()
 				//	Draw annotation about the hovered timeline
 				TimelineImData& data = timelines_data.at( hovered_timeline_id );
 				ImPlot::Annotation(
-					mouse_pos.x, hovered_timeline_y,
+					hovered_timeline_pos.x, hovered_timeline_pos.y,
 					data.color,
 					ANNOTATION_OFFSET,
 					/* clamp */ true,
 					"%s - %.3fms",
 					hovered_timeline_name,
-					hovered_timeline_y
+					hovered_timeline_pos.y
 				);
 			}
 			else
