@@ -18,7 +18,9 @@ namespace suprengine
 		float min_time = math::PLUS_INFINITY;
 		float max_time = math::NEG_INFINITY;
 		float total_time = 0.0f;
+		float non_consumed_time = 0.0f;
 		uint32 total_calls = 0;
+		uint32 non_consumed_calls = 0;
 	};
 
 	class ProfileTimer

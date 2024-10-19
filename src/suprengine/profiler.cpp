@@ -89,16 +89,18 @@ void Profiler::add_result( const char* name, float time )
 	result.max_time = std::max( result.max_time, time );
 	result.min_time = std::min( result.min_time, time );
 	result.total_time += time;
+	result.non_consumed_time += time;
 	result.total_calls++;
+	result.non_consumed_calls++;
 }
 
+void Profiler::consume_results()
 {
-	_results.clear();
-
-	//	Reset timer
-	if ( is_profiling() )
+	for ( auto& pair : _results )
 	{
-		_timer.start();
+		ProfileResult& result = pair.second;
+		result.non_consumed_time = 0.0f;
+		result.non_consumed_calls = 0;
 	}
 }
 
