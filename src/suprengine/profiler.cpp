@@ -3,6 +3,7 @@
 #include <suprengine/engine.h>
 
 #include <implot.h>
+#include <implot_internal.h>
 
 using namespace suprengine;
 
@@ -159,6 +160,12 @@ void Profiler::update()
 	consume_results();
 }
 
+struct TimelineImData
+{
+	bool is_hidden = false;
+	ImVec4 color {};
+};
+
 void Profiler::populate_imgui()
 {
 	const auto& results = get_results();
@@ -276,6 +283,8 @@ void Profiler::populate_imgui()
 		ImPlot::SetupLegend( ImPlotLocation_West, ImPlotLegendFlags_Outside );
 
 		//	Draw timelines
+		std::vector<TimelineImData> timelines_data {};
+		timelines_data.reserve( _timelines.size() );
 		for ( auto& pair : _timelines )
 		{
 			const char* name = pair.first;
@@ -292,6 +301,12 @@ void Profiler::populate_imgui()
 				ImPlotBarsFlags_None,
 				timeline.offset, sizeof( Vec2 )
 			);
+
+			//	Fill timeline data for later use
+			ImPlotContext* plot_context = ImPlot::GetCurrentContext();
+			TimelineImData& data = timelines_data.emplace_back( TimelineImData {} );
+			data.color = ImPlot::GetLastItemColor();
+			data.is_hidden = !plot_context->PreviousItem->Show;
 		}
 
 		//	Inspect timeline under mouse position
@@ -299,25 +314,65 @@ void Profiler::populate_imgui()
 		{
 			ImPlotPoint mouse_pos = ImPlot::GetPlotMousePos();
 
-			const char* nearest_name = "None";
-			double nearest_y = mouse_pos.y;
+			const char* hovered_timeline_name = nullptr;
+			double hovered_timeline_y = mouse_pos.y;
+			int hovered_timeline_id = -1;
+
+			//	Find the hovered timeline
+			int id = -1;
 			for ( auto& pair : _timelines )
 			{
+				id++;
+
+				//	Skip empty timelines
 				auto& timeline = pair.second;
+				if ( timeline.data.empty() ) continue;
+
+				//	Skip hidden timelines (by user)
+				TimelineImData& data = timelines_data.at( id );
+				if ( data.is_hidden ) continue;
 
 				for ( const Vec2& pos : timeline.data )
 				{
+					//	Skip all positions before the mouse X-pos
 					if ( pos.x < mouse_pos.x - TIMELINE_BAR_SIZE * 0.5 ) continue;
+					//	Then, stop if Y-pos is not high enough to have the mouse Y-pos under it
 					if ( pos.y < mouse_pos.y ) break;
 
-					nearest_name = pair.first;
-					nearest_y = pos.y;
+					//	We have a potential winner, let's see the other timelines
+					hovered_timeline_name = pair.first;
+					hovered_timeline_y = pos.y;
+					hovered_timeline_id = id;
 					break;
 				}
 			}
 
-			constexpr ImVec4 SELECTOR_COLOR { 1.0f, 0.0f, 0.0f, 1.0f };
-			ImPlot::Annotation( mouse_pos.x, nearest_y, SELECTOR_COLOR, ImVec2 { 0.0f, -15.0f }, true, nearest_name );
+			constexpr ImVec2 ANNOTATION_OFFSET { 0.0f, -15.0f };
+			if ( hovered_timeline_id != -1 )
+			{
+				//	Draw annotation about the hovered timeline
+				TimelineImData& data = timelines_data.at( hovered_timeline_id );
+				ImPlot::Annotation(
+					mouse_pos.x, hovered_timeline_y,
+					data.color,
+					ANNOTATION_OFFSET,
+					/* clamp */ true,
+					"%s - %.3fms",
+					hovered_timeline_name,
+					hovered_timeline_y
+				);
+			}
+			else
+			{
+				constexpr ImVec4 SELECTOR_COLOR { 0.5f, 0.5f, 0.5f, 1.0f };
+				ImPlot::Annotation(
+					mouse_pos.x, mouse_pos.y,
+					SELECTOR_COLOR,
+					ANNOTATION_OFFSET,
+					/* clamp */ true,
+					"None"
+				);
+			}
 		}
 
 		//	Draw time target
