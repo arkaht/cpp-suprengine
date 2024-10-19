@@ -353,8 +353,11 @@ void Engine::render()
 	PROFILE_SCOPE( "Engine::render" );
 
 	//  Update ImGui
-	_render_batch->begin_imgui_frame();
-	on_imgui_update.invoke();
+	{
+		PROFILE_SCOPE( "Engine::render::UpdateImGui" );
+		_render_batch->begin_imgui_frame();
+		on_imgui_update.invoke();
+	}
 
 	//  Start rendering
 	_render_batch->begin_render();

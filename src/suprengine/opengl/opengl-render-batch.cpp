@@ -194,6 +194,8 @@ void OpenGLRenderBatch::begin_imgui_frame()
 
 void OpenGLRenderBatch::begin_render()
 {
+	PROFILE_SCOPE( "OpenGL::begin_render" );
+
 	//  begin ImGui rendering
 	ImGui::Render();
 
@@ -226,53 +228,46 @@ void OpenGLRenderBatch::begin_render()
 
 void OpenGLRenderBatch::render()
 {
-	//  draw meshes
+	PROFILE_SCOPE( "OpenGL::render" );
+
+	//	Draw world renderers
 	if ( get_renderers_count( RenderPhase::World ) > 0 )
 	{
 		PROFILE_SCOPE( "OpenGL::render::World" );
 
-		//  enable clockwise
+		//	Enable clockwise
 		glFrontFace( GL_CW );
 
-		//  enable face culling
+		//	Enable face culling
 		glEnable( GL_CULL_FACE );
 
-		//  enable depth testing
+		//	Enable depth testing
 		glEnable( GL_DEPTH_TEST );
 		glDepthFunc( GL_LEQUAL );
 
-		//  render
 		_render_phase( RenderPhase::World );
 
-		//  disable options
+		//	Disable options
 		glDisable( GL_DEPTH_TEST );
 		glDisable( GL_CULL_FACE );
 	}
 
-	//  draw sprites
+	//	Draw viewport renderers
 	if ( get_renderers_count( RenderPhase::Viewport ) > 0 )
 	{
 		PROFILE_SCOPE( "OpenGL::render::Viewport" );
 
-		//  setup shaders
-		if ( _texture_shader != nullptr )
-		{
-			_texture_shader->activate();
-			_texture_shader->set_mtx4( "u_view_projection", _viewport_matrix );
-		}
-
-		//  enable counter-clockwise
+		//	Enable counter-clockwise
 		glFrontFace( GL_CCW );
 
-		//  enable blending
+		//	Enable blending
 		glEnable( GL_BLEND );
 		glBlendEquationSeparate( GL_FUNC_ADD, GL_FUNC_ADD );
 		glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO );
 
-		//  render
 		_render_phase( RenderPhase::Viewport );
 
-		//  disable options
+		//	Disable options
 		glDisable( GL_BLEND );
 	}
 
@@ -285,6 +280,8 @@ void OpenGLRenderBatch::render()
 
 void OpenGLRenderBatch::end_render()
 {
+	PROFILE_SCOPE( "OpenGL::end_render" );
+
 	Vec2 window_size = _window->get_size();
 	int width = static_cast<int>( window_size.x );
 	int height = static_cast<int>( window_size.y );
