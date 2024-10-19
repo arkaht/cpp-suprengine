@@ -12,6 +12,7 @@ constexpr int TIMELINE_FPS_TARGET = 60;
 constexpr float TIMELINE_MAX_TIME = 60.0f;
 //	Amount of frames to record for the timeline; by default, allows for 60 seconds at 60 FPS
 constexpr int TIMELINE_DATA_SIZE = static_cast<int>( TIMELINE_MAX_TIME * TIMELINE_FPS_TARGET );
+constexpr double TIMELINE_BAR_SIZE = 1.0 / TIMELINE_MAX_TIME;
 
 ProfileTimer::ProfileTimer( const char* name, bool is_running, bool should_log )
 	: name( name ), _should_log( should_log )
@@ -230,7 +231,7 @@ void Profiler::populate_imgui()
 			//	Min. Time
 			ImGui::TableNextColumn();
 			ImGui::Text( "%.3fms", result.min_time );
-				
+
 			//	Avr. Time
 			ImGui::TableNextColumn();
 			ImGui::Text( "%.3fms", result.total_time / result.total_calls );
@@ -242,7 +243,7 @@ void Profiler::populate_imgui()
 			//	Frame Time
 			ImGui::TableNextColumn();
 			ImGui::Text( "%.3fms", result.non_consumed_time );
-				
+
 			//	Frame Calls
 			ImGui::TableNextColumn();
 			ImGui::Text( "%d", result.non_consumed_calls );
@@ -262,13 +263,12 @@ void Profiler::populate_imgui()
 	}
 
 	ImGui::SeparatorText( "Graphs" );
-	//ImGui::Text( "Timeline Data Size: %d", _timeline.data.size() );
 	if ( ImPlot::BeginPlot( "Timelines", ImVec2 { -1.0f, 250.0f } ) )
 	{
 		ImPlot::SetupAxes( "Profile Time (s)", "Result Time (ms)", ImPlotAxisFlags_AutoFit );
 		ImPlot::SetupAxesLimits( 0, TIMELINE_MAX_TIME, 0, 50 );
 		ImPlot::SetupAxisLimitsConstraints(
-			ImAxis_X1, 
+			ImAxis_X1,
 			math::max( 0.0f, profile_time_seconds - TIMELINE_MAX_TIME ),
 			math::max( static_cast<float>( TIMELINE_MAX_TIME ), profile_time_seconds )
 		);
@@ -288,36 +288,17 @@ void Profiler::populate_imgui()
 				name,
 				&timeline.data[0].x, &timeline.data[0].y,
 				timeline_size,
-				1.0 / TIMELINE_MAX_TIME,
+				TIMELINE_BAR_SIZE,
 				ImPlotBarsFlags_None,
 				timeline.offset, sizeof( Vec2 )
 			);
 		}
-		
+
 		//	Draw time target
-		constexpr ImVec4 TIME_TARGET_COLOR = ImVec4 { 1.0f, 0.0f, 0.0f, 1.0f };
+		constexpr ImVec4 TIME_TARGET_COLOR = ImVec4 { 1.0f, 0.3f, 0.3f, 0.75f };
 		double time_target = 1.0 / TIMELINE_FPS_TARGET * 1000.0;
 		ImPlot::TagY( time_target, TIME_TARGET_COLOR, "Target" );
 		ImPlot::DragLineY( 0, &time_target, TIME_TARGET_COLOR, 2.0f, ImPlotDragToolFlags_NoInputs );
-
-		/*ImPlot::PushStyleVar( ImPlotStyleVar_FillAlpha, 0.25f );
-		ImPlot::PlotShaded(
-			"Frame Time",
-			&_timeline.data[0].x, &_timeline.data[0].y,
-			timeline_size,
-			0.0f,
-			ImPlotShadedFlags_None,
-			_timeline.offset, sizeof( Vec2 )
-		);
-		ImPlot::PopStyleVar();
-
-		ImPlot::PlotLine(
-			"Frame Time",
-			&_timeline.data[0].x, &_timeline.data[0].y,
-			timeline_size,
-			ImPlotLineFlags_None,
-			_timeline.offset, sizeof( Vec2 )
-		);*/
 
 		ImPlot::EndPlot();
 	}
