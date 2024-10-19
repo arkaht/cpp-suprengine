@@ -2,6 +2,8 @@
 
 #include <suprengine/usings.h>
 #include <suprengine/math.h>
+#include <suprengine/imgui.h>
+#include <suprengine/vec2.h>
 
 #include <map>
 #include <chrono>
@@ -11,6 +13,8 @@
 namespace suprengine
 {
 	namespace chrono = std::chrono;
+
+	class Engine;
 
 	struct ProfileResult
 	{
@@ -66,6 +70,8 @@ namespace suprengine
 		void start();
 		void stop();
 
+		void update();
+
 		void populate_imgui();
 
 		bool is_profiling() const;
@@ -83,5 +89,7 @@ namespace suprengine
 		 * Timer to compute the total profile time
 		 */
 		ProfileTimer _timer;
+
+		ImGui::Extra::ScrollingBuffer<Vec2> _timeline;
 	};
 }

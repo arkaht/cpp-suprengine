@@ -2,7 +2,16 @@
 
 #include <suprengine/engine.h>
 
+#include <implot.h>
+
 using namespace suprengine;
+
+//	Frame-per-second target to profile data on the timeline
+constexpr int TIMELINE_FPS_TARGET = 60;
+//	In seconds, the maximum X-axis value
+constexpr float TIMELINE_MAX_TIME = 60.0f;
+//	Amount of frames to record for the timeline; by default, allows for 60 seconds at 60 FPS
+constexpr int TIMELINE_DATA_SIZE = static_cast<int>( TIMELINE_MAX_TIME * TIMELINE_FPS_TARGET );
 
 ProfileTimer::ProfileTimer( const char* name, bool is_running, bool should_log )
 	: name( name ), _should_log( should_log )
@@ -71,7 +80,8 @@ float ProfileTimer::get_time() const
 
 
 Profiler::Profiler( bool is_running )
-	: _timer( "Profiler", is_running, /* should_log */ false )
+	: _timer( "Profiler", is_running, /* should_log */ false ),
+	  _timeline( TIMELINE_DATA_SIZE )
 {}
 
 void Profiler::add_result( const char* name, float time )
@@ -108,6 +118,7 @@ void Profiler::clear()
 {
 	_results.clear();
 	_timer.clear();
+	_timeline.clear();
 }
 
 void Profiler::start()
@@ -120,13 +131,31 @@ void Profiler::stop()
 	_timer.stop();
 }
 
+void Profiler::update()
+{
+	if ( !is_profiling() ) return;
+
+	auto& engine = Engine::instance();
+	auto updater = engine.get_updater();
+
+	const float profile_time = get_profile_time() * 0.001f;
+	_timeline.add_point(
+		Vec2 {
+			profile_time,
+			updater->get_unscaled_delta_time() * 1000.0f
+		}
+	);
+}
+
 void Profiler::populate_imgui()
 {
 	const auto& results = get_results();
-	float profile_time = get_profile_time();
+	const float profile_time = get_profile_time() * 0.001f;
 
 	auto& engine = Engine::instance();
 	auto renderer = engine.get_render_batch();
+
+	ImGui::SeparatorText( "Metrics" );
 	ImGui::Text( "Viewport Renderers Count: %d", renderer->get_renderers_count( RenderPhase::Viewport ) );
 	ImGui::Text( "World Renderers Count: %d", renderer->get_renderers_count( RenderPhase::World ) );
 
@@ -168,7 +197,7 @@ void Profiler::populate_imgui()
 		}
 		ImGui::TableHeadersRow();
 
-		//ImGui::Text( "%.3fms %s [calls: %d]", result.time, name, result.total_calls );
+		//	Draw results
 		int row_id = 0;
 		for ( const auto& result_pair : results )
 		{
@@ -220,6 +249,54 @@ void Profiler::populate_imgui()
 		ImGui::EndTable();
 	}
 
+	ImGui::SeparatorText( "Timeline" );
+	ImGui::Text( "Timeline Data Size: %d", _timeline.data.size() );
+	if ( ImPlot::BeginPlot( "Timeline", ImVec2 { -1.0f, 250.0f } ) )
+	{
+		ImPlot::SetupAxes( "Profile Time (s)", "Result Time (ms)", ImPlotAxisFlags_AutoFit );
+		ImPlot::SetupAxesLimits( 0, TIMELINE_MAX_TIME, 0, 50 );
+		ImPlot::SetupAxisLimitsConstraints(
+			ImAxis_X1, 
+			math::max( 0.0f, profile_time - TIMELINE_MAX_TIME ),
+			math::max( static_cast<float>( TIMELINE_MAX_TIME ), profile_time )
+		);
+		ImPlot::SetupAxisLimitsConstraints( ImAxis_Y1, 0.0, 200.0 );
+
+		int timeline_size = static_cast<int>( _timeline.data.size() );
+		if ( timeline_size > 0 )
+		{
+			/*ImPlot::PushStyleVar( ImPlotStyleVar_FillAlpha, 0.25f );
+			ImPlot::PlotShaded(
+				"Frame Time",
+				&_timeline.data[0].x, &_timeline.data[0].y,
+				timeline_size,
+				0.0f,
+				ImPlotShadedFlags_None,
+				_timeline.offset, sizeof( Vec2 )
+			);
+			ImPlot::PopStyleVar();
+
+			ImPlot::PlotLine(
+				"Frame Time",
+				&_timeline.data[0].x, &_timeline.data[0].y,
+				timeline_size,
+				ImPlotLineFlags_None,
+				_timeline.offset, sizeof( Vec2 )
+			);*/
+
+			ImPlot::PlotBars(
+				"Frame Time",
+				&_timeline.data[0].x, &_timeline.data[0].y,
+				timeline_size,
+				1.0 / TIMELINE_MAX_TIME,
+				ImPlotBarsFlags_None,
+				_timeline.offset, sizeof( Vec2 ) 
+			);
+		}
+
+		ImPlot::EndPlot();
+	}
+
 	const char* toggle_text = is_profiling() ? "Stop" : "Start";
 	if ( ImGui::Button( toggle_text ) )
 	{
@@ -238,7 +315,7 @@ void Profiler::populate_imgui()
 		clear();
 	}
 	ImGui::SameLine();
-	ImGui::Text( "Time: %.1fs", profile_time * 0.001f );
+	ImGui::Text( "Profile Time: %.1fs", profile_time );
 
 	if ( is_profiling() )
 	{

@@ -24,8 +24,8 @@ namespace suprengine
 		 */
 		static Engine& instance()
 		{
-			static Engine inst;
-			return inst;
+			static Engine instance;
+			return instance;
 		}
 
 		Engine( const Engine& ) = delete;

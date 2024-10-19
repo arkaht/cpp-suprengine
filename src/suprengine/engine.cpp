@@ -118,30 +118,34 @@ void Engine::loop()
 {
 	while ( _is_running )
 	{
-		PROFILE_SCOPE( "Engine::loop" );
-
 		{
-			PROFILE_SCOPE( "Engine::loop::no_delay" );
+			PROFILE_SCOPE( "Engine::loop" );
 
-			_updater.compute_delta_time();
-			float dt = _updater.get_scaled_delta_time();
-
-			//  Apply time scale modifiers
-			//  NOTE: This won't affect result returned by 
-			//  Update::get_scaled_delta_time.
-			if ( is_game_paused )
 			{
-				dt = 0.0f;
+				PROFILE_SCOPE( "Engine::loop::no_delay" );
+
+				_updater.compute_delta_time();
+				float dt = _updater.get_scaled_delta_time();
+
+				//  Apply time scale modifiers
+				//  NOTE: This won't affect result returned by 
+				//  Update::get_scaled_delta_time.
+				if ( is_game_paused )
+				{
+					dt = 0.0f;
+				}
+
+				process_input();
+				update( dt );
+				render();
+
+				_updater.accumulate_seconds( dt );
 			}
 
-			process_input();
-			update( dt );
-			render();
-
-			_updater.accumulate_seconds( dt );
+			_updater.delay_time();
 		}
 
-		_updater.delay_time();
+		_profiler.update();
 	}
 }
 

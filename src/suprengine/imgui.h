@@ -3,8 +3,47 @@
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
 
+#include <vector>
+
 namespace ImGui::Extra
 {
+	/*
+	 * Struct storing points in a way that allows to create a scrolling histogram.
+	 * This code is took from implot_demo.cpp
+	 */
+	template <typename DataType>
+	struct ScrollingBuffer
+	{
+		ScrollingBuffer( int max_size )
+			: max_size( max_size )
+		{
+			data.reserve( max_size );
+		}
+
+		void add_point( const DataType& point )
+		{
+			if ( data.size() < max_size )
+			{
+				data.emplace_back( point );
+			}
+			else
+			{
+				data[offset] = point;
+				offset = ( offset + 1 ) % max_size;
+			}
+		}
+
+		void clear()
+		{
+			data.clear();
+			offset = 0;
+		}
+
+		int max_size = 100;
+		int offset = 0;
+		std::vector<DataType> data {};
+	};
+
 	static void ColoredProgressBar(
 		float fraction,
 		ImVec4 color,
