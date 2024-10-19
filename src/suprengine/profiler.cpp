@@ -9,7 +9,7 @@ using namespace suprengine;
 
 //	Frame-per-second target to profile data on the timeline
 constexpr int TIMELINE_FPS_TARGET = 60;
-//	In seconds, the maximum X-axis value
+//	In seconds, the maximum time of recording for the timeline
 constexpr float TIMELINE_MAX_TIME = 60.0f;
 //	Amount of frames to record for the timeline; by default, allows for 60 seconds at 60 FPS
 constexpr int TIMELINE_DATA_SIZE = static_cast<int>( TIMELINE_MAX_TIME * TIMELINE_FPS_TARGET );
@@ -186,25 +186,25 @@ void Profiler::populate_imgui()
 	//table_flags |= ImGuiTableFlags_SizingFixedFit;
 
 	ImGui::SeparatorText( "Results" );
-	const char* column_names[] {
+	constexpr const char* COLUMN_NAMES[] {
 		"Name",
 		"Last Time", "Min. Time", "Avg. Time", "Max. Time",
 		"Frame Time", "Frame Calls",
 		"Total Calls",
 		"Usage",
 	};
-	constexpr int COLUMNS_AMOUNT = IM_ARRAYSIZE( column_names );
+	constexpr int COLUMNS_AMOUNT = IM_ARRAYSIZE( COLUMN_NAMES );
 	constexpr ImVec2 TABLE_SIZE { 0.0f, 250.0f };
 	if ( ImGui::BeginTable( "suprengine_profiler_results", COLUMNS_AMOUNT, table_flags, TABLE_SIZE ) )
 	{
 		//	Setup first column
-		ImGui::TableSetupColumn( column_names[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder );
+		ImGui::TableSetupColumn( COLUMN_NAMES[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder );
 
 		//	Setup remaining columns
 		ImGuiTableColumnFlags column_flags = ImGuiTableColumnFlags_WidthFixed;
 		for ( int i = 1; i < COLUMNS_AMOUNT; i++ )
 		{
-			ImGui::TableSetupColumn( column_names[i], column_flags );
+			ImGui::TableSetupColumn( COLUMN_NAMES[i], column_flags );
 		}
 
 		//	Freeze headers and first column
@@ -219,6 +219,7 @@ void Profiler::populate_imgui()
 
 		//	Draw results
 		int row_id = 0;
+		const ImVec4 default_row_color = ImGui::GetStyleColorVec4( ImGuiCol_TableRowBg );
 		for ( const auto& result_pair : results )
 		{
 			const char* name = result_pair.first;
@@ -260,8 +261,24 @@ void Profiler::populate_imgui()
 			ImGui::Text( "%d", result.total_calls );
 
 			//	Usage
+			float usage = result.total_time / profile_time_ms;
 			ImGui::TableNextColumn();
-			ImGui::Text( "%.1f%%", result.total_time / profile_time_ms * 100.0f );
+			ImGui::Text( "%.1f%%", usage * 100.0f );
+
+			//	Set cell's background color depending on usage
+			constexpr ImVec4 MAX_USAGE_COLOR { 0.8f, 0.2f, 0.1f, 0.5f };
+			constexpr float MAX_USAGE_PERCENT = 60.0f;
+			constexpr float USAGE_COLOR_SCALE = 100.0f / MAX_USAGE_PERCENT;
+			ImGui::TableSetBgColor(
+				ImGuiTableBgTarget_RowBg0,
+				ImGui::GetColorU32(
+					ImLerp(
+						default_row_color,
+						MAX_USAGE_COLOR,
+						ImSaturate( usage * USAGE_COLOR_SCALE )
+					)
+				)
+			);
 
 			ImGui::PopID();
 		}
