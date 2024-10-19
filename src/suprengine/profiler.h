@@ -90,6 +90,6 @@ namespace suprengine
 		 */
 		ProfileTimer _timer;
 
-		ImGui::Extra::ScrollingBuffer<Vec2> _timeline;
+		std::map<const char*, ImGui::Extra::ScrollingBuffer<Vec2>> _timelines;
 	};
 }

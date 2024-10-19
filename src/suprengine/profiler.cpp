@@ -80,8 +80,7 @@ float ProfileTimer::get_time() const
 
 
 Profiler::Profiler( bool is_running )
-	: _timer( "Profiler", is_running, /* should_log */ false ),
-	  _timeline( TIMELINE_DATA_SIZE )
+	: _timer( "Profiler", is_running, /* should_log */ false )
 {}
 
 void Profiler::add_result( const char* name, float time )
@@ -118,7 +117,7 @@ void Profiler::clear()
 {
 	_results.clear();
 	_timer.clear();
-	_timeline.clear();
+	_timelines.clear();
 }
 
 void Profiler::start()
@@ -139,12 +138,24 @@ void Profiler::update()
 	auto updater = engine.get_updater();
 
 	const float profile_time = get_profile_time() * 0.001f;
-	_timeline.add_point(
-		Vec2 {
-			profile_time,
-			updater->get_unscaled_delta_time() * 1000.0f
+	for ( auto& pair : _results )
+	{
+		auto itr = _timelines.find( pair.first );
+		if ( itr == _timelines.end() )
+		{
+			itr = _timelines.emplace( pair.first, ImGui::Extra::ScrollingBuffer<Vec2>( TIMELINE_DATA_SIZE ) ).first;
 		}
-	);
+
+		itr->second.add_point(
+			Vec2 {
+				profile_time,
+				pair.second.non_consumed_time
+				//updater->get_unscaled_delta_time() * 1000.0f
+			}
+		);
+	}
+
+	consume_results();
 }
 
 void Profiler::populate_imgui()
@@ -250,9 +261,9 @@ void Profiler::populate_imgui()
 		ImGui::EndTable();
 	}
 
-	ImGui::SeparatorText( "Timeline" );
-	ImGui::Text( "Timeline Data Size: %d", _timeline.data.size() );
-	if ( ImPlot::BeginPlot( "Timeline", ImVec2 { -1.0f, 250.0f } ) )
+	ImGui::SeparatorText( "Graphs" );
+	//ImGui::Text( "Timeline Data Size: %d", _timeline.data.size() );
+	if ( ImPlot::BeginPlot( "Timelines", ImVec2 { -1.0f, 250.0f } ) )
 	{
 		ImPlot::SetupAxes( "Profile Time (s)", "Result Time (ms)", ImPlotAxisFlags_AutoFit );
 		ImPlot::SetupAxesLimits( 0, TIMELINE_MAX_TIME, 0, 50 );
@@ -262,38 +273,51 @@ void Profiler::populate_imgui()
 			math::max( static_cast<float>( TIMELINE_MAX_TIME ), profile_time_seconds )
 		);
 		ImPlot::SetupAxisLimitsConstraints( ImAxis_Y1, 0.0, 200.0 );
+		ImPlot::SetupLegend( ImPlotLocation_West, ImPlotLegendFlags_Outside );
 
-		int timeline_size = static_cast<int>( _timeline.data.size() );
-		if ( timeline_size > 0 )
+		//	Draw timelines
+		for ( auto& pair : _timelines )
 		{
-			/*ImPlot::PushStyleVar( ImPlotStyleVar_FillAlpha, 0.25f );
-			ImPlot::PlotShaded(
-				"Frame Time",
-				&_timeline.data[0].x, &_timeline.data[0].y,
-				timeline_size,
-				0.0f,
-				ImPlotShadedFlags_None,
-				_timeline.offset, sizeof( Vec2 )
-			);
-			ImPlot::PopStyleVar();
+			const char* name = pair.first;
+			auto& timeline = pair.second;
 
-			ImPlot::PlotLine(
-				"Frame Time",
-				&_timeline.data[0].x, &_timeline.data[0].y,
-				timeline_size,
-				ImPlotLineFlags_None,
-				_timeline.offset, sizeof( Vec2 )
-			);*/
+			int timeline_size = static_cast<int>( timeline.data.size() );
+			if ( timeline_size == 0 ) return;
 
 			ImPlot::PlotBars(
-				"Frame Time",
-				&_timeline.data[0].x, &_timeline.data[0].y,
+				name,
+				&timeline.data[0].x, &timeline.data[0].y,
 				timeline_size,
 				1.0 / TIMELINE_MAX_TIME,
 				ImPlotBarsFlags_None,
-				_timeline.offset, sizeof( Vec2 ) 
+				timeline.offset, sizeof( Vec2 )
 			);
 		}
+		
+		//	Draw time target
+		constexpr ImVec4 TIME_TARGET_COLOR = ImVec4 { 1.0f, 0.0f, 0.0f, 1.0f };
+		double time_target = 1.0 / TIMELINE_FPS_TARGET * 1000.0;
+		ImPlot::TagY( time_target, TIME_TARGET_COLOR, "Target" );
+		ImPlot::DragLineY( 0, &time_target, TIME_TARGET_COLOR, 2.0f, ImPlotDragToolFlags_NoInputs );
+
+		/*ImPlot::PushStyleVar( ImPlotStyleVar_FillAlpha, 0.25f );
+		ImPlot::PlotShaded(
+			"Frame Time",
+			&_timeline.data[0].x, &_timeline.data[0].y,
+			timeline_size,
+			0.0f,
+			ImPlotShadedFlags_None,
+			_timeline.offset, sizeof( Vec2 )
+		);
+		ImPlot::PopStyleVar();
+
+		ImPlot::PlotLine(
+			"Frame Time",
+			&_timeline.data[0].x, &_timeline.data[0].y,
+			timeline_size,
+			ImPlotLineFlags_None,
+			_timeline.offset, sizeof( Vec2 )
+		);*/
 
 		ImPlot::EndPlot();
 	}
@@ -317,11 +341,6 @@ void Profiler::populate_imgui()
 	}
 	ImGui::SameLine();
 	ImGui::Text( "Profile Time: %.1fs", profile_time_seconds );
-
-	if ( is_profiling() )
-	{
-		consume_results();
-	}
 }
 
 bool Profiler::is_profiling() const
