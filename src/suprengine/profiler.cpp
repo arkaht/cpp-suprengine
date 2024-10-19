@@ -26,17 +26,28 @@ void ProfileTimer::start()
 
 void ProfileTimer::stop()
 {
-	if ( !_is_running ) return;
+	if ( !is_running() ) return;
+
+	_total_time = get_time();
 
 	if ( _should_log )
 	{
 		//	Add result to profiler
-		float time = get_time();
 		Profiler* profiler = Engine::instance().get_profiler();
-		profiler->add_result( name, time );
+		profiler->add_result( name, _total_time );
 	}
 
 	_is_running = false;
+}
+
+void ProfileTimer::clear()
+{
+	_total_time = 0.0f;
+
+	if ( is_running() )
+	{
+		start();
+	}
 }
 
 bool ProfileTimer::is_running() const
@@ -46,6 +57,8 @@ bool ProfileTimer::is_running() const
 
 float ProfileTimer::get_time() const
 {
+	if ( !is_running() ) return _total_time;
+
 	//	Compute start and end times
 	TimePoint end_timepoint = chrono::high_resolution_clock::now();
 	long long start_ms = chrono::time_point_cast<chrono::microseconds>( _start_timepoint ).time_since_epoch().count();
@@ -53,7 +66,7 @@ float ProfileTimer::get_time() const
 
 	//	Compute time difference of time points
 	float time = ( end_ms - start_ms ) * 0.001f;
-	return time;
+	return _total_time + time;
 }
 
 
@@ -79,7 +92,6 @@ void Profiler::add_result( const char* name, float time )
 	result.total_calls++;
 }
 
-void Profiler::clear()
 {
 	_results.clear();
 
@@ -88,6 +100,12 @@ void Profiler::clear()
 	{
 		_timer.start();
 	}
+}
+
+void Profiler::clear()
+{
+	_results.clear();
+	_timer.clear();
 }
 
 void Profiler::start()

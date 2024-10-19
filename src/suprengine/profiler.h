@@ -32,6 +32,7 @@ namespace suprengine
 
 		void start();
 		void stop();
+		void clear();
 
 		bool is_running() const;
 		float get_time() const;
@@ -41,6 +42,8 @@ namespace suprengine
 
 	private:
 		TimePoint _start_timepoint;
+
+		float _total_time = 0.0f;
 
 		bool _is_running = false;
 		bool _should_log = true;
@@ -55,6 +58,7 @@ namespace suprengine
 		Profiler( bool is_running = true );
 
 		void add_result( const char* name, float time );
+		void consume_results();
 		void clear();
 
 		void start();
