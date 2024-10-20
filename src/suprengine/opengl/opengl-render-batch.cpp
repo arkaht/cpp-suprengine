@@ -133,6 +133,8 @@ OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
 	//  Enable debug output
 	set_debug_output( true );
 	glDebugMessageCallback( message_callback, 0 );
+		
+	set_vsync( VSyncMode::Adaptative );
 
 	//  Log OpenGL informations
 	Logger::info( "RenderBatch: Vendor: %s", glGetString( GL_VENDOR ) );
@@ -537,6 +539,55 @@ void OpenGLRenderBatch::set_samples( unsigned int samples )
 	Logger::info( "RenderBatch: Setting samples to %d", samples );
 
 	update_framebuffers();
+}
+
+bool OpenGLRenderBatch::set_vsync( VSyncMode mode )
+{
+	int result = SDL_GL_SetSwapInterval( static_cast<int>( mode ) );
+	if ( result == -1 )
+	{
+		const char* first_error = SDL_GetError();
+		if ( mode != VSyncMode::Adaptative )
+		{
+			Logger::error(
+				"RenderBatch: Failed to change VSync mode: %s",
+				first_error
+			);
+			return false;
+		}
+
+		result = SDL_GL_SetSwapInterval( static_cast<int>( VSyncMode::Enabled ) );
+		if ( result == -1 )
+		{
+			Logger::error(
+				"RenderBatch: Failed to enable VSync both in adaptative or default modes: %s, %s",
+				first_error,
+				SDL_GetError()
+			);
+			return false;
+		}
+
+		Logger::info(
+			"RenderBatch: Fallback to default VSync after failing to enable adaptative: %s",
+			first_error
+		);
+		return true;
+	}
+
+	switch ( mode )
+	{
+		case VSyncMode::Disabled:
+			Logger::info( "RenderBatch: Disabled VSync" );
+			break;
+		case VSyncMode::Enabled:
+			Logger::info( "RenderBatch: Enabled default VSync" );
+			break;
+		case VSyncMode::Adaptative:
+			Logger::info( "RenderBatch: Enabled adaptative VSync" );
+			break;
+	}
+
+	return true;
 }
 
 void OpenGLRenderBatch::update_framebuffers()
