@@ -173,6 +173,7 @@ void Profiler::populate_imgui()
 	const float profile_time_seconds = profile_time_ms * 0.001f;
 
 	auto& engine = Engine::instance();
+	auto updater = engine.get_updater();
 	auto renderer = engine.get_render_batch();
 
 	ImGui::SeparatorText( "Metrics" );
@@ -401,7 +402,7 @@ void Profiler::populate_imgui()
 
 		//	Draw time target
 		constexpr ImVec4 TIME_TARGET_COLOR { 1.0f, 0.3f, 0.3f, 0.75f };
-		double time_target = 1.0 / TIMELINE_FPS_TARGET * 1000.0;
+		double time_target = 1.0 / updater->target_fps * 1000.0;
 		ImPlot::TagY( time_target, TIME_TARGET_COLOR, "Target" );
 		ImPlot::DragLineY( 0, &time_target, TIME_TARGET_COLOR, 2.0f, ImPlotDragToolFlags_NoInputs );
 

@@ -541,9 +541,23 @@ void OpenGLRenderBatch::set_samples( unsigned int samples )
 	update_framebuffers();
 }
 
+void OpenGLRenderBatch::update_framebuffers()
+{
+	Logger::info( "RenderBatch: Updating framebuffers" );
+
+	_release_framebuffers();
+	_create_framebuffers( (int)_viewport_size.x, (int)_viewport_size.y );
+}
+
 bool OpenGLRenderBatch::set_vsync( VSyncMode mode )
 {
-	int result = SDL_GL_SetSwapInterval( static_cast<int>( mode ) );
+	int interval = static_cast<int>( mode );
+	if ( mode == VSyncMode::Adaptative )
+	{
+		interval = -1;
+	}
+
+	int result = SDL_GL_SetSwapInterval( interval );
 	if ( result == -1 )
 	{
 		const char* first_error = SDL_GetError();
@@ -587,15 +601,13 @@ bool OpenGLRenderBatch::set_vsync( VSyncMode mode )
 			break;
 	}
 
+	_vsync_mode = mode;
 	return true;
 }
 
-void OpenGLRenderBatch::update_framebuffers()
+VSyncMode OpenGLRenderBatch::get_vsync_mode()
 {
-	Logger::info( "RenderBatch: Updating framebuffers" );
-
-	_release_framebuffers();
-	_create_framebuffers( (int)_viewport_size.x, (int)_viewport_size.y );
+	return _vsync_mode;
 }
 
 uint32 OpenGLRenderBatch::get_samples() const

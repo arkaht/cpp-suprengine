@@ -42,6 +42,13 @@ namespace suprengine
 		float scale = 1.0f;
 	};
 
+	enum class VSyncMode
+	{
+		Disabled,
+		Enabled,
+		Adaptative,
+	};
+
 	enum class DrawType
 	{
 		Fill,
@@ -133,6 +140,9 @@ namespace suprengine
 		virtual void translate( const Vec2& pos ) = 0;
 		virtual void scale( float zoom ) = 0;
 		virtual void clip( const Rect& region ) = 0;
+
+		virtual bool set_vsync( VSyncMode mode ) = 0;
+		virtual VSyncMode get_vsync_mode() = 0;
 
 		virtual Texture* load_texture( rconst_str path, const TextureParams& params = {} );
 		virtual Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params = {} );

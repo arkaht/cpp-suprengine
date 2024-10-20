@@ -1,13 +1,9 @@
 #pragma once
 
-#include <cstdint>
+#include <suprengine/usings.h>
 
 namespace suprengine
 {
-	constexpr uint32_t FPS = 60;
-	constexpr uint32_t FRAME_DELAY = 1000u / FPS;
-	constexpr uint32_t MAX_DT = 50;
-
 	class Updater
 	{
 	public:
@@ -19,22 +15,27 @@ namespace suprengine
 		float get_scaled_delta_time() const;
 		float get_unscaled_delta_time() const;
 
+		/*
+		 * Delays main thread to the target frame rate.
+		 * If 'is_fps_capped' set to false, this function will result in no operation.
+		 */
 		void delay_time();
 
 		void accumulate_seconds( float dt );
 		float get_accumulated_seconds() const;
-		uint32_t get_fps() const;
+		uint32 get_fps() const;
 
-		uint32_t get_frame_tick() const;
+		uint32 get_frame_tick() const;
 
 	public:
 		float time_scale = 1.0f;
+		float target_fps = 60.0f;
+		bool is_fps_capped = true;
 
 	private:
-		uint32_t _frame_start = 0u;
-		uint32_t _last_frame = 0u;
-		uint32_t _frame_time = 0u;
-		uint32_t _fps = 0;
+		uint32 _frame_start = 0u;
+		uint32 _last_frame = 0u;
+		uint32 _fps = 0;
 
 		float _accumulated_seconds = 0.0f;
 		float _delta_time = 0.0f;

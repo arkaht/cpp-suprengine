@@ -9,13 +9,6 @@
 
 namespace suprengine
 {
-	enum class VSyncMode
-	{
-		Disabled = 0,
-		Enabled = 1,
-		Adaptative = -1,
-	};
-
 	class OpenGLRenderBatch : public RenderBatch
 	{
 	public:
@@ -84,8 +77,10 @@ namespace suprengine
 
 		void set_debug_output( bool is_active );
 		void set_samples( uint32 samples );
-		bool set_vsync( VSyncMode mode );
 		void update_framebuffers();
+
+		bool set_vsync( VSyncMode mode ) override;
+		VSyncMode get_vsync_mode() override;
 
 		uint32 get_samples() const;
 
@@ -125,6 +120,7 @@ namespace suprengine
 		Mtx4 _viewport_matrix;
 
 		uint32 _render_tick = 0;
+		VSyncMode _vsync_mode = VSyncMode::Disabled;
 	};
 }
 

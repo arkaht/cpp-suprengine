@@ -5,6 +5,8 @@
 
 using namespace suprengine;
 
+constexpr uint32 MAX_DT = 50;
+
 void Updater::compute_delta_time()
 {
 	_frame_start = SDL_GetTicks();
@@ -26,10 +28,13 @@ float Updater::get_unscaled_delta_time() const
 
 void Updater::delay_time()
 {
-	_frame_time = SDL_GetTicks() - _frame_start;
-	if ( _frame_time < FRAME_DELAY )
+	if ( !is_fps_capped ) return;
+
+	uint32 target_frame_time = static_cast<uint32>( 1.0f / target_fps * 1000.0f );
+	uint32_t frame_time = SDL_GetTicks() - _frame_start;
+	if ( frame_time < target_frame_time )
 	{
-		SDL_Delay( FRAME_DELAY - _frame_time );
+		SDL_Delay( target_frame_time - frame_time );
 	}
 }
 
