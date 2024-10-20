@@ -31,7 +31,7 @@ void Updater::delay_time()
 	if ( !is_fps_capped ) return;
 
 	uint32 target_frame_time = static_cast<uint32>( 1.0f / target_fps * 1000.0f );
-	uint32_t frame_time = SDL_GetTicks() - _frame_start;
+	uint32 frame_time = SDL_GetTicks() - _frame_start;
 	if ( frame_time < target_frame_time )
 	{
 		SDL_Delay( target_frame_time - frame_time );
