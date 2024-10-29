@@ -29,7 +29,7 @@ namespace suprengine
 
 	public:
 		float time_scale = 1.0f;
-		float target_fps = 60.0f;
+		int target_fps = 60;
 		bool is_fps_capped = true;
 
 	private:
