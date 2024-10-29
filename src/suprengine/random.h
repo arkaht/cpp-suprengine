@@ -49,6 +49,14 @@ namespace suprengine
 			};
 		}
 
+		static Vec3 generate_location( const Box& box )
+		{
+			return generate_location(
+				box.min.x, box.min.y, box.min.z,
+				box.max.x, box.max.y, box.max.z
+			);
+		}
+
 		static Vec3 generate_direction()
 		{
 			//  https://math.stackexchange.com/a/44691
