@@ -24,10 +24,6 @@ Vec3::Vec3( float value )
 	: x( value ), y( value ), z( value )
 {}
 
-Vec3::Vec3( const Vec2& vec )
-	: x( vec.x ), y( vec.y ), z( 0.0f )
-{}
-
 Vec3::Vec3( const Vec2& vec, float z )
 	: x( vec.x ), y( vec.y ), z( z )
 {}
@@ -240,10 +236,10 @@ Vec3 Vec3::transform_with_perspective_div( const Vec3& vec, const Mtx4& mat, flo
 	float transformedW = vec.x * mat.mat[0][3] + vec.y * mat.mat[1][3] +
 		vec.z * mat.mat[2][3] + w * mat.mat[3][3];
 
-	if ( !math::near_zero( math::abs( transformedW ) ) )
+	if ( !math::near_zero( transformedW ) )
 	{
 		transformedW = 1.0f / transformedW;
-		retVal *= transformedW;
+		retVal *= transformedW;	
 	}
 
 	return retVal;

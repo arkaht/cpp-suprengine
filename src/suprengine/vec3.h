@@ -7,7 +7,10 @@
 
 namespace suprengine
 {
-	class Vec3
+	struct Quaternion;
+	struct Mtx4;
+
+	struct Vec3
 	{
 	public:
 		static const Vec3 zero, one;
@@ -24,9 +27,7 @@ namespace suprengine
 		Vec3() {}
 		explicit Vec3( float value );
 		explicit Vec3( float x, float y, float z );
-
-		explicit Vec3( const Vec2& vec );
-		explicit Vec3( const Vec2& vec, float z );
+		explicit Vec3( const Vec2& vec, float z = 0.0f );
 
 	public:
 		/*  
@@ -100,10 +101,10 @@ namespace suprengine
 		static Vec3 sqrt( const Vec3& current );
 
 		// Transform a Vector3 by a quaternion
-		static Vec3 transform( const Vec3& value, const class Quaternion& q );
-		static Vec3 transform( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );
+		static Vec3 transform( const Vec3& value, const Quaternion& q );
+		static Vec3 transform( const Vec3& vec, const Mtx4& mat, float w = 1.0f );
 		// This will transform the vector and renormalize the w component
-		static Vec3 transform_with_perspective_div( const Vec3& vec, const class Mtx4& mat, float w = 1.0f );
+		static Vec3 transform_with_perspective_div( const Vec3& vec, const Mtx4& mat, float w = 1.0f );
 
 	public:
 		// Vector addition (a + b)

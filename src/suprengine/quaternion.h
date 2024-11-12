@@ -5,7 +5,7 @@
 
 namespace suprengine
 {
-	class Quaternion
+	struct Quaternion
 	{
 	public:
 		static const Quaternion identity;

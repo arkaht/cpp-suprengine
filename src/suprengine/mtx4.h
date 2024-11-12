@@ -5,7 +5,7 @@
 
 namespace suprengine
 {
-	class Mtx4
+	struct Mtx4
 	{
 	public:
 		float mat[4][4];
