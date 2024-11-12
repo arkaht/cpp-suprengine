@@ -23,9 +23,6 @@ std::string Assets::_resources_path { "" };
 Assimp::Importer Assets::_importer;
 curve_x::CurveSerializer Assets::_curve_serializer;
 
-const std::string Assets::CUBE_PATH { "assets/suprengine/meshes/cube.fbx" };
-const std::string Assets::SPHERE_PATH { "assets/suprengine/meshes/sphere.fbx" };
-
 Texture* Assets::load_texture( rconst_str name, rconst_str path, const TextureParams& params )
 {
 	Logger::info(

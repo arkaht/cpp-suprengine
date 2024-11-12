@@ -54,7 +54,7 @@ bool SphereCollider::raycast( _RAYCAST_FUNC_PARAMS )
 
 void SphereCollider::debug_render( RenderBatch* render_batch )
 {
-	auto model = Assets::get_model( Assets::SPHERE_PATH );
+	auto model = Assets::get_model( MESH_SPHERE );
 	Mtx4 matrix = Mtx4::create_from_transform( 
 		radius * transform->scale, 
 		Quaternion::identity,

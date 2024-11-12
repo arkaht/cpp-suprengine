@@ -22,9 +22,6 @@ namespace suprengine
 	class Assets
 	{
 	public:
-		static const std::string CUBE_PATH;
-		static const std::string SPHERE_PATH;
-
 		Assets() = delete;
 
 		static void set_render_batch( RenderBatch* render_batch ) { _render_batch = render_batch; }
