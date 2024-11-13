@@ -82,24 +82,21 @@ Vec3 Camera::viewport_to_world( const Vec2& location ) const
 {
 	//  https://stackoverflow.com/a/56348846
 
-	Vec4 pos {
+	Vec3 pos {
 		( location.x - _viewport_size.x * 0.5f ) / _viewport_size.x * 2.0f,
 		( location.y - _viewport_size.y * 0.5f ) / _viewport_size.y * 2.0f,
-		-1.0f,
-		1.0f
+		-1.0f
 	};
 	printf( "Viewport: %s\n", *pos.to_string() );
 
 	Mtx4 inverse_matrix = _projection_matrix * _view_matrix;
 	inverse_matrix.invert();
 
-	pos = pos * inverse_matrix;
-	pos /= pos.w;
-	//pos = Vec3::transform( pos, inverse_projection_matrix );
+	pos = Vec3::transform_with_perspective_div( pos, inverse_matrix, 1.0f );
 
 	//pos -= transform->location;
 
-	return Vec3( pos.x, pos.y, pos.z );
+	return pos;
 }
 
 void Camera::look_at( const Vec3& target )

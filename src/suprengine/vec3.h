@@ -9,6 +9,7 @@ namespace suprengine
 {
 	struct Quaternion;
 	struct Mtx4;
+	struct Vec4;
 
 	struct Vec3
 	{
@@ -28,6 +29,7 @@ namespace suprengine
 		explicit Vec3( float value );
 		explicit Vec3( float x, float y, float z );
 		explicit Vec3( const Vec2& vec, float z = 0.0f );
+		explicit Vec3( const Vec4& vec );
 
 	public:
 		/*  

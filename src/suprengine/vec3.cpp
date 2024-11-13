@@ -1,35 +1,38 @@
 #include "vec3.h"
-#include "mtx4.h"
-#include "quaternion.h"
+
+#include <suprengine/vec4.h>
+#include <suprengine/mtx4.h>
+#include <suprengine/quaternion.h>
 
 using namespace suprengine;
 
+const Vec3 Vec3::zero( 0.0f, 0.0f, 0.0f );
+const Vec3 Vec3::one( 1.0f, 1.0f, 1.0f );
 
-const Vec3
-Vec3::zero( 0.0f, 0.0f, 0.0f ),
-Vec3::one( 1.0f, 1.0f, 1.0f );
-const Vec3
-Vec3::unit_x( 1.0f, 0.0f, 0.0f ),
-Vec3::unit_y( 0.0f, 1.0f, 0.0f ),
-Vec3::unit_z( 0.0f, 0.0f, 1.0f );
-const Vec3
-Vec3::forward( 1.0f, 0.0f, 0.0f ),
-Vec3::right( 0.0f, 1.0f, 0.0f ),
-Vec3::up( 0.0f, 0.0f, 1.0f );
-const Vec3
-Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
+const Vec3 Vec3::unit_x( 1.0f, 0.0f, 0.0f );
+const Vec3 Vec3::unit_y( 0.0f, 1.0f, 0.0f );
+const Vec3 Vec3::unit_z( 0.0f, 0.0f, 1.0f );
 
+const Vec3 Vec3::forward( 1.0f, 0.0f, 0.0f );
+const Vec3 Vec3::right( 0.0f, 1.0f, 0.0f );
+const Vec3 Vec3::up( 0.0f, 0.0f, 1.0f );
+
+const Vec3 Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 
 Vec3::Vec3( float value )
 	: x( value ), y( value ), z( value )
+{}
+
+Vec3::Vec3( float x, float y, float z )
+	: x( x ), y( y ), z( z )
 {}
 
 Vec3::Vec3( const Vec2& vec, float z )
 	: x( vec.x ), y( vec.y ), z( z )
 {}
 
-Vec3::Vec3( float x, float y, float z )
-	: x( x ), y( y ), z( z )
+Vec3::Vec3( const Vec4& vec )
+	: x( vec.x ), y( vec.y ), z( vec.z )
 {}
 
 float Vec3::length_sqr() const
@@ -211,38 +214,25 @@ Vec3 Vec3::sqrt( const Vec3& current )
 	};
 }
 
-Vec3 Vec3::transform( const Vec3& vec, const Mtx4& mat, float w )
+Vec3 Vec3::transform( const Vec3& vec, const Mtx4& matrix, float w )
 {
-	Vec3 retVal;
-	retVal.x = vec.x * mat.mat[0][0] + vec.y * mat.mat[1][0] +
-		vec.z * mat.mat[2][0] + w * mat.mat[3][0];
-	retVal.y = vec.x * mat.mat[0][1] + vec.y * mat.mat[1][1] +
-		vec.z * mat.mat[2][1] + w * mat.mat[3][1];
-	retVal.z = vec.x * mat.mat[0][2] + vec.y * mat.mat[1][2] +
-		vec.z * mat.mat[2][2] + w * mat.mat[3][2];
-	//ignore w since we aren't returning a new value for it...
-	return retVal;
+	Vec4 vec4 = Vec4( vec, w ) * matrix;
+	return Vec3( vec4 );
 }
 
-Vec3 Vec3::transform_with_perspective_div( const Vec3& vec, const Mtx4& mat, float w )
+Vec3 Vec3::transform_with_perspective_div( const Vec3& vec, const Mtx4& matrix, float w )
 {
-	Vec3 retVal;
-	retVal.x = vec.x * mat.mat[0][0] + vec.y * mat.mat[1][0] +
-		vec.z * mat.mat[2][0] + w * mat.mat[3][0];
-	retVal.y = vec.x * mat.mat[0][1] + vec.y * mat.mat[1][1] +
-		vec.z * mat.mat[2][1] + w * mat.mat[3][1];
-	retVal.z = vec.x * mat.mat[0][2] + vec.y * mat.mat[1][2] +
-		vec.z * mat.mat[2][2] + w * mat.mat[3][2];
-	float transformedW = vec.x * mat.mat[0][3] + vec.y * mat.mat[1][3] +
-		vec.z * mat.mat[2][3] + w * mat.mat[3][3];
+	Vec4 vec4 = Vec4( vec, w ) * matrix;
 
-	if ( !math::near_zero( transformedW ) )
+	if ( !math::near_zero( vec4.w ) )
 	{
-		transformedW = 1.0f / transformedW;
-		retVal *= transformedW;	
+		float inverse_w = 1.0f / vec4.w;
+		vec4.x *= inverse_w;
+		vec4.y *= inverse_w;
+		vec4.z *= inverse_w;
 	}
 
-	return retVal;
+	return Vec3( vec4 );
 }
 
 Vec3 Vec3::transform( const Vec3& value, const Quaternion& q )
