@@ -82,25 +82,31 @@ Ray Camera::viewport_to_world( const Vec2& location ) const
 {
 	//  https://stackoverflow.com/a/56348846
 
-	printf( "%f %f\n", location.x, location.y );
+	//printf( "%f %f\n", location.x, location.y );
 	/*Vec3 pos {
 		( location.x - _viewport_size.x * 0.5f ) / _viewport_size.x * 2.0f,
 		( location.y - _viewport_size.y * 0.5f ) / _viewport_size.y * 2.0f,
 		0.01f
 	};*/
-	Vec3 near_pos { location.x / _viewport_size.x, location.y / _viewport_size.y, 0.01f };
-	Vec3 far_pos { location.x / _viewport_size.x, location.y / _viewport_size.y, 1.0f };
-	printf( "Viewport: %s\n", *near_pos.to_string() );
+	const Vec2 normalized_screen_pos {
+		location.x / _viewport_size.x,
+		location.y / _viewport_size.y
+	};
+	const Vec2 screen_space_pos {
+		( normalized_screen_pos.x - 0.5f ) * 2.0f,
+		( ( 1.0f - normalized_screen_pos.y ) - 0.5f ) * 2.0f
+	};
+
+	const Vec3 proj_space_near_pos( screen_space_pos.x, screen_space_pos.y, -1.0f );
+	const Vec3 proj_space_far_pos( screen_space_pos.x, screen_space_pos.y, 1.0f );
 
 	Mtx4 inverse_matrix = _view_matrix * _projection_matrix;
 	inverse_matrix.invert();
 
-	near_pos = Vec3::transform_with_perspective_div( near_pos, inverse_matrix );
-	far_pos = Vec3::transform_with_perspective_div( far_pos, inverse_matrix );
+	const Vec3 world_space_near_pos = Vec3::transform_with_perspective_div( proj_space_near_pos, inverse_matrix );
+	const Vec3 world_space_far_pos = Vec3::transform_with_perspective_div( proj_space_far_pos, inverse_matrix );
 
-	//pos -= transform->location;
-
-	return Ray( near_pos, far_pos - near_pos );
+	return Ray( world_space_near_pos, world_space_far_pos - world_space_near_pos );
 }
 
 void Camera::look_at( const Vec3& target )
