@@ -39,6 +39,11 @@ namespace suprengine
 				translation.z / distance 
 			};
 		}
+
+		Vec3 get_end_point() const
+		{
+			return origin + direction * distance;
+		}
 	};
 
 	struct RayHit

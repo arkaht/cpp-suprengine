@@ -17,6 +17,10 @@ namespace suprengine
 
 	public:
 		Vec4 operator*( const Mtx4& mtx );
+		Vec4 operator/( float value );
+
+		Vec4& operator*=( const Mtx4& mtx );
+		Vec4& operator*=( float value );
 		Vec4& operator/=( float value );
 
 	public:

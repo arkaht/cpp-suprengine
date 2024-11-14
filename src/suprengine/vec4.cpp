@@ -21,22 +21,46 @@ Vec4::Vec4( const Vec3& vec, float w )
 
 Vec4 Vec4::operator*( const Mtx4& mtx )
 {
-	return Vec4 {
-		x * mtx[0][0] + y * mtx[1][0] + z * mtx[2][0] + w * mtx[3][0],
-		x * mtx[0][1] + y * mtx[1][1] + z * mtx[2][1] + w * mtx[3][1],
-		x * mtx[0][2] + y * mtx[1][2] + z * mtx[2][2] + w * mtx[3][2],
-		x * mtx[0][3] + y * mtx[1][3] + z * mtx[2][3] + w * mtx[3][3]
-	};
+	Vec4 copy = *this;
+	copy *= mtx;
+	return copy;
+}
+
+Vec4 Vec4::operator/( float value )
+{
+	Vec4 copy = *this;
+	copy /= value;
+	return copy;
+}
+
+Vec4& Vec4::operator*=( const Mtx4& mtx )
+{
+	x = x * mtx[0][0] + y * mtx[1][0] + z * mtx[2][0] + w * mtx[3][0];
+	y = x * mtx[0][1] + y * mtx[1][1] + z * mtx[2][1] + w * mtx[3][1];
+	z = x * mtx[0][2] + y * mtx[1][2] + z * mtx[2][2] + w * mtx[3][2];
+	w = x * mtx[0][3] + y * mtx[1][3] + z * mtx[2][3] + w * mtx[3][3];
+
+	return *this;
+}
+
+Vec4& Vec4::operator*=( float value )
+{
+	x *= value;
+	y *= value;
+	z *= value;
+	w *= value;
+
+	return *this;
 }
 
 Vec4& Vec4::operator/=( float value )
 {
 	value = 1.0f / value;
 
-	x /= value;
-	y /= value;
-	z /= value;
-	w /= value;
+	x *= value;
+	y *= value;
+	z *= value;
+	w *= value;
 
 	return *this;
 }
