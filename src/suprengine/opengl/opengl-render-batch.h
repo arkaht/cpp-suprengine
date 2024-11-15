@@ -71,6 +71,12 @@ namespace suprengine
 			const Color& color 
 		) override;
 
+		void draw_line(
+			const Vec3& start,
+			const Vec3& end,
+			const Color& color = Color::white
+		);
+
 		void translate( const Vec2& pos ) override;
 		void scale( float zoom ) override;
 		void clip( const Rect& region ) override;

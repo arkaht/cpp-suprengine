@@ -35,15 +35,16 @@ namespace suprengine
 	class VertexArrayPreset
 	{
 	public:
+		static const VertexArrayPreset Position3;
 		static const VertexArrayPreset Position3_Normal3_UV2;
 		static const VertexArrayPreset Position2_UV2;
 
 	public:
-		VertexArrayPreset( 
-			uint32 positions,
-			uint32 normals,
-			uint32 uvs
-		);
+		constexpr VertexArrayPreset( uint32 positions, uint32 normals, uint32 uvs )
+			: positions( positions ), normals( normals ), uvs( uvs )
+		{
+			stride = positions + normals + uvs;
+		}
 
 	public:
 		uint32 stride;

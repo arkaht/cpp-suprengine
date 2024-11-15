@@ -9,22 +9,9 @@ using namespace suprengine;
 /*
  * VertexArrayPreset
  */
-const VertexArrayPreset 
-	VertexArrayPreset::Position3_Normal3_UV2( 3, 3, 2 );
-const VertexArrayPreset 
-	VertexArrayPreset::Position2_UV2( 2, 0, 2 );
-
-VertexArrayPreset::VertexArrayPreset( 
-	uint32 positions, 
-	uint32 normals, 
-	uint32 uvs 
-)
-	: positions( positions ),
-	  normals( normals ),
-	  uvs( uvs )
-{
-	stride = positions + normals + uvs;
-}
+const VertexArrayPreset VertexArrayPreset::Position3( 3, 0, 0 );
+const VertexArrayPreset VertexArrayPreset::Position3_Normal3_UV2( 3, 3, 2 );
+const VertexArrayPreset VertexArrayPreset::Position2_UV2( 2, 0, 2 );
 
 /*
  * VertexArray

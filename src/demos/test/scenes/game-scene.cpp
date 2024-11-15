@@ -3,6 +3,8 @@
 #include <suprengine/opengl/opengl-render-batch.h>
 #include <suprengine/assets.h>
 
+#include <suprengine/vis-debug.h>
+
 using namespace test;
 
 void GameScene::init()
@@ -59,6 +61,20 @@ void GameScene::update( float dt )
 {
 	auto engine = _game->get_engine();
 	float time = engine->get_updater()->get_accumulated_seconds();
+
+	VisDebug::add_line(
+		Vec3 {
+			0.0f,
+			0.0f,
+			math::sin( time * 2.0f ) * 10.0f
+		},
+		Vec3 {
+			math::cos( time ) * 10.0f,
+			math::sin( time ) * 10.0f,
+			10.0f
+		},
+		Color::red
+	);
 
 	RenderBatch* render_batch = engine->get_render_batch();
 	/*render_batch->set_ambient_direction(

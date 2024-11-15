@@ -137,6 +137,12 @@ namespace suprengine
 			const Color& color 
 		) = 0;
 
+		virtual void draw_line(
+			const Vec3& start,
+			const Vec3& end,
+			const Color& color = Color::white
+		) = 0;
+
 		virtual void translate( const Vec2& pos ) = 0;
 		virtual void scale( float zoom ) = 0;
 		virtual void clip( const Rect& region ) = 0;

@@ -7,6 +7,7 @@
 #include <suprengine/components/collider.h>
 #include <suprengine/scene.h>
 #include <suprengine/profiler.h>
+#include <suprengine/vis-debug.h>
 
 #include <backends/imgui_impl_sdl2.h>
 #include <implot.h>
@@ -409,6 +410,8 @@ void Engine::render()
 				component->debug_render( _render_batch );
 			}
 		}
+
+		VisDebug::render();
 	}
 
 	//  End rendering

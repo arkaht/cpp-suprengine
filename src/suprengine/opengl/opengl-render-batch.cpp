@@ -508,6 +508,45 @@ void OpenGLRenderBatch::draw_debug_model(
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 }
 
+void OpenGLRenderBatch::draw_line( const Vec3& start, const Vec3& end, const Color& color )
+{
+	//	Generate a vertex array once
+	constexpr float vertices[] {
+		//	Origin
+		//	NOTE: We set to 0.0f to ignore multiplication (read below)
+		0.0f, 0.0f, 0.0f,
+		//	Offset
+		//	NOTE: We set to 1.0f to compute the end position in the
+		//	vertex shader by multiplying the difference of both vectors
+		1.0f, 1.0f, 1.0f
+	};
+	constexpr uint32 indices[] { 0, 1 };
+	static VertexArray line_vertex_array(
+		VertexArrayPreset::Position3,
+		vertices, 2,
+		indices, 2
+	);
+
+	//	Activate line shader
+	Shader* shader = Assets::get_shader( "suprengine::line" );
+	shader->activate();
+
+	//	Prepare shader only once per frame
+	if ( shader->prepare( _render_tick ) )
+	{
+		shader->set_mtx4( "u_view_projection", _view_matrix );
+	}
+
+	//	Send instance parameters
+	shader->set_color( "u_modulate", color );
+	shader->set_vec3( "u_origin", start );
+	shader->set_vec3( "u_offset", end - start );
+
+	//	Draw line
+	line_vertex_array.activate();
+	glDrawArrays( GL_LINE_STRIP, 0, 2 );
+}
+
 void OpenGLRenderBatch::translate( const Vec2& pos )
 {}
 
@@ -651,6 +690,11 @@ void OpenGLRenderBatch::_load_assets()
 		SHADER_LIT_MESH,
 		"assets/suprengine/shaders/lit-mesh.vert",
 		"assets/suprengine/shaders/lit-mesh.frag"
+	);
+	Assets::load_shader(
+		"suprengine::line",
+		"assets/suprengine/shaders/line.vert",
+		"assets/suprengine/shaders/color.frag"
 	);
 
 	//	Load textures
