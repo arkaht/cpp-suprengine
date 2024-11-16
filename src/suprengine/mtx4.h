@@ -8,12 +8,9 @@ namespace suprengine
 	struct Mtx4
 	{
 	public:
-		float mat[4][4];
+		float mat[4][4] {};
 
-		Mtx4()
-		{
-			*this = Mtx4::identity;
-		}
+		Mtx4() {}
 
 		explicit Mtx4( float inMat[4][4] )
 		{
@@ -138,13 +135,18 @@ namespace suprengine
 			return *this;
 		}
 
+		float* operator[]( int id )
+		{
+			return mat[id];
+		}
 		const float* operator[]( int id ) const
 		{
 			return mat[id];
 		}
 
-		// Invert the matrix - super slow
 		void invert();
+
+		Mtx4 inverse() const;
 
 		Vec3 get_translation() const
 		{
