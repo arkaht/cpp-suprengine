@@ -520,11 +520,10 @@ void OpenGLRenderBatch::draw_line( const Vec3& start, const Vec3& end, const Col
 		//	vertex shader by multiplying the difference of both vectors
 		1.0f, 1.0f, 1.0f
 	};
-	constexpr uint32 indices[] { 0, 1 };
 	static VertexArray line_vertex_array(
 		VertexArrayPreset::Position3,
 		vertices, 2,
-		indices, 2
+		nullptr, 0
 	);
 
 	//	Activate line shader
