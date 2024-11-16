@@ -51,7 +51,11 @@ namespace suprengine
 		 * Returns a Vec3 where Z > 0.0f helps to determine visibility.
 		 */
 		Vec3 world_to_viewport( const Vec3& location ) const;
-		Ray viewport_to_world( const Vec2& location ) const;
+		/*
+		 * Translate a 2D-viewport position into a 3D-world location.
+		 * Returns a Ray starting at the near plane and ending at the far plane.
+		 */
+		Ray viewport_to_world( const Vec2& position ) const;
 
 		void look_at( const Vec3& target );
 

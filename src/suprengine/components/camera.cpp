@@ -78,31 +78,29 @@ Vec3 Camera::world_to_viewport( const Vec3& location ) const
 	return pos;
 }
 
-Ray Camera::viewport_to_world( const Vec2& location ) const
+Ray Camera::viewport_to_world( const Vec2& position ) const
 {
-	//  https://stackoverflow.com/a/56348846
-
-	//printf( "%f %f\n", location.x, location.y );
-	/*Vec3 pos {
-		( location.x - _viewport_size.x * 0.5f ) / _viewport_size.x * 2.0f,
-		( location.y - _viewport_size.y * 0.5f ) / _viewport_size.y * 2.0f,
-		0.01f
-	};*/
+	//	Normalize the viewport-space position of range: 0.0f:1.0f
 	const Vec2 normalized_screen_pos {
-		location.x / _viewport_size.x,
-		location.y / _viewport_size.y
+		position.x / _viewport_size.x,
+		position.y / _viewport_size.y
 	};
+	//	Translate to screen-space position of range -1.0f:1.0f
 	const Vec2 screen_space_pos {
 		( normalized_screen_pos.x - 0.5f ) * 2.0f,
 		( ( 1.0f - normalized_screen_pos.y ) - 0.5f ) * 2.0f
 	};
 
-	const Vec3 proj_space_near_pos( screen_space_pos.x, screen_space_pos.y, -1.0f );
+	//	Add Z-axis to translate to Normalized Device Coordinates
+	//	and to compute both near and far world-space locations
+	const Vec3 proj_space_near_pos( screen_space_pos.x, screen_space_pos.y, 0.0f );
 	const Vec3 proj_space_far_pos( screen_space_pos.x, screen_space_pos.y, 1.0f );
 
+	//	Compute inverse view-projection matrix
 	Mtx4 inverse_matrix = _view_matrix * _projection_matrix;
 	inverse_matrix.invert();
 
+	//	Compute world-space locations
 	const Vec3 world_space_near_pos = Vec3::transform_with_perspective_div( proj_space_near_pos, inverse_matrix );
 	const Vec3 world_space_far_pos = Vec3::transform_with_perspective_div( proj_space_far_pos, inverse_matrix );
 

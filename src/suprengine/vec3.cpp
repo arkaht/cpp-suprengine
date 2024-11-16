@@ -224,7 +224,21 @@ Vec3 Vec3::transform_with_perspective_div( const Vec3& vec, const Mtx4& matrix, 
 {
 	Vec4 vec4 = Vec4( vec, w ) * matrix;
 
-	if ( !math::near_zero( vec4.w ) )
+	//	NOTE: It is important to check for a literal zero and not for an approximation
+	//	like math::near_zero does because the value can be so little that it may returns
+	//	false positive when you really need that division to occurs.
+	//	Trust me, it would save you days of investigation.
+	//
+	//	It happened to me when I was working on the Camera::viewport_to_world function
+	//	where the near world-space location was computed correctly but the far location
+	//	wasn't. It was due to the use of math::near_zero function which checked for a
+	//	precision up to 10^-3 where my vec4.w was computed with a 10^-5 precision, hence
+	//	the division was never occuring and the returned location was incorrect.
+	//
+	//	I decided to directly check for zero instead of making the approximation precision
+	//	greater because, if I did so, it would only behave correctly until you set a too great
+	//	value for the Z-Far of the camera.
+	if ( vec4.w != 0.0f )
 	{
 		float inverse_w = 1.0f / vec4.w;
 		vec4.x *= inverse_w;
