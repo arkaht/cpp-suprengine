@@ -41,14 +41,17 @@ VertexArray::VertexArray(
 	);
 
 	//	Create indices buffer object
-	glGenBuffers( 1, &_ibo_id );
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _ibo_id );
-	glBufferData(
-		GL_ELEMENT_ARRAY_BUFFER,
-		indices_count * sizeof( uint32 ),
-		indices,
-		GL_STATIC_DRAW
-	);
+	if ( indices != nullptr && indices_count > 0 )
+	{
+		glGenBuffers( 1, &_ibo_id );
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _ibo_id );
+		glBufferData(
+			GL_ELEMENT_ARRAY_BUFFER,
+			indices_count * sizeof( uint32 ),
+			indices,
+			GL_STATIC_DRAW
+		);
+	}
 
 	const GLsizei byte_stride = sizeof( float ) * preset.stride;
 	
