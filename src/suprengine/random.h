@@ -1,9 +1,10 @@
 #pragma once
 #include <random>
 
-#include "vec3.h"
-#include "color.h"
-#include "quaternion.h"
+#include <suprengine/vec3.h>
+#include <suprengine/color.h>
+#include <suprengine/quaternion.h>
+#include <suprengine/box.h>
 
 namespace suprengine
 {
