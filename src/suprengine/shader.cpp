@@ -359,7 +359,7 @@ void Shader::set_color( const char* name, const Color& value )
 
 void Shader::set_mtx4( const char* name, const Mtx4& matrix )
 {
-	glUniformMatrix4fv( _get_uniform_location( name ), 1, GL_TRUE, matrix.get_as_float_pointer() );
+	glUniformMatrix4fv( _get_uniform_location( name ), 1, GL_TRUE, &matrix[0][0] );
 }
 
 bool Shader::_compile_shader( uint32 shader_id, const char* name )
