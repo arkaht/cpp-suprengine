@@ -11,8 +11,7 @@ namespace suprengine
 	{
 		Timer() {}
 		Timer( const lambda& callback, float time, std::uint32_t repetitions = 1 )
-			: current_time( time ), max_time( time ),
-			  repetitions( repetitions ), callback( callback )
+			: max_time( time ), repetitions( repetitions ), callback( callback )
 		{}
 
 		/*
