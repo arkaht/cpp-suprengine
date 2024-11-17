@@ -3,6 +3,8 @@
 #include <suprengine/opengl/opengl-render-batch.h>
 #include <suprengine/assets.h>
 
+#include <suprengine/components/colliders/sphere-collider.h>
+
 #include <suprengine/vis-debug.h>
 
 using namespace test;
@@ -23,7 +25,7 @@ void GameScene::init()
 	auto ground = engine.create_entity<Entity>();
 	ground->transform->scale = Vec3 { 100.0f, 100.0f, 1.0f };
 	ground->create_component<ModelRenderer>( cube_model, SHADER_LIT_MESH );
-	ground->create_component<BoxCollider>( Box::HALF );
+	ground_collider = ground->create_component<BoxCollider>( Box::ONE );
 
 	auto player = engine.create_entity<Entity>();
 
@@ -44,6 +46,7 @@ void GameScene::init()
 	
 	auto mesh = engine.create_entity<Entity>();
 	mesh->transform->location = Vec3 { 0.0f, 0.0f, 5.0f };
+	mesh->create_component<SphereCollider>( 2.0f );
 	model_renderer = mesh->create_component<ModelRenderer>( cool_model, SHADER_LIT_MESH );
 
 	//  setup camera
@@ -60,6 +63,7 @@ void GameScene::init()
 void GameScene::update( float dt )
 {
 	auto engine = _game->get_engine();
+	auto inputs = engine->get_inputs();
 	float time = engine->get_updater()->get_accumulated_seconds();
 
 	VisDebug::add_line(
@@ -94,4 +98,16 @@ void GameScene::update( float dt )
 		Vec3 { 0.0f, 0.0f, 5.0f + sinf( time ) * 0.5f } );
 	model_renderer->transform->set_rotation( 
 		model_renderer->transform->rotation + Quaternion( DegAngles { 0.0f, 35.0f * dt, 0.0f } ) );
+
+	VisDebug::add_box(
+		Vec3 { 0.0f, 0.0f, 1.0f + math::sin( time * 5.0f ) * 0.5f },
+		Quaternion( DegAngles { time * 30.0f, time * 60.0f, time * 90.0f } ),
+		Box::ONE,
+		Color::white
+	);
+
+	if ( inputs->is_key_just_pressed( SDL_SCANCODE_F ) )
+	{
+		ground_collider->is_active = !ground_collider->is_active;
+	}
 }

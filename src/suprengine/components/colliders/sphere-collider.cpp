@@ -1,5 +1,8 @@
 #include "sphere-collider.h"
 
+#include <suprengine/components/transform.h>
+#include <suprengine/vis-debug.h>
+
 using namespace suprengine;
 
 SphereCollider::SphereCollider( float radius )
@@ -13,38 +16,35 @@ bool SphereCollider::intersects( SharedPtr<Collider> other )
 
 bool SphereCollider::raycast( _RAYCAST_FUNC_PARAMS )
 {
-	Vec3 center = transform->location;
-	float _radius = radius * transform->scale.x;
+	const Vec3 center = transform->location;
+	const float scaled_radius = get_scaled_radius();
 
-	Vec3 e = center - ray.origin;
-	float a = Vec3::dot( e, ray.direction );
+	const Vec3 offset = center - ray.origin;
+	const float a = Vec3::dot( offset, ray.direction );
 
-	//  check intersection
-	float esq = e.length_sqr();
-	float radius_sqr = _radius * _radius;
-	float f_sqr = radius_sqr - esq + a * a;
-	if ( f_sqr < 0.0f )
-		return false;
+	//  Check intersection
+	const float esq = offset.length_sqr();
+	const float squared_radius = scaled_radius * scaled_radius;
+	const float f_sqr = squared_radius - esq + a * a;
+	if ( f_sqr < 0.0f ) return false;
 
-	float f = math::sqrt( f_sqr );
+	const float f = math::sqrt( f_sqr );
 	float result_t = a - f;
 
-	//  check origin in sphere
-	if ( esq < radius_sqr )
+	//	Check origin in sphere
+	if ( esq < squared_radius )
 	{
-		if ( !params.can_hit_from_origin )
-			return false;
+		if ( !params.can_hit_from_origin ) return false;
 
 		result_t = a + f;
 	}
 
 	if ( result_t < 0.0f ) return false;
 
-	//  check max distance
-	if ( result_t >= ray.distance )
-		return false;
+	//	Check max distance
+	if ( result_t >= ray.distance ) return false;
 
-	//  hit result
+	//	Populate hit result
 	hit->collider = as<Collider>();
 	hit->point = ray.origin + ray.direction * result_t;
 	hit->normal = ( hit->point - center ).normalized();
@@ -52,18 +52,16 @@ bool SphereCollider::raycast( _RAYCAST_FUNC_PARAMS )
 	return true;
 }
 
+float SphereCollider::get_scaled_radius() const
+{
+	return radius * transform->scale.x;
+}
+
 void SphereCollider::debug_render( RenderBatch* render_batch )
 {
-	auto model = Assets::get_model( MESH_SPHERE );
-	Mtx4 matrix = Mtx4::create_from_transform( 
-		radius * transform->scale, 
-		Quaternion::identity,
-		transform->location 
-	);
-
-	render_batch->draw_debug_model(
-		matrix,
-		model,
-		is_active ? Color::green : Color::red
+	VisDebug::add_sphere(
+		transform->location,
+		get_scaled_radius(),
+		is_active ? Color::green : Color::gray
 	);
 }

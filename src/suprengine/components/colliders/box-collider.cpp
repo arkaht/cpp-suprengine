@@ -1,6 +1,7 @@
 #include "box-collider.h"
 
-#include <suprengine/assets.h>
+#include <suprengine/components/transform.h>
+#include <suprengine/vis-debug.h>
 
 using namespace suprengine;
 
@@ -90,16 +91,10 @@ bool BoxCollider::raycast( _RAYCAST_FUNC_PARAMS )
 
 void BoxCollider::debug_render( RenderBatch* render_batch )
 {
-	auto model = Assets::get_model( MESH_CUBE );
-	Mtx4 matrix = Mtx4::create_from_transform( 
-		shape.max * transform->scale,
-		Quaternion::identity/*transform->rotation*/,  //  rotation is not handled yet
-		transform->location 
-	);
-
-	render_batch->draw_debug_model(
-		matrix,
-		model,
-		is_active ? Color::green : Color::red
+	VisDebug::add_box(
+		transform->location,
+		transform->rotation,
+		shape * transform->scale * 0.5f,
+		is_active ? Color::green : Color::gray
 	);
 }

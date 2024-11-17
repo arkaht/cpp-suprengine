@@ -8,7 +8,10 @@ namespace suprengine
 {
 	struct Color
 	{
-		static const Color white, black, red, green, blue, transparent;
+		static const Color white, black;
+		static const Color red, green, blue;
+		static const Color gray;
+		static const Color transparent;
 
 		uint8_t r = 255u, g = 255u, b = 255u, a = 255u;
 

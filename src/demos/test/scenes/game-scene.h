@@ -20,6 +20,7 @@ namespace test
 		void update( float dt ) override;
 
 	private:
-		SharedPtr<ModelRenderer> model_renderer;
+		SharedPtr<Collider> ground_collider = nullptr;
+		SharedPtr<ModelRenderer> model_renderer = nullptr;
 	};
 }
