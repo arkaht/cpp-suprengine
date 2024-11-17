@@ -25,7 +25,7 @@ void GameScene::init()
 	auto ground = engine.create_entity<Entity>();
 	ground->transform->scale = Vec3 { 100.0f, 100.0f, 1.0f };
 	ground->create_component<ModelRenderer>( cube_model, SHADER_LIT_MESH );
-	ground_collider = ground->create_component<BoxCollider>( Box::ONE );
+	ground_collider = ground->create_component<BoxCollider>( Box::one );
 
 	auto player = engine.create_entity<Entity>();
 
@@ -102,7 +102,7 @@ void GameScene::update( float dt )
 	VisDebug::add_box(
 		Vec3 { 0.0f, 0.0f, 1.0f + math::sin( time * 5.0f ) * 0.5f },
 		Quaternion( DegAngles { time * 30.0f, time * 60.0f, time * 90.0f } ),
-		Box::ONE,
+		Box::one,
 		Color::white
 	);
 

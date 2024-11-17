@@ -6,17 +6,19 @@ namespace suprengine
 {
 	struct Box
 	{
-		Vec3 min, max;
+	public:
+		static Box one;
+		static Box half;
 
-		Vec3 get_center() const
-		{
-			return ( min + max ) * 0.5f;
-		}
-		Vec3 get_size() const
-		{
-			return max - min;
-		}
+	public:
+		Vec3 min = Vec3::zero;
+		Vec3 max = Vec3::zero;
 
+	public:
+		Vec3 get_center() const;
+		Vec3 get_size() const;
+
+	public:
 		Box operator+( const Vec3& pos ) const
 		{
 			return Box {
@@ -38,8 +40,5 @@ namespace suprengine
 				max * value
 			};
 		}
-
-		static Box ONE;
-		static Box HALF;
 	};
 }
