@@ -14,7 +14,7 @@ namespace suprengine
 	public:
 		void update();
 
-		bool raycast( _RAYCAST_FUNC_PARAMS );
+		bool raycast( const Ray& ray, RayHit* hit, const RayParams& params );
 
 		void add_collider( SharedPtr<Collider> collider );
 		void remove_collider( SharedPtr<Collider> collider );

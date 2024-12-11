@@ -44,7 +44,7 @@ void Physics::update()
 	}
 }
 
-bool Physics::raycast( _RAYCAST_FUNC_PARAMS )
+bool Physics::raycast( const Ray& ray, RayHit* hit, const RayParams& params )
 {
 	for ( auto& collider : colliders )
 	{

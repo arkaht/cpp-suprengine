@@ -21,7 +21,7 @@ bool BoxCollider::intersects( SharedPtr<Collider> other )
 	return false; 
 }
 
-bool BoxCollider::raycast( _RAYCAST_FUNC_PARAMS )
+bool BoxCollider::raycast( const Ray& ray, RayHit* hit, const RayParams& params )
 {
 	//  get bounds
 	//  TODO: handle rotation (https://answers.unity.com/questions/532297/rotate-a-vector-around-a-certain-point.html)

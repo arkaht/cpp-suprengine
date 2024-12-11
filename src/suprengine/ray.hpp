@@ -4,8 +4,6 @@
 #include <suprengine/vec3.h>
 #include <suprengine/components/collider.fwd.h>
 
-#define _RAYCAST_FUNC_PARAMS const Ray& ray, RayHit* hit, const RayParams& params
-
 namespace suprengine
 {
 	struct Ray

@@ -34,7 +34,7 @@ namespace suprengine
 		void unsetup();
 
 		virtual bool intersects( SharedPtr<Collider> other ) = 0;
-		virtual bool raycast( _RAYCAST_FUNC_PARAMS ) = 0;
+		virtual bool raycast( const Ray& ray, RayHit* hit, const RayParams& params ) = 0;
 
 		void update_collision_with( SharedPtr<Collider> other, bool active );
 	

@@ -14,7 +14,7 @@ bool SphereCollider::intersects( SharedPtr<Collider> other )
 	return false; 
 }
 
-bool SphereCollider::raycast( _RAYCAST_FUNC_PARAMS )
+bool SphereCollider::raycast( const Ray& ray, RayHit* hit, const RayParams& params )
 {
 	const Vec3 center = transform->location;
 	const float scaled_radius = get_scaled_radius();
