@@ -30,7 +30,7 @@ namespace suprengine
 			distance = translation.length();
 			if ( distance == 0.0f ) return;
 
-			//  normalize direction
+			//	Normalize direction
 			direction = Vec3 { 
 				translation.x / distance, 
 				translation.y / distance, 

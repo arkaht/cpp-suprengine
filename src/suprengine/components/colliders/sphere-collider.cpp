@@ -16,6 +16,8 @@ bool SphereCollider::intersects( SharedPtr<Collider> other )
 
 bool SphereCollider::raycast( const Ray& ray, RayHit* hit, const RayParams& params )
 {
+	//	Source: https://gdbooks.gitbooks.io/3dcollisions/content/Chapter3/raycast_sphere.html
+
 	const Vec3 center = transform->location;
 	const float scaled_radius = get_scaled_radius();
 

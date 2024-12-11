@@ -90,50 +90,50 @@ namespace suprengine
 
 		static Vec3 round( const Vec3& value );
 
-		// Normalize the provided vector
+		//  Normalize the provided vector
 		static Vec3 normalize( const Vec3& vec );
-		// Dot product between two vectors (a dot b)
+		//  Dot product between two vectors (a dot b)
 		static float dot( const Vec3& a, const Vec3& b );
-		// Cross product between two vectors (a cross b)
+		//  Cross product between two vectors (a cross b)
 		static Vec3 cross( const Vec3& a, const Vec3& b );
 		static Vec3 lerp( const Vec3& a, const Vec3& b, float t );
-		// Reflect V about (normalized) N
+		//  Reflect V about (normalized) N
 		static Vec3 reflect( const Vec3& value, const Vec3& n );
 		static Vec3 approach( const Vec3& current, const Vec3& target, float delta );
 		static Vec3 sqrt( const Vec3& current );
 
-		// Transform a Vector3 by a quaternion
+		//  Transform a Vector3 by a quaternion
 		static Vec3 transform( const Vec3& value, const Quaternion& q );
 		static Vec3 transform( const Vec3& vec, const Mtx4& mat, float w = 1.0f );
-		// This will transform the vector and renormalize the w component
+		//  This will transform the vector and renormalize the w component
 		static Vec3 transform_with_perspective_div( const Vec3& vec, const Mtx4& mat, float w = 1.0f );
 
 	public:
-		// Vector addition (a + b)
+		//  Vector addition (a + b)
 		friend Vec3 operator+( const Vec3& a, const Vec3& b )
 		{
 			return Vec3( a.x + b.x, a.y + b.y, a.z + b.z );
 		}
 
-		// Vector subtraction (a - b)
+		//  Vector subtraction (a - b)
 		friend Vec3 operator-( const Vec3& a, const Vec3& b )
 		{
 			return Vec3( a.x - b.x, a.y - b.y, a.z - b.z );
 		}
 
-		// Component-wise multiplication
+		//  Component-wise multiplication
 		friend Vec3 operator*( const Vec3& left, const Vec3& right )
 		{
 			return Vec3( left.x * right.x, left.y * right.y, left.z * right.z );
 		}
 
-		// Scalar multiplication
+		//  Scalar multiplication
 		friend Vec3 operator*( const Vec3& vec, float scalar )
 		{
 			return Vec3( vec.x * scalar, vec.y * scalar, vec.z * scalar );
 		}
 
-		// Scalar multiplication
+		//  Scalar multiplication
 		friend Vec3 operator*( float scalar, const Vec3& vec )
 		{
 			return Vec3( vec.x * scalar, vec.y * scalar, vec.z * scalar );
@@ -148,7 +148,6 @@ namespace suprengine
 			return Vec3( x / scalar, y / scalar, z / scalar );
 		}
 
-		// Scalar *=
 		Vec3& operator*=( float scalar )
 		{
 			x *= scalar;
@@ -164,7 +163,6 @@ namespace suprengine
 			return *this;
 		}
 
-		// Vector +=
 		Vec3& operator+=( const Vec3& right )
 		{
 			x += right.x;
@@ -173,7 +171,6 @@ namespace suprengine
 			return *this;
 		}
 
-		// Vector -=
 		Vec3& operator-=( const Vec3& right )
 		{
 			x -= right.x;

@@ -11,12 +11,12 @@ using namespace suprengine;
 RenderBatch::RenderBatch( Window* _window )
 	: _window( _window )
 {
-	//  setup ambient light
+	//	Setup ambient light
 	_ambient_light.color = Color::white;
 	_ambient_light.direction = Vec3 { 0.3f, 1.0f, 0.3f }.normalized();
 	_ambient_light.scale = 0.25f;
 
-	//  update viewport on window size change
+	//	Update viewport on window size change
 	_window->on_size_changed.listen( 
 		"suprengine::render-batch", 
 		[&]( const Vec2& new_size, const Vec2& old_size ) {
@@ -47,37 +47,35 @@ void RenderBatch::set_ambient_color( Color color )
 
 void RenderBatch::add_renderer( SharedPtr<Renderer> renderer )
 {
-	//  get priority order
 	int order = renderer->get_priority_order();
 
-	//  check phase creation
+	//  Ensure creation of the render phase map
 	RenderPhase phase = renderer->get_render_phase();
 	if ( _renderers.find( phase ) == _renderers.end() )
 		_renderers.insert( std::pair( phase, std::vector<SharedPtr<Renderer>>() ) );
 
-	//  search order position
+	//  Search order position
 	auto& list = _renderers.at( phase );
 	auto itr = list.begin();
 	for ( ; itr != list.end(); itr++ )
 		if ( order >= (*itr)->get_priority_order() )
 			break;
 
-	//  insert it
 	list.insert( itr, renderer );
 }
 
 void RenderBatch::remove_renderer( SharedPtr<Renderer> renderer )
 {
-	//  check phase
+	//  Ensure our render phase map exists
 	RenderPhase phase = renderer->get_render_phase();
 	if ( _renderers.find( phase ) == _renderers.end() ) return;
 
-	//  find element in vector
+	//  Find element in vector
 	auto& list = _renderers.at( phase );
 	auto itr = std::find( list.begin(), list.end(), renderer );
 	if ( itr == list.end() ) return;
 
-	list.erase( itr );  //  don't swap or you need to sort again!
+	list.erase( itr );  //  Don't swap or you need to sort again!
 }
 
 void RenderBatch::init()
@@ -88,7 +86,14 @@ void RenderBatch::init()
 	on_window_resized( _window->get_size() );
 }
 
-void RenderBatch::draw_texture( const Vec2& pos, const Vec2& scale, float rotation, const Vec2& origin, Texture* texture, const Color& color )
+void RenderBatch::draw_texture(
+	const Vec2& pos,
+	const Vec2& scale,
+	float rotation,
+	const Vec2& origin,
+	Texture* texture,
+	const Color& color
+)
 {
 	Rect src_rect { Vec2::zero, texture->get_size() };
 	Rect dest_rect { pos, texture->get_size() * scale };
@@ -115,7 +120,7 @@ Texture* RenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* s
 	return new Texture( path, surface, params );
 }
 
-int RenderBatch::get_renderers_count( RenderPhase phase ) const
+int RenderBatch::get_renderers_count( const RenderPhase phase ) const
 {
 	auto itr = _renderers.find( phase );
 	if ( itr == _renderers.end() ) return 0;

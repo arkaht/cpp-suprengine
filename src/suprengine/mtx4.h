@@ -56,11 +56,12 @@ namespace suprengine
 		static Mtx4 create_simple_view_projection( float width, float height );
 
 	public:
-		// Matrix multiplication (a * b)
+		//  Matrix multiplication (a * b)
 		friend Mtx4 operator*( const Mtx4& a, const Mtx4& b )
 		{
 			Mtx4 retVal;
-			// row 0
+
+			//  Row 0
 			retVal.mat[0][0] =
 				a.mat[0][0] * b.mat[0][0] +
 				a.mat[0][1] * b.mat[1][0] +
@@ -85,7 +86,7 @@ namespace suprengine
 				a.mat[0][2] * b.mat[2][3] +
 				a.mat[0][3] * b.mat[3][3];
 
-			// row 1
+			//  Row 1
 			retVal.mat[1][0] =
 				a.mat[1][0] * b.mat[0][0] +
 				a.mat[1][1] * b.mat[1][0] +
@@ -110,7 +111,7 @@ namespace suprengine
 				a.mat[1][2] * b.mat[2][3] +
 				a.mat[1][3] * b.mat[3][3];
 
-			// row 2
+			//  Row 2
 			retVal.mat[2][0] =
 				a.mat[2][0] * b.mat[0][0] +
 				a.mat[2][1] * b.mat[1][0] +
@@ -135,7 +136,7 @@ namespace suprengine
 				a.mat[2][2] * b.mat[2][3] +
 				a.mat[2][3] * b.mat[3][3];
 
-			// row 3
+			//  Row 3
 			retVal.mat[3][0] =
 				a.mat[3][0] * b.mat[0][0] +
 				a.mat[3][1] * b.mat[1][0] +

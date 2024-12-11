@@ -23,12 +23,14 @@ bool BoxCollider::intersects( SharedPtr<Collider> other )
 
 bool BoxCollider::raycast( const Ray& ray, RayHit* hit, const RayParams& params )
 {
-	//  get bounds
-	//  TODO: handle rotation (https://answers.unity.com/questions/532297/rotate-a-vector-around-a-certain-point.html)
-	Vec3 min = transform->location + shape.min * transform->scale,
-		max = transform->location + shape.max * transform->scale;
+	//  Source: 
+	//	https://subscription.packtpub.com/book/game+development/9781787123663/14/ch14lvl1sec135/raycast-bounding-box
 
-	//  get intersection points
+	//  TODO: Handle rotation (https://answers.unity.com/questions/532297/rotate-a-vector-around-a-certain-point.html)
+	const Vec3 min = transform->location + shape.min * transform->scale,
+			   max = transform->location + shape.max * transform->scale;
+
+	//	Compute intersection points
 	float t[] = {
 		( min.x - ray.origin.x ) / ray.direction.x,
 		( max.x - ray.origin.x ) / ray.direction.x,
@@ -38,7 +40,7 @@ bool BoxCollider::raycast( const Ray& ray, RayHit* hit, const RayParams& params 
 		( max.z - ray.origin.z ) / ray.direction.z,
 	};
 
-	//  get minimum & maximum
+	//	Compute two extrems of all intersection points
 	float min_t = math::max(
 		math::max(
 			math::min( t[0], t[1] ),
@@ -54,12 +56,12 @@ bool BoxCollider::raycast( const Ray& ray, RayHit* hit, const RayParams& params 
 		math::max( t[4], t[5] )
 	);
 
-	//  check intersection
+	//	Check for intersection
 	if ( max_t < 0.0f || min_t > max_t )
 		return false;
 
+	//	Check origin in box
 	float result_t = min_t;
-	//  check origin in box
 	if ( min_t <= 0.0f )
 	{
 		if ( !params.can_hit_from_origin )
@@ -68,15 +70,15 @@ bool BoxCollider::raycast( const Ray& ray, RayHit* hit, const RayParams& params 
 		result_t = max_t;
 	}
 
-	//  check max distance
+	//	Check for maximum distance
 	if ( result_t >= ray.distance )
 		return false;
 
-	//  hit result
+	//	Populate hit result
 	hit->collider = as<Collider>();
 	hit->point = ray.origin + ray.direction * result_t;
 
-	//  provide normal
+	//	Provide normal
 	for ( int i = 0; i < 6; i++ )
 	{
 		if ( result_t == t[i] )

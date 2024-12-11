@@ -58,20 +58,19 @@ Vec3 Camera::world_to_viewport( const Vec3& location ) const
 {
 	Vec3 pos = location;
 
-	//  pass location to view & projection matrices
+	//	Pass location to view & projection matrices
 	pos = Vec3::transform( pos, _view_matrix );
 	pos = Vec3::transform( pos, _projection_matrix );
 
-	//  normalize by Z-axis
+	//	Normalize by Z-axis
 	pos.x /= pos.z;
 	pos.y /= pos.z;
 
-	//  remap [-1.0f; 1.0f] to [0.0f; 1.0f]
+	//	Remap [-1.0f; 1.0f] to [0.0f; 1.0f]
 	pos.x = ( pos.x + 1.0f ) * 0.5f;
 	pos.y = ( pos.y + 1.0f ) * 0.5f;
-	//printf( "x=%f; y=%f; z=%f\n", pos.x, pos.y, pos.z );
 
-	//  to viewport
+	//	Convert to viewport
 	pos.x *= _viewport_size.x;
 	pos.y *= _viewport_size.y;
 
@@ -152,7 +151,7 @@ void Camera::set_view_matrix( const Mtx4& matrix )
 	_view_matrix = matrix;
 	_is_view_matrix_dirty = false;
 
-	//  compute transform for external uses
+	//	Compute transform for external uses
 	transform->get_matrix();
 }
 
@@ -183,7 +182,7 @@ void Camera::setup_vars()
 {
 	auto window = Engine::instance().get_window();
 
-	//  listen to window updates
+	//	Listen to window updates
 	window->on_size_changed.listen( 
 		"suprengine::camera" + std::to_string( get_owner()->get_unique_id() ), 
 		[&]( const Vec2& new_size, const Vec2& old_size ) {
@@ -193,5 +192,5 @@ void Camera::setup_vars()
 	);
 
 	_viewport_size = window->get_size();
-	viewport.w, viewport.h = _viewport_size.x, _viewport_size.y;  //  TODO: remove obsolete camera code
+	viewport.w, viewport.h = _viewport_size.x, _viewport_size.y;  //  TODO: Remove obsolete camera code
 }

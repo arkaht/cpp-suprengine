@@ -16,18 +16,18 @@
 using namespace suprengine;
 
 constexpr float RECT_VERTICES[] = {
-	//  bottom-left
-	-1.0f, -1.0f,  //  position
-	 0.0f,  0.0f,  //  uv
-	 //  bottom-right
-	 1.0f, -1.0f,  //  position
-	 1.0f,  0.0f,  //  uv
-	 //  top-right
-	 1.0f, 1.0f,  //  position
-	 1.0f, 1.0f,  //  uv
-	 //  top-left
-	 -1.0f, 1.0f,  //  position
-	 0.0f, 1.0f   //  uv
+	//	Bottom-left
+	-1.0f, -1.0f,  //  Position
+	 0.0f,  0.0f,  //  UV
+	//	Bottom-right
+	 1.0f, -1.0f,  //  Position
+	 1.0f,  0.0f,  //  UV
+	//	Top-right
+	 1.0f, 1.0f,   //  Position
+	 1.0f, 1.0f,   //  UV
+	//	Top-left
+	 -1.0f, 1.0f,  //  Position
+	 0.0f, 1.0f    //  UV
 };
 
 constexpr unsigned int RECT_INDICES[] = {
@@ -103,9 +103,9 @@ OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
 	SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8 );
 	SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8 );
 
-	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );  //  depth buffering
-	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );  //  enable double buffering
-	SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );  //  force OpenGL to use hardware acceleration
+	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );  //  Depth buffering
+	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );  //  Enable double buffering
+	SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );  //  Force OpenGL to use hardware acceleration
 
 	//	Create OpenGL context
 	_gl_context = SDL_GL_CreateContext( _window->get_sdl_window() );
@@ -196,10 +196,10 @@ void OpenGLRenderBatch::begin_render()
 {
 	PROFILE_SCOPE( "OpenGL::begin_render" );
 
-	//  begin ImGui rendering
+	//	Begin ImGui rendering
 	ImGui::Render();
 
-	//  clear screen
+	//	Clear screen
 	glBindFramebuffer( GL_FRAMEBUFFER, _fbo_id );
 	glClearColor(
 		_background_color.r / 255.0f,
@@ -209,7 +209,7 @@ void OpenGLRenderBatch::begin_render()
 	);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	//  check camera
+	//	Check camera
 	auto& engine = Engine::instance();
 	_camera = engine.camera;
 	if ( _camera == nullptr )
@@ -218,7 +218,7 @@ void OpenGLRenderBatch::begin_render()
 		return;
 	}
 
-	//  activate shader & vertex array
+	//	Activate shader & vertex array
 	_view_matrix = _camera->get_view_matrix() * _camera->get_projection_matrix();
 
 	//	Store render frame for later use
@@ -385,7 +385,7 @@ void OpenGLRenderBatch::draw_texture(
 	_texture_shader->set_mtx4( "u_world_transform", matrix );
 	_texture_shader->set_color( "u_modulate", color );
 
-	//  source rect
+	//	Source rect
 	Vec2 size = texture->get_size();
 	_texture_shader->set_vec4(
 		"u_source_rect",
@@ -395,10 +395,10 @@ void OpenGLRenderBatch::draw_texture(
 		src_rect.h / size.y
 	);
 
-	//  origin
+	//	Origin
 	_texture_shader->set_vec2( "u_origin", origin );
 
-	//  draw
+	//	Draw
 	_quad_vertex_array->activate();
 	texture->activate();
 	_draw_elements( 6 );

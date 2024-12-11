@@ -14,7 +14,6 @@ namespace suprengine
 
 		//  TODO: implement this
 		bool intersects( SharedPtr<Collider> other ) override;
-		//  source: https://subscription.packtpub.com/book/game+development/9781787123663/14/ch14lvl1sec135/raycast-bounding-box
 		bool raycast( const Ray& ray, RayHit* hit, const RayParams& params );
 
 		void debug_render( RenderBatch* render_batch ) override;

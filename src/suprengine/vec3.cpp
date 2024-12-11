@@ -251,7 +251,6 @@ Vec3 Vec3::transform_with_perspective_div( const Vec3& vec, const Mtx4& matrix, 
 
 Vec3 Vec3::transform( const Vec3& value, const Quaternion& q )
 {
-	// value + 2.0*cross(q.xyz, cross(q.xyz,value) + q.w*value);
 	Vec3 qv( q.x, q.y, q.z );
 	Vec3 retVal = value;
 	retVal += 2.0f * Vec3::cross( qv, Vec3::cross( qv, value ) + q.w * value );
