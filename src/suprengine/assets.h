@@ -29,14 +29,14 @@ namespace suprengine
 		static void set_path( rconst_str path ) { _resources_path = path; }
 		static std::string get_path() { return _resources_path; }
 
-		static Texture* load_texture( rconst_str name, rconst_str path, const TextureParams& params = {} );
-		static Texture* get_texture( rconst_str name );
+		static SharedPtr<Texture> load_texture( rconst_str name, rconst_str path, const TextureParams& params = {} );
+		static SharedPtr<Texture> get_texture( rconst_str name );
 
-		static Font* load_font( rconst_str name, rconst_str path, int size = 12 );
-		static Font* get_font( rconst_str path, int size );
+		static SharedPtr<Font> load_font( rconst_str name, rconst_str path, int size = 12 );
+		static SharedPtr<Font> get_font( rconst_str path, int size );
 
-		static Shader* load_shader( rconst_str name, rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path = "", rconst_str tse_path = "", rconst_str geo_path = "", bool append_resources_path = true );
-		static Shader* get_shader( rconst_str name );
+		static SharedPtr<Shader> load_shader( rconst_str name, rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path = "", rconst_str tse_path = "", rconst_str geo_path = "", bool append_resources_path = true );
+		static SharedPtr<Shader> get_shader( rconst_str name );
 
 		static SharedPtr<Model> load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
 		static SharedPtr<Model> get_model( rconst_str name );
@@ -111,9 +111,9 @@ namespace suprengine
 	private:
 		using filewatcher = filewatch::FileWatch<std::string>;
 
-		static std::map<std::string, Texture*> _textures;
-		static std::map<std::string, Font*> _fonts;
-		static std::map<std::string, Shader*> _shaders;
+		static std::map<std::string, SharedPtr<Texture>> _textures;
+		static std::map<std::string, SharedPtr<Font>> _fonts;
+		static std::map<std::string, SharedPtr<Shader>> _shaders;
 		static std::map<std::string, SharedPtr<Model>> _models;
 		static std::map<std::string, SharedPtr<Curve>> _curves;
 
@@ -125,8 +125,6 @@ namespace suprengine
 		static curve_x::CurveSerializer _curve_serializer;
 
 		static bool _read_file( rconst_str path, std::string* data );
-
-		static Shader* load_shader_from_file( rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path, rconst_str tse_path, rconst_str geo_path );
 
 		static VertexArray* load_mesh( const aiMesh* mesh );
 		static std::vector<Mesh*> load_node( const aiNode* node, const aiScene* scene );

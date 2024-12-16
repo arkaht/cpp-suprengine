@@ -100,7 +100,7 @@ namespace suprengine
 			const Vec2& scale,
 			float rotation,
 			const Vec2& origin,
-			Texture* texture,
+			SharedPtr<Texture> texture,
 			const Color& color = Color::white
 		);
 		virtual void draw_texture(
@@ -108,12 +108,12 @@ namespace suprengine
 			const Rect& dest_rect, 
 			float rotation, 
 			const Vec2& origin, 
-			Texture* texture,
+			SharedPtr<Texture> texture,
 			const Color& color = Color::white 
 		) = 0;
 		virtual void draw_texture(
 			const Mtx4& matrix,
-			Texture* texture,
+			SharedPtr<Texture> texture,
 			const Vec2& origin, 
 			const Rect& src_rect, 
 			const Color& color = Color::white
@@ -150,8 +150,15 @@ namespace suprengine
 		virtual bool set_vsync( VSyncMode mode ) = 0;
 		virtual VSyncMode get_vsync_mode() = 0;
 
-		virtual Texture* load_texture( rconst_str path, const TextureParams& params = {} );
-		virtual Texture* load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params = {} );
+		virtual SharedPtr<Texture> load_texture(
+			rconst_str path,
+			const TextureParams& params = {}
+		);
+		virtual SharedPtr<Texture> load_texture_from_surface(
+			rconst_str path,
+			SDL_Surface* surface,
+			const TextureParams& params = {}
+		);
 
 		int get_renderers_count( RenderPhase phase ) const;
 

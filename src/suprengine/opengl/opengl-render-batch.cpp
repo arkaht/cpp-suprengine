@@ -337,8 +337,8 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	}
 
 	//	Setup matrices
-	Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
-	Mtx4 location_matrix = _compute_location_matrix( rect.x, rect.y, 0.0f );
+	const Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
+	const Mtx4 location_matrix = _compute_location_matrix( rect.x, rect.y, 0.0f );
 	_color_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
 	_color_shader->set_color( "u_modulate", color );
 
@@ -351,14 +351,14 @@ void OpenGLRenderBatch::draw_texture(
 	const Rect& dest_rect,
 	float rotation,
 	const Vec2& origin,
-	Texture* texture,
+	SharedPtr<Texture> texture,
 	const Color& color
 )
 {
 	//	Setup matrices
-	Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
-	Mtx4 rotation_matrix = Mtx4::create_rotation_z( rotation );
-	Mtx4 location_matrix = _compute_location_matrix( dest_rect.x, dest_rect.y, 0.0f );
+	const Mtx4 scale_matrix = Mtx4::create_scale( dest_rect.w, dest_rect.h, 1.0f );
+	const Mtx4 rotation_matrix = Mtx4::create_rotation_z( rotation );
+	const Mtx4 location_matrix = _compute_location_matrix( dest_rect.x, dest_rect.y, 0.0f );
 
 	draw_texture(
 		scale_matrix * rotation_matrix * location_matrix,
@@ -368,7 +368,7 @@ void OpenGLRenderBatch::draw_texture(
 
 void OpenGLRenderBatch::draw_texture(
 	const Mtx4& matrix,
-	Texture* texture,
+	SharedPtr<Texture> texture,
 	const Vec2& origin,
 	const Rect& src_rect,
 	const Color& color
@@ -386,7 +386,7 @@ void OpenGLRenderBatch::draw_texture(
 	_texture_shader->set_color( "u_modulate", color );
 
 	//	Source rect
-	Vec2 size = texture->get_size();
+	const Vec2 size = texture->get_size();
 	_texture_shader->set_vec4(
 		"u_source_rect",
 		src_rect.x / size.x,
@@ -407,7 +407,7 @@ void OpenGLRenderBatch::draw_texture(
 void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color )
 {
 	//	Update uniforms
-	Shader* shader = mesh->get_shader();
+	SharedPtr<Shader> shader = mesh->get_shader();
 	ASSERT( shader != nullptr, "Shader is invalid" );
 
 	shader->activate();
@@ -448,7 +448,7 @@ void OpenGLRenderBatch::draw_model(
 		auto mesh = model->get_mesh( i );
 
 		//	Get shader to use
-		Shader* shader = nullptr;
+		SharedPtr<Shader> shader = nullptr;
 		if ( !shader_name.empty() )
 		{
 			shader = Assets::get_shader( shader_name );
@@ -527,7 +527,7 @@ void OpenGLRenderBatch::draw_line( const Vec3& start, const Vec3& end, const Col
 	);
 
 	//	Activate line shader
-	Shader* shader = Assets::get_shader( "suprengine::line" );
+	SharedPtr<Shader> shader = Assets::get_shader( "suprengine::line" );
 	shader->activate();
 
 	//	Prepare shader only once per frame
@@ -608,6 +608,7 @@ bool OpenGLRenderBatch::set_vsync( VSyncMode mode )
 			return false;
 		}
 
+		//	Trying to enable VSync after failing to set it up on adaptative
 		result = SDL_GL_SetSwapInterval( static_cast<int>( VSyncMode::Enabled ) );
 		if ( result == -1 )
 		{
@@ -626,6 +627,7 @@ bool OpenGLRenderBatch::set_vsync( VSyncMode mode )
 		return true;
 	}
 
+	//	Log new VSync mode
 	switch ( mode )
 	{
 		case VSyncMode::Disabled:
@@ -706,7 +708,7 @@ void OpenGLRenderBatch::_load_assets()
 		"assets/suprengine/textures/medium-grid.png"
 	);
 
-	auto texture = Assets::get_texture( TEXTURE_MEDIUM_GRID );
+	SharedPtr<Texture> texture = Assets::get_texture( TEXTURE_MEDIUM_GRID );
 
 	//	Load models
 	auto arrow_model = Assets::load_model(

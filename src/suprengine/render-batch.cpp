@@ -91,7 +91,7 @@ void RenderBatch::draw_texture(
 	const Vec2& scale,
 	float rotation,
 	const Vec2& origin,
-	Texture* texture,
+	SharedPtr<Texture> texture,
 	const Color& color
 )
 {
@@ -104,20 +104,27 @@ void RenderBatch::draw_texture(
 	);
 }
 
-Texture* RenderBatch::load_texture( rconst_str path, const TextureParams& params )
+SharedPtr<Texture> RenderBatch::load_texture(
+	rconst_str path,
+	const TextureParams& params
+)
 {
 	SDL_Surface* surface = Texture::load_surface( path );
 	if ( surface == nullptr ) return nullptr;
 
-	Texture* texture = load_texture_from_surface( path, surface, params );
+	SharedPtr<Texture> texture = load_texture_from_surface( path, surface, params );
 	SDL_FreeSurface( surface );
 
 	return texture;
 }
 
-Texture* RenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
+SharedPtr<Texture> RenderBatch::load_texture_from_surface(
+	rconst_str path,
+	SDL_Surface* surface,
+	const TextureParams& params
+)
 {
-	return new Texture( path, surface, params );
+	return std::make_shared<Texture>( path, surface, params );
 }
 
 int RenderBatch::get_renderers_count( const RenderPhase phase ) const
@@ -132,8 +139,8 @@ void RenderBatch::_render_phase( const RenderPhase phase )
 {
 	if ( _renderers.find( phase ) == _renderers.end() ) return;
 
-	auto& list = _renderers.at( phase );
-	for ( auto& renderer : list )
+	std::vector<SharedPtr<Renderer>>& list = _renderers.at( phase );
+	for ( SharedPtr<Renderer>& renderer : list )
 	{
 		if ( !renderer->is_active ) continue;
 		renderer->render( this );

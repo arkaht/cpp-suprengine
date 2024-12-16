@@ -10,9 +10,9 @@
 
 using namespace suprengine;
 
-std::map<std::string, Texture*> Assets::_textures;
-std::map<std::string, Font*> Assets::_fonts;
-std::map<std::string, Shader*> Assets::_shaders;
+std::map<std::string, SharedPtr<Texture>> Assets::_textures;
+std::map<std::string, SharedPtr<Font>> Assets::_fonts;
+std::map<std::string, SharedPtr<Shader>> Assets::_shaders;
 std::map<std::string, SharedPtr<Model>> Assets::_models;
 std::map<std::string, SharedPtr<Curve>> Assets::_curves;
 
@@ -23,7 +23,7 @@ std::string Assets::_resources_path { "" };
 Assimp::Importer Assets::_importer;
 curve_x::CurveSerializer Assets::_curve_serializer;
 
-Texture* Assets::load_texture( rconst_str name, rconst_str path, const TextureParams& params )
+SharedPtr<Texture> Assets::load_texture( rconst_str name, rconst_str path, const TextureParams& params )
 {
 	Logger::info(
 		"Loading texture '%s' at path '%s' (F: %d)",
@@ -35,10 +35,10 @@ Texture* Assets::load_texture( rconst_str name, rconst_str path, const TexturePa
 	return _textures[name];
 }
 
-Texture* Assets::get_texture( rconst_str name )
+SharedPtr<Texture> Assets::get_texture( rconst_str name )
 {
 	//  check texture
-	auto itr = _textures.find( name );
+	const auto itr = _textures.find( name );
 	if ( itr == _textures.end() )
 	{
 		Logger::error( "Failed to get texture '" + name + "', either not loaded or the name is wrong!" );
@@ -49,20 +49,20 @@ Texture* Assets::get_texture( rconst_str name )
 	return (*itr).second;
 }
 
-Font* Assets::load_font( rconst_str name, rconst_str path, int size )
+SharedPtr<Font> Assets::load_font( rconst_str name, rconst_str path, int size )
 {
-	std::string key = name + std::to_string( size );
+	const std::string key = name + std::to_string( size );
 
 	_fonts[key] = Font::load( path, size );
 	return _fonts[key];
 }
 
-Font* Assets::get_font( rconst_str name, int size )
+SharedPtr<Font> Assets::get_font( rconst_str name, int size )
 {
-	std::string key = name + std::to_string( size );
+	const std::string key = name + std::to_string( size );
 
 	//  check font
-	auto itr = _fonts.find( key );
+	const auto itr = _fonts.find( key );
 	if ( itr == _fonts.end() )
 	{
 		Logger::error( "Failed to get font '" + key + "', either not loaded or the name is wrong!" );
@@ -73,7 +73,93 @@ Font* Assets::get_font( rconst_str name, int size )
 	return (*itr).second;
 }
 
-Shader* Assets::load_shader( rconst_str name, rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename, rconst_str tse_filename, rconst_str geo_filename, bool append_resources_path )
+static SharedPtr<Shader> load_shader_from_file(
+	rconst_str vtx_filename, 
+	rconst_str frg_filename, 
+	rconst_str tsc_filename, 
+	rconst_str tse_filename, 
+	rconst_str geo_filename 
+)
+{
+	//	TODO: Refactor this function
+	// 1. Retrieve the vertex/fragment source code from filePath
+	std::string vertex_code {};
+	std::string fragment_code {};
+	std::string tess_control_code {};
+	std::string tess_eval_code {};
+	std::string geometry_code {};
+	try
+	{
+		// Open files
+		std::ifstream vertexShaderFile( vtx_filename );
+		if ( !vertexShaderFile.is_open() )
+		{
+			throw std::exception( "vertex file not found!" );
+		}
+
+		std::ifstream fragmentShaderFile( frg_filename );
+		if ( !fragmentShaderFile.is_open() )
+		{
+			throw std::exception( "fragment file not found!" );
+		}
+
+		std::stringstream vShaderStream, fShaderStream;
+		// Read file's buffer contents into streams
+		vShaderStream << vertexShaderFile.rdbuf();
+		fShaderStream << fragmentShaderFile.rdbuf();
+		// close file handlers
+		vertexShaderFile.close();
+		fragmentShaderFile.close();
+		// Convert stream into string
+		vertex_code = vShaderStream.str();
+		fragment_code = fShaderStream.str();
+		// If tess control shader path is present, also load a tess control shader
+		if ( tsc_filename != "" )
+		{
+			std::ifstream tessControlShaderFile( tsc_filename );
+			std::stringstream tcShaderStream;
+			tcShaderStream << tessControlShaderFile.rdbuf();
+			tessControlShaderFile.close();
+			tess_control_code = tcShaderStream.str();
+		}
+		// If tess evaluation shader path is present, also load a tess evaluation shader
+		if ( tse_filename != "" )
+		{
+			std::ifstream tessEvalShaderFile( tse_filename );
+			std::stringstream teShaderStream;
+			teShaderStream << tessEvalShaderFile.rdbuf();
+			tessEvalShaderFile.close();
+			tess_eval_code = teShaderStream.str();
+		}
+		// If geometry shader path is present, also load a geometry shader
+		if ( geo_filename != "" )
+		{
+			std::ifstream geometryShaderFile( geo_filename );
+			std::stringstream gShaderStream;
+			gShaderStream << geometryShaderFile.rdbuf();
+			geometryShaderFile.close();
+			geometry_code = gShaderStream.str();
+		}
+	}
+	catch ( std::exception e )
+	{
+		Logger::error( "SHADER: failed to read shader files (vertex: '" + vtx_filename + "'; fragment: '" + frg_filename + "'): '" + e.what() + "'\n" );
+		return nullptr;
+	}
+
+	//	Create and compile shader
+	SharedPtr<Shader> shader = std::make_shared<Shader>(
+		*vertex_code,
+		*fragment_code,
+		!tsc_filename.empty() ? *tess_control_code : nullptr,
+		!tse_filename.empty() ? *tess_eval_code : nullptr,
+		!geo_filename.empty() ? *geometry_code : nullptr
+	);
+
+	return shader;
+}
+
+SharedPtr<Shader> Assets::load_shader( rconst_str name, rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename, rconst_str tse_filename, rconst_str geo_filename, bool append_resources_path )
 {
 	Logger::info(
 		"Loading shader '%s' with vertex '%s' and fragment '%s'",
@@ -84,9 +170,9 @@ Shader* Assets::load_shader( rconst_str name, rconst_str vtx_filename, rconst_st
 	return get_shader( name );
 }
 
-Shader* Assets::get_shader( rconst_str name ) 
+SharedPtr<Shader> Assets::get_shader( rconst_str name ) 
 { 
-	auto itr = _shaders.find( name );
+	const auto itr = _shaders.find( name );
 	if ( itr == _shaders.end() )
 	{
 		Logger::error( "Failed to get shader '" + name + "', either not loaded or the name is wrong!" );
@@ -100,13 +186,10 @@ Shader* Assets::get_shader( rconst_str name )
 SharedPtr<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_str shader_name )
 {
 	//	Set import flags
-	int flags = aiProcess_Triangulate 
-			  //| aiProcess_MakeLeftHanded
-			  | aiProcess_FlipUVs 
-			  | aiProcess_JoinIdenticalVertices;
+	const int flags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices;
 	
 	//	Load mesh
-	auto scene = _importer.ReadFile( path, flags );
+	const aiScene* scene = _importer.ReadFile( path, flags );
 	if ( scene == nullptr ) 
 	{
 		Logger::error( "Failed to load model at path '%s', file not found or corrupted!", *path );
@@ -116,7 +199,7 @@ SharedPtr<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_st
 	Logger::info( "Loading model '%s' at path '%s'", *name, *path );
 
 	//	Load all meshes from the root node
-	auto meshes = load_node( scene->mRootNode, scene );
+	std::vector<Mesh*> meshes = load_node( scene->mRootNode, scene );
 	if ( meshes.empty() )
 	{
 		Logger::error( "Failed to load model at path '%s', the model doesn't contain any meshes!", *path );
@@ -124,7 +207,7 @@ SharedPtr<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_st
 	}
 
 	//	Create model
-	auto model = std::make_shared<Model>( std::move( meshes ), shader_name );
+	SharedPtr<Model> model = std::make_shared<Model>( std::move( meshes ), shader_name );
 	
 	//	Register and return
 	_models[name] = model;
@@ -133,7 +216,7 @@ SharedPtr<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_st
 
 SharedPtr<Model> Assets::get_model( rconst_str name )
 {
-	auto itr = _models.find( name );
+	const auto itr = _models.find( name );
 	if ( itr == _models.end() )
 	{
 		Logger::error( "Failed to get model '%s', either not loaded or the name is wrong!", *name );
@@ -231,16 +314,12 @@ SharedPtr<Curve> Assets::load_curve(
 	rconst_str path 
 )
 {
-	//  read curve file
+	//  Read curve file
 	std::string data;
 	if ( !_read_file( path, &data ) ) return nullptr;
 
-	//  unserialize curve and store it
+	//  Un-serialize curve and store it
 	Curve temporary = _curve_serializer.unserialize( data );
-	/*if ( _curves.find( name ) != _curves.end() )
-	{
-		Logger::info( "Replacing existing Curve asset named '" + name + "'." );
-	}*/
 	_curves[name] = std::make_shared<Curve>( temporary );
 
 	Logger::info( "Registered Curve asset as '" + name + "'." );
@@ -261,25 +340,19 @@ SharedPtr<Curve> Assets::get_curve( rconst_str name )
 
 void Assets::release()
 {
-	//  release textures
-	for ( auto& pair : _textures )
-		delete pair.second;
+	//  Release textures
 	_textures.clear();
 
-	//  release fonts
-	for ( auto& pair : _fonts )
-		delete pair.second;
+	//  Release fonts
 	_fonts.clear();
 
-	//  release shaders
-	for ( auto& pair : _shaders )
-		delete pair.second;
+	//  Release shaders
 	_shaders.clear();
 
-	//  release meshes
+	//  Release meshes
 	_models.clear();
 
-	//  release curves
+	//  Release curves
 	_curves.clear();
 }
 
@@ -289,17 +362,17 @@ bool Assets::_read_file( rconst_str path, std::string* data )
 	std::ifstream file;
 	file.open( c_path );
 
-	//  prepare output
+	//  Prepare output
 	*data = "";
 
-	//  check file exists
+	//  Check whether file exists
 	if ( !file.is_open() )
 	{
 		Logger::error( "File '" + path + "' doesn't exists, aborting reading from file!" );
 		return false;
 	}
 
-	//  read file's content
+	//  Read file's content
 	for ( std::string line; std::getline( file, line ); )
 	{
 		*data += line + '\n';
@@ -310,103 +383,17 @@ bool Assets::_read_file( rconst_str path, std::string* data )
 	return true;
 }
 
-Shader* Assets::load_shader_from_file(
-	rconst_str vtx_filename, 
-	rconst_str frg_filename, 
-	rconst_str tsc_filename, 
-	rconst_str tse_filename, 
-	rconst_str geo_filename 
-)
-{
-	//	TODO: Refactor this function
-	// 1. Retrieve the vertex/fragment source code from filePath
-	std::string vertex_code {};
-	std::string fragment_code {};
-	std::string tess_control_code {};
-	std::string tess_eval_code {};
-	std::string geometry_code {};
-	try
-	{
-		// Open files
-		std::ifstream vertexShaderFile( vtx_filename );
-		if ( !vertexShaderFile.is_open() )
-		{
-			throw std::exception( "vertex file not found!" );
-		}
-
-		std::ifstream fragmentShaderFile( frg_filename );
-		if ( !fragmentShaderFile.is_open() )
-		{
-			throw std::exception( "fragment file not found!" );
-		}
-		
-		std::stringstream vShaderStream, fShaderStream;
-		// Read file's buffer contents into streams
-		vShaderStream << vertexShaderFile.rdbuf();
-		fShaderStream << fragmentShaderFile.rdbuf();
-		// close file handlers
-		vertexShaderFile.close();
-		fragmentShaderFile.close();
-		// Convert stream into string
-		vertex_code = vShaderStream.str();
-		fragment_code = fShaderStream.str();
-		// If tess control shader path is present, also load a tess control shader
-		if ( tsc_filename != "" )
-		{
-			std::ifstream tessControlShaderFile( tsc_filename );
-			std::stringstream tcShaderStream;
-			tcShaderStream << tessControlShaderFile.rdbuf();
-			tessControlShaderFile.close();
-			tess_control_code = tcShaderStream.str();
-		}
-		// If tess evaluation shader path is present, also load a tess evaluation shader
-		if ( tse_filename != "" )
-		{
-			std::ifstream tessEvalShaderFile( tse_filename );
-			std::stringstream teShaderStream;
-			teShaderStream << tessEvalShaderFile.rdbuf();
-			tessEvalShaderFile.close();
-			tess_eval_code = teShaderStream.str();
-		}
-		// If geometry shader path is present, also load a geometry shader
-		if ( geo_filename != "" )
-		{
-			std::ifstream geometryShaderFile( geo_filename );
-			std::stringstream gShaderStream;
-			gShaderStream << geometryShaderFile.rdbuf();
-			geometryShaderFile.close();
-			geometry_code = gShaderStream.str();
-		}
-	}
-	catch ( std::exception e )
-	{
-		Logger::error( "SHADER: failed to read shader files (vertex: '" + vtx_filename + "'; fragment: '" + frg_filename + "'): '" + e.what() + "'\n" );
-		return nullptr;
-	}
-
-	//	Create and compile shader
-	Shader* shader = new Shader(
-		*vertex_code,
-		*fragment_code,
-		!tsc_filename.empty() ? *tess_control_code : nullptr,
-		!tse_filename.empty() ? *tess_eval_code : nullptr,
-		!geo_filename.empty() ? *geometry_code : nullptr
-	);
-
-	return shader;
-}
-
 VertexArray* Assets::load_mesh( const aiMesh* mesh )
 {
 	const VertexArrayPreset& preset = VertexArrayPreset::Position3_Normal3_UV2;
 	
 	//	Create vertices and indices containers
-	size_t vertices_count = mesh->mNumVertices;
+	const size_t vertices_count = mesh->mNumVertices;
 	std::vector<float> vertices( vertices_count * preset.stride );
 	std::vector<unsigned int> indices;
 
-	bool has_normals = mesh->HasNormals();
-	bool has_uvs = mesh->HasTextureCoords( 0 );
+	const bool has_normals = mesh->HasNormals();
+	const bool has_uvs = mesh->HasTextureCoords( 0 );
 
 	//	Copy vertices
 	for ( size_t i = 0; i < vertices_count; i++ )
@@ -446,7 +433,8 @@ VertexArray* Assets::load_mesh( const aiMesh* mesh )
 			indices.push_back( face.mIndices[j] );
 		}
 	}
-	size_t indices_count = indices.size();
+
+	const size_t indices_count = indices.size();
 
 	Logger::info(
 		"Loaded mesh '%s' (V: %d; I: %d; N: %s; UV: %s)",
@@ -455,7 +443,7 @@ VertexArray* Assets::load_mesh( const aiMesh* mesh )
 		has_normals ? "true" : "false", has_uvs ? "true" : "false"
 	);
 
-	//  create vertex array
+	//  Create vertex array
 	auto vertex_array = new VertexArray(
 		preset,
 		vertices.data(), static_cast<uint32>( vertices_count ),

@@ -21,8 +21,6 @@ Vec4::Vec4( const Vec3& vec, float w )
 
 Vec4 Vec4::operator*( const Mtx4& mtx )
 {
-	//	NOTE: For some reasons, I can't make a copy Vec4 of this using *=
-	//	and having the same result, so here we go...
 	return Vec4 {
 		x * mtx[0][0] + y * mtx[1][0] + z * mtx[2][0] + w * mtx[3][0],
 		x * mtx[0][1] + y * mtx[1][1] + z * mtx[2][1] + w * mtx[3][1],
@@ -33,18 +31,19 @@ Vec4 Vec4::operator*( const Mtx4& mtx )
 
 Vec4 Vec4::operator/( float value )
 {
-	Vec4 copy = *this;
-	copy /= value;
-	return copy;
+	value = 1.0f / value;
+
+	return Vec4 {
+		x * value,
+		y * value,
+		z * value,
+		w * value
+	};
 }
 
 Vec4& Vec4::operator*=( const Mtx4& mtx )
 {
-	x = x * mtx[0][0] + y * mtx[1][0] + z * mtx[2][0] + w * mtx[3][0];
-	y = x * mtx[0][1] + y * mtx[1][1] + z * mtx[2][1] + w * mtx[3][1];
-	z = x * mtx[0][2] + y * mtx[1][2] + z * mtx[2][2] + w * mtx[3][2];
-	w = x * mtx[0][3] + y * mtx[1][3] + z * mtx[2][3] + w * mtx[3][3];
-
+	*this = *this * mtx;
 	return *this;
 }
 

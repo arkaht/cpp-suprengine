@@ -73,7 +73,14 @@ void SDLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Colo
 	}
 }
 
-void SDLRenderBatch::draw_texture( const Rect& src_rect, const Rect& dest_rect, float rotation, const Vec2& origin, Texture* texture, const Color& color )
+void SDLRenderBatch::draw_texture(
+	const Rect& src_rect,
+	const Rect& dest_rect,
+	float rotation,
+	const Vec2& origin,
+	SharedPtr<Texture> texture,
+	const Color& color
+)
 {
 	SDL_Texture* sdl_texture = texture->get_sdl_texture();
 	SDL_Rect src = src_rect.to_sdl_rect(), dest = dest_rect.to_sdl_rect();
@@ -122,7 +129,11 @@ void SDLRenderBatch::clip( const Rect& region )
 	SDL_RenderSetClipRect( _sdl_renderer, &clip_rect );
 }
 
-Texture* SDLRenderBatch::load_texture_from_surface( rconst_str path, SDL_Surface* surface, const TextureParams& params )
+SharedPtr<Texture> SDLRenderBatch::load_texture_from_surface(
+	rconst_str path,
+	SDL_Surface* surface,
+	const TextureParams& params
+)
 {
-	return new SDLTexture( _sdl_renderer, path, surface );
+	return std::make_shared<SDLTexture>( _sdl_renderer, path, surface );
 }

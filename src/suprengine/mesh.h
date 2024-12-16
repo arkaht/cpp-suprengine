@@ -19,10 +19,10 @@ namespace suprengine
 
 		void operator=( const Mesh& mesh ) = delete;
 
-		int add_texture( Texture* texture );
-		Texture* get_texture( int id );
+		int add_texture( SharedPtr<Texture> texture );
+		SharedPtr<Texture> get_texture( int id );
 
-		Shader* get_shader() const;
+		SharedPtr<Shader> get_shader() const;
 		VertexArray* get_vertex_array() const;
 
 	public:
@@ -30,6 +30,6 @@ namespace suprengine
 
 	private:
 		VertexArray* _vertex_array { nullptr };
-		std::vector<Texture*> _textures;
+		std::vector<SharedPtr<Texture>> _textures;
 	};
 }

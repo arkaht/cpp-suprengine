@@ -9,6 +9,9 @@
 
 namespace suprengine
 {
+	/*
+	 * Renderer for OpenGL by setting up SDL.
+	 */
 	class OpenGLRenderBatch : public RenderBatch
 	{
 	public:
@@ -41,13 +44,13 @@ namespace suprengine
 			const Rect& src_rect, 
 			const Rect& dest_rect, 
 			float rotation, 
-			const Vec2& origin, 
-			Texture* texture, 
+			const Vec2& origin,
+			SharedPtr<Texture> texture, 
 			const Color& color 
 		) override;
 		void draw_texture(
 			const Mtx4& matrix,
-			Texture* texture, 
+			SharedPtr<Texture> texture, 
 			const Vec2& origin,
 			const Rect& src_rect, 
 			const Color& color = Color::white 
@@ -65,7 +68,7 @@ namespace suprengine
 			rconst_str shader_name,
 			const Color& color = Color::white
 		) override;
-		virtual void draw_debug_model( 
+		void draw_debug_model( 
 			const Mtx4& matrix, 
 			const SharedPtr<Model>& model, 
 			const Color& color 
@@ -116,9 +119,9 @@ namespace suprengine
 		VertexArray* _rect_vertex_array = nullptr;
 		VertexArray* _quad_vertex_array = nullptr;
 
-		Shader* _color_shader = nullptr;
-		Shader* _texture_shader = nullptr;
-		Shader* _framebuffer_shader = nullptr;
+		SharedPtr<Shader> _color_shader = nullptr;
+		SharedPtr<Shader> _texture_shader = nullptr;
+		SharedPtr<Shader> _framebuffer_shader = nullptr;
 
 		Camera* _camera = nullptr;
 
