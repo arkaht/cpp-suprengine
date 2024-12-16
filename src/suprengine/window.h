@@ -1,7 +1,7 @@
 #pragma once
 
 #include <suprengine/vec2.h>
-#include <suprengine/event.hpp>
+#include <suprengine/event.h>
 
 struct SDL_Window;
 
