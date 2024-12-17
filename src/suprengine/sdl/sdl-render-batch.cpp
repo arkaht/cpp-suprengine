@@ -18,13 +18,13 @@ SDLRenderBatch::SDLRenderBatch( Window* window )
 		-1,
 		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
 	);
-	ASSERT( _sdl_renderer != nullptr, "Failed to create SDL renderer" );
+	ASSERT_MSG( _sdl_renderer != nullptr, "Failed to create SDL renderer" );
 
 	//  Initialize image library
-	ASSERT( IMG_Init( IMG_INIT_PNG ) != 0, "Failed to initialize SDL image library" );
+	ASSERT_MSG( IMG_Init( IMG_INIT_PNG ) != 0, "Failed to initialize SDL image library" );
 
 	//  Initialize ttf library
-	ASSERT( TTF_Init() == 0, "Failed to initialize SDL TTF library" );
+	ASSERT_MSG( TTF_Init() == 0, "Failed to initialize SDL TTF library" );
 }
 
 SDLRenderBatch::~SDLRenderBatch()

@@ -63,18 +63,18 @@ Shader::Shader(
 	const char* geometry_code
 )
 {
-	ASSERT( strlen( vertex_code ) > 0, "Vertex shader code is empty" );
-	ASSERT( strlen( fragment_code ) > 0, "Fragment shader code is empty" );
+	ASSERT_MSG( strlen( vertex_code ) > 0, "Vertex shader code is empty" );
+	ASSERT_MSG( strlen( fragment_code ) > 0, "Fragment shader code is empty" );
 
 	uint32 vertex_shader_id = _create_shader(
 		GL_VERTEX_SHADER, vertex_code, "vertex"
 	);
-	ASSERT( vertex_shader_id != 0, "Vertex shader failed to compile" );
+	ASSERT_MSG( vertex_shader_id != 0, "Vertex shader failed to compile" );
 
 	uint32 fragment_shader_id = _create_shader(
 		GL_FRAGMENT_SHADER, fragment_code, "fragment"
 	);
-	ASSERT( fragment_shader_id != 0, "Fragment shader failed to compile" );
+	ASSERT_MSG( fragment_shader_id != 0, "Fragment shader failed to compile" );
 
 	uint32 tess_control_shader_id = _create_shader(
 		GL_TESS_CONTROL_SHADER, tess_control_code, "tessellation control"

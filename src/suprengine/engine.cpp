@@ -54,7 +54,7 @@ bool Engine::init( IGame* game )
 
 	//	Init SDL
 	int sdl_status = SDL_Init( SDL_INIT_VIDEO );
-	ASSERT( sdl_status == 0, SDL_GetError() );
+	ASSERT_MSG( sdl_status == 0, SDL_GetError() );
 
 	//	Setup game
 	game->set_engine( this );

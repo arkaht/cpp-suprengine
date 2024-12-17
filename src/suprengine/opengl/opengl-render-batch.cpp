@@ -109,12 +109,12 @@ OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
 
 	//	Create OpenGL context
 	_gl_context = SDL_GL_CreateContext( _window->get_sdl_window() );
-	ASSERT( _gl_context != nullptr, "Failed to create OpenGL context for SDL window" );
+	ASSERT_MSG( _gl_context != nullptr, "Failed to create OpenGL context for SDL window" );
 
 	//  GLEW
 	glewExperimental = GL_TRUE;
 	GLenum glew_status = glewInit();
-	ASSERT( glew_status == GLEW_OK, glewGetErrorString( glew_status ) );
+	ASSERT_MSG( glew_status == GLEW_OK, glewGetErrorString( glew_status ) );
 	Logger::info( "Initialized GLEW" );
 
 	//  Apparently, GLEW emit a beginning error code on some platforms, so we pop it
@@ -122,12 +122,12 @@ OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
 
 	//  Initialize SDL's IMG library
 	int img_status = IMG_Init( IMG_INIT_PNG );
-	ASSERT( img_status != 0, IMG_GetError() );
+	ASSERT_MSG( img_status != 0, IMG_GetError() );
 	Logger::info( "Initialized SDL Image library" );
 
 	//  Initialize SDL's TTF library
 	int ttf_status = TTF_Init();
-	ASSERT( ttf_status == 0, TTF_GetError() );
+	ASSERT_MSG( ttf_status == 0, TTF_GetError() );
 	Logger::info( "Initialized SDL TTF library" );
 
 	//  Enable debug output
@@ -408,7 +408,7 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 {
 	//	Update uniforms
 	SharedPtr<Shader> shader = mesh->get_shader();
-	ASSERT( shader != nullptr, "Shader is invalid" );
+	ASSERT_MSG( shader != nullptr, "Shader is invalid" );
 
 	shader->activate();
 
@@ -461,7 +461,7 @@ void OpenGLRenderBatch::draw_model(
 		}
 
 		//	Update uniforms
-		ASSERT( shader != nullptr, "Shader is invalid" );
+		ASSERT_MSG( shader != nullptr, "Shader is invalid" );
 
 		shader->activate();
 
@@ -798,7 +798,7 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 
 	//	Error-checking framebuffer
 	auto status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
-	ASSERT( status == GL_FRAMEBUFFER_COMPLETE, glewGetErrorString( glGetError() ) );
+	ASSERT_MSG( status == GL_FRAMEBUFFER_COMPLETE, glewGetErrorString( glGetError() ) );
 	Logger::info( "RenderBatch: Framebuffer created" );
 
 	//	Create post-process framebuffer object
@@ -823,7 +823,7 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 
 	//	Error-checking post-process framebuffer
 	status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
-	ASSERT( status == GL_FRAMEBUFFER_COMPLETE, glewGetErrorString( glGetError() ) );
+	ASSERT_MSG( status == GL_FRAMEBUFFER_COMPLETE, glewGetErrorString( glGetError() ) );
 	Logger::info( "RenderBatch: Post-Processing Framebuffer created" );
 }
 

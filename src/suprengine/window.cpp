@@ -18,7 +18,7 @@ Window::Window( const std::string& title, int width, int height  )
 		width, height,
 		SDL_WINDOW_OPENGL
 	);
-	ASSERT( _sdl_window != nullptr, "Window couldn't be created!" );
+	ASSERT_MSG( _sdl_window != nullptr, "Window couldn't be created!" );
 
 	_current_size = _size;
 }
