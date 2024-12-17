@@ -113,7 +113,7 @@ OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
 
 	//  GLEW
 	glewExperimental = GL_TRUE;
-	GLenum glew_status = glewInit();
+	const GLenum glew_status = glewInit();
 	ASSERT_MSG( glew_status == GLEW_OK, glewGetErrorString( glew_status ) );
 	Logger::info( "Initialized GLEW" );
 
@@ -121,12 +121,12 @@ OpenGLRenderBatch::OpenGLRenderBatch( Window* window )
 	glGetError();
 
 	//  Initialize SDL's IMG library
-	int img_status = IMG_Init( IMG_INIT_PNG );
+	const int img_status = IMG_Init( IMG_INIT_PNG );
 	ASSERT_MSG( img_status != 0, IMG_GetError() );
 	Logger::info( "Initialized SDL Image library" );
 
 	//  Initialize SDL's TTF library
-	int ttf_status = TTF_Init();
+	const int ttf_status = TTF_Init();
 	ASSERT_MSG( ttf_status == 0, TTF_GetError() );
 	Logger::info( "Initialized SDL TTF library" );
 
@@ -222,7 +222,7 @@ void OpenGLRenderBatch::begin_render()
 	_view_matrix = _camera->get_view_matrix() * _camera->get_projection_matrix();
 
 	//	Store render frame for later use
-	Updater* updater = engine.get_updater();
+	const Updater* updater = engine.get_updater();
 	_render_tick = updater->get_frame_tick();
 }
 
@@ -282,9 +282,9 @@ void OpenGLRenderBatch::end_render()
 {
 	PROFILE_SCOPE( "OpenGL::end_render" );
 
-	Vec2 window_size = _window->get_size();
-	int width = static_cast<int>( window_size.x );
-	int height = static_cast<int>( window_size.y );
+	const Vec2 window_size = _window->get_size();
+	const int width = static_cast<int>( window_size.x );
+	const int height = static_cast<int>( window_size.y );
 	
 	//	Copy framebuffer into post-process framebuffer
 	glBindFramebuffer( GL_READ_FRAMEBUFFER, _fbo_id );
@@ -445,7 +445,7 @@ void OpenGLRenderBatch::draw_model(
 
 	for ( int i = 0; i < model->get_mesh_count(); i++ )
 	{
-		auto mesh = model->get_mesh( i );
+		Mesh* mesh = model->get_mesh( i );
 
 		//	Get shader to use
 		SharedPtr<Shader> shader = nullptr;
@@ -480,9 +480,9 @@ void OpenGLRenderBatch::draw_model(
 		shader->set_color( "u_modulate", color );
 
 		//	Draw
-		auto vertex_array = mesh->get_vertex_array();
+		VertexArray* vertex_array = mesh->get_vertex_array();
 		vertex_array->activate();
-		if ( auto texture = mesh->get_texture( 0 ) )
+		if ( SharedPtr<Texture> texture = mesh->get_texture( 0 ) )
 		{
 			texture->activate();
 		}
@@ -711,28 +711,28 @@ void OpenGLRenderBatch::_load_assets()
 	SharedPtr<Texture> texture = Assets::get_texture( TEXTURE_MEDIUM_GRID );
 
 	//	Load models
-	auto arrow_model = Assets::load_model(
+	SharedPtr<Model> arrow_model = Assets::load_model(
 		MESH_ARROW,
 		"assets/suprengine/models/arrow.fbx",
 		SHADER_LIT_MESH
 	);
 	arrow_model->get_mesh( 0 )->add_texture( texture );
 
-	auto cube_model = Assets::load_model(
+	SharedPtr<Model> cube_model = Assets::load_model(
 		MESH_CUBE,
 		"assets/suprengine/models/cube.fbx",
 		SHADER_LIT_MESH
 	);
 	cube_model->get_mesh( 0 )->add_texture( texture );
 
-	auto cylinder_model = Assets::load_model(
+	SharedPtr<Model> cylinder_model = Assets::load_model(
 		MESH_CYLINDER,
 		"assets/suprengine/models/cylinder.fbx",
 		SHADER_LIT_MESH
 	);
 	cylinder_model->get_mesh( 0 )->add_texture( texture );
 
-	auto sphere_model = Assets::load_model(
+	SharedPtr<Model> sphere_model = Assets::load_model(
 		MESH_SPHERE,
 		"assets/suprengine/models/sphere.fbx",
 		SHADER_LIT_MESH
@@ -747,7 +747,7 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 	glBindFramebuffer( GL_FRAMEBUFFER, _fbo_id );
 
 	//	Create framebuffer texture
-	int target = _samples > 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+	GLenum target = _samples > 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	glGenTextures( 1, &_framebuffer_texture_id );
 	glBindTexture( target, _framebuffer_texture_id );
 	if ( _samples > 0 )
@@ -797,7 +797,7 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 	);
 
 	//	Error-checking framebuffer
-	auto status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+	GLenum status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
 	ASSERT_MSG( status == GL_FRAMEBUFFER_COMPLETE, glewGetErrorString( glGetError() ) );
 	Logger::info( "RenderBatch: Framebuffer created" );
 
