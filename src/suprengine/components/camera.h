@@ -76,9 +76,12 @@ namespace suprengine
 		const Mtx4& get_view_matrix();
 		const Mtx4& get_projection_matrix();
 
-	protected:
+	private:
 		void setup_vars();
 
+		void _on_window_resized( const Vec2& new_size, const Vec2& old_size );
+
+	private:
 		Mtx4 _projection_matrix;
 		Mtx4 _view_matrix;
 		bool _is_view_matrix_dirty = true;

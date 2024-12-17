@@ -7,10 +7,14 @@
 
 #include <suprengine/vis-debug.h>
 
+#include "tests/unit-test-event.h"
+
 using namespace test;
 
 void GameScene::init()
 {
+	UnitTestEvent().run();
+
 	auto& engine = Engine::instance();
 
 	auto cube_model = Assets::get_model( MESH_CUBE );

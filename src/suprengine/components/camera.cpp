@@ -183,14 +183,14 @@ void Camera::setup_vars()
 	auto window = Engine::instance().get_window();
 
 	//	Listen to window updates
-	window->on_size_changed.listen( 
-		"suprengine::camera" + std::to_string( get_owner()->get_unique_id() ), 
-		[&]( const Vec2& new_size, const Vec2& old_size ) {
-			_viewport_size = new_size;
-			update_projection_from_settings();
-		}
-	);
+	window->on_size_changed.listen( &Camera::_on_window_resized, this );
 
 	_viewport_size = window->get_size();
 	viewport.w, viewport.h = _viewport_size.x, _viewport_size.y;  //  TODO: Remove obsolete camera code
+}
+
+void Camera::_on_window_resized( const Vec2& new_size, const Vec2& old_size )
+{
+	_viewport_size = new_size;
+	update_projection_from_settings();
 }
