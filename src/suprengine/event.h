@@ -2,14 +2,26 @@
 
 #include <vector>
 #include <functional>
-#include <map>
 
 #include <suprengine/usings.h>
 
 namespace suprengine
 {
 	/*
+	 * Templated class representing an event able to call all its bound listeners
+	 * with user-defined parameters. An implementation of the "Observer" programming
+	 * pattern focused on binding functions and methods rather than using interfaces.
 	 * 
+	 * It allows to, first, elegantly know at compile-time the event you're listening
+	 * to without having to cast or having to maintain an enum as your amount of events
+	 * grows and, second, to have as many events as you want on one object and have fine
+	 * control over the parameters of every single event.
+	 * 
+	 * Binding lambdas is supported but not un-binding or identifying.
+	 * Doesn't support un-binding during the broadcast.
+	 * 
+	 * If this implementation is too much template-heavy for you, you can look for the simpler one:
+	 * https://github.com/arkaht/cpp-suprengine/blob/a5a0d2190df31290c18838820d1cd1513c4cdc2d/src/suprengine/event.h
 	 */
 	template <typename ...TVarargs>
 	class Event
@@ -24,29 +36,35 @@ namespace suprengine
 	public:
 		/*
 		 * Bind a lambda function to the event.
-		 * Be aware that it not possible to identify a lambda, therefore un-binding and checking
+		 * It is currently not possible to identify a lambda, therefore un-binding and checking
 		 * for listening is not possible, use other methods instead if you need to.
-		 * Returns whenever the lambda has been registered.
+		 * Returns whenever the lambda has been bound.
 		 */
 		bool listen( const func_signature& callback )
 		{
 			//	NOTE: This is surely not perfect but it should work for my usage.
-			return _add_observer( 0, _observers.size(), callback );
+			//	Concerning un-binding lambdas, I could theoritically return the index of where
+			//	the callback is put, however as this is already a weak support for lambdas,
+			//	I don't want to further encourage using them.
+			return _add_listener( 0, ++next_lambda_id, callback );
 		}
 		/*
 		 * Bind a free function to the event.
-		 * Returns whenever the function has been registered.
+		 * Trying to bind the same function will fail to add the callback and return false.
+		 * Returns whenever the function has been bound.
 		 */
 		bool listen( func_type func )
 		{
 			if ( func == nullptr ) return false;
 
 			const size_t func_address = *reinterpret_cast<size_t*>( &func );
-			return _add_observer( 0, func_address, func );
+			return _add_listener( 0, func_address, func );
 		}
 		/*
 		 * Bind a class method of a given object to the event.
-		 * Returns whenever the method has been registered.
+		 * Trying to bind the same method with the same object will fail to add the callback
+		 * and return false.
+		 * Returns whenever the method has been bound.
 		 */
 		template <typename ClassType>
 		bool listen( class_method<ClassType> func, ClassType* object )
@@ -60,39 +78,58 @@ namespace suprengine
 				std::index_sequence_for<TVarargs...> {}
 			);
 
-			return _add_observer( object_address, func_address, callback );
+			return _add_listener( object_address, func_address, callback );
 		}
 
+		/*
+		 * Un-bind a free function from the event.
+		 * Returns whenever the function has been un-bound.
+		 */
 		bool unlisten( func_type func )
 		{
 			const size_t func_address = *reinterpret_cast<size_t*>( &func );
 
-			return _remove_observer( 0, func_address );
+			return _remove_listener( 0, func_address );
 		}
+		/*
+		 * Un-bind a class method of a given object from the event.
+		 * Returns whenever the function has been un-bound.
+		 */
 		template <typename ClassType>
 		bool unlisten( class_method<ClassType> func, ClassType* object )
 		{
 			const size_t object_address = reinterpret_cast<size_t>( object );
 			const size_t func_address = *reinterpret_cast<size_t*>( &func );
 
-			return _remove_observer( object_address, func_address );
+			return _remove_listener( object_address, func_address );
 		}
 
+		/*
+		 * Broadcast all listeners' callback with given parameters.
+		 * Un-binding a listener during the call is not supported and will lead
+		 * to iterator invalidation.
+		 */
 		void invoke( TVarargs ...args )
 		{
-			for ( const Observer& observer : _observers )
+			for ( const Listener& listener : _listeners )
 			{
-				observer.callback( args... );
+				listener.callback( args... );
 			}
 		}
 
+		/*
+		 * Returns whenever a free function is listening to the event.
+		 */
 		bool is_listening( func_type func ) const
 		{
 			if ( func == nullptr ) return false;
 
 			const size_t func_address = *reinterpret_cast<size_t*>( &func );
-			return _find_observer( 0, func_address ) != -1;
+			return _find_listener( 0, func_address ) != -1;
 		}
+		/*
+		 * Returns whenever a class method is listening to the event. 
+		 */
 		template <typename ClassType>
 		bool is_listening( class_method<ClassType> func, ClassType* object ) const
 		{
@@ -100,54 +137,73 @@ namespace suprengine
 
 			const size_t object_address = reinterpret_cast<size_t>( object );
 			const size_t func_address = *reinterpret_cast<size_t*>( &func );
-			return _find_observer( object_address, func_address ) != -1;
+			return _find_listener( object_address, func_address ) != -1;
 		}
 
+		/*
+		 * Returns the number of listeners currently bound to the event.
+		 */
 		size_t get_listeners_count() const
 		{
-			return _observers.size();
+			return _listeners.size();
+		}
+
+		/*
+		 * Returns estimated memory usage of the internal listeners vector.
+		 */
+		size_t get_listeners_memory_usage() const
+		{
+			return sizeof( Listener ) * get_listeners_capacity();
+		}
+
+		/*
+		 * Returns current internal listeners vector capacity.
+		 */
+		size_t get_listeners_capacity() const
+		{
+			return _listeners.capacity();
 		}
 
 	private:
-		bool _add_observer(
+		bool _add_listener(
 			const size_t object_address,
 			const size_t func_address,
 			const func_signature callback
 		)
 		{
-			//	Ensure observer is not already present
-			const size_t index = _find_observer( object_address, func_address );
+			//	Ensure listener is not already present
+			const size_t index = _find_listener( object_address, func_address );
 			if ( index != -1 ) return false;
 
-			_observers.emplace_back( object_address, func_address, callback );
+			_listeners.emplace_back( object_address, func_address, callback );
 			return true;
 		}
 
-		bool _remove_observer(
+		bool _remove_listener(
 			const size_t object_address,
 			const size_t func_address
 		)
 		{
-			//  TODO: check if erasing during 'invoke()' makes issues  //  yes it does..
-
-			const size_t index = _find_observer( object_address, func_address );
+			//  TODO: Find a way to support removing listeners during an invoke() call
+			//	without adding too much on the memory usage.
+			const size_t index = _find_listener( object_address, func_address );
 			if ( index == -1 ) return false;
 
-			const auto itr = _observers.begin() + index;
-			_observers.erase( itr );
+			const auto itr = _listeners.begin() + index;
+			_listeners.erase( itr );
 
 			return true;
 		}
 
-		size_t _find_observer(
+		size_t _find_listener(
 			const size_t object_address,
 			const size_t func_address
 		) const
 		{
-			for ( size_t index = 0; index < _observers.size(); index++ )
+			for ( size_t index = 0; index < _listeners.size(); index++ )
 			{
-				const Observer& observer = _observers[index];
-				if ( observer.object_address == object_address && observer.func_address == func_address )
+				const Listener& listener = _listeners[index];
+				if ( listener.object_address == object_address && listener.func_address == func_address )
 				{
 					return index;
 				}
@@ -165,14 +221,17 @@ namespace suprengine
 			return std::bind( func, object, std::_Ph<Indices + 1> {}... );
 		}
 
-		struct Observer
+		struct Listener
 		{
-			uint64 object_address = 0;
-			uint64 func_address = 0;
+			size_t object_address = 0;
+			size_t func_address = 0;
 			func_signature callback {};
 		};
 
 	private:
-		std::vector<Observer> _observers {};
+		inline static size_t next_lambda_id = 0;
+
+	private:
+		std::vector<Listener> _listeners {};
 	};
 }

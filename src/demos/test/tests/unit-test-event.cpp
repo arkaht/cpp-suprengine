@@ -40,6 +40,12 @@ void UnitTestEvent::run()
 	ASSERT( test_event.listen( &unit_test_event_listener0 ) );
 	ASSERT( test_event.get_listeners_count() == 1 );
 
+	printf(
+		"UnitTest: test_event internal listeners vector is estimated to cost %zd bytes for a capacity of %zd elements\n",
+		test_event.get_listeners_memory_usage(),
+		test_event.get_listeners_capacity()
+	);
+
 	//	Check that it isn't possible to duplicate bindings of free functions.
 	ASSERT( test_event.listen( &unit_test_event_listener0 ) == false );
 	ASSERT( test_event.get_listeners_count() == 1 );
@@ -60,14 +66,15 @@ void UnitTestEvent::run()
 	ASSERT( test_event.get_listeners_count() == 1 );
 
 	//	Check that is it possible to bind a lambda.
+	const char* lambda_name = "VeryCoolLambda";
 	ASSERT(
 		test_event.listen(
 			[&]( int input )
 			{
-				ASSERT( input == 2 || input == 3 );
-				printf( "UnitTest: lambda called with %d\n", input );
-			} ),
-		"UnitTestEvent"
+				ASSERT( input == 2 || input == 3 || input == 4 );
+				printf( "UnitTest: lambda \"%s\" called with %d\n", lambda_name, input );
+			}
+		)
 	);
 	ASSERT( test_event.get_listeners_count() == 2 );
 
@@ -103,6 +110,38 @@ void UnitTestEvent::run()
 
 	//	Third event call.
 	test_event.invoke( 3 );
+
+	//	Remove all listeners so only the lambda remains.
+	ASSERT( test_event.unlisten( &TestSubject::listener2, &madison ) );
+	ASSERT( test_event.get_listeners_count() == 1 );
+
+	//	Estimate memory usage of the event class.
+	const size_t instance_memory = sizeof( test_event );
+	const size_t listeners_memory = test_event.get_listeners_memory_usage();
+	printf(
+		"UnitTest: test_event is estimated to cost %zd (%zd + %zd) bytes for a capacity of %zd elements\n",
+		instance_memory + listeners_memory,
+		instance_memory, listeners_memory,
+		test_event.get_listeners_capacity()
+	);
+
+	//	Check it is possible to bind multiple lambdas without them collapsing in the implementation.
+	constexpr int LAMBDAS_COUNT = 32;
+	for ( int i = 0; i < LAMBDAS_COUNT; i++ )
+	{
+		ASSERT(
+			test_event.listen(
+				[i]( int input )
+				{
+					ASSERT( input == 4 );
+					printf( "UnitTest: lambda %d called with %d\n", i, input );
+				}
+			)
+		);
+	}
+	ASSERT( test_event.get_listeners_count() == 1 + LAMBDAS_COUNT );
+
+	test_event.invoke( 4 );
 }
 
 void UnitTestEvent::_listener1( int input )
