@@ -3,6 +3,8 @@
 #include <SDL.h>
 
 #include <suprengine/vec2.h>
+#include <suprengine/enum-flags.hpp>
+#include <suprengine/usings.h>
 
 namespace suprengine
 {
@@ -14,12 +16,14 @@ namespace suprengine
 		Released,
 	};
 
-	enum class MouseButton
+	enum class MouseButton : uint8
 	{
-		Left = SDL_BUTTON_LEFT,
-		Middle = SDL_BUTTON_MIDDLE,
-		Right = SDL_BUTTON_RIGHT,
+		None = 0,
+		Left = 1,
+		Middle = 2,
+		Right = 4,
 	};
+	DEFINE_ENUM_WITH_FLAGS( MouseButton, uint8 )
 
 	class InputManager
 	{
@@ -27,6 +31,11 @@ namespace suprengine
 		InputManager();
 
 		void update();
+
+		MouseButton convert_sdl_mouse_button( uint8 button_index );
+
+		void take_mouse_button_down( MouseButton button );
+		void take_mouse_button_up( MouseButton button );
 
 		bool is_key_just_pressed( SDL_Scancode key ) const;
 		bool is_key_just_released( SDL_Scancode key ) const;
@@ -65,7 +74,9 @@ namespace suprengine
 		uint8_t previous_states[SDL_NUM_SCANCODES];
 		uint8_t current_states[SDL_NUM_SCANCODES];
 
-		uint32_t last_mouse_state, current_mouse_state;
+		MouseButton last_mouse_state = MouseButton::None;
+		MouseButton current_mouse_state = MouseButton::None;
+
 		Vec2 last_mouse_pos {};
 		Vec2 current_mouse_pos {};
 	};
