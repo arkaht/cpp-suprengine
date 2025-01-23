@@ -97,6 +97,8 @@ void BoxCollider::debug_render( RenderBatch* render_batch )
 		transform->location,
 		transform->rotation,
 		shape * transform->scale * 0.5f,
-		is_active ? Color::green : Color::gray
+		is_active ? Color::green : Color::gray,
+		0.0f,
+		DebugChannel::Collider
 	);
 }

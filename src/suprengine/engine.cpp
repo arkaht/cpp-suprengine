@@ -279,7 +279,9 @@ void Engine::process_input()
 	//  Toggle debug mode
 	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_COMMA ) )
 	{
-		is_debug = !is_debug;
+		VisDebug::active_channels = VisDebug::active_channels == DebugChannel::None
+			? DebugChannel::All
+			: DebugChannel::None;
 	}
 }
 
@@ -417,7 +419,7 @@ void Engine::render()
 	_render_batch->render();
 
 	//  Debug render entities & components
-	if ( is_debug )
+	if ( VisDebug::is_channel_active( DebugChannel::Entity ) )
 	{
 		PROFILE_SCOPE( "Engine::render::debug" );
 
@@ -431,7 +433,11 @@ void Engine::render()
 				component->debug_render( _render_batch );
 			}
 		}
+	}
 
+	//	Debug visual shapes
+	if ( VisDebug::active_channels != DebugChannel::None )
+	{
 		VisDebug::render();
 	}
 

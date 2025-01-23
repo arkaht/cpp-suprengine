@@ -128,7 +128,6 @@ namespace suprengine
 
 	public:
 		Camera* camera { nullptr };
-		bool is_debug = false;
 		bool is_game_paused = false;
 
 	private:

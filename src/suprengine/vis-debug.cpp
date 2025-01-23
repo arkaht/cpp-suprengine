@@ -5,6 +5,7 @@
 
 using namespace suprengine;
 
+DebugChannel VisDebug::active_channels = DebugChannel::None;
 
 class VisDebugShape
 {
@@ -12,6 +13,8 @@ public:
 	Color color = Color::white;
 
 	float end_time = 0.0f;
+
+	DebugChannel channel = DebugChannel::None;
 
 public:
 	virtual void render( RenderBatch* render_batch ) = 0;
@@ -72,12 +75,12 @@ struct VisDebugLine : public VisDebugShape
 };
 
 
-static std::vector<std::unique_ptr<VisDebugShape>> shapes {};
+static std::vector<VisDebugShape*> shapes {};
 
 template <typename T>
 static void push_shape( const T& shape )
 {
-	shapes.emplace_back( std::make_unique<T>( shape ) );
+	shapes.emplace_back( new T( shape ) );
 }
 
 
@@ -86,7 +89,8 @@ void VisDebug::add_box(
 	const Quaternion& rotation,
 	const Box& box,
 	const Color& color,
-	float lifetime
+	float lifetime,
+	DebugChannel channel
 )
 {
 	VisDebugBox shape {};
@@ -94,6 +98,7 @@ void VisDebug::add_box(
 	shape.rotation = rotation;
 	shape.box = box;
 	shape.color = color;
+	shape.channel = channel;
 	shape.set_lifetime( lifetime );
 
 	push_shape( shape );
@@ -103,13 +108,15 @@ void VisDebug::add_sphere(
 	const Vec3& location,
 	float radius,
 	const Color& color,
-	float lifetime
+	float lifetime,
+	DebugChannel channel
 )
 {
 	VisDebugSphere shape {};
 	shape.location = location;
 	shape.radius = radius;
 	shape.color = color;
+	shape.channel = channel;
 	shape.set_lifetime( lifetime );
 
 	push_shape( shape );
@@ -119,13 +126,15 @@ void VisDebug::add_line(
 	const Vec3& start,
 	const Vec3& end,
 	const Color& color,
-	float lifetime
+	float lifetime,
+	DebugChannel channel
 )
 {
 	VisDebugLine shape {};
 	shape.start = start;
 	shape.end = end;
 	shape.color = color;
+	shape.channel = channel;
 	shape.set_lifetime( lifetime );
 
 	push_shape( shape );
@@ -133,24 +142,39 @@ void VisDebug::add_line(
 
 void VisDebug::render()
 {
+	PROFILE_SCOPE( "VisDebug::render" );
+
 	auto& engine = Engine::instance();
 	RenderBatch* render_batch = engine.get_render_batch();
 	Updater* updater = engine.get_updater();
 
 	for ( auto itr = shapes.begin(); itr != shapes.end(); )
 	{
-		const auto& shape = *itr;
+		VisDebugShape* shape = *itr;
 		
 		//	Check lifetime and erase when out-of-date
 		if ( updater->get_accumulated_seconds() > shape->end_time )
 		{
+			delete shape;
 			itr = shapes.erase( itr );
 			continue;
 		}
 
-		//	Render debug shape
-		shape->render( render_batch );
+		if ( is_channel_active( shape->channel ) )
+		{
+			shape->render( render_batch );
+		}
 
 		itr++;
 	}
+}
+
+bool VisDebug::is_channel_active( DebugChannel channel )
+{
+	return ( active_channels & channel ) == channel;
+}
+
+int VisDebug::get_shapes_count()
+{
+	return static_cast<int>( shapes.size() );
 }

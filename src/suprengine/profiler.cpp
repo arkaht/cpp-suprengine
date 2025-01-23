@@ -1,6 +1,7 @@
 #include "profiler.h"
 
 #include <suprengine/engine.h>
+#include <suprengine/vis-debug.h>
 
 #include <implot.h>
 #include <implot_internal.h>
@@ -179,6 +180,7 @@ void Profiler::populate_imgui()
 	ImGui::SeparatorText( "Metrics" );
 	ImGui::Text( "Viewport Renderers Count: %d", renderer->get_renderers_count( RenderPhase::Viewport ) );
 	ImGui::Text( "World Renderers Count: %d", renderer->get_renderers_count( RenderPhase::World ) );
+	ImGui::Text( "Debug Shapes Count: %d", VisDebug::get_shapes_count() );
 
 	//	TODO: Add sorting
 	ImGuiTableFlags table_flags = ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;

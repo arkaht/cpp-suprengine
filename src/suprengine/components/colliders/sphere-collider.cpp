@@ -64,6 +64,8 @@ void SphereCollider::debug_render( RenderBatch* render_batch )
 	VisDebug::add_sphere(
 		transform->location,
 		get_scaled_radius(),
-		is_active ? Color::green : Color::gray
+		is_active ? Color::green : Color::gray,
+		0.0f,
+		DebugChannel::Collider
 	);
 }
