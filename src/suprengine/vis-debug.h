@@ -34,21 +34,21 @@ namespace suprengine
 			const Box& box,
 			const Color& color,
 			float lifetime = 0.0f,
-			DebugChannel channel = DebugChannel::None
+			DebugChannel channel = DebugChannel::Entity
 		);
 		static void add_sphere(
 			const Vec3& location,
 			float radius,
 			const Color& color,
 			float lifetime = 0.0f,
-			DebugChannel channel = DebugChannel::None
+			DebugChannel channel = DebugChannel::Entity
 		);
 		static void add_line(
 			const Vec3& start,
 			const Vec3& end,
 			const Color& color,
 			float lifetime = 0.0f,
-			DebugChannel channel = DebugChannel::None
+			DebugChannel channel = DebugChannel::Entity
 		);
 
 		static void render();

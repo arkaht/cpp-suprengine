@@ -436,10 +436,7 @@ void Engine::render()
 	}
 
 	//	Debug visual shapes
-	if ( VisDebug::active_channels != DebugChannel::None )
-	{
-		VisDebug::render();
-	}
+	VisDebug::render();
 
 	//  End rendering
 	_render_batch->end_render();

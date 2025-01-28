@@ -74,6 +74,16 @@ struct VisDebugLine : public VisDebugShape
 	}
 };
 
+/*
+ * Gotta admit, this implementation is currently making a huge amount of memory allocations
+ * on the fly. This is pretty bad, but since it's only for debug purposes, it is "okay".
+ * 
+ * Still, I'd like to address those issues at some point. I'm thinking of either managing 
+ * a freelist or to create a specific array per shape type with a fixed amount of elements
+ * pre-allocated.
+ * 
+ * TODO: Fix huge memory usage.
+ */
 
 static std::vector<VisDebugShape*> shapes {};
 
@@ -93,6 +103,8 @@ void VisDebug::add_box(
 	DebugChannel channel
 )
 {
+	if ( lifetime == 0.0f && !is_channel_active( channel ) ) return;
+
 	VisDebugBox shape {};
 	shape.location = location;
 	shape.rotation = rotation;
@@ -112,6 +124,8 @@ void VisDebug::add_sphere(
 	DebugChannel channel
 )
 {
+	if ( lifetime == 0.0f && !is_channel_active( channel ) ) return;
+
 	VisDebugSphere shape {};
 	shape.location = location;
 	shape.radius = radius;
@@ -130,6 +144,8 @@ void VisDebug::add_line(
 	DebugChannel channel
 )
 {
+	if ( lifetime == 0.0f && !is_channel_active( channel ) ) return;
+
 	VisDebugLine shape {};
 	shape.start = start;
 	shape.end = end;
