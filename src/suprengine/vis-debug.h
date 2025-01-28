@@ -55,7 +55,8 @@ namespace suprengine
 
 		static bool is_channel_active( DebugChannel channel );
 
-		static int get_shapes_count();
+		static size_t get_shapes_count();
+		static size_t get_shapes_memory_usage();
 
 	public:
 		static DebugChannel active_channels;

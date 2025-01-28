@@ -180,7 +180,9 @@ void Profiler::populate_imgui()
 	ImGui::SeparatorText( "Metrics" );
 	ImGui::Text( "Viewport Renderers Count: %d", renderer->get_renderers_count( RenderPhase::Viewport ) );
 	ImGui::Text( "World Renderers Count: %d", renderer->get_renderers_count( RenderPhase::World ) );
+
 	ImGui::Text( "Debug Shapes Count: %d", VisDebug::get_shapes_count() );
+	ImGui::Text( "Debug Shapes Memory: %d bytes", VisDebug::get_shapes_memory_usage() );
 
 	//	TODO: Add sorting
 	ImGuiTableFlags table_flags = ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;

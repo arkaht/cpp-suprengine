@@ -74,24 +74,10 @@ struct VisDebugLine : public VisDebugShape
 	}
 };
 
-/*
- * Gotta admit, this implementation is currently making a huge amount of memory allocations
- * on the fly. This is pretty bad, but since it's only for debug purposes, it is "okay".
- * 
- * Still, I'd like to address those issues at some point. I'm thinking of either managing 
- * a freelist or to create a specific array per shape type with a fixed amount of elements
- * pre-allocated.
- * 
- * TODO: Fix huge memory usage.
- */
 
-static std::vector<VisDebugShape*> shapes {};
-
-template <typename T>
-static void push_shape( const T& shape )
-{
-	shapes.emplace_back( new T( shape ) );
-}
+static std::vector<VisDebugBox> boxes {};
+static std::vector<VisDebugSphere> spheres {};
+static std::vector<VisDebugLine> lines {};
 
 
 void VisDebug::add_box(
@@ -113,7 +99,7 @@ void VisDebug::add_box(
 	shape.channel = channel;
 	shape.set_lifetime( lifetime );
 
-	push_shape( shape );
+	boxes.push_back( shape );
 }
 
 void VisDebug::add_sphere(
@@ -133,7 +119,7 @@ void VisDebug::add_sphere(
 	shape.channel = channel;
 	shape.set_lifetime( lifetime );
 
-	push_shape( shape );
+	spheres.push_back( shape );
 }
 
 void VisDebug::add_line(
@@ -153,7 +139,30 @@ void VisDebug::add_line(
 	shape.channel = channel;
 	shape.set_lifetime( lifetime );
 
-	push_shape( shape );
+	lines.push_back( shape );
+}
+
+template <typename T>
+void update_and_render_shapes( std::vector<T>& shapes, RenderBatch* render_batch, float current_time )
+{
+	for ( auto itr = shapes.begin(); itr != shapes.end(); )
+	{
+		T& shape = *itr;
+		
+		//	Check lifetime and erase when out-of-date
+		if ( current_time > shape.end_time )
+		{
+			itr = shapes.erase( itr );
+			continue;
+		}
+
+		if ( VisDebug::is_channel_active( shape.channel ) )
+		{
+			shape.render( render_batch );
+		}
+
+		itr++;
+	}
 }
 
 void VisDebug::render()
@@ -162,27 +171,13 @@ void VisDebug::render()
 
 	auto& engine = Engine::instance();
 	RenderBatch* render_batch = engine.get_render_batch();
+
 	Updater* updater = engine.get_updater();
+	float current_time = updater->get_accumulated_seconds();
 
-	for ( auto itr = shapes.begin(); itr != shapes.end(); )
-	{
-		VisDebugShape* shape = *itr;
-		
-		//	Check lifetime and erase when out-of-date
-		if ( updater->get_accumulated_seconds() > shape->end_time )
-		{
-			delete shape;
-			itr = shapes.erase( itr );
-			continue;
-		}
-
-		if ( is_channel_active( shape->channel ) )
-		{
-			shape->render( render_batch );
-		}
-
-		itr++;
-	}
+	update_and_render_shapes( boxes, render_batch, current_time );
+	update_and_render_shapes( spheres, render_batch, current_time );
+	update_and_render_shapes( lines, render_batch, current_time );
 }
 
 bool VisDebug::is_channel_active( DebugChannel channel )
@@ -190,7 +185,15 @@ bool VisDebug::is_channel_active( DebugChannel channel )
 	return ( active_channels & channel ) == channel;
 }
 
-int VisDebug::get_shapes_count()
+size_t VisDebug::get_shapes_count()
 {
-	return static_cast<int>( shapes.size() );
+	return boxes.size() + spheres.size() + lines.size();
+}
+
+size_t VisDebug::get_shapes_memory_usage()
+{
+	return sizeof( std::vector<VisDebugShape> ) * 3
+		 + sizeof( VisDebugBox ) * boxes.capacity()
+		 + sizeof( VisDebugSphere ) * spheres.capacity()
+		 + sizeof( VisDebugLine ) * lines.capacity();
 }
