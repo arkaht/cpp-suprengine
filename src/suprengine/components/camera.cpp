@@ -1,9 +1,10 @@
 #include "camera.h"
 
-#include <suprengine/vec4.h>
+#include <suprengine/core/engine.h>
 
-#include <suprengine/game.h>
-#include <suprengine/entity.h>
+#include <suprengine/math/vec4.h>
+
+#include <suprengine/components/transform.h>
 
 using namespace suprengine;
 

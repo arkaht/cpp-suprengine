@@ -3,7 +3,7 @@
 
 #include <suprengine/ecs/entity.h>
 #include <suprengine/ecs/components/transform.h>
-#include <suprengine/vec2.h>
+#include <suprengine/math/vec2.h>
 
 #include "../entities/level.h"
 

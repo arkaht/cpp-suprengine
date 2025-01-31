@@ -1,6 +1,6 @@
 #pragma once
 
-#include <suprengine/scene.h>
+#include <suprengine/core/scene.h>
 
 #include "../entities/ghost-blinky.hpp"
 #include "../entities/ghost-pinky.hpp"

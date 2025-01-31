@@ -1,6 +1,6 @@
 #pragma once
 
-#include <suprengine/entity.h>
+#include <suprengine/core/entity.h>
 #include <suprengine/components/transform.h>
 
 namespace suprengine

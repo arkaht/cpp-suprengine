@@ -1,5 +1,6 @@
 #pragma once
-#include <suprengine/render-batch.h>
+
+#include <suprengine/core/render-batch.h>
 
 #include "sdl-texture.hpp"
 

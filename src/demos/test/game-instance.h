@@ -1,6 +1,6 @@
 #pragma once
 
-#include <suprengine/game.h>
+#include <suprengine/core/game.h>
 #include <suprengine/opengl/opengl-render-batch.h>
 
 namespace test

@@ -1,7 +1,7 @@
 #pragma once
-#include <suprengine/component.h>
 
-#include <suprengine/entity.h>
+#include <suprengine/core/engine.h>
+
 #include <suprengine/components/transform.h>
 
 namespace suprengine
@@ -53,11 +53,11 @@ namespace suprengine
 				
 				//  setup raycast
 				Ray ray( transform->location, move_dir );
-				RayParams params;
+				RayParams params {};
 				params.can_hit_from_origin = true;
 
 				//  correct position from raycast
-				RayHit hit;
+				RayHit hit {};
 				if ( physics->raycast( ray, &hit, params ) )
 				{
 					pos = hit.point + hit.normal * 0.01f;

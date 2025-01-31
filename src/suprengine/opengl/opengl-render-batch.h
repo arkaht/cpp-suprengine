@@ -1,9 +1,12 @@
 #pragma once
-#include <suprengine/render-batch.h>
+
+#include <suprengine/core/render-batch.h>
+
 #include <suprengine/components/camera.h>
-#include <suprengine/vertex-array.h>
-#include <suprengine/model.h>
-#include <suprengine/shader.h>
+
+#include <suprengine/rendering/vertex-array.h>
+#include <suprengine/rendering/model.h>
+#include <suprengine/rendering/shader.h>
 
 #include <SDL_image.h>
 

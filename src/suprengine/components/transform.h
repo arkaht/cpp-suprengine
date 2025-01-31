@@ -1,8 +1,8 @@
 #pragma once
-#include "transform.fwd.h"
 
-#include <suprengine/component.h>
-#include <suprengine/mtx4.h>
+#include <suprengine/core/component.h>
+
+#include <suprengine/math/mtx4.h>
 
 namespace suprengine
 {

@@ -1,11 +1,11 @@
 #include "game-scene.h"
 
 #include <suprengine/opengl/opengl-render-batch.h>
-#include <suprengine/assets.h>
+#include <suprengine/core/assets.h>
 
 #include <suprengine/components/colliders/sphere-collider.h>
 
-#include <suprengine/vis-debug.h>
+#include <suprengine/tools/vis-debug.h>
 
 #include "tests/unit-test-event.h"
 

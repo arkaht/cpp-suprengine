@@ -1,7 +1,8 @@
 #pragma once
-#include <suprengine/component.h>
-#include <suprengine/entity.h>
-#include <suprengine/physics.h>
+
+#include <suprengine/core/component.h>
+#include <suprengine/core/entity.h>
+#include <suprengine/core/physics.h>
 
 namespace suprengine
 {

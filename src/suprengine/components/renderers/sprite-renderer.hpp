@@ -1,6 +1,6 @@
 #pragma once
 #include <suprengine/components/renderer.h>
-#include <suprengine/texture.h>
+#include <suprengine/rendering/texture.h>
 
 namespace suprengine
 {

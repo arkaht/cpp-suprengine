@@ -1,7 +1,8 @@
 #include "box-collider.h"
 
 #include <suprengine/components/transform.h>
-#include <suprengine/vis-debug.h>
+
+#include <suprengine/tools/vis-debug.h>
 
 using namespace suprengine;
 

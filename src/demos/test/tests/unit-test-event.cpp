@@ -1,7 +1,7 @@
 #include "unit-test-event.h"
 
-#include <suprengine/event.h>
-#include <suprengine/assert.hpp>
+#include <suprengine/utils/event.h>
+#include <suprengine/utils/assert.h>
 
 using namespace test;
 using namespace suprengine;

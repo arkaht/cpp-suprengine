@@ -1,9 +1,8 @@
 #pragma once
-#include "collider.fwd.h"
 
-#include <suprengine/component.h>
-#include <suprengine/physics.h>
-#include <suprengine/ray.hpp>
+#include <suprengine/core/component.h>
+
+#include <suprengine/utils/ray.h>
 
 #include <set>
 

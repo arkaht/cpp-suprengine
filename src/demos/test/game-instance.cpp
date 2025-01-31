@@ -2,7 +2,7 @@
 
 #include <scenes/game-scene.h>
 
-#include <suprengine/assets.h>
+#include <suprengine/core/assets.h>
 
 using namespace test;
 

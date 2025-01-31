@@ -1,13 +1,14 @@
 #pragma once
-#include <suprengine/component.h>
 
-#include <suprengine/entity.h>
+#include <suprengine/core/component.h>
+#include <suprengine/core/entity.h>
+#include <suprengine/core/input-manager.h>
+
 #include <suprengine/components/spring-arm.hpp>
 #include <suprengine/components/mover.hpp>
 #include <suprengine/components/mouse-follower.hpp>
 #include <suprengine/components/mouse-looker.hpp>
 #include <suprengine/components/target-rotator.h>
-#include <suprengine/input-manager.h>
 
 using namespace suprengine;
 

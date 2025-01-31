@@ -1,7 +1,7 @@
 #pragma once
 #include <suprengine/components/renderer.h>
 
-#include <suprengine/model.h>
+#include <suprengine/rendering/model.h>
 
 namespace suprengine
 {

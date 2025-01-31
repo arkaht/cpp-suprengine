@@ -1,6 +1,8 @@
 #include "sdl-render-batch.h"
 
-#include <suprengine/texture.h>
+#include <suprengine/utils/assert.h>
+
+#include <suprengine/rendering/texture.h>
 #include <suprengine/components/renderer.h>
 
 #include <SDL.h>

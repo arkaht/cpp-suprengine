@@ -2,7 +2,7 @@
 #include <suprengine/components/collider.h>
 #include <suprengine/components/transform.h>
 
-#include <suprengine/entity.h>
+#include <suprengine/core/entity.h>
 
 namespace suprengine
 {

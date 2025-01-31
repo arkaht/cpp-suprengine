@@ -1,10 +1,11 @@
 #pragma once
 
-#include <suprengine/component.h>
+#include <suprengine/core/component.h>
 
-#include <suprengine/rect.h>
-#include <suprengine/mtx4.h>
-#include <suprengine/ray.hpp>
+#include <suprengine/math/rect.h>
+#include <suprengine/math/mtx4.h>
+
+#include <suprengine/utils/ray.h>
 
 namespace suprengine
 {

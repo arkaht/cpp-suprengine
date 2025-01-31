@@ -1,6 +1,6 @@
 #include "renderer.h"
 
-#include <suprengine/entity.h>
+#include <suprengine/core/engine.h>
 
 using namespace suprengine;
 

@@ -1,9 +1,10 @@
 #include "opengl-render-batch.h"
 
-#include <suprengine/assets.h>
-#include <suprengine/texture.h>
-#include <suprengine/game.h>
-#include <suprengine/engine.h>
+#include <suprengine/core/assets.h>
+#include <suprengine/core/game.h>
+#include <suprengine/core/engine.h>
+
+#include <suprengine/rendering/texture.h>
 
 #include <gl/glew.h>
 

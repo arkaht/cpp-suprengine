@@ -33,7 +33,6 @@
 
 packages/
 .vs/
-Debug/
 out/
 build/
 
