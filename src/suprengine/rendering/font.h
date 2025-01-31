@@ -1,8 +1,10 @@
 #pragma once
 
-#include <suprengine/sdl/sdl-render-batch.h>
+#include <suprengine/utils/memory.h>
 
 #include <SDL_ttf.h>
+
+#include <string>
 
 namespace suprengine
 {

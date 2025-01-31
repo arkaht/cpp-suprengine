@@ -1,7 +1,5 @@
 #include "texture.h"
 
-#include <suprengine/sdl/sdl-render-batch.h>
-
 #include <suprengine/utils/logger.h>
 
 //#include <SDL.h>

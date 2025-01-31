@@ -1,7 +1,8 @@
 #include "game-scene.h"
 
-#include <suprengine/opengl/opengl-render-batch.h>
 #include <suprengine/core/assets.h>
+
+#include <suprengine/rendering/opengl/opengl-render-batch.h>
 
 #include <suprengine/components/colliders/sphere-collider.h>
 

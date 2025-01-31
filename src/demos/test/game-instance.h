@@ -1,7 +1,7 @@
 #pragma once
 
 #include <suprengine/core/game.h>
-#include <suprengine/opengl/opengl-render-batch.h>
+#include <suprengine/rendering/opengl/opengl-render-batch.h>
 
 namespace test
 {
