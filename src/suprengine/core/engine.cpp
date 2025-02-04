@@ -277,6 +277,7 @@ void Engine::process_input()
 	{
 		_is_running = false;
 	}
+#ifdef ENABLE_VISDEBUG
 	//  Toggle debug mode
 	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_COMMA ) )
 	{
@@ -284,6 +285,7 @@ void Engine::process_input()
 			? DebugChannel::All
 			: DebugChannel::None;
 	}
+#endif
 }
 
 void Engine::update( float dt )
@@ -419,6 +421,7 @@ void Engine::render()
 	//  Render components
 	_render_batch->render();
 
+#ifdef ENABLE_VISDEBUG
 	//  Debug render entities & components
 	if ( VisDebug::is_channel_active( DebugChannel::Entity ) )
 	{
@@ -438,6 +441,7 @@ void Engine::render()
 
 	//	Debug visual shapes
 	VisDebug::render();
+#endif
 
 	//  End rendering
 	_render_batch->end_render();

@@ -94,6 +94,7 @@ bool BoxCollider::raycast( const Ray& ray, RayHit* hit, const RayParams& params 
 
 void BoxCollider::debug_render( RenderBatch* render_batch )
 {
+#ifdef ENABLE_VISDEBUG
 	VisDebug::add_box(
 		transform->location,
 		transform->rotation,
@@ -102,4 +103,5 @@ void BoxCollider::debug_render( RenderBatch* render_batch )
 		0.0f,
 		DebugChannel::Collider
 	);
+#endif
 }

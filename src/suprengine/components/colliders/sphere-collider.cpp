@@ -62,6 +62,7 @@ float SphereCollider::get_scaled_radius() const
 
 void SphereCollider::debug_render( RenderBatch* render_batch )
 {
+#ifdef ENABLE_VISDEBUG
 	VisDebug::add_sphere(
 		transform->location,
 		get_scaled_radius(),
@@ -69,4 +70,5 @@ void SphereCollider::debug_render( RenderBatch* render_batch )
 		0.0f,
 		DebugChannel::Collider
 	);
+#endif
 }

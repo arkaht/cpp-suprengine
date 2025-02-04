@@ -6,6 +6,9 @@
 #include <suprengine/utils/enum-flags.h>
 #include <suprengine/utils/usings.h>
 
+//	TODO: Move this somewhere else. Inside CMake?
+#define ENABLE_VISDEBUG
+
 namespace suprengine
 {
 	enum class DebugChannel : uint8
