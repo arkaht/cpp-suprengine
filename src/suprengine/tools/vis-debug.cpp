@@ -89,7 +89,7 @@ void VisDebug::add_box(
 	DebugChannel channel
 )
 {
-	if ( lifetime == 0.0f && !is_channel_active( channel ) ) return;
+	if ( !is_channel_active( channel ) ) return;
 
 	VisDebugBox shape {};
 	shape.location = location;
@@ -110,7 +110,7 @@ void VisDebug::add_sphere(
 	DebugChannel channel
 )
 {
-	if ( lifetime == 0.0f && !is_channel_active( channel ) ) return;
+	if ( !is_channel_active( channel ) ) return;
 
 	VisDebugSphere shape {};
 	shape.location = location;
@@ -130,7 +130,7 @@ void VisDebug::add_line(
 	DebugChannel channel
 )
 {
-	if ( lifetime == 0.0f && !is_channel_active( channel ) ) return;
+	if ( !is_channel_active( channel ) ) return;
 
 	VisDebugLine shape {};
 	shape.start = start;
