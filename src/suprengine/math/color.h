@@ -10,6 +10,7 @@ namespace suprengine
 	{
 		static const Color white, black;
 		static const Color red, green, blue;
+		static const Color purple, orange, duckblue;
 		static const Color gray;
 		static const Color transparent;
 
