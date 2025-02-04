@@ -66,6 +66,10 @@ namespace suprengine
 		 * Returns a copy of the vector normalized within 3-dimensions.
 		 */
 		Vec3 normalized() const;
+		/*
+		 * Returns a copy of the vector normalized within 2-dimensions.
+		 */
+		Vec3 normalized2d() const;
 		
 		/*
 		 * Returns a string representing the vector.
@@ -81,6 +85,9 @@ namespace suprengine
 		static float distance2d( const Vec3& from, const Vec3& to );
 		static float distance2d_sqr( const Vec3& from, const Vec3& to );
 
+		static Vec3 direction( const Vec3& from, const Vec3& to );
+		static Vec3 direction2d( const Vec3& from, const Vec3& to );
+
 		static Vec3 world_to_grid( const Vec3& value, float grid_size );
 
 		static Vec3 snap_to_grid( const Vec3& value, float grid_size );
@@ -90,13 +97,15 @@ namespace suprengine
 
 		static Vec3 round( const Vec3& value );
 
-		//  Normalize the provided vector
-		static Vec3 normalize( const Vec3& vec );
 		//  Dot product between two vectors (a dot b)
 		static float dot( const Vec3& a, const Vec3& b );
 		//  Cross product between two vectors (a cross b)
 		static Vec3 cross( const Vec3& a, const Vec3& b );
+
 		static Vec3 lerp( const Vec3& a, const Vec3& b, float t );
+		static Vec3 slerp( const Vec3& a, const Vec3& b, float t );
+		static Vec3 nlerp( const Vec3& a, const Vec3& b, float t );
+
 		//  Reflect V about (normalized) N
 		static Vec3 reflect( const Vec3& value, const Vec3& n );
 		static Vec3 approach( const Vec3& current, const Vec3& target, float delta );

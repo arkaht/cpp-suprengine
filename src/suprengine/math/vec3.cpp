@@ -82,6 +82,13 @@ Vec3 Vec3::normalized() const
 	return value;
 }
 
+Vec3 Vec3::normalized2d() const
+{
+	Vec3 value( x, y, 0.0f );
+	value.normalize2d();
+	return value;
+}
+
 std::string Vec3::to_string() const
 {
 	return "x=" + std::to_string( x )
@@ -112,6 +119,16 @@ float Vec3::distance2d( const Vec3& from, const Vec3& to )
 float Vec3::distance2d_sqr( const Vec3& from, const Vec3& to )
 {
 	return ( from - to ).length2d_sqr();
+}
+
+Vec3 Vec3::direction( const Vec3& from, const Vec3& to )
+{
+	return ( to - from ).normalized();
+}
+
+Vec3 Vec3::direction2d( const Vec3& from, const Vec3& to )
+{
+	return Vec3( to.x - from.x, to.y - from.y, 0.0f ).normalized2d();
 }
 
 Vec3 Vec3::world_to_grid( const Vec3& value, float grid_size )
@@ -161,13 +178,6 @@ Vec3 Vec3::round( const Vec3& value )
 	};
 }
 
-Vec3 Vec3::normalize( const Vec3& vec )
-{
-	Vec3 temp = vec;
-	temp.normalize();
-	return temp;
-}
-
 float Vec3::dot( const Vec3& a, const Vec3& b )
 {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
@@ -175,7 +185,7 @@ float Vec3::dot( const Vec3& a, const Vec3& b )
 
 Vec3 Vec3::cross( const Vec3& a, const Vec3& b )
 {
-	Vec3 temp;
+	Vec3 temp {};
 	temp.x = a.y * b.z - a.z * b.y;
 	temp.y = a.z * b.x - a.x * b.z;
 	temp.z = a.x * b.y - a.y * b.x;
@@ -189,6 +199,28 @@ Vec3 Vec3::lerp( const Vec3& a, const Vec3& b, float f )
 		math::lerp( a.y, b.y, f ),
 		math::lerp( a.z, b.z, f ),
 	};
+}
+
+/*
+ * For both slerp and nlerp, the implementation is from:
+ * https://keithmaggio.wordpress.com/2011/02/15/math-magician-lerp-slerp-and-nlerp/
+ */
+Vec3 Vec3::slerp( const Vec3& a, const Vec3& b, float t )
+{
+	float dot = Vec3::dot( a, b );
+	
+	//	Clamp to ensure the range of acos
+	dot = math::clamp( dot, -1.0f, 1.0f );
+
+	const float theta = math::acos( dot ) * t;
+	const Vec3 relative = ( b - a * t ).normalized();
+
+	return a * math::cos( theta ) + relative * math::sin( theta );
+}
+
+Vec3 Vec3::nlerp( const Vec3& a, const Vec3& b, float t )
+{
+	return Vec3::lerp( a, b, t ).normalized();
 }
 
 Vec3 Vec3::reflect( const Vec3& value, const Vec3& n )

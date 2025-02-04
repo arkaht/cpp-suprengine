@@ -257,11 +257,11 @@ Mtx4 Mtx4::create_from_quaternion( const Quaternion& q )
 
 Mtx4 Mtx4::create_look_at( const Vec3& eye, const Vec3& target, const Vec3& up )
 {
-	Vec3 zaxis = Vec3::normalize( target - eye );
-	Vec3 xaxis = Vec3::normalize( Vec3::cross( up, zaxis ) );
-	Vec3 yaxis = Vec3::normalize( Vec3::cross( zaxis, xaxis ) );
+	const Vec3 zaxis = Vec3::direction( eye, target );
+	const Vec3 xaxis = Vec3::cross( up, zaxis ).normalized();
+	const Vec3 yaxis = Vec3::cross( zaxis, xaxis ).normalized();
 
-	Vec3 trans {
+	const Vec3 trans {
 		-Vec3::dot( xaxis, eye ),
 		-Vec3::dot( yaxis, eye ),
 		-Vec3::dot( zaxis, eye ),
