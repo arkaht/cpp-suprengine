@@ -2,7 +2,10 @@
 
 #include <suprengine/core/engine.h>
 
+#include <suprengine/utils/string-library.h>
+
 #include <suprengine/tools/vis-debug.h>
+#include <suprengine/tools/memory-profiler.h>
 
 #include <implot.h>
 #include <implot_internal.h>
@@ -184,8 +187,14 @@ void Profiler::populate_imgui()
 
 #ifdef ENABLE_VISDEBUG
 	ImGui::Text( "Debug Shapes Count: %d", VisDebug::get_shapes_count() );
-	ImGui::Text( "Debug Shapes Memory: %d bytes", VisDebug::get_shapes_memory_usage() );
+	ImGui::Text( "Debug Shapes Memory: %s", *string::bytes_to_str( VisDebug::get_shapes_memory_usage() ) );
 #endif
+
+	ImGui::Text( "new Total Calls: %d", MemoryProfiler::new_total_calls );
+	ImGui::Text( "delete Total Calls: %d", MemoryProfiler::delete_total_calls );
+
+	ImGui::Text( "Total Allocated Bytes: %s", *string::bytes_to_str( MemoryProfiler::total_allocated_bytes ) );
+	ImGui::Text( "Current Allocated Bytes: %s", *string::bytes_to_str( MemoryProfiler::current_allocated_bytes ) );
 
 	//	TODO: Add sorting
 	ImGuiTableFlags table_flags = ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
