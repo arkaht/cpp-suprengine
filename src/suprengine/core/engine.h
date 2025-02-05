@@ -13,6 +13,7 @@
 #include <suprengine/utils/assert.h>
 
 #include <suprengine/tools/profiler.h>
+#include <suprengine/tools/memory-profiler.h>
 
 #include <vector>
 
@@ -56,6 +57,8 @@ namespace suprengine
 				"Engine::init: use of an invalid Game class!" 
 			);
 
+			MEMORY_SCOPE( "Engine::init" );
+
 			//  Create game
 			auto game = new TGame();
 			return init( game );
@@ -70,6 +73,8 @@ namespace suprengine
 				std::is_base_of<Scene, TScene>::value, 
 				"Engine::create_scene: used for a non-Scene class!"
 			);
+
+			MEMORY_SCOPE( "Engine::create_scene" );
 
 			clear_entities();
 
@@ -86,6 +91,8 @@ namespace suprengine
 				std::is_base_of<Entity, TEntity>::value, 
 				"Engine::create_entity: used for a non-Entity class!"
 			);
+
+			MEMORY_SCOPE( "Engine::create_entity" );
 
 			auto entity = std::make_shared<TEntity>( args... );
 			entity->init();

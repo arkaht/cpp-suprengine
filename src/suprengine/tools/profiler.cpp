@@ -190,241 +190,374 @@ void Profiler::populate_imgui()
 	ImGui::Text( "Debug Shapes Memory: %s", *string::bytes_to_str( VisDebug::get_shapes_memory_usage() ) );
 #endif
 
-	ImGui::Text( "new Total Calls: %d", MemoryProfiler::new_total_calls );
-	ImGui::Text( "delete Total Calls: %d", MemoryProfiler::delete_total_calls );
+	ImGui::Spacing();
+	ImGui::SeparatorText( "Memory" );
 
-	ImGui::Text( "Total Allocated Bytes: %s", *string::bytes_to_str( MemoryProfiler::total_allocated_bytes ) );
-	ImGui::Text( "Current Allocated Bytes: %s", *string::bytes_to_str( MemoryProfiler::current_allocated_bytes ) );
+	const MemoryGlobalProfileResult& memory_global_result = MemoryProfiler::get_global_result();
 
-	//	TODO: Add sorting
-	ImGuiTableFlags table_flags = ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
-	table_flags |= ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-	table_flags |= ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable;
-	//table_flags |= ImGuiTableFlags_SizingFixedFit;
-
-	ImGui::SeparatorText( "Results" );
-	constexpr const char* COLUMN_NAMES[] {
-		"Name",
-		"Last Time", "Min. Time", "Avg. Time", "Max. Time",
-		"Frame Time", "Frame Calls",
-		"Total Calls",
-		"Usage",
-	};
-	constexpr int COLUMNS_AMOUNT = IM_ARRAYSIZE( COLUMN_NAMES );
-	constexpr ImVec2 TABLE_SIZE { 0.0f, 250.0f };
-	if ( ImGui::BeginTable( "suprengine_profiler_results", COLUMNS_AMOUNT, table_flags, TABLE_SIZE ) )
+	if ( ImGui::TreeNode( "Global Result" ) )
 	{
-		//	Setup first column
-		ImGui::TableSetupColumn( COLUMN_NAMES[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder );
+		ImGui::Text( "new Total Calls: %d", memory_global_result.new_total_calls );
+		ImGui::Text( "delete Total Calls: %d", memory_global_result.delete_total_calls );
+		ImGui::Spacing();
 
-		//	Setup remaining columns
-		ImGuiTableColumnFlags column_flags = ImGuiTableColumnFlags_WidthFixed;
-		for ( int i = 1; i < COLUMNS_AMOUNT; i++ )
-		{
-			ImGui::TableSetupColumn( COLUMN_NAMES[i], column_flags );
-		}
+		ImGui::Text( "Total Allocated Bytes: %s", *string::bytes_to_str( memory_global_result.total_allocated_bytes ) );
+		ImGui::Text( "Current Allocated Bytes: %s", *string::bytes_to_str( memory_global_result.current_allocated_bytes ) );
+		ImGui::Text(
+			"Min/Max Allocated Bytes: %s/%s",
+			*string::bytes_to_str( memory_global_result.new_min_bytes ),
+			*string::bytes_to_str( memory_global_result.new_max_bytes )
+		);
 
-		//	Freeze headers and first column
-		ImGui::TableSetupScrollFreeze( 1, 1 );
-
-		//	Draw angled headers if needed
-		if ( column_flags & ImGuiTableColumnFlags_AngledHeader )
-		{
-			ImGui::TableAngledHeadersRow();
-		}
-		ImGui::TableHeadersRow();
-
-		//	Draw results
-		int row_id = 0;
-		const ImVec4 default_row_color = ImGui::GetStyleColorVec4( ImGuiCol_TableRowBg );
-		for ( const auto& result_pair : results )
-		{
-			const char* name = result_pair.first;
-			const ProfileResult& result = result_pair.second;
-
-			ImGui::PushID( row_id );
-			ImGui::TableNextRow( ImGuiTableRowFlags_None );
-
-			//	Name
-			ImGui::TableNextColumn();
-			ImGui::TextUnformatted( name );
-
-			//	Last Time
-			ImGui::TableNextColumn();
-			ImGui::Text( "%.3fms", result.time );
-
-			//	Min. Time
-			ImGui::TableNextColumn();
-			ImGui::Text( "%.3fms", result.min_time );
-
-			//	Avr. Time
-			ImGui::TableNextColumn();
-			ImGui::Text( "%.3fms", result.total_time / result.total_calls );
-
-			//	Max. Time
-			ImGui::TableNextColumn();
-			ImGui::Text( "%.3fms", result.max_time );
-
-			//	Frame Time
-			ImGui::TableNextColumn();
-			ImGui::Text( "%.3fms", result.non_consumed_time );
-
-			//	Frame Calls
-			ImGui::TableNextColumn();
-			ImGui::Text( "%d", result.non_consumed_calls );
-
-			//	Total Calls
-			ImGui::TableNextColumn();
-			ImGui::Text( "%d", result.total_calls );
-
-			//	Usage
-			float usage = result.total_time / profile_time_ms;
-			ImGui::TableNextColumn();
-			ImGui::Text( "%.1f%%", usage * 100.0f );
-
-			//	Set cell's background color depending on usage
-			constexpr ImVec4 MAX_USAGE_COLOR { 0.8f, 0.2f, 0.1f, 0.5f };
-			constexpr float MAX_USAGE_PERCENT = 60.0f;
-			constexpr float USAGE_COLOR_SCALE = 100.0f / MAX_USAGE_PERCENT;
-			ImGui::TableSetBgColor(
-				ImGuiTableBgTarget_RowBg0,
-				ImGui::GetColorU32(
-					ImLerp(
-						default_row_color,
-						MAX_USAGE_COLOR,
-						ImSaturate( usage * USAGE_COLOR_SCALE )
-					)
-				)
-			);
-
-			ImGui::PopID();
-		}
-
-		ImGui::EndTable();
+		ImGui::TreePop();
 	}
 
-	ImGui::SeparatorText( "Graphs" );
-	if ( ImPlot::BeginPlot( "Timelines", ImVec2 { -1.0f, 250.0f } ) )
+	const MemoryProfiler::LocalResultsMap& memory_local_results = MemoryProfiler::get_local_results();
+	if ( ImGui::TreeNode( "Scoped Results" ) )
 	{
-		ImPlot::SetupAxes( "Profile Time (s)", "Result Time (ms)", ImPlotAxisFlags_AutoFit );
-		ImPlot::SetupAxesLimits( 0, TIMELINE_MAX_TIME, 0, 50 );
-		ImPlot::SetupAxisLimitsConstraints(
-			ImAxis_X1,
-			math::max( 0.0f, profile_time_seconds - TIMELINE_MAX_TIME ),
-			math::max( static_cast<float>( TIMELINE_MAX_TIME ), profile_time_seconds )
-		);
-		ImPlot::SetupAxisLimitsConstraints( ImAxis_Y1, 0.0, 200.0 );
-		ImPlot::SetupLegend( ImPlotLocation_West, ImPlotLegendFlags_Outside );
+		//	TODO: Add sorting
+		ImGuiTableFlags table_flags = ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
+		table_flags |= ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+		table_flags |= ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable;
+		//table_flags |= ImGuiTableFlags_SizingFixedFit;
 
-		//	Draw timelines
-		std::vector<TimelineImData> timelines_data {};
-		timelines_data.reserve( _timelines.size() );
-		for ( auto& pair : _timelines )
+		constexpr const char* COLUMN_NAMES[] {
+			"Name",
+			"Total Bytes", "Last Bytes", "Avg. Bytes",
+			"new Calls", "delete Calls", "Profile Calls",
+			"Usage",
+		};
+		constexpr int COLUMNS_AMOUNT = IM_ARRAYSIZE( COLUMN_NAMES );
+		constexpr ImVec2 TABLE_SIZE { 0.0f, 100.0f };
+		if ( ImGui::BeginTable( "suprengine_memory_profiler_local_results", COLUMNS_AMOUNT, table_flags, TABLE_SIZE ) )
 		{
-			const char* name = pair.first;
-			auto& timeline = pair.second;
+			//	Setup first column
+			ImGui::TableSetupColumn( COLUMN_NAMES[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder );
 
-			int timeline_size = static_cast<int>( timeline.data.size() );
-			if ( timeline_size == 0 ) return;
+			//	Setup remaining columns
+			ImGuiTableColumnFlags column_flags = ImGuiTableColumnFlags_WidthFixed;
+			for ( int i = 1; i < COLUMNS_AMOUNT; i++ )
+			{
+				ImGui::TableSetupColumn( COLUMN_NAMES[i], column_flags );
+			}
 
-			ImPlot::PlotBars(
-				name,
-				&timeline.data[0].x, &timeline.data[0].y,
-				timeline_size,
-				TIMELINE_BAR_SIZE,
-				ImPlotBarsFlags_None,
-				timeline.offset, sizeof( Vec2 )
-			);
+			//	Freeze headers and first column
+			ImGui::TableSetupScrollFreeze( 1, 1 );
 
-			//	Fill timeline data for later use
-			ImPlotContext* plot_context = ImPlot::GetCurrentContext();
-			TimelineImData& data = timelines_data.emplace_back( TimelineImData {} );
-			data.color = ImPlot::GetLastItemColor();
-			data.is_hidden = !plot_context->PreviousItem->Show;
+			//	Draw angled headers if needed
+			if ( column_flags & ImGuiTableColumnFlags_AngledHeader )
+			{
+				ImGui::TableAngledHeadersRow();
+			}
+			ImGui::TableHeadersRow();
+
+			//	Draw results
+			int row_id = 0;
+			const ImVec4 default_row_color = ImGui::GetStyleColorVec4( ImGuiCol_TableRowBg );
+			for ( const auto& result_pair : memory_local_results )
+			{
+				const char* name = result_pair.first;
+				const MemoryLocalProfileResult& result = result_pair.second;
+
+				ImGui::PushID( row_id );
+				ImGui::TableNextRow( ImGuiTableRowFlags_None );
+
+				//	Name
+				ImGui::TableNextColumn();
+				ImGui::TextUnformatted( name );
+
+				//	Total Bytes
+				ImGui::TableNextColumn();
+				ImGui::Text( "%s", *string::bytes_to_str( result.total_allocated_bytes ) );
+
+				//	Last Bytes
+				ImGui::TableNextColumn();
+				ImGui::Text( "%s", *string::bytes_to_str( result.non_consumed_allocated_bytes ) );
+
+				//	Avg. Bytes
+				ImGui::TableNextColumn();
+				ImGui::Text( "%s", *string::bytes_to_str( result.total_allocated_bytes / result.total_profile_calls ) );
+
+				//	new Calls
+				ImGui::TableNextColumn();
+				ImGui::Text( "%d", result.new_total_calls );
+
+				//	delete Calls
+				ImGui::TableNextColumn();
+				ImGui::Text( "%d", result.delete_total_calls );
+
+				//	Profile Calls
+				ImGui::TableNextColumn();
+				ImGui::Text( "%d", result.total_profile_calls );
+
+				//	Usage
+				float usage = static_cast<float>( result.total_allocated_bytes ) / static_cast<float>( memory_global_result.total_allocated_bytes );
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.1f%%", usage * 100.0f );
+
+				//	Set cell's background color depending on usage
+				constexpr ImVec4 MAX_USAGE_COLOR { 0.8f, 0.2f, 0.1f, 0.5f };
+				constexpr float MAX_USAGE_PERCENT = 60.0f;
+				constexpr float USAGE_COLOR_SCALE = 100.0f / MAX_USAGE_PERCENT;
+				ImGui::TableSetBgColor(
+					ImGuiTableBgTarget_RowBg0,
+					ImGui::GetColorU32(
+						ImLerp(
+							default_row_color,
+							MAX_USAGE_COLOR,
+							ImSaturate( usage * USAGE_COLOR_SCALE )
+						)
+					)
+				);
+
+				ImGui::PopID();
+			}
+
+			ImGui::EndTable();
 		}
 
-		//	Inspect timeline under mouse position
-		if ( ImPlot::IsPlotHovered() && ImGui::GetIO().KeyCtrl )
+		ImGui::TreePop();
+	}
+
+	ImGui::Spacing();
+	ImGui::SeparatorText( "Time" );
+	if ( ImGui::TreeNode( "Results" ) )
+	{
+		//	TODO: Add sorting
+		ImGuiTableFlags table_flags = ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
+		table_flags |= ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+		table_flags |= ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable;
+		//table_flags |= ImGuiTableFlags_SizingFixedFit;
+
+		constexpr const char* COLUMN_NAMES[] {
+			"Name",
+			"Last Time", "Min. Time", "Avg. Time", "Max. Time",
+			"Frame Time", "Frame Calls",
+			"Total Calls",
+			"Usage",
+		};
+		constexpr int COLUMNS_AMOUNT = IM_ARRAYSIZE( COLUMN_NAMES );
+		constexpr ImVec2 TABLE_SIZE { 0.0f, 250.0f };
+		if ( ImGui::BeginTable( "suprengine_profiler_results", COLUMNS_AMOUNT, table_flags, TABLE_SIZE ) )
 		{
-			ImPlotPoint mouse_pos = ImPlot::GetPlotMousePos();
+			//	Setup first column
+			ImGui::TableSetupColumn( COLUMN_NAMES[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder );
 
-			const char* hovered_timeline_name = nullptr;
-			ImPlotPoint hovered_timeline_pos = mouse_pos;
-			int hovered_timeline_id = -1;
+			//	Setup remaining columns
+			ImGuiTableColumnFlags column_flags = ImGuiTableColumnFlags_WidthFixed;
+			for ( int i = 1; i < COLUMNS_AMOUNT; i++ )
+			{
+				ImGui::TableSetupColumn( COLUMN_NAMES[i], column_flags );
+			}
 
-			//	Find the hovered timeline
-			int id = -1;
+			//	Freeze headers and first column
+			ImGui::TableSetupScrollFreeze( 1, 1 );
+
+			//	Draw angled headers if needed
+			if ( column_flags & ImGuiTableColumnFlags_AngledHeader )
+			{
+				ImGui::TableAngledHeadersRow();
+			}
+			ImGui::TableHeadersRow();
+
+			//	Draw results
+			int row_id = 0;
+			const ImVec4 default_row_color = ImGui::GetStyleColorVec4( ImGuiCol_TableRowBg );
+			for ( const auto& result_pair : results )
+			{
+				const char* name = result_pair.first;
+				const ProfileResult& result = result_pair.second;
+
+				ImGui::PushID( row_id );
+				ImGui::TableNextRow( ImGuiTableRowFlags_None );
+
+				//	Name
+				ImGui::TableNextColumn();
+				ImGui::TextUnformatted( name );
+
+				//	Last Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.time );
+
+				//	Min. Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.min_time );
+
+				//	Avg. Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.total_time / result.total_calls );
+
+				//	Max. Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.max_time );
+
+				//	Frame Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.non_consumed_time );
+
+				//	Frame Calls
+				ImGui::TableNextColumn();
+				ImGui::Text( "%d", result.non_consumed_calls );
+
+				//	Total Calls
+				ImGui::TableNextColumn();
+				ImGui::Text( "%d", result.total_calls );
+
+				//	Usage
+				float usage = result.total_time / profile_time_ms;
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.1f%%", usage * 100.0f );
+
+				//	Set cell's background color depending on usage
+				constexpr ImVec4 MAX_USAGE_COLOR { 0.8f, 0.2f, 0.1f, 0.5f };
+				constexpr float MAX_USAGE_PERCENT = 60.0f;
+				constexpr float USAGE_COLOR_SCALE = 100.0f / MAX_USAGE_PERCENT;
+				ImGui::TableSetBgColor(
+					ImGuiTableBgTarget_RowBg0,
+					ImGui::GetColorU32(
+						ImLerp(
+							default_row_color,
+							MAX_USAGE_COLOR,
+							ImSaturate( usage * USAGE_COLOR_SCALE )
+						)
+					)
+				);
+
+				ImGui::PopID();
+			}
+
+			ImGui::EndTable();
+		}
+
+		ImGui::TreePop();
+	}
+
+	if ( ImGui::TreeNode( "Timelines" ) )
+	{
+		if ( ImPlot::BeginPlot( "Timelines", ImVec2 { -1.0f, 250.0f } ) )
+		{
+			ImPlot::SetupAxes( "Profile Time (s)", "Result Time (ms)", ImPlotAxisFlags_AutoFit );
+			ImPlot::SetupAxesLimits( 0, TIMELINE_MAX_TIME, 0, 50 );
+			ImPlot::SetupAxisLimitsConstraints(
+				ImAxis_X1,
+				math::max( 0.0f, profile_time_seconds - TIMELINE_MAX_TIME ),
+				math::max( static_cast<float>( TIMELINE_MAX_TIME ), profile_time_seconds )
+			);
+			ImPlot::SetupAxisLimitsConstraints( ImAxis_Y1, 0.0, 200.0 );
+			ImPlot::SetupLegend( ImPlotLocation_West, ImPlotLegendFlags_Outside );
+
+			//	Draw timelines
+			std::vector<TimelineImData> timelines_data {};
+			timelines_data.reserve( _timelines.size() );
 			for ( auto& pair : _timelines )
 			{
-				id++;
-
-				//	Skip empty timelines
+				const char* name = pair.first;
 				auto& timeline = pair.second;
-				int data_size = static_cast<int>( timeline.data.size() );
-				if ( data_size == 0 ) continue;
 
-				//	Skip hidden timelines (by user)
-				TimelineImData& data = timelines_data.at( id );
-				if ( data.is_hidden ) continue;
+				int timeline_size = static_cast<int>( timeline.data.size() );
+				if ( timeline_size == 0 ) return;
 
-				for ( int data_id = 0; data_id < data_size; data_id++ )
+				ImPlot::PlotBars(
+					name,
+					&timeline.data[0].x, &timeline.data[0].y,
+					timeline_size,
+					TIMELINE_BAR_SIZE,
+					ImPlotBarsFlags_None,
+					timeline.offset, sizeof( Vec2 )
+				);
+
+				//	Fill timeline data for later use
+				ImPlotContext* plot_context = ImPlot::GetCurrentContext();
+				TimelineImData& data = timelines_data.emplace_back( TimelineImData {} );
+				data.color = ImPlot::GetLastItemColor();
+				data.is_hidden = !plot_context->PreviousItem->Show;
+			}
+
+			//	Inspect timeline under mouse position
+			if ( ImPlot::IsPlotHovered() && ImGui::GetIO().KeyCtrl )
+			{
+				ImPlotPoint mouse_pos = ImPlot::GetPlotMousePos();
+
+				const char* hovered_timeline_name = nullptr;
+				ImPlotPoint hovered_timeline_pos = mouse_pos;
+				int hovered_timeline_id = -1;
+
+				//	Find the hovered timeline
+				int id = -1;
+				for ( auto& pair : _timelines )
 				{
-					//	TODO: Fix bug where it seems to select the incorrect timeline
-					//		  for small-sized buffers. Is it caused by no account of offset?
-					//int i = ( timeline.offset + data_id ) % timeline.max_size;
-					const Vec2& pos = timeline.data[data_id];
+					id++;
 
-					//	Skip all positions before the mouse X-pos
-					if ( pos.x < mouse_pos.x - TIMELINE_BAR_SIZE * 0.5 ) continue;
-					//	Then, stop if Y-pos is not high enough to have the mouse Y-pos under it
-					if ( pos.y < mouse_pos.y ) break;
+					//	Skip empty timelines
+					auto& timeline = pair.second;
+					int data_size = static_cast<int>( timeline.data.size() );
+					if ( data_size == 0 ) continue;
 
-					//	We have a potential winner, let's see the other timelines
-					hovered_timeline_name = pair.first;
-					hovered_timeline_pos.x = pos.x;
-					hovered_timeline_pos.y = pos.y;
-					hovered_timeline_id = id;
-					break;
+					//	Skip hidden timelines (by user)
+					TimelineImData& data = timelines_data.at( id );
+					if ( data.is_hidden ) continue;
+
+					for ( int data_id = 0; data_id < data_size; data_id++ )
+					{
+						//	TODO: Fix bug where it seems to select the incorrect timeline
+						//		  for small-sized buffers. Is it caused by no account of offset?
+						//int i = ( timeline.offset + data_id ) % timeline.max_size;
+						const Vec2& pos = timeline.data[data_id];
+
+						//	Skip all positions before the mouse X-pos
+						if ( pos.x < mouse_pos.x - TIMELINE_BAR_SIZE * 0.5 ) continue;
+						//	Then, stop if Y-pos is not high enough to have the mouse Y-pos under it
+						if ( pos.y < mouse_pos.y ) break;
+
+						//	We have a potential winner, let's see the other timelines
+						hovered_timeline_name = pair.first;
+						hovered_timeline_pos.x = pos.x;
+						hovered_timeline_pos.y = pos.y;
+						hovered_timeline_id = id;
+						break;
+					}
+				}
+
+				constexpr ImVec2 ANNOTATION_OFFSET { 0.0f, -15.0f };
+				if ( hovered_timeline_id != -1 )
+				{
+					//	Draw annotation about the hovered timeline
+					TimelineImData& data = timelines_data.at( hovered_timeline_id );
+					ImPlot::Annotation(
+						hovered_timeline_pos.x, hovered_timeline_pos.y,
+						data.color,
+						ANNOTATION_OFFSET,
+						/* clamp */ true,
+						"%s - %.3fms",
+						hovered_timeline_name,
+						hovered_timeline_pos.y
+					);
+				}
+				else
+				{
+					constexpr ImVec4 SELECTOR_COLOR { 0.5f, 0.5f, 0.5f, 1.0f };
+					ImPlot::Annotation(
+						mouse_pos.x, mouse_pos.y,
+						SELECTOR_COLOR,
+						ANNOTATION_OFFSET,
+						/* clamp */ true,
+						"None"
+					);
 				}
 			}
 
-			constexpr ImVec2 ANNOTATION_OFFSET { 0.0f, -15.0f };
-			if ( hovered_timeline_id != -1 )
-			{
-				//	Draw annotation about the hovered timeline
-				TimelineImData& data = timelines_data.at( hovered_timeline_id );
-				ImPlot::Annotation(
-					hovered_timeline_pos.x, hovered_timeline_pos.y,
-					data.color,
-					ANNOTATION_OFFSET,
-					/* clamp */ true,
-					"%s - %.3fms",
-					hovered_timeline_name,
-					hovered_timeline_pos.y
-				);
-			}
-			else
-			{
-				constexpr ImVec4 SELECTOR_COLOR { 0.5f, 0.5f, 0.5f, 1.0f };
-				ImPlot::Annotation(
-					mouse_pos.x, mouse_pos.y,
-					SELECTOR_COLOR,
-					ANNOTATION_OFFSET,
-					/* clamp */ true,
-					"None"
-				);
-			}
+			//	Draw time target
+			constexpr ImVec4 TIME_TARGET_COLOR { 1.0f, 0.3f, 0.3f, 0.75f };
+			double time_target = 1.0 / updater->target_fps * 1000.0;
+			ImPlot::TagY( time_target, TIME_TARGET_COLOR, "Target" );
+			ImPlot::DragLineY( 0, &time_target, TIME_TARGET_COLOR, 2.0f, ImPlotDragToolFlags_NoInputs );
+
+			ImPlot::EndPlot();
 		}
 
-		//	Draw time target
-		constexpr ImVec4 TIME_TARGET_COLOR { 1.0f, 0.3f, 0.3f, 0.75f };
-		double time_target = 1.0 / updater->target_fps * 1000.0;
-		ImPlot::TagY( time_target, TIME_TARGET_COLOR, "Target" );
-		ImPlot::DragLineY( 0, &time_target, TIME_TARGET_COLOR, 2.0f, ImPlotDragToolFlags_NoInputs );
-
-		ImPlot::EndPlot();
+		ImGui::TreePop();
 	}
-
+	
 	const char* toggle_text = is_profiling() ? "Stop" : "Start";
 	if ( ImGui::Button( toggle_text ) )
 	{

@@ -2,11 +2,11 @@
 
 namespace suprengine::string
 {
-	inline std::string bytes_to_str( int bytes )
+	inline std::string bytes_to_str( std::size_t bytes )
 	{
-		const int kilo_in_bytes = 1024;
-		const int mega_in_bytes = 1024 * 1024;
-		const int giga_in_bytes = 1024 * 1024 * 1024;
+		const std::size_t kilo_in_bytes = 1024;
+		const std::size_t mega_in_bytes = 1024 * 1024;
+		const std::size_t giga_in_bytes = 1024 * 1024 * 1024;
 
 		std::string unit = "XiB";
 		float value = static_cast<float>( bytes );

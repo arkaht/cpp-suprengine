@@ -45,10 +45,10 @@ namespace suprengine
 		float get_time() const;
 
 	public:
-		const char* name;
+		const char* name = nullptr;
 
 	private:
-		TimePoint _start_timepoint;
+		TimePoint _start_timepoint {};
 
 		float _total_time = 0.0f;
 
