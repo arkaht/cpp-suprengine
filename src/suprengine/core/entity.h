@@ -4,6 +4,8 @@
 
 #include <suprengine/utils/shareable.h>
 
+#include <suprengine/tools/memory-profiler.h>
+
 #include <vector>
 
 namespace suprengine
@@ -103,6 +105,12 @@ namespace suprengine
 		 * Get the entity's unique identifier.
 		 */
 		int get_unique_id() const { return _unique_id; }
+
+	public:
+		static void* operator new( std::size_t bytes )
+		{
+			return MemoryProfiler::allocate( "Entity", bytes );
+		}
 
 	public:
 		/*

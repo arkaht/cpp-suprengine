@@ -197,7 +197,7 @@ void Profiler::populate_imgui()
 
 	if ( ImGui::TreeNode( "Global Result" ) )
 	{
-		ImGui::Text( "new Total Calls: %d", memory_global_result.new_total_calls );
+		ImGui::Text( "new Total Calls: %d", memory_global_result.total_instances );
 		ImGui::Text( "delete Total Calls: %d", memory_global_result.delete_total_calls );
 		ImGui::Spacing();
 
@@ -280,7 +280,7 @@ void Profiler::populate_imgui()
 
 				//	new Calls
 				ImGui::TableNextColumn();
-				ImGui::Text( "%d", result.new_total_calls );
+				ImGui::Text( "%d", result.total_instances );
 
 				//	delete Calls
 				ImGui::TableNextColumn();
@@ -292,6 +292,107 @@ void Profiler::populate_imgui()
 
 				//	Usage
 				float usage = static_cast<float>( result.total_allocated_bytes ) / static_cast<float>( memory_global_result.total_allocated_bytes );
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.1f%%", usage * 100.0f );
+
+				//	Set cell's background color depending on usage
+				constexpr ImVec4 MAX_USAGE_COLOR { 0.8f, 0.2f, 0.1f, 0.5f };
+				constexpr float MAX_USAGE_PERCENT = 60.0f;
+				constexpr float USAGE_COLOR_SCALE = 100.0f / MAX_USAGE_PERCENT;
+				ImGui::TableSetBgColor(
+					ImGuiTableBgTarget_RowBg0,
+					ImGui::GetColorU32(
+						ImLerp(
+							default_row_color,
+							MAX_USAGE_COLOR,
+							ImSaturate( usage * USAGE_COLOR_SCALE )
+						)
+					)
+				);
+
+				ImGui::PopID();
+			}
+
+			ImGui::EndTable();
+		}
+
+		ImGui::TreePop();
+	}
+
+	if ( ImGui::TreeNode( "Categorized Results" ) )
+	{
+		const MemoryProfiler::CategoryResultsMap& memory_category_results = MemoryProfiler::get_custom_categories_results();
+		const MemoryCategoryProfileResult& memory_other_category_result = MemoryProfiler::get_other_category_result();
+
+		//	TODO: Add sorting
+		ImGuiTableFlags table_flags = ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
+		table_flags |= ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+		table_flags |= ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable;
+		//table_flags |= ImGuiTableFlags_SizingFixedFit;
+
+		constexpr const char* COLUMN_NAMES[] {
+			"Name",
+			"Total Bytes", "Current Bytes",
+			"Total Instances", "Current Instances",
+			"Usage",
+		};
+		constexpr int COLUMNS_AMOUNT = IM_ARRAYSIZE( COLUMN_NAMES );
+		constexpr ImVec2 TABLE_SIZE { 0.0f, 150.0f };
+		if ( ImGui::BeginTable( "suprengine_memory_profiler_category_results", COLUMNS_AMOUNT, table_flags, TABLE_SIZE ) )
+		{
+			//	Setup first column
+			ImGui::TableSetupColumn( COLUMN_NAMES[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder );
+
+			//	Setup remaining columns
+			ImGuiTableColumnFlags column_flags = ImGuiTableColumnFlags_WidthFixed;
+			for ( int i = 1; i < COLUMNS_AMOUNT; i++ )
+			{
+				ImGui::TableSetupColumn( COLUMN_NAMES[i], column_flags );
+			}
+
+			//	Freeze headers and first column
+			ImGui::TableSetupScrollFreeze( 1, 1 );
+
+			//	Draw angled headers if needed
+			if ( column_flags & ImGuiTableColumnFlags_AngledHeader )
+			{
+				ImGui::TableAngledHeadersRow();
+			}
+			ImGui::TableHeadersRow();
+
+			//	Draw results
+			int row_id = 0;
+			const ImVec4 default_row_color = ImGui::GetStyleColorVec4( ImGuiCol_TableRowBg );
+			for ( const auto& result_pair : memory_category_results )
+			{
+				const char* name = result_pair.first;
+				const MemoryCategoryProfileResult& result = result_pair.second;
+
+				ImGui::PushID( row_id );
+				ImGui::TableNextRow( ImGuiTableRowFlags_None );
+
+				//	Name
+				ImGui::TableNextColumn();
+				ImGui::TextUnformatted( name );
+
+				//	Total Bytes
+				ImGui::TableNextColumn();
+				ImGui::Text( "%s", *string::bytes_to_str( result.total_allocated_bytes ) );
+
+				//	Current Bytes
+				ImGui::TableNextColumn();
+				ImGui::Text( "%s", *string::bytes_to_str( result.current_allocated_bytes ) );
+
+				//	Total Instances
+				ImGui::TableNextColumn();
+				ImGui::Text( "%d", result.total_instances );
+
+				//	Current Instances
+				ImGui::TableNextColumn();
+				ImGui::Text( "%d", result.current_instances );
+
+				//	Usage
+				float usage = static_cast<float>( result.current_allocated_bytes ) / static_cast<float>( memory_global_result.current_allocated_bytes );
 				ImGui::TableNextColumn();
 				ImGui::Text( "%.1f%%", usage * 100.0f );
 

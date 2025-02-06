@@ -27,7 +27,7 @@ namespace suprengine
 		 */
 		static Engine& instance()
 		{
-			static Engine instance;
+			static Engine instance {};
 			return instance;
 		}
 
@@ -94,7 +94,7 @@ namespace suprengine
 
 			MEMORY_SCOPE( "Engine::create_entity" );
 
-			auto entity = std::make_shared<TEntity>( args... );
+			SharedPtr<TEntity> entity( new TEntity( args... ) );
 			entity->init();
 			entity->setup();
 			add_entity( entity );
