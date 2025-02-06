@@ -60,7 +60,7 @@ namespace suprengine
 		template <typename AssetType, typename IdentifierType>
 		static 
 			std::enable_if_t<
-				std::is_same<std::string, IdentifierType>::value || std::is_same<const char*, IdentifierType>::value, 
+				std::is_same_v<IdentifierType, std::string> || std::is_same_v<IdentifierType, const char*>,
 				std::vector<IdentifierType>
 			>
 			get_assets_as_ids()
@@ -69,23 +69,23 @@ namespace suprengine
 			// with the map of the given asset type.
 			auto get_related_assets_map = [&]() constexpr -> std::map<std::string, SharedPtr<AssetType>>&
 			{
-				if constexpr ( std::is_same<Texture, AssetType>::value )
+				if constexpr ( std::is_same_v<AssetType, Texture> )
 				{
 					return _textures;
 				}
-				else if constexpr ( std::is_same<Font, AssetType>::value )
+				else if constexpr ( std::is_same_v<AssetType, Font> )
 				{
 					return _fonts;
 				}
-				else if constexpr ( std::is_same<Shader, AssetType>::value )
+				else if constexpr ( std::is_same_v<AssetType, Shader> )
 				{
 					return _shaders;
 				}
-				else if constexpr ( std::is_same<Model, AssetType>::value )
+				else if constexpr ( std::is_same_v<AssetType, Model> )
 				{
 					return _models;
 				}
-				else if constexpr ( std::is_same<Curve, AssetType>::value )
+				else if constexpr ( std::is_same_v<AssetType, Curve> )
 				{
 					return _curves;
 				}
