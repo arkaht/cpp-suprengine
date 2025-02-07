@@ -37,7 +37,7 @@ namespace suprengine
 				"Entity::create_component: used for a non-Component class!"
 			);
 			
-			auto component = std::make_shared<T>( args... );
+			SharedPtr<T> component( new T( args... ) );
 			component->init( shared_from_this() );
 			add_component( component );
 			
