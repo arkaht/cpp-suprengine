@@ -57,25 +57,6 @@ void* operator new( std::size_t bytes )
 		result.total_allocated_bytes += bytes;
 	}
 
-	//	Register into current category result
-	if ( current_category == nullptr )
-	{
-		other_category_result.total_instances++;
-		other_category_result.current_instances++;
-		other_category_result.current_allocated_bytes += bytes;
-		other_category_result.total_allocated_bytes += bytes;
-	}
-	else
-	{
-		const MemoryProfiler::CategoryResultsMap::iterator itr = category_results.find( current_category );
-
-		MemoryCategoryProfileResult& result = itr->second;
-		result.total_instances++;
-		result.current_instances++;
-		result.current_allocated_bytes += bytes;
-		result.total_allocated_bytes += bytes;
-	}
-
 	//	Basic implementation from Scott Meyers' book "Effective C++"
 	while ( true )
 	{
@@ -109,7 +90,7 @@ void* operator new( std::size_t bytes )
 		}
 
 		const std::new_handler handler = std::get_new_handler();
-		if ( handler )
+		if ( handler != nullptr )
 		{
 			( *handler )( );
 			continue;
@@ -151,6 +132,11 @@ void operator delete( void* pointer, std::size_t bytes )
 		result.current_allocated_bytes -= bytes;
 
 		categorized_addresses.erase( itr );
+	}
+	else
+	{
+		other_category_result.current_instances--;
+		other_category_result.current_allocated_bytes -= bytes;
 	}
 
 	std::free( pointer );

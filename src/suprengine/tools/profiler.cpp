@@ -171,6 +171,57 @@ struct TimelineImData
 	ImVec4 color {};
 };
 
+static void populate_memory_category_result_in_table(
+	const char* name,
+	const MemoryCategoryProfileResult& result,
+	const float global_current_allocated_bytes
+)
+{
+	const ImVec4 default_row_color = ImGui::GetStyleColorVec4( ImGuiCol_TableRowBg );
+
+	ImGui::TableNextRow( ImGuiTableRowFlags_None );
+
+	//	Name
+	ImGui::TableNextColumn();
+	ImGui::TextUnformatted( name );
+
+	//	Total Bytes
+	ImGui::TableNextColumn();
+	ImGui::Text( "%s", *string::bytes_to_str( result.total_allocated_bytes ) );
+
+	//	Current Bytes
+	ImGui::TableNextColumn();
+	ImGui::Text( "%s", *string::bytes_to_str( result.current_allocated_bytes ) );
+
+	//	Total Instances
+	ImGui::TableNextColumn();
+	ImGui::Text( "%d", result.total_instances );
+
+	//	Current Instances
+	ImGui::TableNextColumn();
+	ImGui::Text( "%d", result.current_instances );
+
+	//	Usage
+	float usage = static_cast<float>( result.current_allocated_bytes ) / global_current_allocated_bytes;
+	ImGui::TableNextColumn();
+	ImGui::Text( "%.1f%%", usage * 100.0f );
+
+	//	Set cell's background color depending on usage
+	constexpr ImVec4 MAX_USAGE_COLOR { 0.8f, 0.2f, 0.1f, 0.5f };
+	constexpr float MAX_USAGE_PERCENT = 60.0f;
+	constexpr float USAGE_COLOR_SCALE = 100.0f / MAX_USAGE_PERCENT;
+	ImGui::TableSetBgColor(
+		ImGuiTableBgTarget_RowBg0,
+		ImGui::GetColorU32(
+			ImLerp(
+				default_row_color,
+				MAX_USAGE_COLOR,
+				ImSaturate( usage * USAGE_COLOR_SCALE )
+			)
+		)
+	);
+}
+
 void Profiler::populate_imgui()
 {
 	const auto& results = get_results();
@@ -361,58 +412,23 @@ void Profiler::populate_imgui()
 			ImGui::TableHeadersRow();
 
 			//	Draw results
-			int row_id = 0;
-			const ImVec4 default_row_color = ImGui::GetStyleColorVec4( ImGuiCol_TableRowBg );
+			const float global_current_allocated_bytes = static_cast<float>( memory_global_result.current_allocated_bytes );
 			for ( const auto& result_pair : memory_category_results )
 			{
 				const char* name = result_pair.first;
 				const MemoryCategoryProfileResult& result = result_pair.second;
 
-				ImGui::PushID( row_id );
-				ImGui::TableNextRow( ImGuiTableRowFlags_None );
-
-				//	Name
-				ImGui::TableNextColumn();
-				ImGui::TextUnformatted( name );
-
-				//	Total Bytes
-				ImGui::TableNextColumn();
-				ImGui::Text( "%s", *string::bytes_to_str( result.total_allocated_bytes ) );
-
-				//	Current Bytes
-				ImGui::TableNextColumn();
-				ImGui::Text( "%s", *string::bytes_to_str( result.current_allocated_bytes ) );
-
-				//	Total Instances
-				ImGui::TableNextColumn();
-				ImGui::Text( "%d", result.total_instances );
-
-				//	Current Instances
-				ImGui::TableNextColumn();
-				ImGui::Text( "%d", result.current_instances );
-
-				//	Usage
-				float usage = static_cast<float>( result.current_allocated_bytes ) / static_cast<float>( memory_global_result.current_allocated_bytes );
-				ImGui::TableNextColumn();
-				ImGui::Text( "%.1f%%", usage * 100.0f );
-
-				//	Set cell's background color depending on usage
-				constexpr ImVec4 MAX_USAGE_COLOR { 0.8f, 0.2f, 0.1f, 0.5f };
-				constexpr float MAX_USAGE_PERCENT = 60.0f;
-				constexpr float USAGE_COLOR_SCALE = 100.0f / MAX_USAGE_PERCENT;
-				ImGui::TableSetBgColor(
-					ImGuiTableBgTarget_RowBg0,
-					ImGui::GetColorU32(
-						ImLerp(
-							default_row_color,
-							MAX_USAGE_COLOR,
-							ImSaturate( usage * USAGE_COLOR_SCALE )
-						)
-					)
+				populate_memory_category_result_in_table(
+					name, result,
+					global_current_allocated_bytes
 				);
-
-				ImGui::PopID();
 			}
+
+			//	Draw "Other" category manually
+			populate_memory_category_result_in_table(
+				"Other", memory_other_category_result,
+				global_current_allocated_bytes
+			);
 
 			ImGui::EndTable();
 		}
@@ -462,14 +478,12 @@ void Profiler::populate_imgui()
 			ImGui::TableHeadersRow();
 
 			//	Draw results
-			int row_id = 0;
 			const ImVec4 default_row_color = ImGui::GetStyleColorVec4( ImGuiCol_TableRowBg );
 			for ( const auto& result_pair : results )
 			{
 				const char* name = result_pair.first;
 				const ProfileResult& result = result_pair.second;
 
-				ImGui::PushID( row_id );
 				ImGui::TableNextRow( ImGuiTableRowFlags_None );
 
 				//	Name
@@ -523,8 +537,6 @@ void Profiler::populate_imgui()
 						)
 					)
 				);
-
-				ImGui::PopID();
 			}
 
 			ImGui::EndTable();
