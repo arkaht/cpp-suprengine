@@ -6,6 +6,8 @@
 #include <suprengine/math/vec2.h>
 #include <suprengine/math/mtx4.h>
 
+#include <suprengine/tools/memory-profiler.h>
+
 #include <unordered_map>
 
 namespace suprengine
@@ -56,6 +58,12 @@ namespace suprengine
 		void set_mtx4( const char* name, const Mtx4& matrix );
 
 		void print_all_params() const;
+
+	public:
+		static void* operator new( std::size_t bytes )
+		{
+			return MemoryProfiler::allocate( "Shader", bytes );
+		}
 
 	private:
 		uint32 _create_shader( uint32 type, const char* code, const char* name );
