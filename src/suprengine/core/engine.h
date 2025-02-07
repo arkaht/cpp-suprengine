@@ -40,27 +40,28 @@ namespace suprengine
 		/*
 		 * Create and run the game of given type on the engine.
 		 */
-		template <typename TGame>
-		int run()
+		template <typename GameType>
+		std::enable_if_t<
+			std::is_base_of_v<IGame, GameType>,
+			int
+		> run()
 		{
-			if ( !init<TGame>() ) return EXIT_FAILURE;
+			if ( !init<GameType>() ) return EXIT_FAILURE;
 
 			loop();
 			return EXIT_SUCCESS;
 		}
 
-		template <typename TGame>
-		bool init()
+		template <typename GameType>
+		std::enable_if_t<
+			std::is_base_of_v<IGame, GameType>,
+			bool
+		> init()
 		{
-			static_assert( 
-				std::is_base_of<IGame, TGame>::value, 
-				"Engine::init: use of an invalid Game class!" 
-			);
-
 			MEMORY_SCOPE( "Engine::init" );
 
 			//  Create game
-			auto game = new TGame();
+			auto game = new GameType();
 			return init( game );
 		}
 		bool init( IGame* game );
