@@ -74,11 +74,13 @@ namespace suprengine
 		{
 			clear_entities();
 
+			SceneType* new_scene = new SceneType( args... );
+			
 			//  Change scene
-			_scene = std::make_unique<TScene>( args... );
+			_scene = std::unique_ptr<Scene>( new_scene );
 			_scene->init();
 
-			return _scene.get();
+			return new_scene;
 		}
 		Scene* get_scene() const { return _scene.get(); }
 
@@ -88,7 +90,7 @@ namespace suprengine
 			SharedPtr<EntityType>
 		> create_entity( Args&& ...args )
 		{
-			SharedPtr<TEntity> entity( new TEntity( args... ) );
+			SharedPtr<EntityType> entity( new EntityType( args... ) );
 			entity->init();
 			entity->setup();
 			add_entity( entity );

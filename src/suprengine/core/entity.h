@@ -35,7 +35,7 @@ namespace suprengine
 			SharedPtr<ComponentType>
 		> create_component( Args&& ...args )
 		{
-			SharedPtr<T> component( new ComponentType( args... ) );
+			SharedPtr<ComponentType> component( new ComponentType( args... ) );
 			component->init( shared_from_this() );
 			add_component( component );
 			
