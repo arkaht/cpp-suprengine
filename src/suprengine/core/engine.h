@@ -66,34 +66,28 @@ namespace suprengine
 		bool init( IGame* game );
 		void loop();
 
-		template <typename TScene, typename ...Args>
-		void create_scene( Args&& ...args )
+		template <typename SceneType, typename ...Args>
+		std::enable_if_t<
+			std::is_base_of_v<Scene, SceneType>,
+			SceneType*
+		> create_scene( Args&& ...args )
 		{
-			static_assert( 
-				std::is_base_of<Scene, TScene>::value, 
-				"Engine::create_scene: used for a non-Scene class!"
-			);
-
-			MEMORY_SCOPE( "Engine::create_scene" );
-
 			clear_entities();
 
 			//  Change scene
 			_scene = std::make_unique<TScene>( args... );
 			_scene->init();
+
+			return _scene.get();
 		}
 		Scene* get_scene() const { return _scene.get(); }
 
-		template <typename TEntity, typename ...Args>
-		SharedPtr<TEntity> create_entity( Args&& ...args )
+		template <typename EntityType, typename ...Args>
+		std::enable_if_t<
+			std::is_base_of_v<Entity, EntityType>,
+			SharedPtr<EntityType>
+		> create_entity( Args&& ...args )
 		{
-			static_assert( 
-				std::is_base_of<Entity, TEntity>::value, 
-				"Engine::create_entity: used for a non-Entity class!"
-			);
-
-			MEMORY_SCOPE( "Engine::create_entity" );
-
 			SharedPtr<TEntity> entity( new TEntity( args... ) );
 			entity->init();
 			entity->setup();

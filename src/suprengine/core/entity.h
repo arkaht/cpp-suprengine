@@ -29,15 +29,13 @@ namespace suprengine
 		 * Create and add a component of given type on the entity.
 		 * This is the function you want to use inside Entity::setup.
 		 */
-		template <typename T, typename... Args>
-		SharedPtr<T> create_component( Args&&... args )
+		template <typename ComponentType, typename ...Args>
+		std::enable_if_t<
+			std::is_base_of_v<Component, ComponentType>,
+			SharedPtr<ComponentType>
+		> create_component( Args&& ...args )
 		{
-			static_assert( 
-				std::is_base_of<Component, T>::value,
-				"Entity::create_component: used for a non-Component class!"
-			);
-			
-			SharedPtr<T> component( new T( args... ) );
+			SharedPtr<T> component( new ComponentType( args... ) );
 			component->init( shared_from_this() );
 			add_component( component );
 			
@@ -50,13 +48,11 @@ namespace suprengine
 		 * vector of components of the entity.
 		 */
 		template <typename T>
-		SharedPtr<T> find_component()
+		std::enable_if_t<
+			std::is_base_of_v<Component, T>,
+			SharedPtr<T>
+		> find_component()
 		{
-			static_assert( 
-				std::is_base_of<Component, T>::value, 
-				"Entity::find_component: used for a non-Component class!"
-			);
-			
 			for ( SharedPtr<Component> component : components )
 			{
 				SharedPtr<T> target = std::dynamic_pointer_cast<T>( component );
