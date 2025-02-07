@@ -209,6 +209,11 @@ void Engine::add_timer( const Timer& timer )
 	_timers.emplace_back( timer );
 }
 
+bool Engine::is_running() const
+{
+	return _is_running;
+}
+
 void Engine::process_input()
 {
 	_inputs->update();

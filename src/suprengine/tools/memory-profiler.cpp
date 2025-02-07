@@ -1,5 +1,7 @@
 #include "memory-profiler.h"
 
+#include <suprengine/core/engine.h>
+
 #include <suprengine/utils/assert.h>
 
 #include <vector>
@@ -104,39 +106,45 @@ void operator delete( void* pointer, std::size_t bytes )
 {
 	if ( pointer == nullptr ) return;
 
-	//	Register into global result
-	global_result.delete_total_calls++;
-	global_result.current_allocated_bytes -= bytes;
-
-	//	Register into local results
-	for ( const char* name : profiled_names )
+	//	Avoid crashing when ending the program because 'categorized_addresses' has already been released.
+	//	Not that pretty but it works.
+	bool should_profile = Engine::instance().is_running();
+	if ( should_profile )
 	{
-		auto itr = local_results.find( name );
+		//	Register into global result
+		global_result.delete_total_calls++;
+		global_result.current_allocated_bytes -= bytes;
 
-		MemoryLocalProfileResult& result = itr->second;
-		result.delete_total_calls++;
-	}
+		//	Register into local results
+		for ( const char* name : profiled_names )
+		{
+			auto itr = local_results.find( name );
 
-	//	Register into category result
-	const auto itr = categorized_addresses.find( pointer );
-	if ( itr != categorized_addresses.end() )
-	{
-		const char* category = itr->second;
+			MemoryLocalProfileResult& result = itr->second;
+			result.delete_total_calls++;
+		}
 
-		const MemoryProfiler::CategoryResultsMap::iterator category_result_itr = category_results.find( category );
-		//	TODO: Check whether it's a good idea to put an assert in a critical operator.
-		ASSERT( category_result_itr != category_results.end() );
+		//	Register into category result
+		const auto itr = categorized_addresses.find( pointer );
+		if ( itr != categorized_addresses.end() )
+		{
+			const char* category = itr->second;
 
-		MemoryCategoryProfileResult& result = category_result_itr->second;
-		result.current_instances--;
-		result.current_allocated_bytes -= bytes;
+			const MemoryProfiler::CategoryResultsMap::iterator category_result_itr = category_results.find( category );
+			//	TODO: Check whether it's a good idea to put an assert in a critical operator.
+			ASSERT( category_result_itr != category_results.end() );
 
-		categorized_addresses.erase( itr );
-	}
-	else
-	{
-		other_category_result.current_instances--;
-		other_category_result.current_allocated_bytes -= bytes;
+			MemoryCategoryProfileResult& result = category_result_itr->second;
+			result.current_instances--;
+			result.current_allocated_bytes -= bytes;
+
+			categorized_addresses.erase( itr );
+		}
+		else
+		{
+			other_category_result.current_instances--;
+			other_category_result.current_allocated_bytes -= bytes;
+		}
 	}
 
 	std::free( pointer );

@@ -103,6 +103,8 @@ namespace suprengine
 
 		void add_timer( const Timer& timer );
 
+		bool is_running() const;
+
 		IGame* get_game() const { return _game.get(); }
 		Window* get_window() const { return _window.get(); }
 		RenderBatch* get_render_batch() const { return _render_batch.get(); }
