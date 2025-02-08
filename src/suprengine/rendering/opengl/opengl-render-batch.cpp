@@ -751,17 +751,17 @@ void OpenGLRenderBatch::_create_framebuffers( int width, int height )
 	GLenum target = _samples > 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	glGenTextures( 1, &_framebuffer_texture_id );
 	glBindTexture( target, _framebuffer_texture_id );
-	if ( _samples > 0 )
+	if ( target == GL_TEXTURE_2D_MULTISAMPLE )
 	{
-		glTexImage2DMultisample( target, _samples, GL_RGB, width, height, GL_TRUE );
+		glTexImage2DMultisample( GL_TEXTURE_2D_MULTISAMPLE, _samples, GL_RGB, width, height, GL_TRUE );
 	}
 	else
 	{
-		glTexImage2D( target, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
-		glTexParameteri( target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-		glTexParameteri( target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-		glTexParameteri( target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-		glTexParameteri( target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 	}
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
