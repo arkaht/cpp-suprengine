@@ -15,6 +15,9 @@ namespace suprengine
 	class Shader
 	{
 	public:
+		using UniformsLocationsMap = std::unordered_map<std::string, int>;
+
+	public:
 		/*
 		 * Creates, compiles and links GLSL shaders into one program.
 		 * The vertex and fragment shaders must succeed or assertion is thrown.
@@ -85,6 +88,6 @@ namespace suprengine
 		uint32 _program_id = 0;
 		uint32 _last_preparation_tick = 0;
 
-		std::unordered_map<std::string, int> _uniform_locations {};
+		UniformsLocationsMap _uniform_locations {};
 	};
 }
