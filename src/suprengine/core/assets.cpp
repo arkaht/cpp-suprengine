@@ -148,12 +148,14 @@ static SharedPtr<Shader> load_shader_from_file(
 	}
 
 	//	Create and compile shader
-	SharedPtr<Shader> shader = std::make_shared<Shader>(
-		*vertex_code,
-		*fragment_code,
-		!tsc_filename.empty() ? *tess_control_code : nullptr,
-		!tse_filename.empty() ? *tess_eval_code : nullptr,
-		!geo_filename.empty() ? *geometry_code : nullptr
+	SharedPtr<Shader> shader(
+		new Shader(
+			*vertex_code,
+			*fragment_code,
+			!tsc_filename.empty() ? *tess_control_code : nullptr,
+			!tse_filename.empty() ? *tess_eval_code : nullptr,
+			!geo_filename.empty() ? *geometry_code : nullptr
+		)
 	);
 
 	return shader;

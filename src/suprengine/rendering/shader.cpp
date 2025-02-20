@@ -308,7 +308,7 @@ int Shader::_get_uniform_location( const char* name ) const
 {
 	PROFILE_SCOPE( "Shader::get_uniform_location" );
 
-	auto itr = _uniform_locations.find( name );
+	const UniformsLocationsMap::const_iterator itr = _uniform_locations.find( name );
 	if ( itr == _uniform_locations.end() ) return -1;
 
 	return itr->second;

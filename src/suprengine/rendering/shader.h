@@ -6,12 +6,17 @@
 #include <suprengine/math/vec2.h>
 #include <suprengine/math/mtx4.h>
 
+#include <suprengine/tools/memory-profiler.h>
+
 #include <unordered_map>
 
 namespace suprengine
 {
 	class Shader
 	{
+	public:
+		using UniformsLocationsMap = std::unordered_map<std::string, int>;
+
 	public:
 		/*
 		 * Creates, compiles and links GLSL shaders into one program.
@@ -57,6 +62,12 @@ namespace suprengine
 
 		void print_all_params() const;
 
+	public:
+		static void* operator new( std::size_t bytes )
+		{
+			return MemoryProfiler::allocate( "Shader", bytes );
+		}
+
 	private:
 		uint32 _create_shader( uint32 type, const char* code, const char* name );
 		bool _compile_shader( uint32 shader_id, const char* name );
@@ -77,6 +88,6 @@ namespace suprengine
 		uint32 _program_id = 0;
 		uint32 _last_preparation_tick = 0;
 
-		std::unordered_map<std::string, int> _uniform_locations {};
+		UniformsLocationsMap _uniform_locations {};
 	};
 }

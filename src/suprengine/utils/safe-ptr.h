@@ -59,5 +59,10 @@ namespace suprengine
 		{
 			return get() == ptr.get();
 		}
+
+		explicit operator bool() const
+		{
+			return is_valid();
+		}
 	};
 }

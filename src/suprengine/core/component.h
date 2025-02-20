@@ -4,6 +4,8 @@
 
 #include <suprengine/utils/shareable.h>
 
+#include <suprengine/tools/memory-profiler.h>
+
 namespace suprengine
 {
 	class Entity;
@@ -29,6 +31,12 @@ namespace suprengine
 
 		SharedPtr<Entity> get_owner() const;
 		int get_priority_order() const;
+
+	public:
+		static void* operator new( std::size_t bytes )
+		{
+			return MemoryProfiler::allocate( "Component", bytes );
+		}
 		
 	public:
 		/*

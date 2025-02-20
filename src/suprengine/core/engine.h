@@ -27,7 +27,7 @@ namespace suprengine
 		 */
 		static Engine& instance()
 		{
-			static Engine instance;
+			static Engine instance {};
 			return instance;
 		}
 
@@ -40,61 +40,58 @@ namespace suprengine
 		/*
 		 * Create and run the game of given type on the engine.
 		 */
-		template <typename TGame>
-		int run()
+		template <typename GameType>
+		std::enable_if_t<
+			std::is_base_of_v<IGame, GameType>,
+			int
+		> run()
 		{
-			if ( !init<TGame>() ) return EXIT_FAILURE;
+			if ( !init<GameType>() ) return EXIT_FAILURE;
 
 			loop();
 			return EXIT_SUCCESS;
 		}
 
-		template <typename TGame>
-		bool init()
+		template <typename GameType>
+		std::enable_if_t<
+			std::is_base_of_v<IGame, GameType>,
+			bool
+		> init()
 		{
-			static_assert( 
-				std::is_base_of<IGame, TGame>::value, 
-				"Engine::init: use of an invalid Game class!" 
-			);
-
 			MEMORY_SCOPE( "Engine::init" );
 
 			//  Create game
-			auto game = new TGame();
+			auto game = new GameType();
 			return init( game );
 		}
 		bool init( IGame* game );
 		void loop();
 
-		template <typename TScene, typename ...Args>
-		void create_scene( Args&& ...args )
+		template <typename SceneType, typename ...Args>
+		std::enable_if_t<
+			std::is_base_of_v<Scene, SceneType>,
+			SceneType*
+		> create_scene( Args&& ...args )
 		{
-			static_assert( 
-				std::is_base_of<Scene, TScene>::value, 
-				"Engine::create_scene: used for a non-Scene class!"
-			);
-
-			MEMORY_SCOPE( "Engine::create_scene" );
-
 			clear_entities();
 
+			SceneType* new_scene = new SceneType( args... );
+			
 			//  Change scene
-			_scene = std::make_unique<TScene>( args... );
+			_scene = std::unique_ptr<Scene>( new_scene );
 			_scene->init();
+
+			return new_scene;
 		}
 		Scene* get_scene() const { return _scene.get(); }
 
-		template <typename TEntity, typename ...Args>
-		SharedPtr<TEntity> create_entity( Args&& ...args )
+		template <typename EntityType, typename ...Args>
+		std::enable_if_t<
+			std::is_base_of_v<Entity, EntityType>,
+			SharedPtr<EntityType>
+		> create_entity( Args&& ...args )
 		{
-			static_assert( 
-				std::is_base_of<Entity, TEntity>::value, 
-				"Engine::create_entity: used for a non-Entity class!"
-			);
-
-			MEMORY_SCOPE( "Engine::create_entity" );
-
-			auto entity = std::make_shared<TEntity>( args... );
+			SharedPtr<EntityType> entity( new EntityType( args... ) );
 			entity->init();
 			entity->setup();
 			add_entity( entity );
@@ -106,6 +103,8 @@ namespace suprengine
 		void clear_entities();
 
 		void add_timer( const Timer& timer );
+
+		bool is_running() const;
 
 		IGame* get_game() const { return _game.get(); }
 		Window* get_window() const { return _window.get(); }

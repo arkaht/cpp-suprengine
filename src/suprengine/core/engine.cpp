@@ -49,6 +49,16 @@ Engine::~Engine()
 	SDL_Quit();
 }
 
+static void* custom_imgui_alloc( std::size_t bytes, void* user_data )
+{
+	return MemoryProfiler::allocate( "ImGui", bytes );
+}
+
+static void custom_imgui_free( void* pointer, void* user_data )
+{
+	delete pointer;
+}
+
 bool Engine::init( IGame* game )
 {
 	PROFILE_SCOPE( "Engine::init" );
@@ -100,6 +110,9 @@ bool Engine::init( IGame* game )
 	//  Init imgui
 	{
 		PROFILE_SCOPE( "Engine::init::ImGui" );
+
+		//	Setup allocation functions to profile them
+		ImGui::SetAllocatorFunctions( &custom_imgui_alloc, &custom_imgui_free, NULL );
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -207,6 +220,11 @@ void Engine::clear_entities()
 void Engine::add_timer( const Timer& timer )
 {
 	_timers.emplace_back( timer );
+}
+
+bool Engine::is_running() const
+{
+	return _is_running;
 }
 
 void Engine::process_input()
