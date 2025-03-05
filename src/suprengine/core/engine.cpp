@@ -436,9 +436,6 @@ void Engine::render()
 		}
 	}
 
-	//  Render components
-	_render_batch->render();
-
 #ifdef ENABLE_VISDEBUG
 	//  Debug render entities & components
 	if ( VisDebug::is_channel_active( DebugChannel::Entity ) )
@@ -456,10 +453,10 @@ void Engine::render()
 			}
 		}
 	}
-
-	//	Debug visual shapes
-	VisDebug::render();
 #endif
+
+	//  Render components
+	_render_batch->render();
 
 	//  End rendering
 	_render_batch->end_render();

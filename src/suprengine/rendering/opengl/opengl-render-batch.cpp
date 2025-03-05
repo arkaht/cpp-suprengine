@@ -5,6 +5,7 @@
 #include <suprengine/core/engine.h>
 
 #include <suprengine/rendering/texture.h>
+#include <suprengine/tools/vis-debug.h>
 
 #include <gl/glew.h>
 
@@ -271,6 +272,11 @@ void OpenGLRenderBatch::render()
 		//	Disable options
 		glDisable( GL_BLEND );
 	}
+
+#ifdef ENABLE_VISDEBUG
+	//	Debug visual shapes
+	VisDebug::render();
+#endif
 
 	//  ImGui rendering
 	{
