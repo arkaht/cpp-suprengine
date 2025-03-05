@@ -1,13 +1,12 @@
 #pragma once
 
+#ifdef ENABLE_VISDEBUG
+
 #include <suprengine/math/vec3.h>
 #include <suprengine/math/color.h>
 #include <suprengine/math/box.h>
 #include <suprengine/utils/enum-flags.h>
 #include <suprengine/utils/usings.h>
-
-//	TODO: Move this somewhere else. Inside CMake?
-#define ENABLE_VISDEBUG
 
 namespace suprengine
 {
@@ -65,3 +64,5 @@ namespace suprengine
 		static DebugChannel active_channels;
 	};
 }
+
+#endif
