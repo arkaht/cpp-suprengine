@@ -63,10 +63,12 @@ namespace suprengine
 		void print_all_params() const;
 
 	public:
+	#ifdef ENABLE_MEMORY_PROFILER
 		static void* operator new( std::size_t bytes )
 		{
 			return MemoryProfiler::allocate( "Shader", bytes );
 		}
+	#endif
 
 	private:
 		uint32 _create_shader( uint32 type, const char* code, const char* name );

@@ -19,10 +19,12 @@ namespace suprengine
 		IGame* get_game() const { return _game; }
 
 	public:
+	#ifdef ENABLE_MEMORY_PROFILER
 		static void* operator new( std::size_t bytes )
 		{
 			return MemoryProfiler::allocate( "Scene", bytes );
 		}
+	#endif
 	
 	protected:
 		IGame* _game { nullptr };

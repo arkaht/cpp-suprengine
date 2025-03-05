@@ -1,7 +1,6 @@
 #pragma once
 
 #ifdef ENABLE_VISDEBUG
-
 #include <suprengine/math/vec3.h>
 #include <suprengine/math/color.h>
 #include <suprengine/math/box.h>
@@ -64,5 +63,4 @@ namespace suprengine
 		static DebugChannel active_channels;
 	};
 }
-
 #endif

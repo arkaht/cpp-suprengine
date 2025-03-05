@@ -171,6 +171,7 @@ struct TimelineImData
 	ImVec4 color {};
 };
 
+#ifdef ENABLE_MEMORY_PROFILER
 static void populate_memory_category_result_in_table(
 	const char* name,
 	const MemoryCategoryProfileResult& result,
@@ -221,6 +222,7 @@ static void populate_memory_category_result_in_table(
 		)
 	);
 }
+#endif
 
 void Profiler::populate_imgui()
 {
@@ -244,6 +246,7 @@ void Profiler::populate_imgui()
 	ImGui::Spacing();
 	ImGui::SeparatorText( "Memory" );
 
+#ifdef ENABLE_MEMORY_PROFILER
 	const MemoryGlobalProfileResult& memory_global_result = MemoryProfiler::get_global_result();
 
 	if ( ImGui::TreeNode( "Global Result" ) )
@@ -435,6 +438,9 @@ void Profiler::populate_imgui()
 
 		ImGui::TreePop();
 	}
+#else
+	ImGui::TextWrapped( "Compile with ENABLE_MEMORY_PROFILER to access this feature." );
+#endif
 
 	ImGui::Spacing();
 	ImGui::SeparatorText( "Time" );

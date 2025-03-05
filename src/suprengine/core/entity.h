@@ -103,10 +103,12 @@ namespace suprengine
 		int get_unique_id() const { return _unique_id; }
 
 	public:
+	#ifdef ENABLE_MEMORY_PROFILER
 		static void* operator new( std::size_t bytes )
 		{
 			return MemoryProfiler::allocate( "Entity", bytes );
 		}
+	#endif
 
 	public:
 		/*

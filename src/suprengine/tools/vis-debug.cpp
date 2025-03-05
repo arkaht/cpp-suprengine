@@ -1,6 +1,5 @@
-#include "vis-debug.h"
-
 #ifdef ENABLE_VISDEBUG
+#include "vis-debug.h"
 
 #include <suprengine/core/engine.h>
 #include <suprengine/core/assets.h>
@@ -199,5 +198,4 @@ size_t VisDebug::get_shapes_memory_usage()
 		 + sizeof( VisDebugSphere ) * spheres.capacity()
 		 + sizeof( VisDebugLine ) * lines.capacity();
 }
-
 #endif

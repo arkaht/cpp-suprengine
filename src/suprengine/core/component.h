@@ -33,10 +33,12 @@ namespace suprengine
 		int get_priority_order() const;
 
 	public:
+	#ifdef ENABLE_MEMORY_PROFILER
 		static void* operator new( std::size_t bytes )
 		{
 			return MemoryProfiler::allocate( "Component", bytes );
 		}
+	#endif
 		
 	public:
 		/*

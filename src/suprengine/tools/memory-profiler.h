@@ -1,10 +1,15 @@
 #pragma once
 
+#ifdef ENABLE_MEMORY_PROFILER
+#define MEMORY_SCOPE( name ) ScopedMemoryProfile _scoped_memory_profile##__LINE__( name )
+#else
+#define MEMORY_SCOPE( name )
+#endif
+
+#ifdef ENABLE_MEMORY_PROFILER
 #include <suprengine/utils/usings.h>
 
 #include <map>
-
-#define MEMORY_SCOPE( name ) ScopedMemoryProfile _scoped_memory_profile##__LINE__( name )
 
 namespace suprengine
 {
@@ -86,3 +91,4 @@ namespace suprengine
 		static void _unset_current_category();
 	};
 }
+#endif

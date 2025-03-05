@@ -1,3 +1,4 @@
+#ifdef ENABLE_MEMORY_PROFILER
 #include "memory-profiler.h"
 
 #include <suprengine/core/engine.h>
@@ -218,3 +219,4 @@ void MemoryProfiler::_unset_current_category()
 {
 	current_category = nullptr;
 }
+#endif
