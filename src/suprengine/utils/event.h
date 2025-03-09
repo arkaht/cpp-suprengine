@@ -80,6 +80,18 @@ namespace suprengine
 
 			return _add_listener( object_address, func_address, callback );
 		}
+		/*
+		 * Bind a class method of a given object to the event.
+		 * This version allows to bind to an object method inherited from another class.
+		 * Trying to bind the same method with the same object will fail to add the callback
+		 * and return false.
+		 * Returns whenever the method has been bound.
+		 */
+		template <typename ClassType, typename ObjectType>
+		std::enable_if_t<std::is_base_of_v<ClassType, ObjectType>, bool> listen( class_method<ClassType> func, ObjectType* object )
+		{
+			return listen( func, static_cast<ClassType*>( object ) );
+		}
 
 		/*
 		 * Un-bind a free function from the event.
