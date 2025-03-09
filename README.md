@@ -8,9 +8,11 @@ It uses **OpenGL 3.3** for rendering and **SDL2** for window and inputs handling
 + C++20 compiler
 + OpenGL 3.3.0
 + CMake 3.11
+
 ### Libraries
 + [SDL2](https://github.com/libsdl-org/SDL) with **TTF**, **Image** and **Mixer** (the latter is not used for now)
 + [GLEW](https://github.com/nigels-com/glew)
++ [assimp](https://github.com/assimp/assimp)
 + [rapidjson](https://github.com/Tencent/rapidjson)
 + [ImGui](https://github.com/ocornut/imgui/)
 + [Curve-X](https://github.com/arkaht/cpp-curve-x)
