@@ -24,7 +24,7 @@ It uses **OpenGL 3.3** for rendering and **SDL2** for window and inputs handling
 + CPU and Memory profilers accessible in-game.
 + Visual debugging visible in-game and toggable thanks to channels.
 + Default assets such as 3D primitives (i.e. cube, cylinder, sphere, arrow), shaders and textures.
-+ Basic 3D rendering using OpenGL with shaders and ambient lighting.
++ Basic 3D rendering using OpenGL with shaders, ambient lighting and MSAA support.
 + Basic assets manager, input manager, collision detection and raycasts.
 + Built-in **ImGui** for game tooling.
 
