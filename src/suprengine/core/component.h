@@ -1,7 +1,5 @@
 #pragma once
 
-#include <suprengine/core/render-batch.h>
-
 #include <suprengine/utils/shareable.h>
 
 #include <suprengine/tools/memory-profiler.h>
@@ -10,6 +8,7 @@ namespace suprengine
 {
 	class Entity;
 	class Transform;
+	class RenderBatch;
 
 	class Component : public Shareable<Component>
 	{

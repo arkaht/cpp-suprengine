@@ -2,7 +2,10 @@
 
 #include <suprengine/core/component.h>
 
+#include <suprengine/math/color.h>
+
 #include <suprengine/utils/ray.h>
+#include <suprengine/utils/event.h>
 
 #include <set>
 

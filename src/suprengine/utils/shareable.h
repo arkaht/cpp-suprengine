@@ -1,6 +1,7 @@
 #pragma once
 
 #include "usings.h"
+#include "memory.h"
 
 namespace suprengine
 {

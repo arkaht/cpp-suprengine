@@ -2,6 +2,7 @@
 
 #include <suprengine/core/component.h>
 
+#include <suprengine/math/rect.h>
 #include <suprengine/math/mtx4.h>
 
 namespace suprengine
