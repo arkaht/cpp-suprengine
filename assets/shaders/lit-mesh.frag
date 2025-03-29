@@ -1,8 +1,9 @@
 #version 330
 
-uniform vec4 u_modulate;
 uniform sampler2D u_texture;
-uniform vec4 u_source_rect;
+
+uniform vec4 u_modulate;
+uniform vec2 u_tiling;
 
 uniform vec4 u_ambient_color;
 uniform vec3 u_ambient_direction;
@@ -14,7 +15,7 @@ out vec4 out_color;
 
 void main() 
 {
-	out_color = texture( u_texture, uv ) * u_modulate;
+	out_color = texture( u_texture, uv * u_tiling ) * u_modulate;
 
 	//  lighting
 	float diffuse = max( 

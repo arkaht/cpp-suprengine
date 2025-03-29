@@ -3,6 +3,8 @@
 #include <suprengine/utils/usings.h>
 #include <suprengine/utils/memory.h>
 
+#include <suprengine/math/vec2.h>
+
 #include <vector>
 
 namespace suprengine
@@ -28,6 +30,8 @@ namespace suprengine
 
 	public:
 		std::string shader_name {};
+		Vec2 tiling = Vec2::one;
+		bool should_cull_faces = true;
 
 	private:
 		VertexArray* _vertex_array { nullptr };

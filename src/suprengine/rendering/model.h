@@ -9,7 +9,10 @@ namespace suprengine
 	public:
 		std::string shader_name;
 
-		Model( std::vector<Mesh*>&& meshes, std::string shader_name )
+		Model( Mesh* mesh, rconst_str shader_name )
+			: _meshes( { mesh } ), shader_name( shader_name )
+		{}
+		Model( const std::vector<Mesh*>& meshes, rconst_str shader_name )
 			: _meshes( meshes ), shader_name( shader_name )
 		{}
 

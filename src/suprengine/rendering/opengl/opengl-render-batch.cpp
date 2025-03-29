@@ -485,6 +485,7 @@ void OpenGLRenderBatch::draw_model(
 		//	Update mesh-specific uniforms
 		shader->set_mtx4( "u_world_transform", matrix );
 		shader->set_color( "u_modulate", color );
+		shader->set_vec2( "u_tiling", mesh->tiling );
 
 		//	Draw
 		VertexArray* vertex_array = mesh->get_vertex_array();
@@ -493,7 +494,18 @@ void OpenGLRenderBatch::draw_model(
 		{
 			texture->activate();
 		}
+
+		if ( !mesh->should_cull_faces )
+		{
+			glDisable( GL_CULL_FACE );
+		}
+
 		_draw_elements( vertex_array->get_indices_count() );
+
+		if ( !mesh->should_cull_faces )
+		{
+			glEnable( GL_CULL_FACE );
+		}
 	}
 }
 
