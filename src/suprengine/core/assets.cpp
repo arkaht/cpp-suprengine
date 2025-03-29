@@ -344,6 +344,8 @@ SharedPtr<Curve> Assets::load_curve(
 
 SharedPtr<Curve> Assets::get_curve( rconst_str name )
 {
+	if ( name.empty() ) return nullptr;
+
 	auto itr = _curves.find( name );
 	if ( itr == _curves.end() )
 	{
