@@ -161,7 +161,15 @@ static SharedPtr<Shader> load_shader_from_file(
 	return shader;
 }
 
-SharedPtr<Shader> Assets::load_shader( rconst_str name, rconst_str vtx_filename, rconst_str frg_filename, rconst_str tsc_filename, rconst_str tse_filename, rconst_str geo_filename, bool append_resources_path )
+SharedPtr<Shader> Assets::load_shader(
+	rconst_str name,
+	rconst_str vtx_filename,
+	rconst_str frg_filename,
+	rconst_str tsc_filename,
+	rconst_str tse_filename,
+	rconst_str geo_filename,
+	bool append_resources_path
+)
 {
 	Logger::info(
 		"Loading shader '%s' with vertex '%s' and fragment '%s'",
