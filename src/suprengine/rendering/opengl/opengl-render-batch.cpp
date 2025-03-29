@@ -714,8 +714,10 @@ void OpenGLRenderBatch::_load_assets()
 		TEXTURE_MEDIUM_GRID,
 		"assets/suprengine/textures/medium-grid.png"
 	);
-
-	SharedPtr<Texture> texture = Assets::get_texture( TEXTURE_MEDIUM_GRID );
+	SharedPtr<Texture> texture = Assets::load_texture(
+		TEXTURE_WHITE,
+		"assets/suprengine/textures/white.png"
+	);
 
 	//	Load models
 	SharedPtr<Model> arrow_model = Assets::load_model(
@@ -745,6 +747,13 @@ void OpenGLRenderBatch::_load_assets()
 		SHADER_LIT_MESH
 	);
 	sphere_model->get_mesh( 0 )->add_texture( texture );
+
+	SharedPtr<Model> plane_model = Assets::load_model(
+		MESH_PLANE,
+		"assets/suprengine/models/plane.fbx",
+		SHADER_LIT_MESH
+	);
+	plane_model->get_mesh( 0 )->add_texture( texture );
 }
 
 void OpenGLRenderBatch::_create_framebuffers( int width, int height )

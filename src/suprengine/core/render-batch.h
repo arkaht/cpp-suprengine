@@ -16,12 +16,16 @@
 namespace suprengine
 {
 	static inline const char* const SHADER_LIT_MESH = "suprengine::lit-mesh";
+
+	static inline const char* const TEXTURE_WHITE = "suprengine::white";
 	static inline const char* const TEXTURE_LARGE_GRID = "suprengine::large-grid";
 	static inline const char* const TEXTURE_MEDIUM_GRID = "suprengine::medium-grid";
+
 	static inline const char* const MESH_ARROW = "suprengine::arrow";
 	static inline const char* const MESH_CUBE = "suprengine::cube";
 	static inline const char* const MESH_CYLINDER = "suprengine::cylinder";
 	static inline const char* const MESH_SPHERE = "suprengine::sphere";
+	static inline const char* const MESH_PLANE = "suprengine::plane";
 
 	class Engine;
 	class Renderer;
