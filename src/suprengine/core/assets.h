@@ -38,6 +38,7 @@ namespace suprengine
 		static SharedPtr<Shader> load_shader( rconst_str name, rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path = "", rconst_str tse_path = "", rconst_str geo_path = "", bool append_resources_path = true );
 		static SharedPtr<Shader> get_shader( rconst_str name );
 
+		static SharedPtr<Model> add_model( rconst_str name, SharedPtr<Model> model );
 		static SharedPtr<Model> load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
 		static SharedPtr<Model> get_model( rconst_str name );
 

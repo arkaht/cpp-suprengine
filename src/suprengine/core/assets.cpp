@@ -185,6 +185,12 @@ SharedPtr<Shader> Assets::get_shader( rconst_str name )
 	return (*itr).second;
 }
 
+SharedPtr<Model> Assets::add_model( rconst_str name, SharedPtr<Model> model )
+{
+	_models[name] = model;
+	return model;
+}
+
 SharedPtr<Model> Assets::load_model( rconst_str name, rconst_str path, rconst_str shader_name )
 {
 	//	Set import flags
