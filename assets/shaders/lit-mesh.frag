@@ -17,10 +17,10 @@ void main()
 {
 	out_color = texture( u_texture, uv * u_tiling ) * u_modulate;
 
-	//  lighting
-	float diffuse = max( 
-		dot( normalize( normal ), u_ambient_direction ), 
-		0.0f 
+	//  Lighting
+	float diffuse = -min( 
+		dot( normal, u_ambient_direction ),
+		0.0f
 	);
-	out_color *= u_ambient_color * ( u_ambient_scale + diffuse );
+	out_color = mix( u_ambient_color * u_ambient_scale, out_color, diffuse );
 }
