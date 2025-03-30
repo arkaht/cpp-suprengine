@@ -19,6 +19,7 @@ namespace suprengine
 
 		AI				= 1 << 3,
 		Pathfinding		= 1 << 4,
+		Lighting		= 1 << 5,
 
 		All				= 0xFF,
 	};
