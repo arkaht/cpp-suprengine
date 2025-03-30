@@ -80,6 +80,7 @@ namespace suprengine
 		void set_ambient_direction( const Vec3& direction );
 		void set_ambient_scale( float scale );
 		void set_ambient_color( Color color );
+		AmbientLightInfos get_ambient_infos() const;
 
 		void add_renderer( SharedPtr<Renderer> renderer );
 		void remove_renderer( SharedPtr<Renderer> renderer );

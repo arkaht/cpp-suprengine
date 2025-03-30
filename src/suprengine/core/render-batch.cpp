@@ -44,6 +44,11 @@ void RenderBatch::set_ambient_color( Color color )
 	_ambient_light.color = color;
 }
 
+AmbientLightInfos RenderBatch::get_ambient_infos() const
+{
+	return _ambient_light;
+}
+
 void RenderBatch::add_renderer( SharedPtr<Renderer> renderer )
 {
 	int order = renderer->get_priority_order();
