@@ -124,6 +124,8 @@ namespace suprengine
 			};
 		}
 
+		static float dot( const Vec2& a, const Vec2& b );
+
 		static Vec2 approach( const Vec2& current, const Vec2& target, float delta )
 		{
 			return Vec2 {
