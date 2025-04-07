@@ -330,6 +330,7 @@ void Engine::update( float dt )
 	_is_updating = true;
 	if ( _scene )
 	{
+		PROFILE_SCOPE( "Engine::update::scene" );
 		_scene->update( dt );
 	}
 
