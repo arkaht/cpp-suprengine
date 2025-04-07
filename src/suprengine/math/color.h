@@ -2,6 +2,8 @@
 
 #include "math.h"
 
+#include <suprengine/utils/assert.h>
+
 #include <SDL.h>
 
 namespace suprengine
@@ -43,11 +45,13 @@ namespace suprengine
 				hex = hex.erase( 0, 1 );
 			}
 
+			ASSERT( hex.length() >= 6 );
+
 			return Color {
 				math::from_hex( hex.substr( 0, 2 ) ),
 				math::from_hex( hex.substr( 2, 2 ) ),
 				math::from_hex( hex.substr( 4, 2 ) ),
-				math::from_hex( hex.substr( 6, 2 ) ),
+				hex.length() > 6 ? math::from_hex( hex.substr( 6, 2 ) ) : (unsigned char)255,
 			};
 		}
 
