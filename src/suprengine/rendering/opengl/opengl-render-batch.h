@@ -56,14 +56,21 @@ namespace suprengine
 			SharedPtr<Texture> texture, 
 			const Vec2& origin,
 			const Rect& src_rect, 
-			const Color& color = Color::white 
+			const Color& color = Color::white
 		) override;
 
+		void draw_mesh(
+			const Mtx4& matrix,
+			const Mesh* mesh,
+			SharedPtr<Shader> shader,
+			SharedPtr<Texture> texture,
+			const Color& color = Color::white
+		) override;
 		void draw_mesh( 
 			const Mtx4& matrix,
 			Mesh* mesh, 
 			int texture_id, 
-			const Color& color 
+			const Color& color = Color::white
 		) override;
 		void draw_model( 
 			const Mtx4& matrix, 

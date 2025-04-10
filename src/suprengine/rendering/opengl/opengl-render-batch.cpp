@@ -411,12 +411,15 @@ void OpenGLRenderBatch::draw_texture(
 	_draw_elements( 6 );
 }
 
-void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color )
+void OpenGLRenderBatch::draw_mesh(
+	const Mtx4& matrix,
+	const Mesh* mesh,
+	SharedPtr<Shader> shader,
+	SharedPtr<Texture> texture,
+	const Color& color
+)
 {
 	//	Update uniforms
-	SharedPtr<Shader> shader = mesh->get_shader();
-	ASSERT_MSG( shader != nullptr, "Shader is invalid" );
-
 	shader->activate();
 
 	//	Prepare shader only once per frame
@@ -437,8 +440,19 @@ void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_i
 	//	Draw
 	VertexArray* vertex_array = mesh->get_vertex_array();
 	vertex_array->activate();
-	mesh->get_texture( texture_id )->activate();
+	texture->activate();
 	_draw_elements( vertex_array->get_indices_count() );
+}
+
+void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color )
+{
+	SharedPtr<Shader> shader = mesh->get_shader();
+	ASSERT_MSG( shader != nullptr, "Shader is invalid" );
+	
+	SharedPtr<Texture> texture = mesh->get_texture( texture_id );
+	ASSERT_MSG( shader != nullptr, "Texture is invalid" );
+
+	draw_mesh( matrix, mesh, shader, texture, color );
 }
 
 void OpenGLRenderBatch::draw_model(

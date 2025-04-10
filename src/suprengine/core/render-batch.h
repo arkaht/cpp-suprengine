@@ -127,6 +127,13 @@ namespace suprengine
 		) = 0;
 
 		virtual void draw_mesh( 
+			const Mtx4& matrix,
+			const Mesh* mesh,
+			const SharedPtr<Shader> shader,
+			const SharedPtr<Texture> texture,
+			const Color& color = Color::white
+		) = 0;
+		virtual void draw_mesh( 
 			const Mtx4& matrix, 
 			Mesh* mesh, 
 			int texture_id = 0, 
