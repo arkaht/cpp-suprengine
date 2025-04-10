@@ -31,6 +31,8 @@ namespace suprengine
 		explicit Vec3( const Vec2& vec, float z = 0.0f );
 		explicit Vec3( const Vec4& vec );
 
+		Vec3& operator=( float value );
+
 	public:
 		/*  
 		 * Returns the vector squared magnitude within 3-dimensions.

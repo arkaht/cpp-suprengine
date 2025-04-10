@@ -35,6 +35,12 @@ Vec3::Vec3( const Vec4& vec )
 	: x( vec.x ), y( vec.y ), z( vec.z )
 {}
 
+Vec3& Vec3::operator=( float value )
+{
+	x = y = z = value;
+	return *this;
+}
+
 float Vec3::length_sqr() const
 {
 	return x * x + y * y + z * z;
