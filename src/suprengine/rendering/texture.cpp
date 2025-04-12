@@ -74,7 +74,7 @@ Texture::Texture( rconst_str path, SDL_Surface* surface, const TextureParams& pa
 		/* level */ 0,
 		GL_RGBA,
 		surface->w, surface->h,
-		/* boder */ 0,
+		/* border */ 0,
 		format, GL_UNSIGNED_BYTE,
 		surface->pixels
 	);
