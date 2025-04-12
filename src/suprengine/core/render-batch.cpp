@@ -39,6 +39,11 @@ void RenderBatch::set_ambient_scale( float scale )
 	_ambient_light.scale = scale;
 }
 
+void RenderBatch::set_ambient_min_brightness( float brightness )
+{
+	_ambient_light.min_brightness = brightness;
+}
+
 void RenderBatch::set_ambient_color( Color color )
 {
 	_ambient_light.color = color;

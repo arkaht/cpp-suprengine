@@ -433,8 +433,9 @@ void OpenGLRenderBatch::draw_mesh(
 
 		//	Ambient lighting
 		shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
-		shader->set_float( "u_ambient_scale", _ambient_light.scale );
 		shader->set_color( "u_ambient_color", _ambient_light.color );
+		shader->set_float( "u_ambient_scale", _ambient_light.scale );
+		shader->set_float( "u_ambient_min_brightness", _ambient_light.min_brightness );
 	}
 
 	//	Update mesh-specific uniforms
@@ -496,8 +497,9 @@ void OpenGLRenderBatch::draw_model(
 
 			//	Ambient lighting
 			shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
-			shader->set_float( "u_ambient_scale", _ambient_light.scale );
 			shader->set_color( "u_ambient_color", _ambient_light.color );
+			shader->set_float( "u_ambient_scale", _ambient_light.scale );
+			shader->set_float( "u_ambient_min_brightness", _ambient_light.min_brightness );
 		}
 
 		//	Update mesh-specific uniforms

@@ -46,6 +46,7 @@ namespace suprengine
 		Color color = Color::white;
 		Vec3 direction = Vec3::zero;
 		float scale = 1.0f;
+		float min_brightness = 0.2f;
 	};
 
 	enum class VSyncMode
@@ -78,8 +79,9 @@ namespace suprengine
 		void set_background_color( Color color );
 
 		void set_ambient_direction( const Vec3& direction );
-		void set_ambient_scale( float scale );
 		void set_ambient_color( Color color );
+		void set_ambient_scale( float scale );
+		void set_ambient_min_brightness( float brightness );
 		AmbientLightInfos get_ambient_infos() const;
 
 		void add_renderer( SharedPtr<Renderer> renderer );
