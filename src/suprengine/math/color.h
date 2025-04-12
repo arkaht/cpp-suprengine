@@ -18,7 +18,7 @@ namespace suprengine
 
 		uint8_t r = 255u, g = 255u, b = 255u, a = 255u;
 
-		static Color from_pixel( uint32_t pixel )
+		static constexpr Color from_pixel( uint32_t pixel )
 		{
 			return Color {
 				(uint8_t) pixel,
@@ -28,7 +28,7 @@ namespace suprengine
 			};
 		}
 		//  Big endian version of Color::from_pixel()
-		static Color from_0x( uint32_t hex )
+		static constexpr Color from_0x( uint32_t hex )
 		{
 			return Color {
 				(uint8_t) ( hex >> 24 ),
