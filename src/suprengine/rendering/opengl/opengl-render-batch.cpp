@@ -247,11 +247,15 @@ void OpenGLRenderBatch::render()
 		glEnable( GL_DEPTH_TEST );
 		glDepthFunc( GL_LEQUAL );
 
+		glEnable( GL_BLEND );
+		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
 		_render_phase( RenderPhase::World );
 
 		//	Disable options
 		glDisable( GL_DEPTH_TEST );
 		glDisable( GL_CULL_FACE );
+		glDisable( GL_BLEND );
 	}
 
 	//	Draw viewport renderers

@@ -15,5 +15,4 @@ void main()
 	);
 
 	out_color = texture( u_texture, suv ) * u_modulate;
-	if ( out_color.a < 0.1f ) discard;
 }
