@@ -26,6 +26,7 @@ namespace suprengine
 
 	public:
 		SharedPtr<Model> model = nullptr;
+		//	TODO: Fix texture index not working.
 		int texture_id = 0;
 		std::string shader_name {};
 	};

@@ -74,7 +74,7 @@ namespace suprengine
 		) override;
 		void draw_model( 
 			const Mtx4& matrix, 
-			const SharedPtr<Model>& model, 
+			const SharedPtr<Model>& model,
 			rconst_str shader_name,
 			const Color& color = Color::white
 		) override;

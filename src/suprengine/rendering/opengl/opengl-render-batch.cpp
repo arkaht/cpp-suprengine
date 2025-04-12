@@ -423,6 +423,9 @@ void OpenGLRenderBatch::draw_mesh(
 	const Color& color
 )
 {
+	ASSERT_MSG( mesh != nullptr, "Shader is invalid" );
+	ASSERT_MSG( shader != nullptr, "Shader is invalid" );
+
 	//	Update uniforms
 	shader->activate();
 
@@ -441,22 +444,35 @@ void OpenGLRenderBatch::draw_mesh(
 	//	Update mesh-specific uniforms
 	shader->set_mtx4( "u_world_transform", matrix );
 	shader->set_color( "u_modulate", color );
+	shader->set_vec2( "u_tiling", mesh->tiling );
 
-	//	Draw
 	VertexArray* vertex_array = mesh->get_vertex_array();
 	vertex_array->activate();
-	texture->activate();
+
+	//	Activate texture
+	if ( texture != nullptr )
+	{
+		texture->activate();
+	}
+
+	if ( !mesh->should_cull_faces )
+	{
+		glDisable( GL_CULL_FACE );
+	}
+
+	//	Draw
 	_draw_elements( vertex_array->get_indices_count() );
+
+	if ( !mesh->should_cull_faces )
+	{
+		glEnable( GL_CULL_FACE );
+	}
 }
 
 void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color )
 {
 	SharedPtr<Shader> shader = mesh->get_shader();
-	ASSERT_MSG( shader != nullptr, "Shader is invalid" );
-	
 	SharedPtr<Texture> texture = mesh->get_texture( texture_id );
-	ASSERT_MSG( shader != nullptr, "Texture is invalid" );
-
 	draw_mesh( matrix, mesh, shader, texture, color );
 }
 
@@ -486,46 +502,8 @@ void OpenGLRenderBatch::draw_model(
 				: mesh->get_shader();
 		}
 
-		//	Update uniforms
-		ASSERT_MSG( shader != nullptr, "Shader is invalid" );
-
-		shader->activate();
-
-		if ( shader->prepare( _render_tick ) )
-		{
-			shader->set_mtx4( "u_view_projection", _view_matrix );
-
-			//	Ambient lighting
-			shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
-			shader->set_color( "u_ambient_color", _ambient_light.color );
-			shader->set_float( "u_ambient_scale", _ambient_light.scale );
-			shader->set_float( "u_ambient_min_brightness", _ambient_light.min_brightness );
-		}
-
-		//	Update mesh-specific uniforms
-		shader->set_mtx4( "u_world_transform", matrix );
-		shader->set_color( "u_modulate", color );
-		shader->set_vec2( "u_tiling", mesh->tiling );
-
-		//	Draw
-		VertexArray* vertex_array = mesh->get_vertex_array();
-		vertex_array->activate();
-		if ( SharedPtr<Texture> texture = mesh->get_texture( 0 ) )
-		{
-			texture->activate();
-		}
-
-		if ( !mesh->should_cull_faces )
-		{
-			glDisable( GL_CULL_FACE );
-		}
-
-		_draw_elements( vertex_array->get_indices_count() );
-
-		if ( !mesh->should_cull_faces )
-		{
-			glEnable( GL_CULL_FACE );
-		}
+		//	Draw mesh
+		draw_mesh( matrix, mesh, shader, mesh->get_texture( 0 ), color );
 	}
 }
 
