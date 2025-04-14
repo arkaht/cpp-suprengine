@@ -551,8 +551,12 @@ void Profiler::populate_imgui()
 		ImGui::TreePop();
 	}
 
+	ImGui::SetNextItemOpen( true, ImGuiCond_FirstUseEver );
 	if ( ImGui::TreeNode( "Timelines" ) )
 	{
+		PROFILE_SCOPE( "Profiler::populate_imgui::Timelines" );
+
+		//	TODO: Optimize this code, especially with a ton of values
 		if ( ImPlot::BeginPlot( "Timelines", ImVec2 { -1.0f, 250.0f } ) )
 		{
 			ImPlot::SetupAxes( "Profile Time (s)", "Result Time (ms)", ImPlotAxisFlags_AutoFit );
