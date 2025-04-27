@@ -1,8 +1,12 @@
+cmake_minimum_required(VERSION 3.11)
+
 project(TEST0)
+set(CMAKE_CXX_STANDARD 20)
+set(TEST0_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/")
 set(TEST0_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 
 #  Find source files
-file(GLOB_RECURSE TEST0_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+file(GLOB_RECURSE TEST0_SOURCES CONFIGURE_DEPENDS "${TEST0_INCLUDE}/*.cpp")
 
 #  Declare test project
 add_executable(TEST0)
