@@ -8,7 +8,11 @@
 
 #include <suprengine/tools/vis-debug.h>
 
+#include <suprengine/utils/random.h>
+
 #include "tests/unit-test-event.h"
+
+#include <GL/glew.h>
 
 using namespace test;
 
@@ -18,7 +22,7 @@ void GameScene::init()
 
 	auto& engine = Engine::instance();
 
-	auto cube_model = Assets::get_model( MESH_CUBE );
+	auto cube_model = Assets::get_model( "cube" );
 	auto cylinder_model = Assets::get_model( MESH_CYLINDER );
 	auto sphere_model = Assets::get_model( MESH_SPHERE );
 
@@ -27,10 +31,10 @@ void GameScene::init()
 	cool_model->get_mesh( 0 )->add_texture( texture );
 
 	//  setup ground
-	auto ground = engine.create_entity<Entity>();
+	/*auto ground = engine.create_entity<Entity>();
 	ground->transform->scale = Vec3 { 100.0f, 100.0f, 1.0f };
 	ground->create_component<ModelRenderer>( cube_model, SHADER_LIT_MESH );
-	ground_collider = ground->create_component<BoxCollider>( Box::one );
+	ground_collider = ground->create_component<BoxCollider>( Box::one );*/
 
 	auto player = engine.create_entity<Entity>();
 
@@ -49,20 +53,23 @@ void GameScene::init()
 	//cylinder->transform->location = Vec3 { 4.0f, 0.0f, 4.0f };
 	//cylinder->create_component<ModelRenderer>( cylinder_model, SHADER_LIT_MESH, Color::red );
 	
-	auto mesh = engine.create_entity<Entity>();
+	/*auto mesh = engine.create_entity<Entity>();
 	mesh->transform->location = Vec3 { 0.0f, 0.0f, 5.0f };
 	mesh->create_component<SphereCollider>( 2.0f );
-	model_renderer = mesh->create_component<ModelRenderer>( cool_model, SHADER_LIT_MESH );
+	model_renderer = mesh->create_component<ModelRenderer>( cool_model, SHADER_LIT_MESH );*/
 
 	//  setup camera
 	auto camera_owner = engine.create_entity<CameraDemo>( player );
 	camera_owner->transform->location = Vec3 { 5.0f, 3.0f, 7.0f };
-	camera_owner->transform->look_at( mesh->transform->location );
+	//camera_owner->transform->look_at( mesh->transform->location );
 	auto camera = camera_owner->create_component<Camera>( CameraProjectionSettings {} );
 	camera->activate();
 
 	RenderBatch* render_batch = _game->get_engine()->get_render_batch();
-	render_batch->set_ambient_direction( Vec3 { 0.0f, 0.0f, 1.0f } );
+	render_batch->set_ambient_direction( -Vec3::up );
+	render_batch->set_ambient_scale( 0.1f );
+
+	VisDebug::active_channels = DebugChannel::Entity;
 }
 
 void GameScene::update( float dt )
@@ -70,20 +77,70 @@ void GameScene::update( float dt )
 	auto engine = _game->get_engine();
 	auto inputs = engine->get_inputs();
 	float time = engine->get_updater()->get_accumulated_seconds();
+	
+	Vec3 pos { 0.0f, 0.0f, 5.0f };
+	/*VisDebug::add_box(
+		pos + Vec3 { 0.0f, 0.0f, math::sin( time * 5.0f ) * 0.5f },
+		Quaternion( DegAngles { time * 30.0f, time * 60.0f, time * 90.0f } ),
+		Box::one * math::abs( math::cos( time * 1.0f ) * 1.5f ),
+		Color::white
+	);
+	pos.x += 5.0f;
 
 	VisDebug::add_line(
-		Vec3 {
+		pos + Vec3 {
 			0.0f,
 			0.0f,
-			math::sin( time * 2.0f ) * 10.0f
+			math::sin( time * 2.0f ) * 2.0f
 		},
-		Vec3 {
+		pos + Vec3 {
 			math::cos( time ) * 10.0f,
 			math::sin( time ) * 10.0f,
-			10.0f
+			2.0f
 		},
 		Color::red
 	);
+	pos.x += 5.0f;*/
+
+	static float spawn_time = 0.0f;
+	if ( ( spawn_time -= dt ) < 0.0f )
+	{
+		for ( int i = 0; i < 10; i++ )
+		{
+			const float lifetime = random::generate( 0.5f, 1.5f );
+			const Vec3 bounds = Vec3 { 15.0f, 5.0f, 5.0f };
+			const Vec3 location = pos + random::generate_location( Box { -bounds, bounds } );
+			switch ( random::generate( 0, 2 ) )
+			{
+				case 0:
+					VisDebug::add_sphere(
+						location,
+						random::generate( 1.0f, 3.0f ),
+						random::generate_color(),
+						lifetime
+					);
+					break;
+				case 1:
+					VisDebug::add_box( 
+						location,
+						random::generate_rotation(),
+						Box::half * random::generate( 0.1f, 2.0f ),
+						random::generate_color(),
+						lifetime
+					);
+					break;
+				case 2:
+					VisDebug::add_line(
+						location,
+						location + random::generate_location( Box::one * random::generate( 1.0f, 10.0f ) ),
+						random::generate_color(),
+						lifetime
+					);
+					break;
+			}
+		}
+		spawn_time = 0.3f;
+	}
 
 	RenderBatch* render_batch = engine->get_render_batch();
 	/*render_batch->set_ambient_direction(
@@ -94,22 +151,24 @@ void GameScene::update( float dt )
 		}
 	);*/
 
-	model_renderer->modulate = Color { 
-		(unsigned char)( 222 + cosf( time ) * 33 ),
-		(unsigned char)( 222 + sinf( time ) * 33 ),
-		(unsigned char)( 222 + cosf( time ) * 33 ),
-	};
-	model_renderer->transform->set_location( 
-		Vec3 { 0.0f, 0.0f, 5.0f + sinf( time ) * 0.5f } );
-	model_renderer->transform->set_rotation( 
-		model_renderer->transform->rotation + Quaternion( DegAngles { 0.0f, 35.0f * dt, 0.0f } ) );
-
-	VisDebug::add_box(
-		Vec3 { 0.0f, 0.0f, 1.0f + math::sin( time * 5.0f ) * 0.5f },
-		Quaternion( DegAngles { time * 30.0f, time * 60.0f, time * 90.0f } ),
-		Box::one,
-		Color::white
-	);
+	if ( model_renderer )
+	{
+		model_renderer->modulate = Color { 
+			(unsigned char)( 222 + cosf( time ) * 33 ),
+			(unsigned char)( 222 + sinf( time ) * 33 ),
+			(unsigned char)( 222 + cosf( time ) * 33 ),
+		};
+		model_renderer->transform->set_location( 
+			Vec3 {
+				0.0f,
+				0.0f,
+				5.0f + sinf( time ) * 0.5f
+			}
+		);
+		model_renderer->transform->set_rotation( 
+			model_renderer->transform->rotation + Quaternion( DegAngles { 0.0f, 35.0f * dt, 0.0f } )
+		);
+	}
 
 	if ( inputs->is_key_just_pressed( SDL_SCANCODE_F ) )
 	{
