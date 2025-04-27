@@ -142,6 +142,8 @@ void UnitTestEvent::run()
 	ASSERT( test_event.get_listeners_count() == 1 + LAMBDAS_COUNT );
 
 	test_event.invoke( 4 );
+
+	printf( "UnitTest: All Passed!\n" );
 }
 
 void UnitTestEvent::_listener1( int input )
