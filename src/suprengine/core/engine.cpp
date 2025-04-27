@@ -74,7 +74,7 @@ bool Engine::init( IGame* game )
 	_game = std::unique_ptr<IGame>( game );
 
 	//  Get game infos
-	auto infos = _game->get_infos();
+	const GameInfos infos = _game->get_infos();
 
 	//  Init window
 	{
@@ -83,7 +83,8 @@ bool Engine::init( IGame* game )
 		_window = std::make_unique<Window>( 
 			infos.title,
 			infos.width,
-			infos.height
+			infos.height,
+			infos.window_mode
 		);
 	}
 

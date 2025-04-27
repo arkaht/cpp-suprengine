@@ -11,6 +11,7 @@ namespace suprengine
 	enum class WindowMode
 	{
 		Windowed,
+		BorderlessWindowed,
 		Fullscreen,
 		BorderlessFullscreen,
 	};
@@ -18,7 +19,7 @@ namespace suprengine
 	class Window
 	{
 	public:
-		Window( const std::string& title, int width, int height );
+		Window( const std::string& title, int width, int height, WindowMode mode = WindowMode::Windowed );
 		Window( const Window& ) = delete;
 		Window& operator=( const Window& ) = delete;
 		~Window();

@@ -6,7 +6,7 @@
 
 using namespace suprengine;
 
-Window::Window( const std::string& title, int width, int height  ) 
+Window::Window( const std::string& title, int width, int height, WindowMode mode ) 
 	:	_title( title )
 {
 	_size.x = static_cast<float>( width );
@@ -21,6 +21,11 @@ Window::Window( const std::string& title, int width, int height  )
 	ASSERT_MSG( _sdl_window != nullptr, "Window couldn't be created!" );
 
 	_current_size = _size;
+
+	if ( mode != WindowMode::Windowed )
+	{
+		set_mode( mode );
+	}
 }
 
 Window::~Window()
@@ -42,6 +47,7 @@ void Window::set_mode( WindowMode mode )
 		case WindowMode::Fullscreen:
 			SDL_SetWindowFullscreen( _sdl_window, 0 );
 			break;
+		case WindowMode::BorderlessWindowed:
 		case WindowMode::BorderlessFullscreen:
 			SDL_SetWindowBordered( _sdl_window, SDL_TRUE );
 			break;
@@ -50,6 +56,8 @@ void Window::set_mode( WindowMode mode )
 	//	Set current mode
 	switch ( mode )
 	{
+		case WindowMode::BorderlessWindowed:
+			SDL_SetWindowBordered( _sdl_window, SDL_FALSE );
 		case WindowMode::Windowed:
 			set_size( _size, false );
 			SDL_SetWindowPosition( _sdl_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED );

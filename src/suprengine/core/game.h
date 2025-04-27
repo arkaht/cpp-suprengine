@@ -14,6 +14,7 @@ namespace suprengine
 		std::string title;
 		int width;
 		int height;
+		WindowMode window_mode = WindowMode::Windowed;
 	};
 
 	class IGame
