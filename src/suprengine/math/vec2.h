@@ -15,14 +15,14 @@ namespace suprengine
 
 		float x { 0.0f }, y { 0.0f };
 
-		Vec2() {}
-		explicit Vec2( float value )
+		constexpr Vec2() {}
+		constexpr explicit Vec2( float value )
 			: x( value ), y( value )
 		{}
-		Vec2( float x, float y )
+		constexpr Vec2( float x, float y )
 			: x( x ), y( y )
 		{}
-		Vec2( const ImVec2& vec )
+		constexpr Vec2( const ImVec2& vec )
 			: x( vec.x ), y( vec.y )
 		{}
 
