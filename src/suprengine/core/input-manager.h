@@ -57,6 +57,8 @@ namespace suprengine
 		) const;
 
 		void set_relative_mouse_mode( bool value );
+		bool is_relative_mouse_mode_enabled() const;
+
 		bool is_mouse_button_just_pressed( MouseButton button ) const;
 		bool is_mouse_button_just_released( MouseButton button ) const;
 		bool is_mouse_button_pressed( MouseButton button ) const;

@@ -137,8 +137,13 @@ float InputManager::get_keys_as_axis(
 }
 
 void InputManager::set_relative_mouse_mode( bool value )
-{ 
+{
 	SDL_SetRelativeMouseMode( value ? SDL_TRUE : SDL_FALSE ); 
+}
+
+bool InputManager::is_relative_mouse_mode_enabled() const
+{
+	return SDL_GetRelativeMouseMode();;
 }
 
 bool InputManager::is_mouse_button_just_pressed( MouseButton button ) const
