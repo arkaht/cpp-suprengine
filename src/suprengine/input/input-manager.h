@@ -7,24 +7,50 @@
 #include <suprengine/utils/enum-flags.h>
 #include <suprengine/utils/usings.h>
 
+#include "input-device.h"
+
 namespace suprengine
 {
-	enum class KeyState
+	enum class KeyState : uint8
 	{
-		Up,
-		Down,
-		Pressed,
-		Released,
+		Up		 = 0,
+		Down	 = 1,
+		Pressed	 = 2,
+		Released = 3,
 	};
 
 	enum class MouseButton : uint8
 	{
-		None = 0,
-		Left = 1,
-		Middle = 2,
-		Right = 4,
+		None   = 0,
+		Left   = 1 << 0,
+		Middle = 1 << 1,
+		Right  = 1 << 2,
 	};
 	DEFINE_ENUM_WITH_FLAGS( MouseButton, uint8 )
+
+	/*
+	 * Enum flags, holding all generic gamepad buttons.
+	 * Values are purposely mapped to XInput buttons values for a better integration.
+	 */
+	enum class GamepadButton : uint16
+	{
+		None			= 0,
+		DpadUp			= 1 << 0,
+		DpadDown		= 1 << 1,
+		DpadLeft		= 1 << 2,
+		DpadRight		= 1 << 3,
+		Start			= 1 << 4,
+		Back			= 1 << 5,
+		LeftThumb		= 1 << 6,
+		RightThumb		= 1 << 7,
+		LeftShoulder	= 1 << 8,
+		RightShoulder	= 1 << 9,
+		FaceButtonDown	= 1 << 10,
+		FaceButtonRight = 1 << 11,
+		FaceButtonLeft	= 1 << 12,
+		FaceButtonUp	= 1 << 13,
+	};
+	DEFINE_ENUM_WITH_FLAGS( GamepadButton, uint16 )
 
 	class InputManager
 	{
@@ -37,6 +63,9 @@ namespace suprengine
 
 		void take_mouse_button_down( MouseButton button );
 		void take_mouse_button_up( MouseButton button );
+
+		void take_key_down( SDL_Scancode key );
+		void take_gamepad_button( GamepadButton button );
 
 		bool is_key_just_pressed( SDL_Scancode key ) const;
 		bool is_key_just_released( SDL_Scancode key ) const;
@@ -56,6 +85,10 @@ namespace suprengine
 			float default_value = 0.0f
 		) const;
 
+		bool is_gamepad_button_pressed( GamepadButton button ) const;
+		bool is_gamepad_button_down( GamepadButton button ) const;
+		KeyState get_gamepad_button_state( GamepadButton button ) const;
+
 		void set_relative_mouse_mode( bool value );
 		bool is_relative_mouse_mode_enabled() const;
 
@@ -73,6 +106,12 @@ namespace suprengine
 		Vec2 mouse_delta {};
 		Vec2 mouse_wheel {};
 
+		Vec2 left_gamepad_joystick {};
+		Vec2 right_gamepad_joystick {};
+
+		float left_gamepad_trigger = 0.0f;
+		float right_gamepad_trigger = 0.0f;
+
 	private:
 		uint8_t previous_states[SDL_NUM_SCANCODES];
 		uint8_t current_states[SDL_NUM_SCANCODES];
@@ -80,7 +119,12 @@ namespace suprengine
 		MouseButton last_mouse_state = MouseButton::None;
 		MouseButton current_mouse_state = MouseButton::None;
 
+		GamepadButton current_gamepad_buttons = GamepadButton::None;
+		GamepadButton last_gamepad_buttons = GamepadButton::None;
+
 		Vec2 last_mouse_pos {};
 		Vec2 current_mouse_pos {};
+
+		std::vector<InputDevice*> _input_devices {};
 	};
 }

@@ -37,7 +37,7 @@ namespace suprengine
 		{
 			//  get mouse delta
 			auto inputs = Engine::instance().get_inputs();
-			Vec2 delta = inputs->mouse_delta;
+			Vec2 delta = inputs->mouse_delta + inputs->right_gamepad_joystick;
 			if ( delta == Vec2::zero ) return;
 
 			//  compute yaw

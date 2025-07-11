@@ -1,5 +1,7 @@
 #include "input-manager.h"
 
+#include "xinput-device.h"
+
 using namespace suprengine;
 
 InputManager::InputManager()
@@ -7,12 +9,14 @@ InputManager::InputManager()
 	//	Reset current states so update() doesn't copy an array of unset numbers
 	SDL_memset( current_states, 0, SDL_NUM_SCANCODES );
 
+	_input_devices.push_back( new XInputDevice( this ) );
+
 	update();
 }
 
 void InputManager::update()
 {
-	//  Reset mouse inputs
+	//  Reset mouse input
 	mouse_delta = Vec2::zero;
 	mouse_wheel = Vec2::zero;
 
@@ -33,6 +37,14 @@ void InputManager::update()
 
 	current_mouse_pos.x = static_cast<float>( x );
 	current_mouse_pos.y = static_cast<float>( y );
+
+	last_gamepad_buttons = current_gamepad_buttons;
+	current_gamepad_buttons = GamepadButton::None;
+
+	for ( InputDevice* input_device : _input_devices )
+	{
+		input_device->update();
+	}
 }
 
 MouseButton InputManager::convert_sdl_mouse_button( uint8 button_index )
@@ -62,6 +74,16 @@ void InputManager::take_mouse_button_up( MouseButton button )
 	if ( ( current_mouse_state & button ) == MouseButton::None ) return;
 
 	current_mouse_state = current_mouse_state ^ button;
+}
+
+void InputManager::take_key_down( SDL_Scancode key )
+{
+	current_states[key] = true;
+}
+
+void InputManager::take_gamepad_button( GamepadButton button )
+{
+	current_gamepad_buttons |= button;
 }
 
 bool InputManager::is_key_just_pressed( SDL_Scancode key ) const
@@ -115,25 +137,50 @@ KeyState InputManager::get_key_state( SDL_Scancode key ) const
 	return KeyState::Up;
 }
 
-float InputManager::get_keys_as_axis( 
-	SDL_Scancode negative_key,
-	SDL_Scancode positive_key, 
-	float value,
-	float default_value
-) const
+float InputManager::get_keys_as_axis( SDL_Scancode negative_key, SDL_Scancode positive_key,
+									  float value, float default_value ) const
 {
 	float axis = default_value;
 
-	if ( is_key_down( positive_key ) ) 
+	if ( is_key_down( positive_key ) )
 	{
 		axis += value;
 	}
-	if ( is_key_down( negative_key ) ) 
+	if ( is_key_down( negative_key ) )
 	{
 		axis -= value;
 	}
 
 	return axis;
+}
+
+bool InputManager::is_gamepad_button_down( GamepadButton button ) const
+{
+	return false;
+}
+
+bool InputManager::is_gamepad_button_pressed( GamepadButton button ) const
+{
+	return false;
+}
+
+KeyState InputManager::get_gamepad_button_state( const GamepadButton button ) const
+{
+	if ( enum_has_flag( last_gamepad_buttons, button ) )
+	{
+		if ( enum_has_flag( current_gamepad_buttons, button ) )
+		{
+			return KeyState::Down;
+		}
+
+		return KeyState::Released;
+	}
+	else if ( enum_has_flag( current_gamepad_buttons, button ) )
+	{
+		return KeyState::Pressed;
+	}
+
+	return KeyState::Up;
 }
 
 void InputManager::set_relative_mouse_mode( bool value )

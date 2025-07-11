@@ -37,7 +37,7 @@ GameInfos GameInstance::get_infos() const
 {
     GameInfos infos {};
     infos.title = "Suprengine Test";
-    infos.width = 1920;
-	infos.height = 1079;
+    infos.width = 1280;
+	infos.height = 720;
     return infos;
 }

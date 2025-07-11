@@ -2,12 +2,12 @@
 
 #include <suprengine/core/component.h>
 #include <suprengine/core/entity.h>
-#include <suprengine/core/input-manager.h>
+#include <suprengine/input/input-manager.h>
 
-#include <suprengine/components/spring-arm.hpp>
-#include <suprengine/components/mover.hpp>
 #include <suprengine/components/mouse-follower.hpp>
 #include <suprengine/components/mouse-looker.hpp>
+#include <suprengine/components/mover.hpp>
+#include <suprengine/components/spring-arm.hpp>
 #include <suprengine/components/target-rotator.h>
 
 using namespace suprengine;
@@ -71,7 +71,7 @@ namespace test
 		SharedPtr<MouseLooker> mouse_looker;
 		SharedPtr<TargetRotator> target_rotator;
 
-		CameraMode current_mode = CameraMode::TPS;
+		CameraMode current_mode = CameraMode::FPS;
 
 		void _enable_mode( CameraMode mode )
 		{

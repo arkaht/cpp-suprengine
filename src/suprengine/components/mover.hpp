@@ -21,6 +21,10 @@ namespace suprengine
 			auto inputs = Engine::instance().get_inputs();
 			Vec3 dir {};
 
+			dir = inputs->left_gamepad_joystick.x * transform->get_right()
+				+ inputs->left_gamepad_joystick.y * transform->get_forward()
+				+ ( inputs->right_gamepad_trigger - inputs->left_gamepad_trigger ) * transform->get_up();
+
 			//  forward/backward
 			if ( inputs->is_key_down( SDL_SCANCODE_W ) || inputs->is_key_down( SDL_SCANCODE_UP ) )
 				dir += transform->get_forward();
@@ -43,7 +47,7 @@ namespace suprengine
 
 			//  get movement
 			float speed = ( inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? sprint_speed : move_speed ) * dt;
-			Vec3 move_dir = dir.normalized() * speed;
+			Vec3 move_dir = dir/*.normalized()*/ * speed;
 			Vec3 pos = transform->location + move_dir;
 
 			//  check collisions

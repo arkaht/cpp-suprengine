@@ -1,19 +1,19 @@
 #pragma once
 
-#include <suprengine/core/updater.h>
-#include <suprengine/core/scene.h>
-#include <suprengine/core/input-manager.h>
-#include <suprengine/core/physics.h>
 #include <suprengine/core/game.h>
+#include <suprengine/core/physics.h>
+#include <suprengine/core/scene.h>
+#include <suprengine/core/updater.h>
+#include <suprengine/input/input-manager.h>
 
 #include <suprengine/components/camera.h>
 
-#include <suprengine/utils/timer.h>
-#include <suprengine/utils/imgui.h>
 #include <suprengine/utils/assert.h>
+#include <suprengine/utils/imgui.h>
+#include <suprengine/utils/timer.h>
 
-#include <suprengine/tools/profiler.h>
 #include <suprengine/tools/memory-profiler.h>
+#include <suprengine/tools/profiler.h>
 
 #include <vector>
 
