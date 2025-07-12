@@ -13,3 +13,9 @@ float Vec2::dot( const Vec2& a, const Vec2& b )
 {
 	return a.x * b.x + a.y * b.y;
 }
+
+std::string Vec2::to_string() const
+{
+	return "x=" + std::to_string( x )
+		+ ";y=" + std::to_string( y );
+}

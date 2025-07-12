@@ -45,10 +45,13 @@ namespace suprengine
 		RightThumb		= 1 << 7,
 		LeftShoulder	= 1 << 8,
 		RightShoulder	= 1 << 9,
-		FaceButtonDown	= 1 << 10,
-		FaceButtonRight = 1 << 11,
-		FaceButtonLeft	= 1 << 12,
-		FaceButtonUp	= 1 << 13,
+
+		// There is a jump in values here, XInput does skip two values.
+
+		FaceButtonDown	= 1 << 12,
+		FaceButtonRight = 1 << 13,
+		FaceButtonLeft	= 1 << 14,
+		FaceButtonUp	= 1 << 15,
 	};
 	DEFINE_ENUM_WITH_FLAGS( GamepadButton, uint16 )
 
@@ -56,6 +59,7 @@ namespace suprengine
 	{
 	public:
 		InputManager();
+		~InputManager();
 
 		void update();
 
@@ -85,7 +89,11 @@ namespace suprengine
 			float default_value = 0.0f
 		) const;
 
+		bool is_gamepad_button_just_pressed( GamepadButton button ) const;
+		bool is_gamepad_button_just_released( GamepadButton button ) const;
 		bool is_gamepad_button_pressed( GamepadButton button ) const;
+		bool is_gamepad_button_released( GamepadButton button ) const;
+		bool is_gamepad_button_up( GamepadButton button ) const;
 		bool is_gamepad_button_down( GamepadButton button ) const;
 		KeyState get_gamepad_button_state( GamepadButton button ) const;
 
@@ -100,7 +108,12 @@ namespace suprengine
 		bool is_mouse_button_down( MouseButton button ) const;
 
 		KeyState get_mouse_button_state( MouseButton button ) const;
-		Vec2 get_mouse_pos() const { return current_mouse_pos; }
+		Vec2 get_mouse_pos() const
+		{
+			return _current_mouse_pos;
+		}
+
+		void populate_imgui();
 
 	public:
 		Vec2 mouse_delta {};
@@ -113,17 +126,17 @@ namespace suprengine
 		float right_gamepad_trigger = 0.0f;
 
 	private:
-		uint8_t previous_states[SDL_NUM_SCANCODES];
-		uint8_t current_states[SDL_NUM_SCANCODES];
+		uint8_t _previous_states[SDL_NUM_SCANCODES] {};
+		uint8_t _current_states[SDL_NUM_SCANCODES] {};
 
-		MouseButton last_mouse_state = MouseButton::None;
-		MouseButton current_mouse_state = MouseButton::None;
+		MouseButton _last_mouse_state = MouseButton::None;
+		MouseButton _current_mouse_state = MouseButton::None;
 
-		GamepadButton current_gamepad_buttons = GamepadButton::None;
-		GamepadButton last_gamepad_buttons = GamepadButton::None;
+		GamepadButton _current_gamepad_buttons = GamepadButton::None;
+		GamepadButton _last_gamepad_buttons = GamepadButton::None;
 
-		Vec2 last_mouse_pos {};
-		Vec2 current_mouse_pos {};
+		Vec2 _last_mouse_pos {};
+		Vec2 _current_mouse_pos {};
 
 		std::vector<InputDevice*> _input_devices {};
 	};

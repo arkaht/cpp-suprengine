@@ -16,11 +16,55 @@
 
 using namespace test;
 
+void on_imgui_update()
+{
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar
+			| ImGuiWindowFlags_NoSavedSettings; //  Disable saved settings to avoid weird sizes caused by window modes
+
+	ImGui::SetNextWindowSize( ImVec2 { 400, 600 }, ImGuiCond_Appearing );
+
+	bool is_visible = true;
+	if ( !ImGui::Begin( "Debug Menu", &is_visible, window_flags ) )
+	{
+		ImGui::End();
+		return;
+	}
+
+	//  Show ImGui demo window
+	static bool show_imgui_demo = false;
+	if ( show_imgui_demo ) ImGui::ShowDemoWindow( &show_imgui_demo );
+
+	//  Populate menu bar
+	if ( ImGui::BeginMenuBar() )
+	{
+		if ( ImGui::BeginMenu( "Engine" ) )
+		{
+			ImGui::EndMenu();
+		}
+		if ( ImGui::BeginMenu( "ImGui" ) )
+		{
+			ImGui::MenuItem( "ImGui Demo", nullptr, &show_imgui_demo );
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+
+	if ( ImGui::CollapsingHeader( "Input", ImGuiTreeNodeFlags_DefaultOpen ) )
+	{
+		Engine& engine = Engine::instance();
+		engine.get_inputs()->populate_imgui();
+	}
+
+
+	ImGui::End();
+}
+
 void GameScene::init()
 {
 	UnitTestEvent().run();
 
 	auto& engine = Engine::instance();
+	engine.on_imgui_update.listen( &on_imgui_update );
 
 	auto cube_model = Assets::get_model( "cube" );
 	auto cylinder_model = Assets::get_model( MESH_CYLINDER );
@@ -77,6 +121,11 @@ void GameScene::update( float dt )
 	auto engine = _game->get_engine();
 	auto inputs = engine->get_inputs();
 	float time = engine->get_updater()->get_accumulated_seconds();
+
+	if ( inputs->is_key_just_pressed( SDL_SCANCODE_F1 ) )
+	{
+		inputs->set_relative_mouse_mode( !inputs->is_relative_mouse_mode_enabled() );
+	}
 	
 	Vec3 pos { 0.0f, 0.0f, 5.0f };
 	/*VisDebug::add_box(

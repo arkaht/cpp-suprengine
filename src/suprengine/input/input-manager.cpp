@@ -7,11 +7,19 @@ using namespace suprengine;
 InputManager::InputManager()
 {
 	//	Reset current states so update() doesn't copy an array of unset numbers
-	SDL_memset( current_states, 0, SDL_NUM_SCANCODES );
+	SDL_memset( _current_states, 0, SDL_NUM_SCANCODES );
 
 	_input_devices.push_back( new XInputDevice( this ) );
 
 	update();
+}
+
+InputManager::~InputManager()
+{
+	for ( InputDevice* input_device : _input_devices )
+	{
+		delete input_device;
+	}
 }
 
 void InputManager::update()
@@ -21,25 +29,25 @@ void InputManager::update()
 	mouse_wheel = Vec2::zero;
 
 	//	Copy keyboard current states into previous ones
-	SDL_memcpy( previous_states, current_states, SDL_NUM_SCANCODES );
+	SDL_memcpy( _previous_states, _current_states, SDL_NUM_SCANCODES );
 
 	//	Copy new states into current ones
-	const uint8* state = SDL_GetKeyboardState( NULL );
-	SDL_memcpy( current_states, state, SDL_NUM_SCANCODES );
+	const uint8* state = SDL_GetKeyboardState( nullptr );
+	SDL_memcpy( _current_states, state, SDL_NUM_SCANCODES );
 
 	//	Update last mouse variables
-	last_mouse_pos = current_mouse_pos;
-	last_mouse_state = current_mouse_state;
+	_last_mouse_pos = _current_mouse_pos;
+	_last_mouse_state = _current_mouse_state;
 
 	//	Update current mouse position
 	int x, y;
 	SDL_GetMouseState( &x, &y );
 
-	current_mouse_pos.x = static_cast<float>( x );
-	current_mouse_pos.y = static_cast<float>( y );
+	_current_mouse_pos.x = static_cast<float>( x );
+	_current_mouse_pos.y = static_cast<float>( y );
 
-	last_gamepad_buttons = current_gamepad_buttons;
-	current_gamepad_buttons = GamepadButton::None;
+	_last_gamepad_buttons = _current_gamepad_buttons;
+	_current_gamepad_buttons = GamepadButton::None;
 
 	for ( InputDevice* input_device : _input_devices )
 	{
@@ -47,7 +55,7 @@ void InputManager::update()
 	}
 }
 
-MouseButton InputManager::convert_sdl_mouse_button( uint8 button_index )
+MouseButton InputManager::convert_sdl_mouse_button( const uint8 button_index )
 {
 	switch ( button_index )
 	{
@@ -62,74 +70,75 @@ MouseButton InputManager::convert_sdl_mouse_button( uint8 button_index )
 	return MouseButton::None;
 }
 
-void InputManager::take_mouse_button_down( MouseButton button )
+void InputManager::take_mouse_button_down( const MouseButton button )
 {
-	if ( ( current_mouse_state & button ) == button ) return;
+	if ( ( _current_mouse_state & button ) == button ) return;
 
-	current_mouse_state = current_mouse_state | button;
+	_current_mouse_state = _current_mouse_state | button;
 }
 
-void InputManager::take_mouse_button_up( MouseButton button )
+void InputManager::take_mouse_button_up( const MouseButton button )
 {
-	if ( ( current_mouse_state & button ) == MouseButton::None ) return;
+	if ( ( _current_mouse_state & button ) == MouseButton::None ) return;
 
-	current_mouse_state = current_mouse_state ^ button;
+	_current_mouse_state = _current_mouse_state ^ button;
 }
 
-void InputManager::take_key_down( SDL_Scancode key )
+void InputManager::take_key_down( const SDL_Scancode key )
 {
-	current_states[key] = true;
+	_current_states[key] = true;
 }
 
-void InputManager::take_gamepad_button( GamepadButton button )
+void InputManager::take_gamepad_button( const GamepadButton button )
 {
-	current_gamepad_buttons |= button;
+	_current_gamepad_buttons |= button;
 }
 
-bool InputManager::is_key_just_pressed( SDL_Scancode key ) const
+bool InputManager::is_key_just_pressed( const SDL_Scancode key ) const
 { 
 	return get_key_state( key ) == KeyState::Pressed; 
 }
 
-bool InputManager::is_key_just_released( SDL_Scancode key ) const
+bool InputManager::is_key_just_released( const SDL_Scancode key ) const
 { 
 	return get_key_state( key ) == KeyState::Released; 
 }
 
-bool InputManager::is_key_pressed( SDL_Scancode key ) const
+bool InputManager::is_key_pressed( const SDL_Scancode key ) const
 {
-	KeyState state = get_key_state( key );
+	const KeyState state = get_key_state( key );
 	return state == KeyState::Pressed || state == KeyState::Down;
 }
 
-bool InputManager::is_key_released( SDL_Scancode key ) const
+bool InputManager::is_key_released( const SDL_Scancode key ) const
 {
-	KeyState state = get_key_state( key );
+	const KeyState state = get_key_state( key );
 	return state == KeyState::Released || state == KeyState::Up;
 }
 
-bool InputManager::is_key_up( SDL_Scancode key ) const
+bool InputManager::is_key_up( const SDL_Scancode key ) const
 { 
 	return get_key_state( key ) == KeyState::Up; 
 }
 
-bool InputManager::is_key_down( SDL_Scancode key ) const
+bool InputManager::is_key_down( const SDL_Scancode key ) const
 { 
 	return get_key_state( key ) == KeyState::Down; 
 }
 
-KeyState InputManager::get_key_state( SDL_Scancode key ) const
+KeyState InputManager::get_key_state( const SDL_Scancode key ) const
 {
-	if ( previous_states[key] )
+	if ( _previous_states[key] )
 	{
-		if ( current_states[key] )
+		if ( _current_states[key] )
 		{
 			return KeyState::Down;
 		}
 
 		return KeyState::Released;
 	}
-	else if ( current_states[key] )
+
+	if ( _current_states[key] )
 	{
 		return KeyState::Pressed;
 	}
@@ -137,8 +146,10 @@ KeyState InputManager::get_key_state( SDL_Scancode key ) const
 	return KeyState::Up;
 }
 
-float InputManager::get_keys_as_axis( SDL_Scancode negative_key, SDL_Scancode positive_key,
-									  float value, float default_value ) const
+float InputManager::get_keys_as_axis(
+	const SDL_Scancode negative_key, const SDL_Scancode positive_key,
+	const float value, const float default_value
+) const
 {
 	float axis = default_value;
 
@@ -154,28 +165,51 @@ float InputManager::get_keys_as_axis( SDL_Scancode negative_key, SDL_Scancode po
 	return axis;
 }
 
-bool InputManager::is_gamepad_button_down( GamepadButton button ) const
+bool InputManager::is_gamepad_button_just_pressed( const GamepadButton button ) const
 {
-	return false;
+	return get_gamepad_button_state( button ) == KeyState::Pressed;
 }
 
-bool InputManager::is_gamepad_button_pressed( GamepadButton button ) const
+bool InputManager::is_gamepad_button_just_released( const GamepadButton button ) const
 {
-	return false;
+	return get_gamepad_button_state( button ) == KeyState::Released;
+}
+
+bool InputManager::is_gamepad_button_pressed( const GamepadButton button ) const
+{
+	const KeyState state = get_gamepad_button_state( button );
+	return state == KeyState::Pressed || state == KeyState::Down;
+}
+
+bool InputManager::is_gamepad_button_released( const GamepadButton button ) const
+{
+	const KeyState state = get_gamepad_button_state( button );
+	return state == KeyState::Released || state == KeyState::Up;
+}
+
+bool InputManager::is_gamepad_button_up( const GamepadButton button ) const
+{
+	return get_gamepad_button_state( button ) == KeyState::Up;
+}
+
+bool InputManager::is_gamepad_button_down( const GamepadButton button ) const
+{
+	return get_gamepad_button_state( button ) == KeyState::Down;
 }
 
 KeyState InputManager::get_gamepad_button_state( const GamepadButton button ) const
 {
-	if ( enum_has_flag( last_gamepad_buttons, button ) )
+	if ( enum_has_flag( _last_gamepad_buttons, button ) )
 	{
-		if ( enum_has_flag( current_gamepad_buttons, button ) )
+		if ( enum_has_flag( _current_gamepad_buttons, button ) )
 		{
 			return KeyState::Down;
 		}
 
 		return KeyState::Released;
 	}
-	else if ( enum_has_flag( current_gamepad_buttons, button ) )
+
+	if ( enum_has_flag( _current_gamepad_buttons, button ) )
 	{
 		return KeyState::Pressed;
 	}
@@ -193,53 +227,62 @@ bool InputManager::is_relative_mouse_mode_enabled() const
 	return SDL_GetRelativeMouseMode();;
 }
 
-bool InputManager::is_mouse_button_just_pressed( MouseButton button ) const
+bool InputManager::is_mouse_button_just_pressed( const MouseButton button ) const
 {
 	return get_mouse_button_state( button ) == KeyState::Pressed;
 }
 
-bool InputManager::is_mouse_button_just_released( MouseButton button ) const
+bool InputManager::is_mouse_button_just_released( const MouseButton button ) const
 {
 	return get_mouse_button_state( button ) == KeyState::Released;
 }
 
-bool InputManager::is_mouse_button_pressed( MouseButton button ) const
+bool InputManager::is_mouse_button_pressed( const MouseButton button ) const
 {
 	const KeyState state = get_mouse_button_state( button );
 	return state == KeyState::Pressed || state == KeyState::Down;
 }
 
-bool InputManager::is_mouse_button_released( MouseButton button ) const
+bool InputManager::is_mouse_button_released( const MouseButton button ) const
 {
 	const KeyState state = get_mouse_button_state( button );
 	return state == KeyState::Released || state == KeyState::Up;
 }
 
-bool InputManager::is_mouse_button_up( MouseButton button ) const
+bool InputManager::is_mouse_button_up( const MouseButton button ) const
 {
 	return get_mouse_button_state( button ) == KeyState::Up;
 }
 
-bool InputManager::is_mouse_button_down( MouseButton button ) const
+bool InputManager::is_mouse_button_down( const MouseButton button ) const
 {
 	return get_mouse_button_state( button ) == KeyState::Down;
 }
 
-KeyState InputManager::get_mouse_button_state( MouseButton button ) const
+KeyState InputManager::get_mouse_button_state( const MouseButton button ) const
 {
-	if ( ( last_mouse_state & button ) == button )
+	if ( enum_has_flag( _last_mouse_state, button ) )
 	{
-		if ( ( current_mouse_state & button ) == button )
+		if ( enum_has_flag( _current_mouse_state, button ) )
 		{
 			return KeyState::Down;
 		}
 
 		return KeyState::Released;
 	}
-	else if ( ( current_mouse_state & button ) == button )
+
+	if ( enum_has_flag( _current_mouse_state, button ) )
 	{
 		return KeyState::Pressed;
 	}
 
 	return KeyState::Up;
+}
+
+void InputManager::populate_imgui()
+{
+	for ( InputDevice* input_device : _input_devices )
+	{
+		input_device->populate_imgui();
+	}
 }

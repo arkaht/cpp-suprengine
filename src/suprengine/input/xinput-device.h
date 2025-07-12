@@ -49,6 +49,8 @@ namespace suprengine
 
 		void update() override;
 
+		void populate_imgui() override;
+
 	private:
 		XInputGamepadState _gamepads[XUSER_MAX_COUNT] {};
 	};

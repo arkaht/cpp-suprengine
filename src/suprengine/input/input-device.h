@@ -13,6 +13,8 @@ namespace suprengine
 
 		virtual void update() = 0;
 
+		virtual void populate_imgui() {};
+
 	protected:
 		InputManager* _manager;
 	};

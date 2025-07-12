@@ -144,5 +144,10 @@ namespace suprengine
 				(int)y
 			};
 		}
+
+		/*
+		 * Returns a string representing the vector.
+		 */
+		std::string to_string() const;
 	};
 }
