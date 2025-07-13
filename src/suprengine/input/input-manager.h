@@ -46,7 +46,11 @@ namespace suprengine
 		LeftShoulder	= 1 << 8,
 		RightShoulder	= 1 << 9,
 
-		// There is a jump in values here, XInput does skip two values.
+		// XInput does not implement the trigger values as buttons.
+		// Fortunately, the mapping of further values is still correct because it jumped over them.
+
+		LeftTrigger		= 1 << 10,
+		RightTrigger	= 1 << 11,
 
 		FaceButtonDown	= 1 << 12,
 		FaceButtonRight = 1 << 13,

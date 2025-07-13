@@ -16,38 +16,37 @@ void handle_joystick(
 	Vec2& out_joystick
 )
 {
+	constexpr float MAX_SHORT_VALUE = std::numeric_limits<short>::max();
 	Vec2 joystick {
-		static_cast<float>( joystick_x ),
-		static_cast<float>( joystick_y )
+		static_cast<float>( joystick_x ) / MAX_SHORT_VALUE,
+		static_cast<float>( joystick_y ) / MAX_SHORT_VALUE,
 	};
 
 	const float length = joystick.length();
-	if ( length > static_cast<float>( deadzone ) )
-	{
-		constexpr float MAX_SHORT_VALUE = std::numeric_limits<short>::max();
-		if ( length > MAX_SHORT_VALUE )
-		{
-			joystick.normalize();
-		}
-		else
-		{
-			joystick /= MAX_SHORT_VALUE;
-		}
-
-		/*printf( "%f %f => %f (%f)\n",
-			joystick.x, joystick.y,
-			joystick.length(), length );*/
-	}
-	else
+	if ( length < static_cast<float>( deadzone ) / MAX_SHORT_VALUE )
 	{
 		joystick = Vec2::zero;
 	}
+	else if ( length > 1.0f )
+	{
+		joystick /= length;
+	}
+
+	/*printf( "%f %f => %f (%f)\n",
+		joystick.x, joystick.y,
+		joystick.length(), length );*/
 
 	out_joystick = joystick;
 }
 
-void handle_trigger( const uint8 trigger_value, float& out_trigger_value )
+void handle_trigger( const uint8 trigger_value, const uint8 deadzone, float& out_trigger_value )
 {
+	if ( trigger_value < deadzone )
+	{
+		out_trigger_value = 0.0f;
+		return;
+	}
+
 	out_trigger_value = static_cast<float>( trigger_value ) / 255.0f;
 	/*printf( "Trigger: %f\n", out_trigger_value );*/
 }
@@ -97,16 +96,30 @@ void XInputDevice::update()
 
 		handle_trigger(
 			state.Gamepad.bLeftTrigger,
+			XINPUT_GAMEPAD_TRIGGER_THRESHOLD,
 			_manager->left_gamepad_trigger
 		);
 		handle_trigger(
 			state.Gamepad.bRightTrigger,
+			XINPUT_GAMEPAD_TRIGGER_THRESHOLD,
 			_manager->right_gamepad_trigger
 		);
 
 		// GamepadButton enum is purposely mapped to the same values as XInput buttons macros,
 		// meaning casting this value is safe.
-		const GamepadButton buttons = static_cast<GamepadButton>( state.Gamepad.wButtons );
+		GamepadButton buttons = static_cast<GamepadButton>( state.Gamepad.wButtons );
+
+		// Yet, we still have to manually add trigger buttons since they are not considered
+		// as buttons by XInput.
+		if ( _manager->left_gamepad_trigger > 0.0f )
+		{
+			buttons |= GamepadButton::LeftTrigger;
+		}
+		if ( _manager->right_gamepad_trigger > 0.0f )
+		{
+			buttons |= GamepadButton::RightTrigger;
+		}
+
 		_manager->take_gamepad_button( buttons );
 		/*printf("A pressed: %d\n", _manager->get_gamepad_button_state(
 		 * GamepadButton::FaceButtonDown ) );*/
@@ -198,7 +211,7 @@ void FaceButtons(
 		IM_COL32( 0,   200, 0, 255 ),
 		IM_COL32( 0,   0,   200, 255 ),
 	};
-	ImVec2 directions[4]
+	constexpr ImVec2 directions[4]
 	{
 		ImVec2 {  0.0f, -1.0f },
 		ImVec2 {  1.0f, 0.0f },
@@ -238,7 +251,7 @@ void DpadButtons(
 	};
 
 	const bool buttons[4] { button_up, button_right, button_down, button_left };
-	ImVec2 directions[4]
+	constexpr ImVec2 directions[4]
 	{
 		ImVec2 {  0.0f, -1.0f },
 		ImVec2 {  1.0f, 0.0f },
@@ -276,6 +289,33 @@ void DpadButtons(
 	ImGui::Dummy( ImVec2( widget_size, widget_size ) );
 }
 
+void Shoulder(
+	bool left_trigger, bool left_shoulder,
+	bool right_trigger, bool right_shoulder,
+	float widget_size = GAMEPAD_WIDGET_SIZE,
+	float button_size = FACE_BUTTONS_RADIUS * 2.0f,
+	const uint32 background_color = GAMEPAD_WIDGETS_BACKGROUND_COLOR
+)
+{
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+	const ImVec2 cursor	  = ImGui::GetCursorScreenPos();
+
+	constexpr uint32 PRESSED_COLOR = IM_COL32( 255, 255, 255, 255 );
+
+	draw_list->AddRectFilled(
+		ImVec2 { cursor.x, cursor.y + widget_size * 0.7f },
+		ImVec2 { cursor.x + widget_size, cursor.y + widget_size },
+		left_shoulder ? PRESSED_COLOR : background_color
+	);
+	draw_list->AddRectFilled(
+		ImVec2 { cursor.x + widget_size * 0.5f - widget_size * 0.15f, cursor.y },
+		ImVec2 { cursor.x + widget_size * 0.5f + widget_size * 0.15f, cursor.y + widget_size * 0.6f },
+		left_trigger ? PRESSED_COLOR : background_color
+	);
+
+	ImGui::Dummy( ImVec2( widget_size, widget_size ) );
+}
+
 void XInputDevice::populate_imgui()
 {
 	const InputManager* inputs = Engine::instance().get_inputs();
@@ -297,8 +337,18 @@ void XInputDevice::populate_imgui()
 		ImGui::PushID( gamepad_id );
 		if ( ImGui::TreeNode( "", "Gamepad %d", gamepad_id ) )
 		{
-			ImGui::Text( "Left Joystick: %s", *Vec2::zero.to_string() );
-			ImGui::Text( "Right Joystick: %s", *Vec2::zero.to_string() );
+			ImGui::Text(
+				"Left Joystick: %s (%.0f%%)",
+				*inputs->left_gamepad_joystick.to_string(),
+				inputs->left_gamepad_joystick.length() * 100.0f
+			);
+			ImGui::Text(
+				"Right Joystick: %s (%.0f%%)",
+				*inputs->right_gamepad_joystick.to_string(),
+				inputs->right_gamepad_joystick.length() * 100.0f
+			);
+			ImGui::Text( "Left Trigger: %.0f%%", inputs->left_gamepad_trigger * 100.0f );
+			ImGui::Text( "Right Trigger: %.0f%%", inputs->right_gamepad_trigger * 100.0f );
 
 			Joystick(
 				inputs->left_gamepad_joystick,
@@ -326,6 +376,21 @@ void XInputDevice::populate_imgui()
 				inputs->is_gamepad_button_down( GamepadButton::FaceButtonRight ),
 				inputs->is_gamepad_button_down( GamepadButton::FaceButtonDown ),
 				inputs->is_gamepad_button_down( GamepadButton::FaceButtonLeft )
+			);
+
+			ImGui::SameLine();
+			Shoulder(
+				inputs->is_gamepad_button_down( GamepadButton::LeftTrigger ),
+				inputs->is_gamepad_button_down( GamepadButton::LeftShoulder ),
+				inputs->right_gamepad_trigger,
+				inputs->is_gamepad_button_down( GamepadButton::RightShoulder )
+			);
+			ImGui::SameLine();
+			Shoulder(
+				inputs->is_gamepad_button_down( GamepadButton::RightTrigger ),
+				inputs->is_gamepad_button_down( GamepadButton::RightShoulder ),
+				inputs->left_gamepad_trigger,
+				inputs->is_gamepad_button_down( GamepadButton::LeftShoulder )
 			);
 
 			ImGui::TreePop();
