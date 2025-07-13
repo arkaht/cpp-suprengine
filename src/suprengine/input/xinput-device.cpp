@@ -184,41 +184,40 @@ void FaceButtons(
 )
 {
 	ImDrawList* draw_list = ImGui::GetWindowDrawList();
-	const auto& cursor = ImGui::GetCursorScreenPos();
+	const ImVec2 cursor	  = ImGui::GetCursorScreenPos();
+	const ImVec2 center   = ImVec2 {
+		cursor.x + widget_size * 0.5f,
+		cursor.y + widget_size * 0.5f
+	};
 
-	// Draw background
-	draw_list->AddCircleFilled(
-		ImVec2 {
-			cursor.x + widget_size * 0.5f,
-			cursor.y + button_radius,
-		},
-		button_radius,
-		button_up ? IM_COL32( 200, 200, 0, 255 ) : background_color
-	);
-	draw_list->AddCircleFilled(
-		ImVec2 {
-			cursor.x + widget_size - button_radius,
-			cursor.y + widget_size * 0.5f,
-		},
-		button_radius,
-		button_right ? IM_COL32( 200, 0, 0, 255 ) : background_color
-	);
-	draw_list->AddCircleFilled(
-		ImVec2 {
-			cursor.x + widget_size * 0.5f,
-			cursor.y + widget_size - button_radius,
-		},
-		button_radius,
-		button_down ? IM_COL32( 0, 200, 0, 255 ) : background_color
-	);
-	draw_list->AddCircleFilled(
-		ImVec2 {
-			cursor.x + button_radius,
-			cursor.y + widget_size * 0.5f,
-		},
-		button_radius,
-		button_left ? IM_COL32( 0, 0, 200, 255 ) : background_color
-	);
+	const bool buttons[4] { button_up, button_right, button_down, button_left };
+	uint32 colors[4]
+	{
+		IM_COL32( 200, 200, 0, 255 ),
+		IM_COL32( 200, 0,   0, 255 ),
+		IM_COL32( 0,   200, 0, 255 ),
+		IM_COL32( 0,   0,   200, 255 ),
+	};
+	ImVec2 directions[4]
+	{
+		ImVec2 {  0.0f, -1.0f },
+		ImVec2 {  1.0f, 0.0f },
+		ImVec2 {  0.0f, 1.0f },
+		ImVec2 { -1.0f, 0.0f },
+	};
+
+	const float offset = widget_size * 0.5f - button_radius;
+	for ( int i = 0; i < 4; i++ )
+	{
+		draw_list->AddCircleFilled(
+			ImVec2 {
+				center.x + directions[i].x * offset,
+				center.y + directions[i].y * offset,
+			},
+			button_radius,
+			buttons[i] ? colors[i] : background_color
+		);
+	}
 
 	ImGui::Dummy( ImVec2( widget_size, widget_size ) );
 }
@@ -227,54 +226,59 @@ void DpadButtons(
 	bool button_up, bool button_right,
 	bool button_down, bool button_left,
 	float widget_size = GAMEPAD_WIDGET_SIZE,
-	float button_radius = FACE_BUTTONS_RADIUS,
+	float button_size = FACE_BUTTONS_RADIUS * 2.0f,
 	const uint32 background_color = GAMEPAD_WIDGETS_BACKGROUND_COLOR
 )
 {
 	ImDrawList* draw_list = ImGui::GetWindowDrawList();
-	const auto& cursor = ImGui::GetCursorScreenPos();
+	const ImVec2 cursor	  = ImGui::GetCursorScreenPos();
+	const ImVec2 center   = ImVec2 {
+		cursor.x + widget_size * 0.5f,
+		cursor.y + widget_size * 0.5f
+	};
 
-	// Draw background
+	const bool buttons[4] { button_up, button_right, button_down, button_left };
+	ImVec2 directions[4]
+	{
+		ImVec2 {  0.0f, -1.0f },
+		ImVec2 {  1.0f, 0.0f },
+		ImVec2 {  0.0f, 1.0f },
+		ImVec2 { -1.0f, 0.0f },
+	};
+
 	constexpr uint32 PRESSED_COLOR = IM_COL32( 255, 255, 255, 255 );
-	draw_list->AddCircleFilled(
-		ImVec2 {
-			cursor.x + widget_size * 0.5f,
-			cursor.y + button_radius,
-		},
-		button_radius,
-		button_up ? PRESSED_COLOR : background_color
-	);
-	draw_list->AddCircleFilled(
-		ImVec2 {
-			cursor.x + widget_size - button_radius,
-			cursor.y + widget_size * 0.5f,
-		},
-		button_radius,
-		button_right ? PRESSED_COLOR : background_color
-	);
-	draw_list->AddCircleFilled(
-		ImVec2 {
-			cursor.x + widget_size * 0.5f,
-			cursor.y + widget_size - button_radius,
-		},
-		button_radius,
-		button_down ? PRESSED_COLOR : background_color
-	);
-	draw_list->AddCircleFilled(
-		ImVec2 {
-			cursor.x + button_radius,
-			cursor.y + widget_size * 0.5f,
-		},
-		button_radius,
-		button_left ? PRESSED_COLOR : background_color
-	);
+	const float offset = widget_size * 0.5f;
+	for ( int i = 0; i < 4; i++ )
+	{
+		const float side_offset = offset - button_size;
+		const ImVec2 side_extrude {
+			directions[i].y * button_size * 0.5f,
+			directions[i].x * button_size * 0.5f
+		};
+
+		draw_list->AddTriangleFilled(
+			ImVec2 {
+				center.x + directions[i].x * offset,
+				center.y + directions[i].y * offset,
+			},
+			ImVec2 {
+				center.x + directions[i].x * side_offset + side_extrude.x,
+				center.y + directions[i].y * side_offset + side_extrude.y,
+			},
+			ImVec2 {
+				center.x + directions[i].x * side_offset - side_extrude.x,
+				center.y + directions[i].y * side_offset - side_extrude.y,
+			},
+			buttons[i] ? PRESSED_COLOR : background_color
+		);
+	}
 
 	ImGui::Dummy( ImVec2( widget_size, widget_size ) );
 }
 
 void XInputDevice::populate_imgui()
 {
-	InputManager* inputs = Engine::instance().get_inputs();
+	const InputManager* inputs = Engine::instance().get_inputs();
 
 	ImGui::SeparatorText( "XInput" );
 
