@@ -4,8 +4,8 @@
 #include <suprengine/core/entity.h>
 #include <suprengine/input/input-manager.h>
 
+#include <suprengine/components/looker.hpp>
 #include <suprengine/components/mouse-follower.hpp>
-#include <suprengine/components/mouse-looker.hpp>
 #include <suprengine/components/mover.hpp>
 #include <suprengine/components/spring-arm.hpp>
 #include <suprengine/components/target-rotator.h>
@@ -24,14 +24,22 @@ namespace test
 			STATIC,
 		};
 
-		CameraDemo( SafePtr<Entity> player ) 
-			: player( player )
+		CameraDemo(
+			SafePtr<Entity> player,
+			InputAction<Vec2>* move_action,
+			InputAction<Vec2>* look_action,
+			InputAction<bool>* sprint_action
+		)
+			: player( player ),
+			  move_action( move_action ),
+			  look_action( look_action ),
+			  sprint_action( sprint_action )
 		{}
 
 		void setup() override
 		{
-			mover = create_component<Mover>();
-			mouse_looker = create_component<MouseLooker>( 1.0f );
+			mover = create_component<Mover>( move_action, sprint_action );
+			mouse_looker = create_component<Looker>( look_action, 3.0f );
 			spring_arm = create_component<SpringArm>( player->transform );
 			target_rotator = create_component<TargetRotator>( player->transform );
 
@@ -68,10 +76,14 @@ namespace test
 
 		SharedPtr<SpringArm> spring_arm;
 		SharedPtr<Mover> mover;
-		SharedPtr<MouseLooker> mouse_looker;
+		SharedPtr<Looker> mouse_looker;
 		SharedPtr<TargetRotator> target_rotator;
 
 		CameraMode current_mode = CameraMode::FPS;
+
+		InputAction<Vec2>* move_action = nullptr;
+		InputAction<Vec2>* look_action = nullptr;
+		InputAction<bool>* sprint_action = nullptr;
 
 		void _enable_mode( CameraMode mode )
 		{

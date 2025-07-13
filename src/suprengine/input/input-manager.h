@@ -1,63 +1,18 @@
 #pragma once
 
 #include <SDL.h>
+#include <unordered_map>
 
 #include <suprengine/math/vec2.h>
 
-#include <suprengine/utils/enum-flags.h>
 #include <suprengine/utils/usings.h>
 
-#include "input-device.h"
+#include <suprengine/input/buttons.h>
+#include <suprengine/input/input-action.h>
 
 namespace suprengine
 {
-	enum class KeyState : uint8
-	{
-		Up		 = 0,
-		Down	 = 1,
-		Pressed	 = 2,
-		Released = 3,
-	};
-
-	enum class MouseButton : uint8
-	{
-		None   = 0,
-		Left   = 1 << 0,
-		Middle = 1 << 1,
-		Right  = 1 << 2,
-	};
-	DEFINE_ENUM_WITH_FLAGS( MouseButton, uint8 )
-
-	/*
-	 * Enum flags, holding all generic gamepad buttons.
-	 * Values are purposely mapped to XInput buttons values for a better integration.
-	 */
-	enum class GamepadButton : uint16
-	{
-		None			= 0,
-		DpadUp			= 1 << 0,
-		DpadDown		= 1 << 1,
-		DpadLeft		= 1 << 2,
-		DpadRight		= 1 << 3,
-		Start			= 1 << 4,
-		Back			= 1 << 5,
-		LeftThumb		= 1 << 6,
-		RightThumb		= 1 << 7,
-		LeftShoulder	= 1 << 8,
-		RightShoulder	= 1 << 9,
-
-		// XInput does not implement the trigger values as buttons.
-		// Fortunately, the mapping of further values is still correct because it jumped over them.
-
-		LeftTrigger		= 1 << 10,
-		RightTrigger	= 1 << 11,
-
-		FaceButtonDown	= 1 << 12,
-		FaceButtonRight = 1 << 13,
-		FaceButtonLeft	= 1 << 14,
-		FaceButtonUp	= 1 << 15,
-	};
-	DEFINE_ENUM_WITH_FLAGS( GamepadButton, uint16 )
+	class InputDevice;
 
 	class InputManager
 	{
@@ -65,15 +20,38 @@ namespace suprengine
 		InputManager();
 		~InputManager();
 
-		void update();
-
-		MouseButton convert_sdl_mouse_button( uint8 button_index );
+		/*
+		 * Update inputs and handle SDL events.
+		 * Returns whenever the game can still run.
+		 */
+		bool update();
 
 		void take_mouse_button_down( MouseButton button );
 		void take_mouse_button_up( MouseButton button );
 
 		void take_key_down( SDL_Scancode key );
 		void take_gamepad_button( GamepadButton button );
+
+		template <typename ReturnType>
+		InputAction<ReturnType>* create_action( const std::string& name )
+		{
+			InputAction<ReturnType>* input_action = new InputAction<ReturnType>( name );
+			_input_actions.push_back( input_action );
+			return input_action;
+		}
+		template <typename ReturnType>
+		InputAction<ReturnType>* get_action( const std::string& name )
+		{
+			for ( InputActionBase* input_action : _input_actions )
+			{
+				if ( input_action->name == name )
+				{
+					return dynamic_cast<InputAction<ReturnType>*>( input_action );
+				}
+			}
+
+			return nullptr;
+		}
 
 		bool is_key_just_pressed( SDL_Scancode key ) const;
 		bool is_key_just_released( SDL_Scancode key ) const;
@@ -86,9 +64,9 @@ namespace suprengine
 		 * Returns a value in range [-value; value] representing the input axis
 		 * of both keys. Keys need to be press to change the final value.
 		 */
-		float get_keys_as_axis( 
-			SDL_Scancode negative_key, 
-			SDL_Scancode positive_key, 
+		float get_keys_as_axis(
+			SDL_Scancode negative_key,
+			SDL_Scancode positive_key,
 			float value = 1.0f,
 			float default_value = 0.0f
 		) const;
@@ -130,6 +108,13 @@ namespace suprengine
 		float right_gamepad_trigger = 0.0f;
 
 	private:
+		/*
+		 * Poll all SDL events and handle them.
+		 * Returns whenever the game can still run.
+		 */
+		bool poll_events();
+
+	private:
 		uint8_t _previous_states[SDL_NUM_SCANCODES] {};
 		uint8_t _current_states[SDL_NUM_SCANCODES] {};
 
@@ -143,5 +128,6 @@ namespace suprengine
 		Vec2 _current_mouse_pos {};
 
 		std::vector<InputDevice*> _input_devices {};
+		std::vector<InputActionBase*> _input_actions {};
 	};
 }

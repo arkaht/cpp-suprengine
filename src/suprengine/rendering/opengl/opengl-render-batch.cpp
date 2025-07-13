@@ -81,6 +81,9 @@ void GLAPIENTRY message_callback(
 		case GL_DEBUG_SEVERITY_HIGH:
 			log_severity = "HIGH";
 			break;
+		default:
+			// Prevent debug messages from flooding the console.
+			return;
 	}
 
 	if ( type == GL_DEBUG_TYPE_ERROR )

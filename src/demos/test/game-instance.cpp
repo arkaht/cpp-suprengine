@@ -16,10 +16,11 @@ void GameInstance::load_assets()
 void GameInstance::init()
 {
     Engine& engine = Engine::instance();
-    auto inputs = engine.get_inputs();
+	InputManager* inputs = engine.get_inputs();
 
     //  setup inputs
     inputs->set_relative_mouse_mode( true );
+	setup_input_actions( inputs );
 
     //  setup render batch
     auto render_batch = get_render_batch();
@@ -35,9 +36,28 @@ void GameInstance::release()
 
 GameInfos GameInstance::get_infos() const
 {
-    GameInfos infos {};
-    infos.title = "Suprengine Test";
-    infos.width = 1280;
+	GameInfos infos {};
+	infos.title	 = "Suprengine Test";
+	infos.width	 = 1280;
 	infos.height = 720;
-    return infos;
+	return infos;
+}
+
+void GameInstance::setup_input_actions( InputManager* inputs )
+{
+	InputAction<Vec2>* move_action = inputs->create_action<Vec2>( "Move" );
+	move_action->assign_keys( Axis2D::Y, SDL_SCANCODE_S, SDL_SCANCODE_W );
+	move_action->assign_keys( Axis2D::X, SDL_SCANCODE_A, SDL_SCANCODE_D );
+	move_action->assign_gamepad_joystick( JoystickSide::Left );
+
+	InputAction<Vec2>* look_action = inputs->create_action<Vec2>( "Look" );
+	look_action->assign_mouse_delta();
+	look_action->assign_gamepad_joystick( JoystickSide::Right, JoystickInputModifier::NegateY );
+
+	InputAction<bool>* sprint_action = inputs->create_action<bool>( "Sprint" );
+	sprint_action->assign_key( SDL_SCANCODE_LSHIFT );
+	sprint_action->assign_key( SDL_SCANCODE_RSHIFT );
+	sprint_action->assign_mouse_button( MouseButton::Right );
+	sprint_action->assign_gamepad_button( GamepadButton::LeftShoulder );
+	sprint_action->assign_gamepad_button( GamepadButton::LeftThumb );
 }

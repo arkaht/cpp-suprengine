@@ -234,71 +234,18 @@ bool Engine::is_running() const
 
 void Engine::process_input()
 {
-	_inputs->update();
-
-	ImGuiIO& imgui_io = ImGui::GetIO();
-
-	//  Read window events
-	SDL_Event event;
-	while ( SDL_PollEvent( &event ) )
+	const bool can_run = _inputs->update();
+	if ( !can_run )
 	{
-		//  Send event to ImGui
-		ImGui_ImplSDL2_ProcessEvent( &event );
-
-		//  TODO?: Move most of it to the InputManager class
-		switch ( event.type )
-		{
-			case SDL_MOUSEBUTTONDOWN:
-			{
-				if ( imgui_io.WantCaptureMouse ) continue;
-
-				const MouseButton button = _inputs->convert_sdl_mouse_button( event.button.button );
-				_inputs->take_mouse_button_down( button );
-
-				break;
-			}
-			case SDL_MOUSEBUTTONUP:
-			{
-				//	NOTE: We are not checking for ImGui's IO here in order to update the mouse
-				//	button even when the user is releasing it on an ImGui interface, which would
-				//	cause bugs otherwise.
-
-				const MouseButton button = _inputs->convert_sdl_mouse_button( event.button.button );
-				_inputs->take_mouse_button_up( button );
-
-				break;
-			}
-			//  Store mouse delta for this frame
-			case SDL_MOUSEMOTION:
-			{
-				if ( imgui_io.WantCaptureMouse ) continue;
-
-				_inputs->mouse_delta.x = static_cast<float>( event.motion.xrel );
-				_inputs->mouse_delta.y = static_cast<float>( event.motion.yrel );
-				break;
-			}
-			//  Store mouse wheel for this frame
-			case SDL_MOUSEWHEEL:
-			{
-				if ( imgui_io.WantCaptureMouse ) continue;
-
-				_inputs->mouse_wheel.x = static_cast<float>( event.wheel.x );
-				_inputs->mouse_wheel.y = static_cast<float>( event.wheel.y );
-				break;
-			}
-			//  Quit game when closing window
-			case SDL_QUIT:
-			{
-				_is_running = false;
-				break;
-			}
-		}
+		_is_running = false;
+		return;
 	}
 	
 	//  Quit game when pressing a key
 	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_ESCAPE ) )
 	{
 		_is_running = false;
+		return;
 	}
 #ifdef ENABLE_VISDEBUG
 	//  Toggle debug mode

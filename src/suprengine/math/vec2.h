@@ -3,12 +3,18 @@
 #include <suprengine/math/math.h>
 
 //	TODO: Implement IM_VEC2_CLASS_EXTRA
-#include <suprengine/utils/imgui.h>
+#include <imgui.h>
 
 #include <SDL.h>
 
 namespace suprengine
 {
+	enum class Axis2D
+	{
+		X = 0,
+		Y = 1,
+	};
+
 	struct Vec2
 	{
 		static const Vec2 zero, one, up, down, left, right;
@@ -25,6 +31,8 @@ namespace suprengine
 		constexpr Vec2( const ImVec2& vec )
 			: x( vec.x ), y( vec.y )
 		{}
+
+		void set_axis( Axis2D axis, float value );
 
 		Vec2 operator-() const
 		{

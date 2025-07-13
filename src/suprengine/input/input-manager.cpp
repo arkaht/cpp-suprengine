@@ -1,6 +1,8 @@
 #include "input-manager.h"
 
-#include "xinput-device.h"
+#include "backends/imgui_impl_sdl2.h"
+
+#include <suprengine/input/xinput-device.h>
 
 using namespace suprengine;
 
@@ -10,19 +12,22 @@ InputManager::InputManager()
 	SDL_memset( _current_states, 0, SDL_NUM_SCANCODES );
 
 	_input_devices.push_back( new XInputDevice( this ) );
-
-	update();
 }
 
 InputManager::~InputManager()
 {
+	for ( InputActionBase* input_action : _input_actions )
+	{
+		delete input_action;
+	}
+
 	for ( InputDevice* input_device : _input_devices )
 	{
 		delete input_device;
 	}
 }
 
-void InputManager::update()
+bool InputManager::update()
 {
 	//  Reset mouse input
 	mouse_delta = Vec2::zero;
@@ -42,37 +47,88 @@ void InputManager::update()
 	//	Update current mouse position
 	int x, y;
 	SDL_GetMouseState( &x, &y );
-
 	_current_mouse_pos.x = static_cast<float>( x );
 	_current_mouse_pos.y = static_cast<float>( y );
 
+	// Update mouse delta
+	SDL_GetRelativeMouseState( &x, &y );
+	mouse_delta.x = static_cast<float>( x );
+	mouse_delta.y = static_cast<float>( y );
+
 	_last_gamepad_buttons = _current_gamepad_buttons;
 	_current_gamepad_buttons = GamepadButton::None;
+
+	if ( !poll_events() ) return false;
 
 	for ( InputDevice* input_device : _input_devices )
 	{
 		input_device->update();
 	}
-}
 
-MouseButton InputManager::convert_sdl_mouse_button( const uint8 button_index )
-{
-	switch ( button_index )
+	for ( InputActionBase* input_action : _input_actions )
 	{
-		case 1:
-			return MouseButton::Left;
-		case 2:
-			return MouseButton::Middle;
-		case 3:
-			return MouseButton::Right;
+		input_action->update( this );
 	}
 
-	return MouseButton::None;
+	return true;
+}
+
+bool InputManager::poll_events()
+{
+	const ImGuiIO& imgui_io = ImGui::GetIO();
+
+	//  Read window events
+	SDL_Event event;
+	while ( SDL_PollEvent( &event ) )
+	{
+		//  Send event to ImGui
+		ImGui_ImplSDL2_ProcessEvent( &event );
+
+		switch ( event.type )
+		{
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				if ( imgui_io.WantCaptureMouse ) continue;
+
+				const MouseButton button = sdl_to_mouse_button( event.button.button );
+				take_mouse_button_down( button );
+
+				break;
+			}
+			case SDL_MOUSEBUTTONUP:
+			{
+				//	NOTE: We are not checking for ImGui's IO here in order to update the mouse
+				//	button even when the user is releasing it on an ImGui interface, which would
+				//	cause bugs otherwise.
+
+				const MouseButton button = sdl_to_mouse_button( event.button.button );
+				take_mouse_button_up( button );
+
+				break;
+			}
+			case SDL_MOUSEWHEEL:
+			{
+				if ( imgui_io.WantCaptureMouse ) continue;
+
+				//  Store mouse wheel for this frame
+				mouse_wheel.x = static_cast<float>( event.wheel.x );
+				mouse_wheel.y = static_cast<float>( event.wheel.y );
+				break;
+			}
+			case SDL_QUIT:
+			{
+				//  Quit game when closing window
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 void InputManager::take_mouse_button_down( const MouseButton button )
 {
-	if ( ( _current_mouse_state & button ) == button ) return;
+	if ( enum_has_flag( _current_mouse_state, button ) ) return;
 
 	_current_mouse_state = _current_mouse_state | button;
 }
@@ -281,8 +337,27 @@ KeyState InputManager::get_mouse_button_state( const MouseButton button ) const
 
 void InputManager::populate_imgui()
 {
-	for ( InputDevice* input_device : _input_devices )
+	ImGui::SetNextItemOpen( true, ImGuiCond_Appearing );
+	if ( ImGui::TreeNode( "Actions" ) )
 	{
-		input_device->populate_imgui();
+		ImGui::Text( "Input Actions: %d", _input_actions.size() );
+
+		for ( InputActionBase* input_action : _input_actions )
+		{
+			input_action->populate_imgui();
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::SetNextItemOpen( true, ImGuiCond_Appearing );
+	if ( ImGui::TreeNode( "Devices" ) )
+	{
+		for ( InputDevice* input_device : _input_devices )
+		{
+			input_device->populate_imgui();
+		}
+
+		ImGui::TreePop();
 	}
 }

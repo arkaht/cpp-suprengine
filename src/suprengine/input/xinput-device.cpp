@@ -129,193 +129,6 @@ void XInputDevice::update()
 #endif
 }
 
-constexpr float GAMEPAD_WIDGET_SIZE = 50.0f;
-constexpr float JOYSTICK_WIDGET_RADIUS = GAMEPAD_WIDGET_SIZE / 2.0f;
-constexpr float JOYSTICK_RADIUS = 5.0f;
-constexpr float FACE_BUTTONS_RADIUS = 8.0f;
-constexpr uint32 GAMEPAD_WIDGETS_BACKGROUND_COLOR = IM_COL32( 0, 0, 0, 155 );
-
-void Joystick(
-	const Vec2& joystick,
-	float deadzone = 0.0f,
-	bool is_pressed = false,
-	float widget_radius = JOYSTICK_WIDGET_RADIUS, float joystick_radius = JOYSTICK_RADIUS,
-	uint32 background_color = GAMEPAD_WIDGETS_BACKGROUND_COLOR,
-	uint32 joystick_color = IM_COL32( 215, 215, 215, 255 ),
-	uint32 amplitude_color = IM_COL32( 255, 255, 255, 128 )
-)
-{
-	ImDrawList* draw_list = ImGui::GetWindowDrawList();
-	const auto& cursor = ImGui::GetCursorScreenPos();
-
-	// Draw background
-	const ImVec2 background_circle_center = ImVec2( cursor.x + widget_radius, cursor.y + widget_radius );
-	draw_list->AddCircleFilled( background_circle_center, widget_radius, background_color );
-
-	// Draw deadzone
-	if ( deadzone > 0.0f )
-	{
-		draw_list->AddCircle(
-			background_circle_center,
-			widget_radius * deadzone,
-			IM_COL32( 255, 0, 0, 255 )
-		);
-	}
-
-	// Draw amplitude
-	const float amplitude = joystick.length();
-	if ( amplitude > 0.0f )
-	{
-		draw_list->AddCircle(
-			background_circle_center,
-			widget_radius * amplitude,
-			amplitude_color
-		);
-	}
-
-	// Draw joystick
-	const ImVec2 joystick_center {
-		joystick.x * ( widget_radius - joystick_radius ) + cursor.x + widget_radius,
-		-joystick.y * ( widget_radius - joystick_radius ) + cursor.y + widget_radius,
-	};
-	draw_list->AddCircleFilled( joystick_center, joystick_radius, joystick_color );
-
-	if ( is_pressed )
-	{
-		draw_list->AddCircle( joystick_center, joystick_radius * 1.5f, joystick_color );
-	}
-
-	ImGui::Dummy( ImVec2( widget_radius * 2.0f, widget_radius * 2.0f ) );
-};
-
-void FaceButtons(
-	bool button_up, bool button_right,
-	bool button_down, bool button_left,
-	float widget_size = GAMEPAD_WIDGET_SIZE,
-	float button_radius = FACE_BUTTONS_RADIUS,
-	const uint32 background_color = GAMEPAD_WIDGETS_BACKGROUND_COLOR
-)
-{
-	ImDrawList* draw_list = ImGui::GetWindowDrawList();
-	const ImVec2 cursor	  = ImGui::GetCursorScreenPos();
-	const ImVec2 center   = ImVec2 {
-		cursor.x + widget_size * 0.5f,
-		cursor.y + widget_size * 0.5f
-	};
-
-	const bool buttons[4] { button_up, button_right, button_down, button_left };
-	uint32 colors[4]
-	{
-		IM_COL32( 200, 200, 0, 255 ),
-		IM_COL32( 200, 0,   0, 255 ),
-		IM_COL32( 0,   200, 0, 255 ),
-		IM_COL32( 0,   0,   200, 255 ),
-	};
-	constexpr ImVec2 directions[4]
-	{
-		ImVec2 {  0.0f, -1.0f },
-		ImVec2 {  1.0f, 0.0f },
-		ImVec2 {  0.0f, 1.0f },
-		ImVec2 { -1.0f, 0.0f },
-	};
-
-	const float offset = widget_size * 0.5f - button_radius;
-	for ( int i = 0; i < 4; i++ )
-	{
-		draw_list->AddCircleFilled(
-			ImVec2 {
-				center.x + directions[i].x * offset,
-				center.y + directions[i].y * offset,
-			},
-			button_radius,
-			buttons[i] ? colors[i] : background_color
-		);
-	}
-
-	ImGui::Dummy( ImVec2( widget_size, widget_size ) );
-}
-
-void DpadButtons(
-	bool button_up, bool button_right,
-	bool button_down, bool button_left,
-	float widget_size = GAMEPAD_WIDGET_SIZE,
-	float button_size = FACE_BUTTONS_RADIUS * 2.0f,
-	const uint32 background_color = GAMEPAD_WIDGETS_BACKGROUND_COLOR
-)
-{
-	ImDrawList* draw_list = ImGui::GetWindowDrawList();
-	const ImVec2 cursor	  = ImGui::GetCursorScreenPos();
-	const ImVec2 center   = ImVec2 {
-		cursor.x + widget_size * 0.5f,
-		cursor.y + widget_size * 0.5f
-	};
-
-	const bool buttons[4] { button_up, button_right, button_down, button_left };
-	constexpr ImVec2 directions[4]
-	{
-		ImVec2 {  0.0f, -1.0f },
-		ImVec2 {  1.0f, 0.0f },
-		ImVec2 {  0.0f, 1.0f },
-		ImVec2 { -1.0f, 0.0f },
-	};
-
-	constexpr uint32 PRESSED_COLOR = IM_COL32( 255, 255, 255, 255 );
-	const float offset = widget_size * 0.5f;
-	for ( int i = 0; i < 4; i++ )
-	{
-		const float side_offset = offset - button_size;
-		const ImVec2 side_extrude {
-			directions[i].y * button_size * 0.5f,
-			directions[i].x * button_size * 0.5f
-		};
-
-		draw_list->AddTriangleFilled(
-			ImVec2 {
-				center.x + directions[i].x * offset,
-				center.y + directions[i].y * offset,
-			},
-			ImVec2 {
-				center.x + directions[i].x * side_offset + side_extrude.x,
-				center.y + directions[i].y * side_offset + side_extrude.y,
-			},
-			ImVec2 {
-				center.x + directions[i].x * side_offset - side_extrude.x,
-				center.y + directions[i].y * side_offset - side_extrude.y,
-			},
-			buttons[i] ? PRESSED_COLOR : background_color
-		);
-	}
-
-	ImGui::Dummy( ImVec2( widget_size, widget_size ) );
-}
-
-void Shoulder(
-	bool left_trigger, bool left_shoulder,
-	bool right_trigger, bool right_shoulder,
-	float widget_size = GAMEPAD_WIDGET_SIZE,
-	float button_size = FACE_BUTTONS_RADIUS * 2.0f,
-	const uint32 background_color = GAMEPAD_WIDGETS_BACKGROUND_COLOR
-)
-{
-	ImDrawList* draw_list = ImGui::GetWindowDrawList();
-	const ImVec2 cursor	  = ImGui::GetCursorScreenPos();
-
-	constexpr uint32 PRESSED_COLOR = IM_COL32( 255, 255, 255, 255 );
-
-	draw_list->AddRectFilled(
-		ImVec2 { cursor.x, cursor.y + widget_size * 0.7f },
-		ImVec2 { cursor.x + widget_size, cursor.y + widget_size },
-		left_shoulder ? PRESSED_COLOR : background_color
-	);
-	draw_list->AddRectFilled(
-		ImVec2 { cursor.x + widget_size * 0.5f - widget_size * 0.15f, cursor.y },
-		ImVec2 { cursor.x + widget_size * 0.5f + widget_size * 0.15f, cursor.y + widget_size * 0.6f },
-		left_trigger ? PRESSED_COLOR : background_color
-	);
-
-	ImGui::Dummy( ImVec2( widget_size, widget_size ) );
-}
-
 void XInputDevice::populate_imgui()
 {
 	const InputManager* inputs = Engine::instance().get_inputs();
@@ -326,7 +139,16 @@ void XInputDevice::populate_imgui()
 	for ( int gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++ )
 	{
 		const XInputGamepadState& gamepad_state = _gamepads[gamepad_id];
-		if ( !gamepad_state.is_connected ) return;
+		if ( !gamepad_state.is_connected )
+		{
+			ImGui::PushID( gamepad_id );
+			if ( ImGui::TreeNode( "", "Gamepad %d: Disconnected", gamepad_id ) )
+			{
+				ImGui::TreePop();
+			}
+			ImGui::PopID();
+			continue;
+		}
 
 		// Open the very first node by default
 		if ( gamepad_id == 0 )
@@ -350,20 +172,20 @@ void XInputDevice::populate_imgui()
 			ImGui::Text( "Left Trigger: %.0f%%", inputs->left_gamepad_trigger * 100.0f );
 			ImGui::Text( "Right Trigger: %.0f%%", inputs->right_gamepad_trigger * 100.0f );
 
-			Joystick(
+			ImGui::Extra::Joystick(
 				inputs->left_gamepad_joystick,
 				static_cast<float>( XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE ) / std::numeric_limits<short>::max(),
 				inputs->is_gamepad_button_pressed( GamepadButton::LeftThumb )
 			);
 			ImGui::SameLine();
-			Joystick(
+			ImGui::Extra::Joystick(
 				inputs->right_gamepad_joystick,
 				static_cast<float>( XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE ) / std::numeric_limits<short>::max(),
 				inputs->is_gamepad_button_pressed( GamepadButton::RightThumb )
 			);
 
 			ImGui::SameLine();
-			DpadButtons(
+			ImGui::Extra::DpadButtons(
 				inputs->is_gamepad_button_down( GamepadButton::DpadUp ),
 				inputs->is_gamepad_button_down( GamepadButton::DpadRight ),
 				inputs->is_gamepad_button_down( GamepadButton::DpadDown ),
@@ -371,7 +193,7 @@ void XInputDevice::populate_imgui()
 			);
 			
 			ImGui::SameLine();
-			FaceButtons(
+			ImGui::Extra::FaceButtons(
 				inputs->is_gamepad_button_down( GamepadButton::FaceButtonUp ),
 				inputs->is_gamepad_button_down( GamepadButton::FaceButtonRight ),
 				inputs->is_gamepad_button_down( GamepadButton::FaceButtonDown ),
@@ -379,14 +201,14 @@ void XInputDevice::populate_imgui()
 			);
 
 			ImGui::SameLine();
-			Shoulder(
+			ImGui::Extra::Shoulder(
 				inputs->is_gamepad_button_down( GamepadButton::LeftTrigger ),
 				inputs->is_gamepad_button_down( GamepadButton::LeftShoulder ),
 				inputs->right_gamepad_trigger,
 				inputs->is_gamepad_button_down( GamepadButton::RightShoulder )
 			);
 			ImGui::SameLine();
-			Shoulder(
+			ImGui::Extra::Shoulder(
 				inputs->is_gamepad_button_down( GamepadButton::RightTrigger ),
 				inputs->is_gamepad_button_down( GamepadButton::RightShoulder ),
 				inputs->left_gamepad_trigger,

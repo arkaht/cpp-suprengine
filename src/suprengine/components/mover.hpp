@@ -9,51 +9,33 @@ namespace suprengine
 	class Mover : public Component
 	{
 	public:
-		float move_speed = 10.0f; 
-		float sprint_speed = 25.0f;
-		bool should_collide = true;
+		explicit Mover(
+			InputAction<Vec2>* move_action,
+			InputAction<bool>* sprint_action = nullptr
+		)
+			: move_action( move_action ), sprint_action( sprint_action ) {}
 
-	public:
-		Mover() {}
-
-		void update( float dt ) override
+		void update( const float dt ) override
 		{
-			auto inputs = Engine::instance().get_inputs();
-			Vec3 dir {};
+			if ( move_action == nullptr ) return;
 
-			dir = inputs->left_gamepad_joystick.x * transform->get_right()
-				+ inputs->left_gamepad_joystick.y * transform->get_forward()
-				+ ( inputs->right_gamepad_trigger - inputs->left_gamepad_trigger ) * transform->get_up();
+			const Vec2 move_input = move_action->get_value();
+			if ( move_input == Vec2::zero ) return;
 
-			//  forward/backward
-			if ( inputs->is_key_down( SDL_SCANCODE_W ) || inputs->is_key_down( SDL_SCANCODE_UP ) )
-				dir += transform->get_forward();
-			if ( inputs->is_key_down( SDL_SCANCODE_S ) || inputs->is_key_down( SDL_SCANCODE_DOWN ) )
-				dir -= transform->get_forward();
-
-			//  right/left
-			if ( inputs->is_key_down( SDL_SCANCODE_D ) || inputs->is_key_down( SDL_SCANCODE_RIGHT ) )
-				dir += transform->get_right();
-			if ( inputs->is_key_down( SDL_SCANCODE_A ) || inputs->is_key_down( SDL_SCANCODE_LEFT ) )
-				dir -= transform->get_right();
-
-			//  up/down
-			if ( inputs->is_key_down( SDL_SCANCODE_E ) )
-				dir += Vec3::up;
-			if ( inputs->is_key_down( SDL_SCANCODE_Q ) )
-				dir -= Vec3::up;
-
-			if ( dir == Vec3::zero ) return;
+			const Vec3 dir = transform->get_forward() * move_input.y
+			               + transform->get_right()   * move_input.x;
 
 			//  get movement
-			float speed = ( inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? sprint_speed : move_speed ) * dt;
-			Vec3 move_dir = dir/*.normalized()*/ * speed;
+			const float speed = sprint_action != nullptr && sprint_action->get_value()
+				? sprint_speed
+				: move_speed;
+			const Vec3 move_dir = dir * speed * dt;
 			Vec3 pos = transform->location + move_dir;
 
 			//  check collisions
 			if ( should_collide )
 			{
-				auto physics = Engine::instance().get_physics();
+				Physics* physics = Engine::instance().get_physics();
 				
 				//  setup raycast
 				Ray ray( transform->location, move_dir );
@@ -71,5 +53,13 @@ namespace suprengine
 			//  apply movement
 			transform->set_location( pos );
 		}
+
+	public:
+		float move_speed = 10.0f;
+		float sprint_speed = 25.0f;
+		bool should_collide = true;
+
+		InputAction<Vec2>* move_action = nullptr;
+		InputAction<bool>* sprint_action = nullptr;
 	};
 }
