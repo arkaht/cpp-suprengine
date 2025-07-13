@@ -63,25 +63,25 @@ void Quaternion::normalize()
 
 float Quaternion::get_radian_pitch() const
 {
-	return math::atan2(
-		2.0f * ( w * x + y * z ),
-		1.0f - 2.0f * ( x * x + y * y )
-	);
-}
-
-float Quaternion::get_radian_yaw() const
-{
 	return 2.0f * math::atan2(
 		math::sqrt( 1.0f + 2.0f * ( w * y - x * z ) ),
 		math::sqrt( 1.0f - 2.0f * ( w * y - x * z ) )
 	) - math::HALF_PI;
 }
 
-float Quaternion::get_radian_roll() const
+float Quaternion::get_radian_yaw() const
 {
 	return math::atan2(
 		2.0f * ( w * z + x * y ),
 		1.0f - 2.0f * ( y * y + z * z )
+	);
+}
+
+float Quaternion::get_radian_roll() const
+{
+	return math::atan2(
+		2.0f * ( w * x + y * z ),
+		1.0f - 2.0f * ( x * x + y * y )
 	);
 }
 
