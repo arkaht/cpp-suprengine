@@ -15,6 +15,15 @@ BreakBeforeBraces: Allman
 BreakTemplateDeclarations: Yes
 BreakBeforeConceptDeclarations: Always
 BreakConstructorInitializers: AfterColon
+IndentCaseLabels: true
+
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackParameters: false
+BinPackArguments: false
+AlignAfterOpenBracket: BlockIndent
+BreakBeforeBinaryOperators: NonAssignment
 
 ColumnLimit: 100
 ConstructorInitializerAllOnOneLineOrOnePerLine: false

@@ -32,21 +32,22 @@ namespace suprengine
 		void take_key_down( SDL_Scancode key );
 		void take_gamepad_button( GamepadButton button );
 
-		template <typename ReturnType>
-		InputAction<ReturnType>* create_action( const std::string& name )
+		template <typename T>
+		std::enable_if_t<is_input_action_valid<T>, InputAction<T>*> create_action( const std::string& name )
 		{
-			InputAction<ReturnType>* input_action = new InputAction<ReturnType>( name );
+			// TODO: Check that name doesn't conflict with one already existing
+			InputAction<T>* input_action = new InputAction<T>( name );
 			_input_actions.push_back( input_action );
 			return input_action;
 		}
-		template <typename ReturnType>
-		InputAction<ReturnType>* get_action( const std::string& name )
+		template <typename T>
+		InputAction<T>* get_action( const std::string& name )
 		{
 			for ( InputActionBase* input_action : _input_actions )
 			{
 				if ( input_action->name == name )
 				{
-					return dynamic_cast<InputAction<ReturnType>*>( input_action );
+					return dynamic_cast<InputAction<T>*>( input_action );
 				}
 			}
 
