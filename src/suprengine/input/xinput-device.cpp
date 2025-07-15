@@ -54,10 +54,10 @@ void XInputDevice::update()
 	float game_time = engine.get_updater()->get_accumulated_seconds();
 
 #ifdef PLATFORM_WINDOWS
-	for ( int gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++ )
+	for ( int i = 0; i < XUSER_MAX_COUNT; i++ )
 	{
-		XInputGamepadState& gamepad_state = _gamepads[gamepad_id];
-		if ( !gamepad_state.is_connected && gamepad_state.next_update_time > game_time )
+		XInputGamepadState& gamepad_state = _gamepads[i];
+		if ( gamepad_state.gamepad_id == INDEX_NONE && gamepad_state.next_update_time > game_time )
 		{
 			continue;
 		}
@@ -65,35 +65,35 @@ void XInputDevice::update()
 		// Getting gamepad state
 		XINPUT_STATE& state = gamepad_state.internal_state;
 		ZeroMemory( &state, sizeof( XINPUT_STATE ) );
-		const DWORD result = XInputGetState( gamepad_id, &state );
+		const DWORD result = XInputGetState( i, &state );
 
 		if ( result != ERROR_SUCCESS )
 		{
-			if ( gamepad_state.is_connected )
+			if ( gamepad_state.gamepad_id != INDEX_NONE )
 			{
-				_manager->disconnect_gamepad( gamepad_id );
+				_manager->disconnect_gamepad( i );
 			}
 
 			// Scheduling an update time for non-connected gamepads as specified
 			// in XInput documentation.
-			gamepad_state.is_connected = false;
+			gamepad_state.gamepad_id = INDEX_NONE;
 			gamepad_state.next_update_time = game_time + RECONNECTION_DELAY;
 			continue;
 		}
 
-		if ( !gamepad_state.is_connected )
+		if ( gamepad_state.gamepad_id == INDEX_NONE )
 		{
-			_manager->connect_gamepad( gamepad_id );
+			const bool is_connected = _manager->connect_gamepad( gamepad_state.gamepad_id );
+			if ( !is_connected )
+			{
+				gamepad_state.next_update_time = game_time + RECONNECTION_DELAY;
+				continue;
+			}
 		}
 
-		gamepad_state.is_connected = true;
-
 		// TODO: Prevent direct access of GamepadInputs and use a proxy for each individual input
-		// TODO: Do not use directly 'gamepad_id' for InputManager methods, we need to ask an ID
-		//		 to the InputManager to resolve conflicts in the case of multiple gamepads running
-		//		 by different InputDevices.
 
-		GamepadInputs& gamepad_inputs = _manager->get_gamepad_inputs( gamepad_id );
+		GamepadInputs& gamepad_inputs = _manager->get_gamepad_inputs( gamepad_state.gamepad_id );
 
 		handle_joystick(
 			state.Gamepad.sThumbLX, state.Gamepad.sThumbLY,
@@ -142,23 +142,26 @@ void XInputDevice::populate_imgui()
 	ImGui::SeparatorText( "XInput" );
 
 	int connected_count = 0;
-	for ( int gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++ )
+	for ( int i = 0; i < XUSER_MAX_COUNT; i++ )
 	{
-		const XInputGamepadState& gamepad_state = _gamepads[gamepad_id];
-		const GamepadInputs& gamepad_inputs = _manager->get_gamepad_inputs( gamepad_id );
+		const XInputGamepadState& gamepad_state = _gamepads[i];
+		const bool is_connected = gamepad_state.gamepad_id != INDEX_NONE;
 
 		// Open the very first node by default
 		ImGui::SetNextItemOpen( true, ImGuiCond_Appearing );
 
-		ImGui::PushID( gamepad_id );
-		if ( ImGui::TreeNode( "", "Gamepad %d: %s", gamepad_id, gamepad_inputs.is_connected ? "Connected" : "Disconnected" ) )
+		ImGui::PushID( i );
+		if ( ImGui::TreeNode( "", "Gamepad %d: %s", i, is_connected ? "Connected" : "Disconnected" ) )
 		{
-			if ( !gamepad_state.is_connected )
+			if ( !is_connected )
 			{
 				ImGui::TreePop();
 				ImGui::PopID();
 				continue;
 			}
+
+			const GamepadInputs& gamepad_inputs = _manager->get_gamepad_inputs( gamepad_state.gamepad_id );
+			ImGui::Text( "Gamepad ID: %d", gamepad_state.gamepad_id );
 
 			ImGui::Text(
 				"Left Joystick: %s (%.0f%%)",
@@ -176,44 +179,44 @@ void XInputDevice::populate_imgui()
 			ImGui::Extra::Joystick(
 				gamepad_inputs.left_joystick,
 				static_cast<float>( XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE ) / std::numeric_limits<short>::max(),
-				_manager->is_gamepad_button_pressed( gamepad_id, GamepadButton::LeftThumb )
+				_manager->is_gamepad_button_pressed( gamepad_state.gamepad_id, GamepadButton::LeftThumb )
 			);
 			ImGui::SameLine();
 			ImGui::Extra::Joystick(
 				gamepad_inputs.right_joystick,
 				static_cast<float>( XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE ) / std::numeric_limits<short>::max(),
-				_manager->is_gamepad_button_pressed( gamepad_id, GamepadButton::RightThumb )
+				_manager->is_gamepad_button_pressed( gamepad_state.gamepad_id, GamepadButton::RightThumb )
 			);
 
 			ImGui::SameLine();
 			ImGui::Extra::DpadButtons(
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::DpadUp ),
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::DpadRight ),
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::DpadDown ),
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::DpadLeft )
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::DpadUp ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::DpadRight ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::DpadDown ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::DpadLeft )
 			);
 			
 			ImGui::SameLine();
 			ImGui::Extra::FaceButtons(
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::FaceButtonUp ),
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::FaceButtonRight ),
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::FaceButtonDown ),
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::FaceButtonLeft )
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::FaceButtonUp ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::FaceButtonRight ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::FaceButtonDown ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::FaceButtonLeft )
 			);
 
 			ImGui::SameLine();
 			ImGui::Extra::Shoulder(
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::LeftTrigger ),
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::LeftShoulder ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::LeftTrigger ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::LeftShoulder ),
 				gamepad_inputs.right_trigger > 0.0f,
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::RightShoulder )
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::RightShoulder )
 			);
 			ImGui::SameLine();
 			ImGui::Extra::Shoulder(
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::RightTrigger ),
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::RightShoulder ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::RightTrigger ),
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::RightShoulder ),
 				gamepad_inputs.left_trigger > 0.0f,
-				_manager->is_gamepad_button_down( gamepad_id, GamepadButton::LeftShoulder )
+				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::LeftShoulder )
 			);
 
 			ImGui::TreePop();

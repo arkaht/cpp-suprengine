@@ -87,7 +87,7 @@ namespace suprengine
 			float default_value = 0.0f
 		) const;
 
-		void connect_gamepad( int gamepad_id );
+		bool connect_gamepad( int& gamepad_id );
 		void disconnect_gamepad( int gamepad_id );
 
 		void take_gamepad_button( int gamepad_id, GamepadButton button );
@@ -138,6 +138,8 @@ namespace suprengine
 		 * Returns whenever the game can still run.
 		 */
 		bool poll_events();
+
+		bool find_next_gamepad_id( int& gamepad_id ) const;
 
 	private:
 		uint8_t _last_keyboard_states[SDL_NUM_SCANCODES] {};

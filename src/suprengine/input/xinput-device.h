@@ -30,13 +30,13 @@ struct XINPUT_STATE {};
 
 #include "input-device.h"
 
-#include "suprengine/math/vec2.h"
+#include "suprengine/utils/usings.h"
 
 namespace suprengine
 {
 	struct XInputGamepadState
 	{
-		bool is_connected = false;
+		int gamepad_id = INDEX_NONE;
 		float next_update_time = 0.0f;
 
 		XINPUT_STATE internal_state;

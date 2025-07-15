@@ -223,14 +223,37 @@ float InputManager::get_keys_as_axis(
 	return axis;
 }
 
-void InputManager::connect_gamepad( const int gamepad_id )
+bool InputManager::find_next_gamepad_id( int& gamepad_id ) const
 {
+	gamepad_id = INDEX_NONE;
+
+	for ( int i = 0; i < MAX_GAMEPADS_COUNT; i++ )
+	{
+		if ( !_gamepads_inputs[i].is_connected )
+		{
+			gamepad_id = i;
+			break;
+		}
+	}
+
+	return gamepad_id != INDEX_NONE;
+}
+
+bool InputManager::connect_gamepad( int& gamepad_id )
+{
+	if ( !find_next_gamepad_id( gamepad_id ) )
+	{
+		Logger::error( "A gamepad couldn't connect: reached the maximum gamepad count!", gamepad_id );
+		return false;
+	}
+
 	GamepadInputs& gamepad_inputs = get_gamepad_inputs( gamepad_id );
 	ASSERT( !gamepad_inputs.is_connected );
 
 	gamepad_inputs.is_connected = true;
 
 	Logger::info( "Gamepad %d is connected!", gamepad_id );
+	return true;
 }
 
 void InputManager::disconnect_gamepad( const int gamepad_id )
