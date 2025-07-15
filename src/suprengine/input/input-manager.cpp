@@ -3,13 +3,14 @@
 #include "backends/imgui_impl_sdl2.h"
 
 #include <suprengine/input/xinput-device.h>
+#include <suprengine/utils/assert.h>
 
 using namespace suprengine;
 
 InputManager::InputManager()
 {
 	//	Reset current states so update() doesn't copy an array of unset numbers
-	SDL_memset( _current_states, 0, SDL_NUM_SCANCODES );
+	SDL_memset( _current_keyboard_states, 0, SDL_NUM_SCANCODES );
 
 	_input_devices.push_back( new XInputDevice( this ) );
 }
@@ -34,11 +35,11 @@ bool InputManager::update()
 	mouse_wheel = Vec2::zero;
 
 	//	Copy keyboard current states into previous ones
-	SDL_memcpy( _previous_states, _current_states, SDL_NUM_SCANCODES );
+	SDL_memcpy( _last_keyboard_states, _current_keyboard_states, SDL_NUM_SCANCODES );
 
 	//	Copy new states into current ones
 	const uint8* state = SDL_GetKeyboardState( nullptr );
-	SDL_memcpy( _current_states, state, SDL_NUM_SCANCODES );
+	SDL_memcpy( _current_keyboard_states, state, SDL_NUM_SCANCODES );
 
 	//	Update last mouse variables
 	_last_mouse_pos = _current_mouse_pos;
@@ -55,8 +56,12 @@ bool InputManager::update()
 	mouse_delta.x = static_cast<float>( x );
 	mouse_delta.y = static_cast<float>( y );
 
-	_last_gamepad_buttons = _current_gamepad_buttons;
-	_current_gamepad_buttons = GamepadButton::None;
+	// Update gamepads inputs
+	for ( GamepadInputs& gamepad_inputs : _gamepads_inputs )
+	{
+		gamepad_inputs.last_buttons = gamepad_inputs.current_buttons;
+		gamepad_inputs.current_buttons = GamepadButton::None;
+	}
 
 	if ( !poll_events() ) return false;
 
@@ -142,12 +147,7 @@ void InputManager::take_mouse_button_up( const MouseButton button )
 
 void InputManager::take_key_down( const SDL_Scancode key )
 {
-	_current_states[key] = true;
-}
-
-void InputManager::take_gamepad_button( const GamepadButton button )
-{
-	_current_gamepad_buttons |= button;
+	_current_keyboard_states[key] = true;
 }
 
 bool InputManager::is_key_just_pressed( const SDL_Scancode key ) const
@@ -184,9 +184,9 @@ bool InputManager::is_key_down( const SDL_Scancode key ) const
 
 KeyState InputManager::get_key_state( const SDL_Scancode key ) const
 {
-	if ( _previous_states[key] )
+	if ( _last_keyboard_states[key] )
 	{
-		if ( _current_states[key] )
+		if ( _current_keyboard_states[key] )
 		{
 			return KeyState::Down;
 		}
@@ -194,7 +194,7 @@ KeyState InputManager::get_key_state( const SDL_Scancode key ) const
 		return KeyState::Released;
 	}
 
-	if ( _current_states[key] )
+	if ( _current_keyboard_states[key] )
 	{
 		return KeyState::Pressed;
 	}
@@ -203,8 +203,10 @@ KeyState InputManager::get_key_state( const SDL_Scancode key ) const
 }
 
 float InputManager::get_keys_as_axis(
-	const SDL_Scancode negative_key, const SDL_Scancode positive_key,
-	const float value, const float default_value
+	const SDL_Scancode negative_key,
+	const SDL_Scancode positive_key,
+	const float value,
+	const float default_value
 ) const
 {
 	float axis = default_value;
@@ -221,43 +223,97 @@ float InputManager::get_keys_as_axis(
 	return axis;
 }
 
-bool InputManager::is_gamepad_button_just_pressed( const GamepadButton button ) const
+void InputManager::connect_gamepad( const int gamepad_id )
 {
-	return get_gamepad_button_state( button ) == KeyState::Pressed;
+	GamepadInputs& gamepad_inputs = get_gamepad_inputs( gamepad_id );
+	ASSERT( !gamepad_inputs.is_connected );
+
+	gamepad_inputs.is_connected = true;
+
+	Logger::info( "Gamepad %d is connected!", gamepad_id );
 }
 
-bool InputManager::is_gamepad_button_just_released( const GamepadButton button ) const
+void InputManager::disconnect_gamepad( const int gamepad_id )
 {
-	return get_gamepad_button_state( button ) == KeyState::Released;
+	GamepadInputs& gamepad_inputs = get_gamepad_inputs( gamepad_id );
+	ASSERT( gamepad_inputs.is_connected );
+
+	gamepad_inputs.is_connected = false;
+
+	Logger::info( "Gamepad %d has been disconnected!", gamepad_id );
 }
 
-bool InputManager::is_gamepad_button_pressed( const GamepadButton button ) const
+void InputManager::take_gamepad_button( const int gamepad_id, const GamepadButton button )
 {
-	const KeyState state = get_gamepad_button_state( button );
+	GamepadInputs& gamepad_inputs = get_gamepad_inputs( gamepad_id );
+	ASSERT( gamepad_inputs.is_connected );
+
+	gamepad_inputs.current_buttons |= button;
+}
+
+bool InputManager::is_gamepad_connected( const int gamepad_id ) const
+{
+	return get_gamepad_inputs( gamepad_id ).is_connected;
+}
+
+GamepadInputs& InputManager::get_gamepad_inputs( const int gamepad_id )
+{
+	ASSERT( gamepad_id >= 0 && gamepad_id < MAX_GAMEPADS_COUNT );
+	return _gamepads_inputs[gamepad_id];
+}
+
+const GamepadInputs& InputManager::get_gamepad_inputs( const int gamepad_id ) const
+{
+	ASSERT( gamepad_id >= 0 && gamepad_id < MAX_GAMEPADS_COUNT );
+	return _gamepads_inputs[gamepad_id];
+}
+
+bool InputManager::is_gamepad_button_just_pressed( const int gamepad_id, const GamepadButton button ) const
+{
+	return get_gamepad_button_state( gamepad_id, button ) == KeyState::Pressed;
+}
+
+bool InputManager::is_gamepad_button_just_released( const int gamepad_id, const GamepadButton button ) const
+{
+	return get_gamepad_button_state( gamepad_id, button ) == KeyState::Released;
+}
+
+bool InputManager::is_gamepad_button_pressed( const int gamepad_id, const GamepadButton button ) const
+{
+	const KeyState state = get_gamepad_button_state( gamepad_id, button );
 	return state == KeyState::Pressed || state == KeyState::Down;
 }
 
-bool InputManager::is_gamepad_button_released( const GamepadButton button ) const
+bool InputManager::is_gamepad_button_released( const int gamepad_id, const GamepadButton button ) const
 {
-	const KeyState state = get_gamepad_button_state( button );
+	const KeyState state = get_gamepad_button_state( gamepad_id, button );
 	return state == KeyState::Released || state == KeyState::Up;
 }
 
-bool InputManager::is_gamepad_button_up( const GamepadButton button ) const
+bool InputManager::is_gamepad_button_up( const int gamepad_id, const GamepadButton button ) const
 {
-	return get_gamepad_button_state( button ) == KeyState::Up;
+	return get_gamepad_button_state( gamepad_id, button ) == KeyState::Up;
 }
 
-bool InputManager::is_gamepad_button_down( const GamepadButton button ) const
+bool InputManager::is_gamepad_button_down( const int gamepad_id, const GamepadButton button ) const
 {
-	return get_gamepad_button_state( button ) == KeyState::Down;
+	return get_gamepad_button_state( gamepad_id, button ) == KeyState::Down;
 }
 
-KeyState InputManager::get_gamepad_button_state( const GamepadButton button ) const
+KeyState InputManager::get_gamepad_button_state(
+	const int gamepad_id,
+	const GamepadButton button
+) const
 {
-	if ( enum_has_flag( _last_gamepad_buttons, button ) )
+	const GamepadInputs& gamepad_inputs = get_gamepad_inputs( gamepad_id );
+	if ( !gamepad_inputs.is_connected )
 	{
-		if ( enum_has_flag( _current_gamepad_buttons, button ) )
+		return KeyState::Up;
+	}
+
+	if ( enum_has_flag( gamepad_inputs.last_buttons, button ) )
+	{
+		if ( enum_has_flag( gamepad_inputs.current_buttons, button ) )
 		{
 			return KeyState::Down;
 		}
@@ -265,12 +321,32 @@ KeyState InputManager::get_gamepad_button_state( const GamepadButton button ) co
 		return KeyState::Released;
 	}
 
-	if ( enum_has_flag( _current_gamepad_buttons, button ) )
+	if ( enum_has_flag( gamepad_inputs.current_buttons, button ) )
 	{
 		return KeyState::Pressed;
 	}
 
 	return KeyState::Up;
+}
+
+const Vec2& InputManager::get_gamepad_joystick( const int gamepad_id, const JoystickSide side ) const
+{
+	const GamepadInputs& gamepad_inputs = get_gamepad_inputs( gamepad_id );
+	if ( !gamepad_inputs.is_connected )
+	{
+		return Vec2::zero;
+	}
+
+	switch ( side )
+	{
+		case JoystickSide::Left:
+			return gamepad_inputs.left_joystick;
+		case JoystickSide::Right:
+			return gamepad_inputs.right_joystick;
+	}
+
+	ASSERT( side != JoystickSide::None );
+	return Vec2::zero;
 }
 
 void InputManager::set_relative_mouse_mode( bool value )

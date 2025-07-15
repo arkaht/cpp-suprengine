@@ -317,6 +317,7 @@ namespace ImGui::Extra
 		ImGui::Dummy( ImVec2( widget_size, widget_size ) );
 	}
 
+	// TODO: Think about displaying trigger amount and whether to display both triggers at once.
 	static void Shoulder(
 		bool left_trigger, bool left_shoulder,
 		bool right_trigger, bool right_shoulder,

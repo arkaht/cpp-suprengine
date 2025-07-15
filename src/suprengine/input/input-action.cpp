@@ -34,7 +34,8 @@ void InputAction<bool>::update( const InputManager* inputs )
 	// Evaluate gamepad buttons
 	for ( const GamepadButton button : _assigned_gamepad_buttons )
 	{
-		if ( inputs->is_gamepad_button_down( button ) )
+		// TODO: Find a way to give a gamepad ID
+		if ( inputs->is_gamepad_button_down( 0, button ) )
 		{
 			_value = true;
 			return;
@@ -126,28 +127,15 @@ void InputAction<Vec2>::update( const InputManager* inputs )
 	_value = Vec2::zero;
 
 	// Read gamepad inputs
-	switch ( _joystick_side )
+	if ( _joystick_side != JoystickSide::None )
 	{
-		case JoystickSide::Left:
+		// TODO: Find a way to give a gamepad ID
+		const Vec2& joystick = inputs->get_gamepad_joystick( 0, _joystick_side );
+		if ( joystick.length_sqr() != 0.0f )
 		{
-			if ( inputs->left_gamepad_joystick.length_sqr() != 0.0f )
-			{
-				_value = get_joystick_with_modifiers( inputs->left_gamepad_joystick );
-				return;
-			}
-			break;
+			_value = get_joystick_with_modifiers( joystick );
+			return;
 		}
-		case JoystickSide::Right:
-		{
-			if ( inputs->right_gamepad_joystick.length_sqr() != 0.0f )
-			{
-				_value = get_joystick_with_modifiers( inputs->right_gamepad_joystick );
-				return;
-			}
-			break;
-		}
-		default:
-			break;
 	}
 
 	if ( _mouse_movement )

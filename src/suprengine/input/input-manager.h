@@ -14,6 +14,25 @@ namespace suprengine
 {
 	class InputDevice;
 
+	struct GamepadInputs
+	{
+		bool is_connected = false;
+
+		Vec2 left_joystick {};
+		Vec2 right_joystick {};
+
+		float left_trigger = 0.0f;
+		float right_trigger = 0.0f;
+
+		GamepadButton current_buttons = GamepadButton::None;
+		GamepadButton last_buttons = GamepadButton::None;
+	};
+
+	/*
+	 * Maximum amount of gamepads simultaneously connected and managed by the input system.
+	 */
+	constexpr int MAX_GAMEPADS_COUNT = 4;
+
 	class InputManager
 	{
 	public:
@@ -25,12 +44,6 @@ namespace suprengine
 		 * Returns whenever the game can still run.
 		 */
 		bool update();
-
-		void take_mouse_button_down( MouseButton button );
-		void take_mouse_button_up( MouseButton button );
-
-		void take_key_down( SDL_Scancode key );
-		void take_gamepad_button( GamepadButton button );
 
 		template <typename T>
 		std::enable_if_t<is_input_action_valid<T>, InputAction<T>*> create_action( const std::string& name )
@@ -54,6 +67,8 @@ namespace suprengine
 			return nullptr;
 		}
 
+		void take_key_down( SDL_Scancode key );
+
 		bool is_key_just_pressed( SDL_Scancode key ) const;
 		bool is_key_just_released( SDL_Scancode key ) const;
 		bool is_key_pressed( SDL_Scancode key ) const;
@@ -72,13 +87,28 @@ namespace suprengine
 			float default_value = 0.0f
 		) const;
 
-		bool is_gamepad_button_just_pressed( GamepadButton button ) const;
-		bool is_gamepad_button_just_released( GamepadButton button ) const;
-		bool is_gamepad_button_pressed( GamepadButton button ) const;
-		bool is_gamepad_button_released( GamepadButton button ) const;
-		bool is_gamepad_button_up( GamepadButton button ) const;
-		bool is_gamepad_button_down( GamepadButton button ) const;
-		KeyState get_gamepad_button_state( GamepadButton button ) const;
+		void connect_gamepad( int gamepad_id );
+		void disconnect_gamepad( int gamepad_id );
+
+		void take_gamepad_button( int gamepad_id, GamepadButton button );
+
+		bool is_gamepad_connected( int gamepad_id ) const;
+
+		GamepadInputs& get_gamepad_inputs( int gamepad_id );
+		const GamepadInputs& get_gamepad_inputs( int gamepad_id ) const;
+
+		bool is_gamepad_button_just_pressed( int gamepad_id, GamepadButton button ) const;
+		bool is_gamepad_button_just_released( int gamepad_id, GamepadButton button ) const;
+		bool is_gamepad_button_pressed( int gamepad_id, GamepadButton button ) const;
+		bool is_gamepad_button_released( int gamepad_id, GamepadButton button ) const;
+		bool is_gamepad_button_up( int gamepad_id, GamepadButton button ) const;
+		bool is_gamepad_button_down( int gamepad_id, GamepadButton button ) const;
+		KeyState get_gamepad_button_state( int gamepad_id, GamepadButton button ) const;
+
+		const Vec2& get_gamepad_joystick( int gamepad_id, JoystickSide side ) const;
+
+		void take_mouse_button_down( MouseButton button );
+		void take_mouse_button_up( MouseButton button );
 
 		void set_relative_mouse_mode( bool value );
 		bool is_relative_mouse_mode_enabled() const;
@@ -102,12 +132,6 @@ namespace suprengine
 		Vec2 mouse_delta {};
 		Vec2 mouse_wheel {};
 
-		Vec2 left_gamepad_joystick {};
-		Vec2 right_gamepad_joystick {};
-
-		float left_gamepad_trigger = 0.0f;
-		float right_gamepad_trigger = 0.0f;
-
 	private:
 		/*
 		 * Poll all SDL events and handle them.
@@ -116,17 +140,16 @@ namespace suprengine
 		bool poll_events();
 
 	private:
-		uint8_t _previous_states[SDL_NUM_SCANCODES] {};
-		uint8_t _current_states[SDL_NUM_SCANCODES] {};
+		uint8_t _last_keyboard_states[SDL_NUM_SCANCODES] {};
+		uint8_t _current_keyboard_states[SDL_NUM_SCANCODES] {};
 
 		MouseButton _last_mouse_state = MouseButton::None;
 		MouseButton _current_mouse_state = MouseButton::None;
 
-		GamepadButton _current_gamepad_buttons = GamepadButton::None;
-		GamepadButton _last_gamepad_buttons = GamepadButton::None;
-
 		Vec2 _last_mouse_pos {};
 		Vec2 _current_mouse_pos {};
+
+		GamepadInputs _gamepads_inputs[MAX_GAMEPADS_COUNT] {};
 
 		std::vector<InputDevice*> _input_devices {};
 		std::vector<InputActionBase*> _input_actions {};
