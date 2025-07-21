@@ -1,7 +1,7 @@
 ﻿#include "input-action.h"
 
 #include "input-manager.h"
-#include "suprengine/utils/imgui.h"
+#include "suprengine/utils/imgui/imgui-input-visualizer.h"
 
 using namespace suprengine;
 
@@ -144,7 +144,7 @@ void InputAction<float>::update( const InputManager* inputs )
 
 void InputAction<float>::populate_imgui()
 {
-	ImGui::Extra::Joystick( Vec2 { _value, 0.0f }, 0.0f, false );
+	ImGui::InputVisualizer::Axis( _value );
 
 	ImGui::SameLine();
 	ImGui::Text(
@@ -249,7 +249,7 @@ void InputAction<Vec2>::update( const InputManager* inputs )
 
 void InputAction<Vec2>::populate_imgui()
 {
-	ImGui::Extra::Joystick( _value, 0.0f, false );
+	ImGui::InputVisualizer::Joystick( _value, 0.0f, false );
 
 	ImGui::SameLine();
 	ImGui::Text(

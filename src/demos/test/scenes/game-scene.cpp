@@ -68,7 +68,7 @@ void GameScene::init()
 	InputManager* inputs = engine.get_inputs();
 	InputAction<Vec2>* move_action = inputs->get_action<Vec2>( "Move" );
 	InputAction<Vec2>* look_action = inputs->get_action<Vec2>( "Look" );
-	InputAction<float>* vertical_action = inputs->get_action<float>( "Vertical" );
+	InputAction<float>* vertical_action = inputs->get_action<float>( "Up/Down" );
 	InputAction<bool>* sprint_action = inputs->get_action<bool>( "Sprint" );
 
 	auto cube_model = Assets::get_model( "cube" );

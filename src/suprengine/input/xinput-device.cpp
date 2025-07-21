@@ -4,6 +4,7 @@
 
 #include "suprengine/core/engine.h"
 #include "suprengine/math/vec2.h"
+#include "suprengine/utils/imgui/imgui-input-visualizer.h"
 
 using namespace suprengine;
 
@@ -176,20 +177,22 @@ void XInputDevice::populate_imgui()
 			ImGui::Text( "Left Trigger: %.0f%%", gamepad_inputs.left_trigger * 100.0f );
 			ImGui::Text( "Right Trigger: %.0f%%", gamepad_inputs.right_trigger * 100.0f );
 
-			ImGui::Extra::Joystick(
+			ImGui::InputVisualizer::Joystick(
 				gamepad_inputs.left_joystick,
 				static_cast<float>( XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE ) / std::numeric_limits<short>::max(),
-				_manager->is_gamepad_button_pressed( gamepad_state.gamepad_id, GamepadButton::LeftThumb )
+				_manager->is_gamepad_button_pressed( gamepad_state.gamepad_id, GamepadButton::LeftThumb ),
+				1
 			);
 			ImGui::SameLine();
-			ImGui::Extra::Joystick(
+			ImGui::InputVisualizer::Joystick(
 				gamepad_inputs.right_joystick,
 				static_cast<float>( XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE ) / std::numeric_limits<short>::max(),
-				_manager->is_gamepad_button_pressed( gamepad_state.gamepad_id, GamepadButton::RightThumb )
+				_manager->is_gamepad_button_pressed( gamepad_state.gamepad_id, GamepadButton::RightThumb ),
+				1
 			);
 
 			ImGui::SameLine();
-			ImGui::Extra::DpadButtons(
+			ImGui::InputVisualizer::DpadButtons(
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::DpadUp ),
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::DpadRight ),
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::DpadDown ),
@@ -197,7 +200,7 @@ void XInputDevice::populate_imgui()
 			);
 			
 			ImGui::SameLine();
-			ImGui::Extra::FaceButtons(
+			ImGui::InputVisualizer::FaceButtons(
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::FaceButtonUp ),
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::FaceButtonRight ),
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::FaceButtonDown ),
@@ -205,14 +208,14 @@ void XInputDevice::populate_imgui()
 			);
 
 			ImGui::SameLine();
-			ImGui::Extra::Shoulder(
+			ImGui::InputVisualizer::Shoulder(
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::LeftTrigger ),
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::LeftShoulder ),
 				gamepad_inputs.right_trigger > 0.0f,
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::RightShoulder )
 			);
 			ImGui::SameLine();
-			ImGui::Extra::Shoulder(
+			ImGui::InputVisualizer::Shoulder(
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::RightTrigger ),
 				_manager->is_gamepad_button_down( gamepad_state.gamepad_id, GamepadButton::RightShoulder ),
 				gamepad_inputs.left_trigger > 0.0f,

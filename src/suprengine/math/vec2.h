@@ -4,7 +4,6 @@
 
 //	TODO: Implement IM_VEC2_CLASS_EXTRA
 #include <imgui.h>
-
 #include <SDL.h>
 
 namespace suprengine
@@ -21,14 +20,14 @@ namespace suprengine
 
 		float x { 0.0f }, y { 0.0f };
 
-		constexpr Vec2() {}
-		constexpr explicit Vec2( float value )
+		constexpr Vec2() = default;
+		constexpr explicit Vec2( const float value )
 			: x( value ), y( value )
 		{}
-		constexpr Vec2( float x, float y )
+		constexpr Vec2( const float x, const float y )
 			: x( x ), y( y )
 		{}
-		constexpr Vec2( const ImVec2& vec )
+		constexpr explicit Vec2( const ImVec2& vec )
 			: x( vec.x ), y( vec.y )
 		{}
 

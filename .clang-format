@@ -16,6 +16,7 @@ BreakTemplateDeclarations: Yes
 BreakBeforeConceptDeclarations: Always
 BreakConstructorInitializers: AfterColon
 IndentCaseLabels: true
+IndentCaseBlocks: false
 
 AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowAllArgumentsOnNextLine: false
@@ -35,7 +36,6 @@ IncludeCategories:
   - Regex: '.*'
     Priority: 3
 IncludeIsMainRegex: '([-_](test|unittest))?$'
-IndentCaseBlocks: false
 InsertNewlineAtEOF: true
 MacroBlockBegin: ''
 MacroBlockEnd: ''

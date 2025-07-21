@@ -9,7 +9,6 @@
 #include <suprengine/components/camera.h>
 
 #include <suprengine/utils/assert.h>
-#include <suprengine/utils/imgui.h>
 #include <suprengine/utils/timer.h>
 
 #include <suprengine/tools/memory-profiler.h>
@@ -121,18 +120,18 @@ namespace suprengine
 		 * Parameters:
 		 * - SafePtr<Entity> Entity being added
 		 */
-		Event<SafePtr<Entity>> on_entity_added;
+		Event<SafePtr<Entity>> on_entity_added {};
 		/*
 		 * Called when an entity is being removed.
 		 * 
 		 * Parameters:
 		 * - Entity* Entity being removed
 		 */
-		Event<Entity*> on_entity_removed;
+		Event<Entity*> on_entity_removed {};
 		/*
 		 * Called when ImGui windows are updating.
 		 */
-		Event<> on_imgui_update;
+		Event<> on_imgui_update {};
 
 	public:
 		Camera* camera { nullptr };
@@ -143,16 +142,16 @@ namespace suprengine
 		bool _is_updating = false;
 
 	private:
-		Engine() {};
+		Engine() = default;
 
 		void process_input();
 		void update( float dt );
 		void render();
 
 	private:
-		std::vector<SharedPtr<Entity>> _pending_entities, _entities, _dead_entities;
+		std::vector<SharedPtr<Entity>> _pending_entities {}, _entities {}, _dead_entities {};
 
-		std::vector<Timer> _timers;
+		std::vector<Timer> _timers {};
 
 		std::unique_ptr<IGame> _game;
 		std::unique_ptr<Window> _window;

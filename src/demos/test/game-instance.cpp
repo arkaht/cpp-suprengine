@@ -54,7 +54,7 @@ void GameInstance::setup_input_actions( InputManager* inputs )
 	look_action->assign_mouse_delta();
 	look_action->assign_gamepad_joystick( JoystickSide::Right, JoystickInputModifier::NegateY );
 
-	InputAction<float>* vertical_action = inputs->create_action<float>( "Vertical" );
+	InputAction<float>* vertical_action = inputs->create_action<float>( "Up/Down" );
 	vertical_action->assign_keys( SDL_SCANCODE_Q, SDL_SCANCODE_E );
 	vertical_action->assign_gamepad_buttons(
 		GamepadButton::LeftTrigger,
