@@ -352,7 +352,10 @@ KeyState InputManager::get_gamepad_button_state(
 	return KeyState::Up;
 }
 
-const Vec2& InputManager::get_gamepad_joystick( const int gamepad_id, const JoystickSide side ) const
+const Vec2& InputManager::get_gamepad_joystick(
+	const int gamepad_id,
+	const JoystickSide side
+) const
 {
 	const GamepadInputs& gamepad_inputs = get_gamepad_inputs( gamepad_id );
 	if ( !gamepad_inputs.is_connected )
@@ -370,6 +373,26 @@ const Vec2& InputManager::get_gamepad_joystick( const int gamepad_id, const Joys
 
 	ASSERT( side != JoystickSide::None );
 	return Vec2::zero;
+}
+
+float InputManager::get_gamepad_trigger( const int gamepad_id, const JoystickSide side ) const
+{
+	const GamepadInputs& gamepad_inputs = get_gamepad_inputs( gamepad_id );
+	if ( !gamepad_inputs.is_connected )
+	{
+		return 0.0f;
+	}
+
+	switch ( side )
+	{
+		case JoystickSide::Left:
+			return gamepad_inputs.left_trigger;
+		case JoystickSide::Right:
+			return gamepad_inputs.right_trigger;
+	}
+
+	ASSERT( side != JoystickSide::None );
+	return 0.0f;
 }
 
 void InputManager::set_relative_mouse_mode( bool value )

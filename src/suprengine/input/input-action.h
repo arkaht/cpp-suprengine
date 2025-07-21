@@ -81,8 +81,6 @@ namespace suprengine
 		bool _value = false;
 	};
 
-	// TODO: InputAction<float>
-
 	enum class JoystickInputModifier : uint8
 	{
 		None	= 0,
@@ -90,6 +88,39 @@ namespace suprengine
 		NegateY = 1 << 1,
 	};
 	DEFINE_ENUM_WITH_FLAGS( JoystickInputModifier, uint8 )
+
+	template <>
+	class InputAction<float> : public InputActionBase
+	{
+	public:
+		explicit InputAction( const std::string& name ) : InputActionBase( name ) {}
+
+		/*
+		 * Assign two keyboard keys that will trigger the action.
+		 * Multiple calls will override the previously assigned values.
+		 */
+		void assign_keys( SDL_Scancode negative_key, SDL_Scancode positive_key );
+		/*
+		 * Assign two gamepad buttons that will trigger the action.
+		 * Giving a value with multiple buttons will behave as an AND operator,
+		 * meaning that all buttons have to be down to trigger the action.
+		 */
+		void assign_gamepad_buttons( GamepadButton negative_button, GamepadButton positive_button );
+
+		float get_value() const;
+
+		void update( const InputManager* inputs ) override;
+
+		void populate_imgui() override;
+
+	private:
+		SDL_Scancode _assigned_negative_key = SDL_SCANCODE_UNKNOWN;
+		SDL_Scancode _assigned_positive_key = SDL_SCANCODE_UNKNOWN;
+		GamepadButton _assigned_gamepad_negative_button = GamepadButton::None;
+		GamepadButton _assigned_gamepad_positive_button = GamepadButton::None;
+
+		float _value = 0.0f;
+	};
 
 	template <>
 	class InputAction<Vec2> : public InputActionBase

@@ -106,6 +106,7 @@ namespace suprengine
 		KeyState get_gamepad_button_state( int gamepad_id, GamepadButton button ) const;
 
 		const Vec2& get_gamepad_joystick( int gamepad_id, JoystickSide side ) const;
+		float get_gamepad_trigger( int gamepad_id, JoystickSide side ) const;
 
 		void take_mouse_button_down( MouseButton button );
 		void take_mouse_button_up( MouseButton button );

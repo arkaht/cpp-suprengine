@@ -28,17 +28,19 @@ namespace test
 			SafePtr<Entity> player,
 			InputAction<Vec2>* move_action,
 			InputAction<Vec2>* look_action,
-			InputAction<bool>* sprint_action
+			InputAction<bool>* sprint_action,
+			InputAction<float>* vertical_action
 		)
 			: player( player ),
 			  move_action( move_action ),
 			  look_action( look_action ),
-			  sprint_action( sprint_action )
+			  sprint_action( sprint_action ),
+			  vertical_action( vertical_action )
 		{}
 
 		void setup() override
 		{
-			mover = create_component<Mover>( move_action, sprint_action );
+			mover = create_component<Mover>( move_action, sprint_action, vertical_action );
 			mouse_looker = create_component<Looker>( look_action, 3.0f );
 			spring_arm = create_component<SpringArm>( player->transform );
 			target_rotator = create_component<TargetRotator>( player->transform );
@@ -84,6 +86,7 @@ namespace test
 		InputAction<Vec2>* move_action = nullptr;
 		InputAction<Vec2>* look_action = nullptr;
 		InputAction<bool>* sprint_action = nullptr;
+		InputAction<float>* vertical_action = nullptr;
 
 		void _enable_mode( CameraMode mode )
 		{

@@ -68,6 +68,7 @@ void GameScene::init()
 	InputManager* inputs = engine.get_inputs();
 	InputAction<Vec2>* move_action = inputs->get_action<Vec2>( "Move" );
 	InputAction<Vec2>* look_action = inputs->get_action<Vec2>( "Look" );
+	InputAction<float>* vertical_action = inputs->get_action<float>( "Vertical" );
 	InputAction<bool>* sprint_action = inputs->get_action<bool>( "Sprint" );
 
 	auto cube_model = Assets::get_model( "cube" );
@@ -107,7 +108,7 @@ void GameScene::init()
 	model_renderer = mesh->create_component<ModelRenderer>( cool_model, SHADER_LIT_MESH );*/
 
 	//  setup camera
-	auto camera_owner = engine.create_entity<CameraDemo>( player, move_action, look_action, sprint_action );
+	auto camera_owner = engine.create_entity<CameraDemo>( player, move_action, look_action, sprint_action, vertical_action );
 	camera_owner->transform->location = Vec3 { 5.0f, 3.0f, 7.0f };
 	//camera_owner->transform->look_at( mesh->transform->location );
 	auto camera = camera_owner->create_component<Camera>( CameraProjectionSettings {} );

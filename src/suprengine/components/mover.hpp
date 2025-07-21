@@ -11,19 +11,32 @@ namespace suprengine
 	public:
 		explicit Mover(
 			InputAction<Vec2>* move_action,
-			InputAction<bool>* sprint_action = nullptr
+			InputAction<bool>* sprint_action = nullptr,
+			InputAction<float>* vertical_action = nullptr
 		)
-			: move_action( move_action ), sprint_action( sprint_action ) {}
+			: move_action( move_action ),
+			  sprint_action( sprint_action ),
+			  vertical_action( vertical_action ) {}
 
 		void update( const float dt ) override
 		{
 			if ( move_action == nullptr ) return;
 
-			const Vec2 move_input = move_action->get_value();
-			if ( move_input == Vec2::zero ) return;
+			Vec3 dir = Vec3::zero;
 
-			const Vec3 dir = transform->get_forward() * move_input.y
-			               + transform->get_right()   * move_input.x;
+			const Vec2 move_input = move_action->get_value();
+			if ( move_input != Vec2::zero )
+			{
+				dir = transform->get_forward() * move_input.y
+					+ transform->get_right() * move_input.x;
+			}
+
+			if ( vertical_action != nullptr )
+			{
+				dir += transform->get_up() * vertical_action->get_value();
+			}
+
+			if ( dir == Vec3::zero ) return;
 
 			//  get movement
 			const float speed = sprint_action != nullptr && sprint_action->get_value()
@@ -61,5 +74,6 @@ namespace suprengine
 
 		InputAction<Vec2>* move_action = nullptr;
 		InputAction<bool>* sprint_action = nullptr;
+		InputAction<float>* vertical_action = nullptr;
 	};
 }
