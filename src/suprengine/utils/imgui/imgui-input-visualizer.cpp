@@ -123,6 +123,22 @@ void ImGui::InputVisualizer::Axis(
 	ImGui::Dummy( ImVec2( widget_size, widget_size ) );
 }
 
+void ImGui::InputVisualizer::Bool( const bool value, const float widget_size )
+{
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+	const ImVec2 cursor	  = ImGui::GetCursorScreenPos();
+	const ImVec2 center	  = ImVec2 {
+		cursor.x + widget_size * 0.5f,
+		cursor.y + widget_size * 0.5f
+	};
+
+	draw_list->AddCircleFilled( center, widget_size * 0.5f, BACKGROUND_COLOR );
+
+	draw_list->AddCircleFilled( center, widget_size * 0.4f, value ? VALID_COLOR : IM_COL32( 30, 30, 30, 128 ) );
+
+	ImGui::Dummy( ImVec2( widget_size, widget_size ) );
+}
+
 void ImGui::InputVisualizer::Joystick(
 	suprengine::Vec2 joystick,
 	const float deadzone,

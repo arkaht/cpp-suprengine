@@ -464,10 +464,13 @@ void InputManager::populate_imgui()
 	{
 		ImGui::Text( "Input Actions: %d", _input_actions.size() );
 
+		ImGui::Columns( 2, "InputActions" );
 		for ( InputActionBase* input_action : _input_actions )
 		{
 			input_action->populate_imgui();
+			ImGui::NextColumn();
 		}
+		ImGui::Columns( 1 );
 
 		ImGui::TreePop();
 	}

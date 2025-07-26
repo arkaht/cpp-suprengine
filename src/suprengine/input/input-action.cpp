@@ -67,9 +67,15 @@ void InputAction<bool>::update( const InputManager* inputs )
 
 void InputAction<bool>::populate_imgui()
 {
-	bool readonly_value = _value;
-	ImGui::Checkbox( "Value", &readonly_value );
-	ImGui::Text( "Name: %s", *name );
+	ImGui::InputVisualizer::Bool( _value );
+
+	ImGui::SameLine();
+	ImGui::Text(
+		"Name: %s\n"
+		"Value: %s",
+		*name,
+		_value ? "true" : "false"
+	);
 }
 
 /*

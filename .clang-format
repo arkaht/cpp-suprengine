@@ -17,7 +17,6 @@ BreakBeforeConceptDeclarations: Always
 BreakConstructorInitializers: AfterColon
 IndentCaseLabels: true
 IndentCaseBlocks: false
-
 AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
@@ -27,7 +26,6 @@ AlignAfterOpenBracket: BlockIndent
 BreakBeforeBinaryOperators: NonAssignment
 
 ColumnLimit: 100
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
 IncludeCategories: 
   - Regex: '^<.*'
     Priority: 1

@@ -34,10 +34,15 @@ namespace ImGui::InputVisualizer
 
 	void Axis(
 		float value,
-		float deadzone	   = 0.0f,
-		int grid_divisions = 2,
+		float deadzone		   = 0.0f,
+		int grid_divisions	   = 2,
 		AxisKnobType knob_type = AxisKnobType::Radial,
-		float widget_size  = GAMEPAD_WIDGET_SIZE
+		float widget_size	   = GAMEPAD_WIDGET_SIZE
+	);
+
+	void Bool(
+		bool value,
+		float widget_size = GAMEPAD_WIDGET_SIZE
 	);
 
 	void Joystick(
