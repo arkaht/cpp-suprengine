@@ -50,7 +50,7 @@ Engine::~Engine()
 }
 
 #ifdef ENABLE_MEMORY_PROFILER
-static void* custom_imgui_alloc( std::size_t bytes, void* user_data )
+static void* custom_imgui_alloc( const std::size_t bytes, void* user_data )
 {
 	return MemoryProfiler::allocate( "ImGui", bytes );
 }
@@ -66,21 +66,19 @@ bool Engine::init( IGame* game )
 	PROFILE_SCOPE( "Engine::init" );
 
 	//	Init SDL
-	int sdl_status = SDL_Init( SDL_INIT_VIDEO );
+	const int sdl_status = SDL_Init( SDL_INIT_VIDEO );
 	ASSERT_MSG( sdl_status == 0, SDL_GetError() );
 
 	//	Setup game
 	game->set_engine( this );
 	_game = std::unique_ptr<IGame>( game );
 
-	//  Get game infos
-	const GameInfos infos = _game->get_infos();
-
 	//  Init window
 	{
+		const GameInfos infos = _game->get_infos();
 		PROFILE_SCOPE( "Engine::init::Window" );
 
-		_window = std::make_unique<Window>( 
+		_window = std::make_unique<Window>(
 			infos.title,
 			infos.width,
 			infos.height,
@@ -169,7 +167,7 @@ void Engine::loop()
 	}
 }
 
-void Engine::add_entity( SharedPtr<Entity> entity )
+void Engine::add_entity( const SharedPtr<Entity>& entity )
 {
 	//  Add to pending entities if currently updating...
 	if ( _is_updating )
@@ -189,7 +187,7 @@ void Engine::add_entity( SharedPtr<Entity> entity )
 	}
 }
 
-void Engine::remove_entity( SharedPtr<Entity> entity )
+void Engine::remove_entity( const SharedPtr<Entity>& entity )
 {
 	//  Remove from actives
 	auto itr = std::find( _entities.begin(), _entities.end(), entity );
@@ -258,7 +256,7 @@ void Engine::process_input()
 #endif
 }
 
-void Engine::update( float dt )
+void Engine::update( const float dt )
 {
 	PROFILE_SCOPE( "Engine::update" );
 
@@ -374,7 +372,7 @@ void Engine::render()
 
 	//  Apply camera
 	//  NOTE: This code doesn't do anything when using the OpenGL 
-	//  render-batch. It was orignally here for supporting SDL and 
+	//  render-batch. It was originally here for supporting SDL and
 	//  2D.
 	if ( camera != nullptr ) 
 	{
@@ -395,14 +393,14 @@ void Engine::render()
 	{
 		PROFILE_SCOPE( "Engine::render::debug" );
 
-		auto _render_batch = get_render_batch();
-		for ( auto& entity : _entities )
+		RenderBatch* render_batch = get_render_batch();
+		for ( const SharedPtr<Entity>& entity : _entities )
 		{
-			entity->debug_render( _render_batch );
+			entity->debug_render( render_batch );
 
-			for ( auto& component : entity->components )
+			for ( const SharedPtr<Component>& component : entity->components )
 			{
-				component->debug_render( _render_batch );
+				component->debug_render( render_batch );
 			}
 		}
 	}

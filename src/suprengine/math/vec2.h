@@ -8,6 +8,8 @@
 
 namespace suprengine
 {
+	struct Vec3;
+
 	enum class Axis2D
 	{
 		X = 0,
@@ -16,20 +18,24 @@ namespace suprengine
 
 	struct Vec2
 	{
-		static const Vec2 zero, one, up, down, left, right;
+	public:
+		static const Vec2 zero;
+		static const Vec2 one;
+		static const Vec2 up;
+		static const Vec2 down;
+		static const Vec2 left;
+		static const Vec2 right;
 
-		float x { 0.0f }, y { 0.0f };
+	public:
+		float x = 0.0f;
+		float y = 0.0f;
 
-		constexpr Vec2() = default;
-		constexpr explicit Vec2( const float value )
-			: x( value ), y( value )
-		{}
-		constexpr Vec2( const float x, const float y )
-			: x( x ), y( y )
-		{}
-		constexpr explicit Vec2( const ImVec2& vec )
-			: x( vec.x ), y( vec.y )
-		{}
+	public:
+		constexpr Vec2() {};
+		explicit constexpr Vec2( float value );
+		explicit constexpr Vec2( float x, float y );
+		explicit constexpr Vec2( const ImVec2& vec );
+		explicit constexpr Vec2( const Vec3& vec );
 
 		void set_axis( Axis2D axis, float value );
 
@@ -44,24 +50,28 @@ namespace suprengine
 			y += v.y;
 			return *this;
 		}
+
 		Vec2& operator*=( const Vec2& v )
 		{
 			x *= v.x;
 			y *= v.y;
 			return *this;
 		}
-		Vec2& operator*=( float v )
+
+		Vec2& operator*=( const float v )
 		{
 			x *= v;
 			y *= v;
 			return *this;
 		}
+
 		Vec2& operator/=( const Vec2& v )
 		{
 			x /= v.x;
 			y /= v.y;
 			return *this;
 		}
+
 		Vec2& operator/=( float v )
 		{
 			x /= v;
@@ -73,6 +83,7 @@ namespace suprengine
 		{
 			return Vec2 { x + v.x, y + v.y };
 		}
+
 		Vec2 operator-( const Vec2& v ) const
 		{
 			return Vec2 { x - v.x, y - v.y };
@@ -82,7 +93,8 @@ namespace suprengine
 		{
 			return Vec2 { x * v.x, y * v.y };
 		}
-		Vec2 operator*( float m ) const
+
+		Vec2 operator*( const float m ) const
 		{
 			return Vec2 { x * m, y * m };
 		}
@@ -91,7 +103,8 @@ namespace suprengine
 		{
 			return Vec2 { x / v.x, y / v.y };
 		}
-		Vec2 operator/( float m ) const
+
+		Vec2 operator/( const float m ) const
 		{
 			return Vec2 { x / m, y / m };
 		}
@@ -103,9 +116,8 @@ namespace suprengine
 
 		Vec2& normalize()
 		{
-			float mag = length();
-			if ( mag == 0.0f )
-				return *this;
+			const float mag = length();
+			if ( mag == 0.0f ) return *this;
 
 			x /= mag, y /= mag;
 			return *this;
@@ -123,14 +135,14 @@ namespace suprengine
 
 		float get_angle() const
 		{
-			return (float)math::atan2( y, x );
+			return static_cast<float>( math::atan2( y, x ) );
 		}
 
-		static Vec2 lerp( const Vec2& a, const Vec2& b, float f )
+		static Vec2 lerp( const Vec2& a, const Vec2& b, const float t )
 		{
 			return Vec2 {
-				math::lerp( a.x, b.x, f ),
-				math::lerp( a.y, b.y, f ),
+				math::lerp( a.x, b.x, t ),
+				math::lerp( a.y, b.y, t ),
 			};
 		}
 
@@ -147,8 +159,8 @@ namespace suprengine
 		SDL_Point to_sdl_point() const
 		{
 			return SDL_Point {
-				(int)x,
-				(int)y
+				static_cast<int>( x ),
+				static_cast<int>( y )
 			};
 		}
 

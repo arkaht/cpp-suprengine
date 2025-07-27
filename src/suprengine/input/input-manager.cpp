@@ -1,8 +1,8 @@
 #include "input-manager.h"
 
-#include "backends/imgui_impl_sdl2.h"
+#include <backends/imgui_impl_sdl2.h>
 
-#include <suprengine/input/xinput-device.h>
+#include <suprengine/input/devices/xinput-device.h>
 #include <suprengine/utils/assert.h>
 
 using namespace suprengine;

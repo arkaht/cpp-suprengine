@@ -19,23 +19,24 @@ const Vec3 Vec3::up( 0.0f, 0.0f, 1.0f );
 
 const Vec3 Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 
-Vec3::Vec3( float value )
+// TODO: Find out why using constexpr makes the linking fail
+Vec3::Vec3( const float value )
 	: x( value ), y( value ), z( value )
 {}
 
-Vec3::Vec3( float x, float y, float z )
+constexpr Vec3::Vec3( const float x, const float y, const float z )
 	: x( x ), y( y ), z( z )
 {}
 
-Vec3::Vec3( const Vec2& vec, float z )
+constexpr Vec3::Vec3( const Vec2& vec, const float z )
 	: x( vec.x ), y( vec.y ), z( z )
 {}
 
-Vec3::Vec3( const Vec4& vec )
+constexpr Vec3::Vec3( const Vec4& vec )
 	: x( vec.x ), y( vec.y ), z( vec.z )
 {}
 
-Vec3& Vec3::operator=( float value )
+Vec3& Vec3::operator=( const float value )
 {
 	x = y = z = value;
 	return *this;

@@ -20,16 +20,16 @@ namespace suprengine
 		static const Vec3 infinity;
 
 	public:
-		float x { 0.0f };
-		float y { 0.0f };
-		float z { 0.0f };
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
 
 	public:
-		Vec3() {}
+		constexpr Vec3() {}
 		explicit Vec3( float value );
-		explicit Vec3( float x, float y, float z );
-		explicit Vec3( const Vec2& vec, float z = 0.0f );
-		explicit Vec3( const Vec4& vec );
+		explicit constexpr Vec3( float x, float y, float z );
+		explicit constexpr Vec3( const Vec2& vec, float z = 0.0f );
+		explicit constexpr Vec3( const Vec4& vec );
 
 		Vec3& operator=( float value );
 
@@ -154,12 +154,12 @@ namespace suprengine
 		{
 			return Vec3( x / value.x, y / value.y, z / value.z );
 		}
-		Vec3 operator/( float scalar )
+		Vec3 operator/( const float scalar )
 		{
 			return Vec3( x / scalar, y / scalar, z / scalar );
 		}
 
-		Vec3& operator*=( float scalar )
+		Vec3& operator*=( const float scalar )
 		{
 			x *= scalar;
 			y *= scalar;
@@ -190,9 +190,15 @@ namespace suprengine
 			return *this;
 		}
 
-		operator Vec2() { return Vec2 { x, y }; }
+		operator Vec2() const
+		{
+			return Vec2 { x, y };
+		}
 
-		Vec3 operator-() const { return Vec3 { -x, -y, -z }; }
+		Vec3 operator-() const
+		{
+			return Vec3 { -x, -y, -z };
+		}
 
 		friend bool operator==( const Vec3& a, const Vec2& b )
 		{

@@ -1,4 +1,5 @@
 #include "vec2.h"
+#include "vec3.h"
 
 #include "suprengine/utils/assert.h"
 
@@ -6,6 +7,18 @@ using namespace suprengine;
 
 const Vec2 Vec2::zero { 0.0f, 0.0f }, Vec2::one { 1.0f, 1.0f }, Vec2::up { 0.0f, -1.0f },
 	Vec2::down { 0.0f, 1.0f }, Vec2::left { -1.0f, 0.0f }, Vec2::right { 1.0f, 0.0f };
+
+constexpr Vec2::Vec2( const float value )
+	: x( value ), y( value ) {}
+
+constexpr Vec2::Vec2( const float x, const float y )
+	: x( x ), y( y ) {}
+
+constexpr Vec2::Vec2( const ImVec2& vec )
+	: x( vec.x ), y( vec.y ) {}
+
+constexpr Vec2::Vec2( const Vec3& vec )
+	: x( vec.x ), y( vec.y ) {}
 
 void Vec2::set_axis( const Axis2D axis, const float value )
 {

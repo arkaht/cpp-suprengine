@@ -18,22 +18,26 @@ public:
 	DebugChannel channel = DebugChannel::None;
 
 public:
+	virtual ~VisDebugShape() = default;
+
 	virtual void render( RenderBatch* render_batch ) = 0;
 
-	void set_lifetime( float lifetime )
+	void set_lifetime( const float lifetime )
 	{
-		Updater* updater = Engine::instance().get_updater();
+		const Updater* updater = Engine::instance().get_updater();
 		end_time = updater->get_accumulated_seconds() + lifetime;
 	}
 };
 
-struct VisDebugBox : public VisDebugShape
+struct VisDebugBox : VisDebugShape
 {
+public:
 	Vec3 location {};
 	Quaternion rotation = Quaternion::identity;
 	Box box {};
 
-	virtual void render( RenderBatch* render_batch ) override
+public:
+	void render( RenderBatch* render_batch ) override
 	{
 		const auto model = Assets::get_model( MESH_CUBE );
 		const Mtx4 matrix = Mtx4::create_from_transform(
@@ -46,12 +50,14 @@ struct VisDebugBox : public VisDebugShape
 	}
 };
 
-struct VisDebugSphere : public VisDebugShape
+struct VisDebugSphere : VisDebugShape
 {
+public:
 	Vec3 location {};
 	float radius = 0.0f;
 
-	virtual void render( RenderBatch* render_batch ) override
+public:
+	void render( RenderBatch* render_batch ) override
 	{
 		const auto model = Assets::get_model( MESH_SPHERE );
 		const Mtx4 matrix = Mtx4::create_from_transform(
@@ -64,12 +70,14 @@ struct VisDebugSphere : public VisDebugShape
 	}
 };
 
-struct VisDebugLine : public VisDebugShape
+struct VisDebugLine : VisDebugShape
 {
+public:
 	Vec3 start = Vec3::zero;
 	Vec3 end = Vec3::one;
 
-	virtual void render( RenderBatch* render_batch ) override
+public:
+	void render( RenderBatch* render_batch ) override
 	{
 		render_batch->draw_line( start, end, color );
 	}

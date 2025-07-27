@@ -40,10 +40,7 @@ namespace suprengine
 		 * Create and run the game of given type on the engine.
 		 */
 		template <typename GameType>
-		std::enable_if_t<
-			std::is_base_of_v<IGame, GameType>,
-			int
-		> run()
+		std::enable_if_t<std::is_base_of_v<IGame, GameType>, int> run()
 		{
 			if ( !init<GameType>() ) return EXIT_FAILURE;
 
@@ -52,10 +49,7 @@ namespace suprengine
 		}
 
 		template <typename GameType>
-		std::enable_if_t<
-			std::is_base_of_v<IGame, GameType>,
-			bool
-		> init()
+		std::enable_if_t<std::is_base_of_v<IGame, GameType>, bool> init()
 		{
 			MEMORY_SCOPE( "Engine::init" );
 
@@ -97,8 +91,8 @@ namespace suprengine
 
 			return entity;
 		}
-		void add_entity( SharedPtr<Entity> entity );
-		void remove_entity( SharedPtr<Entity> entity );
+		void add_entity( const SharedPtr<Entity>& entity );
+		void remove_entity( const SharedPtr<Entity>& entity );
 		void clear_entities();
 
 		void add_timer( const Timer& timer );
@@ -134,12 +128,8 @@ namespace suprengine
 		Event<> on_imgui_update {};
 
 	public:
-		Camera* camera { nullptr };
+		Camera* camera = nullptr;
 		bool is_game_paused = false;
-
-	private:
-		bool _is_running = true;
-		bool _is_updating = false;
 
 	private:
 		Engine() = default;
@@ -158,10 +148,12 @@ namespace suprengine
 		std::unique_ptr<RenderBatch> _render_batch;
 		std::unique_ptr<InputManager> _inputs;
 		std::unique_ptr<Physics> _physics;
+		std::unique_ptr<Scene> _scene;
 
 		Profiler _profiler {};
 		Updater _updater {};
 
-		std::unique_ptr<Scene> _scene;
+		bool _is_running = true;
+		bool _is_updating = false;
 	};
 }

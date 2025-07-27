@@ -11,6 +11,13 @@ AlignOperands: AlignAfterOperator
 AlignTrailingComments: true
 SeparateDefinitionBlocks: Always
 
+SpacesInParens: Custom
+SpacesInParensOptions:
+  InConditionalStatements: true
+  InCStyleCasts: false
+  InEmptyParentheses: false
+  Other: true
+
 BreakBeforeBraces: Allman
 BreakTemplateDeclarations: Yes
 BreakBeforeConceptDeclarations: Always

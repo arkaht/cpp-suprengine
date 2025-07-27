@@ -8,7 +8,7 @@ namespace suprengine
 	{
 	public:
 		SDLTexture( SDL_Renderer* renderer, rconst_str path, SDL_Surface* surface )
-			: Texture( path, { (float)surface->w, (float)surface->h } )
+			: Texture( path, Vec2 { static_cast<float>( surface->w ), static_cast<float>( surface->h ) } )
 		{
 			sdl_texture = SDL_CreateTextureFromSurface( renderer, surface );
 		}
