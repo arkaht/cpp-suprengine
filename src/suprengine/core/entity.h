@@ -24,18 +24,18 @@ namespace suprengine
 		virtual ~Entity();
 		Entity( const Entity& ) = delete;
 		Entity& operator=( const Entity& ) = delete;
-		
+
 		/*
 		 * Create and add a component of given type on the entity.
 		 * This is the function you want to use inside Entity::setup.
 		 */
-		template <typename ComponentType, typename ...Args>
+		template <typename TComponent, typename ...TArgs>
 		std::enable_if_t<
-			std::is_base_of_v<Component, ComponentType>,
-			SharedPtr<ComponentType>
-		> create_component( Args&& ...args )
+			std::is_base_of_v<Component, TComponent> && std::is_constructible_v<TComponent, TArgs...>,
+			SharedPtr<TComponent>
+		> create_component( TArgs&& ...args )
 		{
-			SharedPtr<ComponentType> component( new ComponentType( args... ) );
+			SharedPtr<TComponent> component( new TComponent( args... ) );
 			component->init( shared_from_this() );
 			add_component( component );
 			

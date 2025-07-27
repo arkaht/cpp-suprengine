@@ -66,15 +66,15 @@ namespace suprengine
 		bool init( IGame* game );
 		void loop();
 
-		template <typename SceneType, typename ...Args>
+		template <typename TScene, typename ...TArgs>
 		std::enable_if_t<
-			std::is_base_of_v<Scene, SceneType>,
-			SceneType*
-		> create_scene( Args&& ...args )
+			std::is_base_of_v<Scene, TScene> && std::is_constructible_v<TScene, TArgs...>,
+			TScene*
+		> create_scene( TArgs&& ...args )
 		{
 			clear_entities();
 
-			SceneType* new_scene = new SceneType( args... );
+			TScene* new_scene = new TScene( args... );
 			
 			//  Change scene
 			_scene = std::unique_ptr<Scene>( new_scene );
@@ -84,13 +84,13 @@ namespace suprengine
 		}
 		Scene* get_scene() const { return _scene.get(); }
 
-		template <typename EntityType, typename ...Args>
+		template <typename TEntity, typename ...TArgs>
 		std::enable_if_t<
-			std::is_base_of_v<Entity, EntityType>,
-			SharedPtr<EntityType>
-		> create_entity( Args&& ...args )
+			std::is_base_of_v<Entity, TEntity> && std::is_constructible_v<TEntity, TArgs...>,
+			SharedPtr<TEntity>
+		> create_entity( TArgs&& ...args )
 		{
-			SharedPtr<EntityType> entity( new EntityType( args... ) );
+			SharedPtr<TEntity> entity( new TEntity( args... ) );
 			entity->init();
 			entity->setup();
 			add_entity( entity );
