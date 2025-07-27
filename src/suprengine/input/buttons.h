@@ -7,10 +7,10 @@ namespace suprengine
 {
 	enum class KeyState : uint8
 	{
-		Up		 = 0,
-		Down	 = 1,
-		Pressed	 = 2,
-		Released = 3,
+		Up,
+		Down,
+		Pressed,
+		Released,
 	};
 
 	enum class MouseButton : uint8
@@ -52,6 +52,13 @@ namespace suprengine
 		FaceButtonUp	= 1 << 15,
 	};
 	DEFINE_ENUM_WITH_FLAGS( GamepadButton, uint16 )
+
+	enum class JoystickSide
+	{
+		None,
+		Left,
+		Right,
+	};
 
 	static MouseButton sdl_to_mouse_button( const uint8 button_index )
 	{

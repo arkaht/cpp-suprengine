@@ -55,17 +55,10 @@ namespace suprengine
 
 	/*
 	 * An InputAction class is considered valid when it has a constructor accepting a
-	 * const std::string& for setting his name.
+	 * const std::string& for setting his name and an InputManager* for reading inputs.
 	 */
 	template <typename T>
 	constexpr bool is_input_action_valid = std::is_constructible_v<InputAction<T>, const std::string&, InputManager*>;
-
-	enum class JoystickSide
-	{
-		None,
-		Left,
-		Right,
-	};
 
 	template <>
 	class InputAction<bool> : public InputActionBase
