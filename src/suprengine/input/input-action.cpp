@@ -24,57 +24,56 @@ void InputAction<bool>::assign_gamepad_button( const GamepadButton gamepad_butto
 	_assigned_gamepad_buttons.push_back( gamepad_button );
 }
 
-bool InputAction<bool>::get_value() const
+bool InputAction<bool>::read_value( const InputContext& context ) const
 {
-	return _value;
+	if ( context.is_using_gamepad() )
+	{
+		// Evaluate gamepad buttons
+		for ( const GamepadButton button : _assigned_gamepad_buttons )
+		{
+			if ( _inputs->is_gamepad_button_down( context.gamepad_id, button ) )
+			{
+				return true;
+			}
+		}
+	}
+
+	if ( context.is_using_keyboard_and_mouse() )
+	{
+		// Evaluate mouse button
+		if ( _assigned_mouse_button != MouseButton::None )
+		{
+			if ( _inputs->is_mouse_button_down( _assigned_mouse_button ) )
+			{
+				return true;
+			}
+		}
+
+		// Evaluate keyboard inputs
+		for ( const SDL_Scancode key : _assigned_keys )
+		{
+			if ( _inputs->is_key_down( key ) )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
-void InputAction<bool>::update( const InputManager* inputs )
+void InputAction<bool>::populate_imgui( const InputContext& context )
 {
-	// Evaluate gamepad buttons
-	for ( const GamepadButton button : _assigned_gamepad_buttons )
-	{
-		// TODO: Find a way to give a gamepad ID
-		if ( inputs->is_gamepad_button_down( 0, button ) )
-		{
-			_value = true;
-			return;
-		}
-	}
+	const bool value = read_value( context );
 
-	// Evaluate mouse button
-	if ( _assigned_mouse_button != MouseButton::None )
-	{
-		if ( inputs->is_mouse_button_down( _assigned_mouse_button ) )
-		{
-			_value = true;
-			return;
-		}
-	}
-
-	// Evaluate keyboard inputs
-	for ( const SDL_Scancode key : _assigned_keys )
-	{
-		if ( inputs->is_key_down( key ) )
-		{
-			_value = true;
-			return;
-		}
-	}
-
-	_value = false;
-}
-
-void InputAction<bool>::populate_imgui()
-{
-	ImGui::InputVisualizer::Bool( _value );
+	ImGui::InputVisualizer::Bool( value );
 
 	ImGui::SameLine();
 	ImGui::Text(
 		"Name: %s\n"
 		"Value: %s",
 		*name,
-		_value ? "true" : "false"
+		value ? "true" : "false"
 	);
 }
 
@@ -98,11 +97,6 @@ void InputAction<float>::assign_gamepad_buttons(
 {
 	_assigned_gamepad_negative_button = negative_button;
 	_assigned_gamepad_positive_button = positive_button;
-}
-
-float InputAction<float>::get_value() const
-{
-	return _value;
 }
 
 static float read_gamepad_button_value(
@@ -130,33 +124,45 @@ static float read_gamepad_button_value(
 	return 0.0f;
 }
 
-void InputAction<float>::update( const InputManager* inputs )
+float InputAction<float>::read_value( const InputContext& context ) const
 {
-	if ( _assigned_gamepad_negative_button != GamepadButton::None
-	  && _assigned_gamepad_positive_button != GamepadButton::None )
-	{
-		_value = read_gamepad_button_value( inputs, 0, _assigned_gamepad_negative_button ) * -1.0f
-			   + read_gamepad_button_value( inputs, 0, _assigned_gamepad_positive_button );
+	float value = 0.0f;
 
-		if ( _value != 0.0f ) return;
+	if ( context.is_using_gamepad() )
+	{
+		if ( _assigned_gamepad_negative_button != GamepadButton::None
+		  && _assigned_gamepad_positive_button != GamepadButton::None )
+		{
+			value =  read_gamepad_button_value( _inputs, context.gamepad_id, _assigned_gamepad_negative_button ) * -1.0f
+				   + read_gamepad_button_value( _inputs, context.gamepad_id, _assigned_gamepad_positive_button );
+
+			if ( value != 0.0f ) return value;
+		}
 	}
 
-	if ( _assigned_negative_key != SDL_SCANCODE_UNKNOWN
-	  && _assigned_positive_key != SDL_SCANCODE_UNKNOWN )
+	if ( context.is_using_keyboard_and_mouse() )
 	{
-		_value = inputs->get_keys_as_axis( _assigned_negative_key, _assigned_positive_key );
+		if ( _assigned_negative_key != SDL_SCANCODE_UNKNOWN
+		  && _assigned_positive_key != SDL_SCANCODE_UNKNOWN )
+		{
+			value = _inputs->get_keys_as_axis( _assigned_negative_key, _assigned_positive_key );
+		}
 	}
+
+	return value;
 }
 
-void InputAction<float>::populate_imgui()
+void InputAction<float>::populate_imgui( const InputContext& context )
 {
-	ImGui::InputVisualizer::Axis( _value );
+	const float value = read_value( context );
+
+	ImGui::InputVisualizer::Axis( value );
 
 	ImGui::SameLine();
 	ImGui::Text(
 		"Name: %s\n"
 		"Value: %.2f",
-		*name, _value
+		*name, value
 	);
 }
 
@@ -186,13 +192,51 @@ void InputAction<Vec2>::assign_gamepad_joystick(
 
 void InputAction<Vec2>::assign_mouse_delta( const float multiplier )
 {
-	_mouse_movement = true;
+	_mouse_movement			= true;
 	_mouse_delta_multiplier = multiplier;
 }
 
-const Vec2& InputAction<Vec2>::get_value() const
+Vec2 InputAction<Vec2>::read_value( const InputContext& context ) const
 {
-	return _value;
+	if ( context.is_using_gamepad() )
+	{
+		// Read gamepad inputs
+		if ( _joystick_side != JoystickSide::None )
+		{
+			const Vec2& joystick = _inputs->get_gamepad_joystick( context.gamepad_id, _joystick_side );
+			if ( joystick.length_sqr() != 0.0f )
+			{
+				return get_joystick_with_modifiers( joystick );
+			}
+		}
+	}
+
+	if ( context.is_using_keyboard_and_mouse() )
+	{
+		if ( _mouse_movement )
+		{
+			return _inputs->mouse_delta * _mouse_delta_multiplier;
+		}
+
+		// Read keyboard inputs
+		Vec2 value = Vec2::zero;
+		for ( int i = 0; i < 2; i++ )
+		{
+			const AxisKeys& keys = _keys_axes[i];
+			if ( keys.negative_key == SDL_SCANCODE_UNKNOWN
+			  || keys.positive_key == SDL_SCANCODE_UNKNOWN ) continue;
+
+			value.set_axis(
+				static_cast<Axis2D>( i ),
+				_inputs->get_keys_as_axis( keys.negative_key, keys.positive_key )
+			);
+		}
+
+		value.normalize();
+		return value;
+	}
+
+	return Vec2::zero;
 }
 
 Vec2 InputAction<Vec2>::get_joystick_with_modifiers( Vec2 joystick ) const
@@ -210,52 +254,11 @@ Vec2 InputAction<Vec2>::get_joystick_with_modifiers( Vec2 joystick ) const
 	return joystick;
 }
 
-void InputAction<Vec2>::update( const InputManager* inputs )
+void InputAction<Vec2>::populate_imgui( const InputContext& context )
 {
-	_value = Vec2::zero;
+	const Vec2 value = read_value( context );
 
-	// Read gamepad inputs
-	if ( _joystick_side != JoystickSide::None )
-	{
-		// TODO: Find a way to give a gamepad ID
-		const Vec2& joystick = inputs->get_gamepad_joystick( 0, _joystick_side );
-		if ( joystick.length_sqr() != 0.0f )
-		{
-			_value = get_joystick_with_modifiers( joystick );
-			return;
-		}
-	}
-
-	if ( _mouse_movement )
-	{
-		_value.x = inputs->mouse_delta.x * _mouse_delta_multiplier;
-		_value.y = inputs->mouse_delta.y * _mouse_delta_multiplier;
-	}
-
-	// Read keyboard inputs
-	bool has_keyboard = false;
-	for ( int i = 0; i < 2; i++ )
-	{
-		const AxisKeys& keys = _keys_axes[i];
-		if ( keys.negative_key == SDL_SCANCODE_UNKNOWN
-		  || keys.positive_key == SDL_SCANCODE_UNKNOWN ) continue;
-
-		_value.set_axis(
-			static_cast<Axis2D>( i ),
-			inputs->get_keys_as_axis( keys.negative_key, keys.positive_key )
-		);
-		has_keyboard = true;
-	}
-
-	if ( has_keyboard )
-	{
-		_value.normalize();
-	}
-}
-
-void InputAction<Vec2>::populate_imgui()
-{
-	ImGui::InputVisualizer::Joystick( _value, 0.0f, false );
+	ImGui::InputVisualizer::Joystick( value, 0.0f, false );
 
 	ImGui::SameLine();
 	ImGui::Text(
@@ -263,6 +266,9 @@ void InputAction<Vec2>::populate_imgui()
 		"X: %.2f\n"
 		"Y: %.2f\n"
 		"Length: %.2f",
-		*name, _value.x, _value.y, _value.length()
+		*name,
+		value.x,
+		value.y,
+		value.length()
 	);
 }

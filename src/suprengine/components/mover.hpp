@@ -3,6 +3,7 @@
 #include <suprengine/core/engine.h>
 
 #include <suprengine/components/transform.h>
+#include <suprengine/components/input-component.h>
 
 namespace suprengine
 {
@@ -10,21 +11,21 @@ namespace suprengine
 	{
 	public:
 		explicit Mover(
+			const SharedPtr<InputComponent>& input_component,
 			InputAction<Vec2>* move_action,
 			InputAction<bool>* sprint_action = nullptr,
 			InputAction<float>* vertical_action = nullptr
 		)
 			: move_action( move_action ),
 			  sprint_action( sprint_action ),
-			  vertical_action( vertical_action ) {}
+			  vertical_action( vertical_action ),
+			  _input_component( input_component ) {}
 
 		void update( const float dt ) override
 		{
-			if ( move_action == nullptr ) return;
-
 			Vec3 dir = Vec3::zero;
 
-			const Vec2 move_input = move_action->get_value();
+			const Vec2 move_input = _input_component->read_value( move_action );
 			if ( move_input != Vec2::zero )
 			{
 				dir = transform->get_forward() * move_input.y
@@ -33,13 +34,13 @@ namespace suprengine
 
 			if ( vertical_action != nullptr )
 			{
-				dir += transform->get_up() * vertical_action->get_value();
+				dir += transform->get_up() * _input_component->read_value( vertical_action );
 			}
 
 			if ( dir == Vec3::zero ) return;
 
 			//  get movement
-			const float speed = sprint_action != nullptr && sprint_action->get_value()
+			const float speed = _input_component->read_value( sprint_action )
 				? sprint_speed
 				: move_speed;
 			const Vec3 move_dir = dir * speed * dt;
@@ -75,5 +76,8 @@ namespace suprengine
 		InputAction<Vec2>* move_action = nullptr;
 		InputAction<bool>* sprint_action = nullptr;
 		InputAction<float>* vertical_action = nullptr;
+
+	private:
+		SharedPtr<InputComponent> _input_component = nullptr;
 	};
 }

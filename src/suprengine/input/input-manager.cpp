@@ -70,11 +70,6 @@ bool InputManager::update()
 		input_device->update();
 	}
 
-	for ( InputActionBase* input_action : _input_actions )
-	{
-		input_action->update( this );
-	}
-
 	return true;
 }
 
@@ -462,12 +457,51 @@ void InputManager::populate_imgui()
 	ImGui::SetNextItemOpen( true, ImGuiCond_Appearing );
 	if ( ImGui::TreeNode( "Actions" ) )
 	{
+		constexpr InputContext INPUT_CONTEXTS[]
+		{
+			InputContext {
+				.use_mouse_and_keyboard = true,
+				.gamepad_id = 0,
+			},
+			InputContext {
+				.use_mouse_and_keyboard = false,
+				.gamepad_id = 0,
+			},
+			InputContext {
+				.use_mouse_and_keyboard = false,
+				.gamepad_id = 1,
+			},
+			InputContext {
+				.use_mouse_and_keyboard = false,
+				.gamepad_id = 2,
+			},
+			InputContext {
+				.use_mouse_and_keyboard = false,
+				.gamepad_id = 3,
+			},
+		};
+		constexpr const char* INPUT_CONTEXT_NAMES[]
+		{
+			"K&M & Gamepad 0",
+			"Gamepad 0",
+			"Gamepad 1",
+			"Gamepad 2",
+			"Gamepad 3",
+		};
+
+		static int current_context_id = 0;
+		ImGui::Combo(
+			"Input Context",
+			&current_context_id,
+			INPUT_CONTEXT_NAMES, IM_ARRAYSIZE( INPUT_CONTEXT_NAMES )
+		);
+
 		ImGui::Text( "Input Actions: %d", _input_actions.size() );
 
 		ImGui::Columns( 2, "InputActions" );
 		for ( InputActionBase* input_action : _input_actions )
 		{
-			input_action->populate_imgui();
+			input_action->populate_imgui( INPUT_CONTEXTS[current_context_id] );
 			ImGui::NextColumn();
 		}
 		ImGui::Columns( 1 );

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <suprengine/core/entity.h>
+#include <suprengine/components/input-component.h>
 #include <suprengine/components/transform.h>
+
 #include <suprengine/input/input-action.h>
 
 namespace suprengine
@@ -23,14 +24,18 @@ namespace suprengine
 
 	public:
 		Looker(
+			const SharedPtr<InputComponent>& input_component,
 			InputAction<Vec2>* look_action,
-			float sensitivity = 0.25f,
-			int priority_order = 0
+			const float sensitivity = 0.25f,
+			const int priority_order = 0
 		)
-			: look_action( look_action ),
+			: _input_component( input_component ),
+			  look_action( look_action ),
 			  sensitivity( sensitivity ),
 			  Component( priority_order )
-		{}
+		{
+			assert( _input_component != nullptr );
+		}
 
 		void setup() override
 		{
@@ -38,11 +43,9 @@ namespace suprengine
 			//pitch = transform->rotation.get_radian_pitch();
 		}
 
-		void update( float dt ) override
+		void update( const float dt ) override
 		{
-			if ( look_action == nullptr ) return;
-
-			const Vec2 input = look_action->get_value();
+			const Vec2 input = _input_component->read_value( look_action );
 			if ( input == Vec2::zero ) return;
 
 			const Vec2 rotation_rate = input * ( sensitivity * dt );
@@ -85,5 +88,8 @@ namespace suprengine
 				transform->set_rotation( new_rotation_with_pitch );
 			}
 		}
+
+	private:
+		SharedPtr<InputComponent> _input_component = nullptr;
 	};
 }

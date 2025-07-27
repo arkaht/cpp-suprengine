@@ -5,10 +5,11 @@
 #include <suprengine/input/input-manager.h>
 
 #include <suprengine/components/looker.hpp>
-#include <suprengine/components/mouse-follower.hpp>
 #include <suprengine/components/mover.hpp>
 #include <suprengine/components/spring-arm.hpp>
 #include <suprengine/components/target-rotator.h>
+
+#include "suprengine/components/input-component.h"
 
 using namespace suprengine;
 
@@ -40,8 +41,14 @@ namespace test
 
 		void setup() override
 		{
-			mover = create_component<Mover>( move_action, sprint_action, vertical_action );
-			mouse_looker = create_component<Looker>( look_action, 3.0f );
+			input_component = create_component<InputComponent>(
+				InputContext {
+					.use_mouse_and_keyboard = true,
+					.gamepad_id = 0
+				}
+			);
+			mover = create_component<Mover>( input_component, move_action, sprint_action, vertical_action );
+			mouse_looker = create_component<Looker>( input_component, look_action, 3.0f );
 			spring_arm = create_component<SpringArm>( player->transform );
 			target_rotator = create_component<TargetRotator>( player->transform );
 
@@ -76,6 +83,7 @@ namespace test
 	private:
 		SafePtr<Entity> player;
 
+		SharedPtr<InputComponent> input_component;
 		SharedPtr<SpringArm> spring_arm;
 		SharedPtr<Mover> mover;
 		SharedPtr<Looker> mouse_looker;

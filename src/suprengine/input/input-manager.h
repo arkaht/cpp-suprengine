@@ -49,7 +49,7 @@ namespace suprengine
 		std::enable_if_t<is_input_action_valid<T>, InputAction<T>*> create_action( const std::string& name )
 		{
 			// TODO: Check that name doesn't conflict with one already existing
-			InputAction<T>* input_action = new InputAction<T>( name );
+			InputAction<T>* input_action = new InputAction<T>( name, this );
 			_input_actions.push_back( input_action );
 			return input_action;
 		}

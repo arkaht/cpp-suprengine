@@ -9,19 +9,41 @@ namespace suprengine
 {
 	class InputManager;
 
+	/*
+	 * Structure defining which devices (e.g. K&M, gamepads) should be considered for reading inputs.
+	 * Used by InputActions and stored in the InputComponent.
+	 */
+	struct InputContext
+	{
+	public:
+		bool use_mouse_and_keyboard = false;
+		int gamepad_id				= INDEX_NONE;
+
+	public:
+		bool is_using_gamepad() const
+		{
+			return gamepad_id != INDEX_NONE;
+		}
+		bool is_using_keyboard_and_mouse() const
+		{
+			return use_mouse_and_keyboard;
+		}
+	};
+
 	class InputActionBase
 	{
 	public:
-		explicit InputActionBase( const std::string& name )
-			: name( name ) {}
+		explicit InputActionBase( const std::string& name, InputManager* inputs )
+			: name( name ), _inputs( inputs ) {}
 		virtual ~InputActionBase() = default;
 
-		virtual void update( const InputManager* inputs ) = 0;
-
-		virtual void populate_imgui() {};
+		virtual void populate_imgui( const InputContext& context ) {};
 
 	public:
 		std::string name {};
+
+	protected:
+		InputManager* _inputs = nullptr;
 	};
 
 	template <typename T>
@@ -36,7 +58,7 @@ namespace suprengine
 	 * const std::string& for setting his name.
 	 */
 	template <typename T>
-	constexpr bool is_input_action_valid = std::is_constructible_v<InputAction<T>, const std::string&>;
+	constexpr bool is_input_action_valid = std::is_constructible_v<InputAction<T>, const std::string&, InputManager*>;
 
 	enum class JoystickSide
 	{
@@ -49,7 +71,8 @@ namespace suprengine
 	class InputAction<bool> : public InputActionBase
 	{
 	public:
-		explicit InputAction( const std::string& name ) : InputActionBase( name ) {}
+		explicit InputAction( const std::string& name, InputManager* inputs )
+			: InputActionBase( name, inputs ) {}
 
 		/*
 		 * Assign a mouse button that will trigger the action.
@@ -67,18 +90,14 @@ namespace suprengine
 		 */
 		void assign_gamepad_button( GamepadButton gamepad_button );
 
-		bool get_value() const;
+		bool read_value( const InputContext& context ) const;
 
-		void update( const InputManager* inputs ) override;
-
-		void populate_imgui() override;
+		void populate_imgui( const InputContext& context ) override;
 
 	private:
 		MouseButton _assigned_mouse_button = MouseButton::None;
 		std::vector<SDL_Scancode> _assigned_keys {};
 		std::vector<GamepadButton> _assigned_gamepad_buttons {};
-
-		bool _value = false;
 	};
 
 	enum class JoystickInputModifier : uint8
@@ -93,7 +112,8 @@ namespace suprengine
 	class InputAction<float> : public InputActionBase
 	{
 	public:
-		explicit InputAction( const std::string& name ) : InputActionBase( name ) {}
+		explicit InputAction( const std::string& name, InputManager* inputs )
+			: InputActionBase( name, inputs ) {}
 
 		/*
 		 * Assign two keyboard keys that will trigger the action.
@@ -107,26 +127,23 @@ namespace suprengine
 		 */
 		void assign_gamepad_buttons( GamepadButton negative_button, GamepadButton positive_button );
 
-		float get_value() const;
+		float read_value( const InputContext& context ) const;
 
-		void update( const InputManager* inputs ) override;
-
-		void populate_imgui() override;
+		void populate_imgui( const InputContext& context ) override;
 
 	private:
 		SDL_Scancode _assigned_negative_key = SDL_SCANCODE_UNKNOWN;
 		SDL_Scancode _assigned_positive_key = SDL_SCANCODE_UNKNOWN;
 		GamepadButton _assigned_gamepad_negative_button = GamepadButton::None;
 		GamepadButton _assigned_gamepad_positive_button = GamepadButton::None;
-
-		float _value = 0.0f;
 	};
 
 	template <>
 	class InputAction<Vec2> : public InputActionBase
 	{
 	public:
-		explicit InputAction( const std::string& name ) : InputActionBase( name ) {}
+		explicit InputAction( const std::string& name, InputManager* inputs )
+			: InputActionBase( name, inputs ) {}
 
 		/*
 		 * Assign an axis with two keys.
@@ -136,11 +153,9 @@ namespace suprengine
 		void assign_gamepad_joystick( JoystickSide side, JoystickInputModifier modifier = JoystickInputModifier::None );
 		void assign_mouse_delta( float multiplier = 0.05f );
 
-		const Vec2& get_value() const;
+		Vec2 read_value( const InputContext& context ) const;
 
-		void update( const InputManager* inputs ) override;
-
-		void populate_imgui() override;
+		void populate_imgui( const InputContext& context ) override;
 
 	private:
 		Vec2 get_joystick_with_modifiers( Vec2 joystick ) const;
@@ -157,8 +172,6 @@ namespace suprengine
 
 		bool _mouse_movement = false;
 		float _mouse_delta_multiplier = 0.0f;
-
-		Vec2 _value = Vec2::zero;
 
 		JoystickInputModifier _joystick_modifier = JoystickInputModifier::None;
 	};
