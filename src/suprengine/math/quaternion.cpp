@@ -1,18 +1,20 @@
 #include "quaternion.h"
 
+#include <suprengine/math/math.h>
+
 using namespace suprengine;
 
 const Quaternion Quaternion::identity {};
 
-Quaternion::Quaternion( float x, float y, float z, float w )
+Quaternion::Quaternion( const float x, const float y, const float z, const float w )
 	: x( x ), y( y ), z( z ), w( w )
 {}
 
-Quaternion::Quaternion( const Vec3& axis, float angle )
+Quaternion::Quaternion( const Vec3& axis, const float angle )
 {
-	float half_angle = angle / 2.0f;
-	float scale = math::sin( half_angle );
-	Vec3 dir = axis.normalized();
+	const float half_angle = angle / 2.0f;
+	const float scale	   = math::sin( half_angle );
+	const Vec3 dir = axis.normalized();
 
 	x = dir.x * scale;
 	y = dir.y * scale;
@@ -22,18 +24,18 @@ Quaternion::Quaternion( const Vec3& axis, float angle )
 
 Quaternion::Quaternion( const RadAngles& angles )
 {
-	float pitch = angles.p * 0.5f;
-	float yaw   = angles.y * 0.5f;
-	float roll  = angles.r * 0.5f;
+	const float pitch = angles.p * 0.5f;
+	const float yaw   = angles.y * 0.5f;
+	const float roll  = angles.r * 0.5f;
 
-	float sp = math::sin( pitch );
-	float cp = math::cos( pitch );
+	const float sp = math::sin( pitch );
+	const float cp = math::cos( pitch );
 
-	float sy = math::sin( yaw );
-	float cy = math::cos( yaw );
+	const float sy = math::sin( yaw );
+	const float cy = math::cos( yaw );
 
-	float sr = math::sin( roll );
-	float cr = math::cos( roll );
+	const float sr = math::sin( roll );
+	const float cr = math::cos( roll );
 
 	x =  cr * sp * sy  -  sr * cp * cy;
 	y = -cr * sp * cy  -  sr * cp * sy;
@@ -41,9 +43,7 @@ Quaternion::Quaternion( const RadAngles& angles )
 	w =  cr * cp * cy  +  sr * sp * sy;
 }
 
-Quaternion::Quaternion( const DegAngles& angles )
-	: Quaternion( RadAngles( angles ) )
-{}
+Quaternion::Quaternion( const DegAngles& angles ) : Quaternion( RadAngles( angles ) ) {}
 
 void Quaternion::conjugate()
 {
@@ -54,7 +54,7 @@ void Quaternion::conjugate()
 
 void Quaternion::normalize()
 {
-	float len = length();
+	const float len = length();
 	x /= len;
 	y /= len;
 	z /= len;
@@ -120,7 +120,7 @@ Quaternion Quaternion::normalize( const Quaternion& quat )
 Quaternion Quaternion::lerp( 
 	const Quaternion& a,
 	const Quaternion& b,
-	float t
+	const float t
 )
 {
 	Quaternion new_quat {};
@@ -135,10 +135,10 @@ Quaternion Quaternion::lerp(
 Quaternion Quaternion::slerp( 
 	const Quaternion& a,
 	const Quaternion& b,
-	float f
+	const float t
 )
 {
-	float raw_cosom = Quaternion::dot( a, b );
+	const float raw_cosom = dot( a, b );
 
 	float cosom = -raw_cosom;
 	if ( raw_cosom >= 0.0f )
@@ -151,15 +151,15 @@ Quaternion Quaternion::slerp(
 	{
 		const float omega = math::acos( cosom );
 		const float invSin = 1.f / math::sin( omega );
-		scale0 = math::sin( ( 1.f - f ) * omega ) * invSin;
-		scale1 = math::sin( f * omega ) * invSin;
+		scale0 = math::sin( ( 1.f - t ) * omega ) * invSin;
+		scale1 = math::sin( t * omega ) * invSin;
 	}
 	else
 	{
 		// Use linear interpolation if the quaternions
 		// are collinear
-		scale0 = 1.0f - f;
-		scale1 = f;
+		scale0 = 1.0f - t;
+		scale1 = t;
 	}
 
 	if ( raw_cosom < 0.0f )
@@ -193,9 +193,9 @@ Quaternion Quaternion::concatenate(
 
 	// Vector component is:
 	// ps * qv + qs * pv + pv x qv
-	Vec3 qv( q.x, q.y, q.z );
-	Vec3 pv( p.x, p.y, p.z );
-	Vec3 newVec = p.w * qv + q.w * pv + Vec3::cross( pv, qv );
+	const Vec3 qv( q.x, q.y, q.z );
+	const Vec3 pv( p.x, p.y, p.z );
+	const Vec3 newVec = p.w * qv + q.w * pv + Vec3::cross( pv, qv );
 	new_quat.x = newVec.x;
 	new_quat.y = newVec.y;
 	new_quat.z = newVec.z;
@@ -208,13 +208,13 @@ Quaternion Quaternion::concatenate(
 }
 
 /*
- *  I didn't think I would say that one day but..
+ *  I didn't think I would say that one day but...
  *  Thanks Unreal for your code!
  * 
  *  I spent so much time trying to fix a weird 90 degrees offset 
  *  bug with the old look_at function I had (basically pointing 
  *  targets with their up axis instead of their forward), which 
- *  I believe was fundamentally messed up with my coordinates 
+ *  I believe was fundamentally messed up with my coordinates
  *  system.
  * 
  *  Therefore, as Unreal was using the same coordinates system 

@@ -1,5 +1,7 @@
 ﻿#include "imgui-input-visualizer.h"
 
+#include <suprengine/math/math.h>
+
 static uint32 get_amplitude_color_of_value( const float value )
 {
 	if ( value < -1.0f || value > 1.0f ) return ImGui::InputVisualizer::DEADZONE_COLOR;

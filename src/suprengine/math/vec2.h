@@ -1,10 +1,9 @@
 #pragma once
 
-#include <suprengine/math/math.h>
-
-//	TODO: Implement IM_VEC2_CLASS_EXTRA
-#include <imgui.h>
 #include <SDL.h>
+#include <string>
+
+struct ImVec2;
 
 namespace suprengine
 {
@@ -19,154 +18,95 @@ namespace suprengine
 	struct Vec2
 	{
 	public:
-		static const Vec2 zero;
-		static const Vec2 one;
-		static const Vec2 up;
-		static const Vec2 down;
-		static const Vec2 left;
-		static const Vec2 right;
+		static const Vec2 zero, one;
+		static const Vec2 up, down, left, right;
+		static const Vec2 unit_x, unit_y;
+		static const Vec2 infinity;
 
 	public:
 		float x = 0.0f;
 		float y = 0.0f;
 
 	public:
-		constexpr Vec2() {};
-		explicit constexpr Vec2( float value );
-		explicit constexpr Vec2( float x, float y );
-		explicit constexpr Vec2( const ImVec2& vec );
-		explicit constexpr Vec2( const Vec3& vec );
+		constexpr Vec2() = default;
+		explicit constexpr Vec2( const float value ) : x( value ), y( value ) {}
+		explicit constexpr Vec2( const float x, const float y ) : x( x ), y( y ) {}
+
+		explicit Vec2( const ImVec2& vec );
+		explicit Vec2( const Vec3& vec );
+
+	public:
+		/*
+		 * Returns the vector magnitude.
+		 */
+		float length() const;
+		/*
+		 * Returns the vector squared magnitude.
+		 */
+		float length_sqr() const;
+
+		/*
+		 * Normalizes the vector.
+		 */
+		Vec2& normalize();
+		/*
+		 * Returns a copy of the vector normalized.
+		 */
+		Vec2 normalized() const;
 
 		void set_axis( Axis2D axis, float value );
 
-		Vec2 operator-() const
-		{
-			return Vec2 { -x, -y };
-		}
+		float get_angle() const;
 
-		Vec2& operator+=( const Vec2& v )
-		{
-			x += v.x;
-			y += v.y;
-			return *this;
-		}
-
-		Vec2& operator*=( const Vec2& v )
-		{
-			x *= v.x;
-			y *= v.y;
-			return *this;
-		}
-
-		Vec2& operator*=( const float v )
-		{
-			x *= v;
-			y *= v;
-			return *this;
-		}
-
-		Vec2& operator/=( const Vec2& v )
-		{
-			x /= v.x;
-			y /= v.y;
-			return *this;
-		}
-
-		Vec2& operator/=( float v )
-		{
-			x /= v;
-			y /= v;
-			return *this;
-		}
-
-		Vec2 operator+( const Vec2& v ) const
-		{
-			return Vec2 { x + v.x, y + v.y };
-		}
-
-		Vec2 operator-( const Vec2& v ) const
-		{
-			return Vec2 { x - v.x, y - v.y };
-		}
-
-		Vec2 operator*( const Vec2& v ) const
-		{
-			return Vec2 { x * v.x, y * v.y };
-		}
-
-		Vec2 operator*( const float m ) const
-		{
-			return Vec2 { x * m, y * m };
-		}
-
-		Vec2 operator/( const Vec2& v ) const
-		{
-			return Vec2 { x / v.x, y / v.y };
-		}
-
-		Vec2 operator/( const float m ) const
-		{
-			return Vec2 { x / m, y / m };
-		}
-
-		bool operator==( const Vec2& v ) const
-		{
-			return x == v.x && y == v.y;
-		}
-
-		Vec2& normalize()
-		{
-			const float mag = length();
-			if ( mag == 0.0f ) return *this;
-
-			x /= mag, y /= mag;
-			return *this;
-		}
-
-		float length() const
-		{
-			return math::sqrt( length_sqr() );
-		}
-
-		float length_sqr() const
-		{
-			return x * x + y * y;
-		}
-
-		float get_angle() const
-		{
-			return static_cast<float>( math::atan2( y, x ) );
-		}
-
-		static Vec2 lerp( const Vec2& a, const Vec2& b, const float t )
-		{
-			return Vec2 {
-				math::lerp( a.x, b.x, t ),
-				math::lerp( a.y, b.y, t ),
-			};
-		}
-
-		static float dot( const Vec2& a, const Vec2& b );
-
-		static Vec2 approach( const Vec2& current, const Vec2& target, float delta )
-		{
-			return Vec2 {
-				math::approach( current.x, target.x, delta ),
-				math::approach( current.y, target.y, delta )
-			};
-		}
-
-		SDL_Point to_sdl_point() const
-		{
-			return SDL_Point {
-				static_cast<int>( x ),
-				static_cast<int>( y )
-			};
-		}
+		SDL_Point to_sdl_point() const;
 
 		/*
 		 * Returns a string representing the vector.
 		 */
 		std::string to_string() const;
+
+	public:
+		static float distance( const Vec2& from, const Vec2& to );
+		static float distance_sqr( const Vec2& from, const Vec2& to );
+
+		static Vec2 direction( const Vec2& from, const Vec2& to );
+
+		static Vec2 world_to_grid( const Vec2& value, float grid_size );
+
+		static Vec2 snap_to_grid( const Vec2& value, float grid_size );
+		static Vec2 snap_to_grid( const Vec2& value, const Vec2& grid_size );
+
+		static Vec2 clamp( const Vec2& value, const Vec2& min, const Vec2& max );
+
+		static Vec2 round( const Vec2& value );
+
+		static float dot( const Vec2& a, const Vec2& b );
+
+		static Vec2 lerp( const Vec2& a, const Vec2& b, float t );
+		static Vec2 slerp( const Vec2& a, const Vec2& b, float t );
+		static Vec2 nlerp( const Vec2& a, const Vec2& b, float t );
+
+		static Vec2 approach( const Vec2& current, const Vec2& target, float delta );
+
+	public:
+		friend Vec2 operator+( const Vec2& lhs, const Vec2& rhs );
+		friend Vec2 operator-( const Vec2& lhs, const Vec2& rhs );
+		friend Vec2 operator*( const Vec2& lhs, const Vec2& rhs );
+		friend Vec2 operator*( const Vec2& lhs, float rhs );
+		friend Vec2 operator*( float lhs, const Vec2& rhs );
+		friend Vec2 operator/( const Vec2& lhs, const Vec2& rhs );
+		friend Vec2 operator/( const Vec2& lhs, float rhs );
+
+		Vec2& operator+=( const Vec2& rhs );
+		Vec2& operator-=( const Vec2& rhs );
+		Vec2& operator*=( const Vec2& rhs );
+		Vec2& operator*=( float rhs );
+		Vec2& operator/=( const Vec2& rhs );
+		Vec2& operator/=( float rhs );
+
+		Vec2 operator-() const;
+
+		friend bool operator==( const Vec2& lhs, const Vec2& rhs );
+		friend bool operator!=( const Vec2& lhs, const Vec2& rhs );
 	};
 }

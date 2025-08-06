@@ -2,13 +2,11 @@
 
 #include <string>
 
-#include "math.h"
-#include "vec2.h"
-
 namespace suprengine
 {
 	struct Quaternion;
 	struct Mtx4;
+	struct Vec2;
 	struct Vec4;
 
 	struct Vec3
@@ -25,34 +23,33 @@ namespace suprengine
 		float z = 0.0f;
 
 	public:
-		constexpr Vec3() {}
-		explicit Vec3( float value );
-		explicit constexpr Vec3( float x, float y, float z );
-		explicit constexpr Vec3( const Vec2& vec, float z = 0.0f );
-		explicit constexpr Vec3( const Vec4& vec );
+		constexpr Vec3() = default;
+		explicit constexpr Vec3( const float value ) : x( value ), y( value ), z( value ) {}
+		explicit constexpr Vec3( const float x, const float y, const float z ) : x( x ), y( y ), z( z ) {}
+
+		explicit Vec3( const Vec2& vec, float z = 0.0f );
+		explicit Vec3( const Vec4& vec );
 
 		Vec3& operator=( float value );
 
 	public:
-		/*  
-		 * Returns the vector squared magnitude within 3-dimensions.
-		 */
-		float length_sqr() const;
-		/* 
+		/*
 		 * Returns the vector magnitude within 3-dimensions.
 		 */
 		float length() const;
-
-		/*  
-		 * Returns the vector squared magnitude within 2-dimensions
-		 * (X and Y).
-		 */
-		float length2d_sqr() const;
 		/*
-		 * Returns the vector magnitude within 2-dimensions 
-		 * (X and Y).
+		 * Returns the vector squared magnitude within 3-dimensions.
+		 */
+		float length_sqr() const;
+
+		/*
+		 * Returns the vector magnitude within 2-dimensions (X and Y).
 		 */
 		float length2d() const;
+		/*
+		 * Returns the vector squared magnitude within 2-dimensions (X and Y).
+		 */
+		float length2d_sqr() const;
 
 		/*
 		 * Normalizes the vector within 3-dimensions.
@@ -77,8 +74,6 @@ namespace suprengine
 		 * Returns a string representing the vector.
 		 */
 		std::string to_string() const;
-
-		const float* get_as_float_ptr() const;
 
 	public:
 		static float distance( const Vec3& from, const Vec3& to );
@@ -120,98 +115,24 @@ namespace suprengine
 		static Vec3 transform_with_perspective_div( const Vec3& vec, const Mtx4& mat, float w = 1.0f );
 
 	public:
-		//  Vector addition (a + b)
-		friend Vec3 operator+( const Vec3& a, const Vec3& b )
-		{
-			return Vec3( a.x + b.x, a.y + b.y, a.z + b.z );
-		}
+		friend Vec3 operator+( const Vec3& lhs, const Vec3& rhs );
+		friend Vec3 operator-( const Vec3& lhs, const Vec3& rhs );
+		friend Vec3 operator*( const Vec3& lhs, const Vec3& rhs );
+		friend Vec3 operator*( const Vec3& lhs, float rhs );
+		friend Vec3 operator*( float lhs, const Vec3& rhs );
+		friend Vec3 operator/( const Vec3& lhs, const Vec3& rhs );
+		friend Vec3 operator/( const Vec3& lhs, float rhs );
 
-		//  Vector subtraction (a - b)
-		friend Vec3 operator-( const Vec3& a, const Vec3& b )
-		{
-			return Vec3( a.x - b.x, a.y - b.y, a.z - b.z );
-		}
+		Vec3& operator+=( const Vec3& rhs );
+		Vec3& operator-=( const Vec3& rhs );
+		Vec3& operator*=( const Vec3& rhs );
+		Vec3& operator*=( float rhs );
+		Vec3& operator/=( const Vec3& rhs );
+		Vec3& operator/=( float rhs );
 
-		//  Component-wise multiplication
-		friend Vec3 operator*( const Vec3& left, const Vec3& right )
-		{
-			return Vec3( left.x * right.x, left.y * right.y, left.z * right.z );
-		}
+		Vec3 operator-() const;
 
-		//  Scalar multiplication
-		friend Vec3 operator*( const Vec3& vec, float scalar )
-		{
-			return Vec3( vec.x * scalar, vec.y * scalar, vec.z * scalar );
-		}
-
-		//  Scalar multiplication
-		friend Vec3 operator*( float scalar, const Vec3& vec )
-		{
-			return Vec3( vec.x * scalar, vec.y * scalar, vec.z * scalar );
-		}
-
-		Vec3 operator/( const Vec3& value )
-		{
-			return Vec3( x / value.x, y / value.y, z / value.z );
-		}
-		Vec3 operator/( const float scalar )
-		{
-			return Vec3( x / scalar, y / scalar, z / scalar );
-		}
-
-		Vec3& operator*=( const float scalar )
-		{
-			x *= scalar;
-			y *= scalar;
-			z *= scalar;
-			return *this;
-		}
-		Vec3& operator*=( const Vec3& value )
-		{
-			x *= value.x;
-			y *= value.y;
-			z *= value.z;
-			return *this;
-		}
-
-		Vec3& operator+=( const Vec3& right )
-		{
-			x += right.x;
-			y += right.y;
-			z += right.z;
-			return *this;
-		}
-
-		Vec3& operator-=( const Vec3& right )
-		{
-			x -= right.x;
-			y -= right.y;
-			z -= right.z;
-			return *this;
-		}
-
-		operator Vec2() const
-		{
-			return Vec2 { x, y };
-		}
-
-		Vec3 operator-() const
-		{
-			return Vec3 { -x, -y, -z };
-		}
-
-		friend bool operator==( const Vec3& a, const Vec2& b )
-		{
-			return math::near_value( a.x, b.x )
-			    && math::near_value( a.y, b.y )
-			    && math::near_value( a.z, 0.0f );
-		}
-
-		friend bool operator==( const Vec3& a, const Vec3& b )
-		{
-			return math::near_value( a.x, b.x )
-			    && math::near_value( a.y, b.y )
-			    && math::near_value( a.z, b.z );
-		}
+		friend bool operator==( const Vec3& lhs, const Vec3& rhs );
+		friend bool operator!=( const Vec3& lhs, const Vec3& rhs );
 	};
 }

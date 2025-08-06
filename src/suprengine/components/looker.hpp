@@ -34,7 +34,7 @@ namespace suprengine
 			  sensitivity( sensitivity ),
 			  Component( priority_order )
 		{
-			assert( _input_component != nullptr );
+			ASSERT( _input_component != nullptr );
 		}
 
 		void setup() override
