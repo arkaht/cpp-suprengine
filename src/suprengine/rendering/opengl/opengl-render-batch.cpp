@@ -398,6 +398,7 @@ void OpenGLRenderBatch::draw_texture(
 
 	_texture_shader->set_mtx4( "u_world_transform", matrix );
 	_texture_shader->set_color( "u_modulate", color );
+	_texture_shader->set_vec2( "u_tiling", Vec2::one );
 
 	//	Source rect
 	const Vec2 size = texture->get_size();
