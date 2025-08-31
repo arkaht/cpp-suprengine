@@ -10,8 +10,10 @@
 
 #include <suprengine/utils/usings.h>
 
-#include <vector>
 #include <unordered_map>
+#include <vector>
+
+#include "suprengine/components/camera.h"
 
 namespace suprengine
 {
@@ -93,7 +95,7 @@ namespace suprengine
 		virtual void begin_imgui_frame() = 0;
 
 		virtual void begin_render() = 0;
-		virtual void render() = 0;
+		virtual void render( Camera* camera ) = 0;
 		virtual void end_render() = 0;
 
 		virtual void on_window_resized( const Vec2& size ) = 0;

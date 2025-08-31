@@ -2,8 +2,6 @@
 
 #include <suprengine/core/render-batch.h>
 
-#include <suprengine/components/camera.h>
-
 #include <suprengine/rendering/vertex-array.h>
 #include <suprengine/rendering/model.h>
 #include <suprengine/rendering/shader.h>
@@ -12,6 +10,8 @@
 
 namespace suprengine
 {
+	class Camera;
+
 	/*
 	 * Renderer for OpenGL by setting up SDL.
 	 */
@@ -28,7 +28,7 @@ namespace suprengine
 		void begin_imgui_frame() override;
 
 		void begin_render() override;
-		void render() override;
+		void render( Camera* camera ) override;
 		void end_render() override;
 
 		/*
@@ -133,12 +133,11 @@ namespace suprengine
 		SharedPtr<Shader> _texture_shader = nullptr;
 		SharedPtr<Shader> _framebuffer_shader = nullptr;
 
-		Camera* _camera = nullptr;
-
 		Mtx4 _view_matrix;
 		Mtx4 _viewport_matrix;
 
-		uint32 _render_tick = 0;
+		uint32 _render_id = 0;
+		uint8 _render_frame = 0;
 		VSyncMode _vsync_mode = VSyncMode::Disabled;
 	};
 }

@@ -2,38 +2,45 @@
 
 #include <suprengine/core/engine.h>
 
-#include <suprengine/math/vec4.h>
-
 #include <suprengine/components/transform.h>
 
 using namespace suprengine;
 
-Camera::Camera()
-{}
-
-Camera::Camera( const CameraProjectionSettings& projection_settings )
-	: projection_settings( projection_settings )
-{}
+Camera::Camera( const CameraProjectionSettings& projection_settings ) :
+	projection_settings( projection_settings )
+{
+}
 
 void Camera::setup()
 {
 	setup_vars();
 	update_projection_from_settings();
+
+	auto& engine = Engine::instance();
+	engine.add_camera( this );
+}
+
+void Camera::unsetup()
+{
+	auto& engine = Engine::instance();
+	engine.remove_camera( this );
 }
 
 void Camera::setup_simple_projection()
 {
+	const Rect screen_viewport = get_screen_viewport();
 	_projection_matrix = Mtx4::create_simple_view_projection(
-		_viewport_size.x,
-		_viewport_size.y
+		screen_viewport.w,
+		screen_viewport.h
 	);
 }
 
-void Camera::setup_perspective( float fov, float znear, float zfar )
+void Camera::setup_perspective( const float fov, const float znear, const float zfar )
 {
+	const Rect screen_viewport = get_screen_viewport();
 	_projection_matrix = Mtx4::create_perspective_fov(
 		fov * math::DEG2RAD,
-		_viewport_size.x, _viewport_size.y,
+		screen_viewport.w, screen_viewport.h,
 		znear, zfar
 	);
 }
@@ -47,7 +54,7 @@ void Camera::update_projection_from_settings()
 	);
 }
 
-void Camera::set_fov( float fov )
+void Camera::set_fov( const float fov )
 {
 	if ( fov == projection_settings.fov ) return;
 
@@ -72,8 +79,11 @@ Vec3 Camera::world_to_viewport( const Vec3& location ) const
 	pos.y = ( pos.y + 1.0f ) * 0.5f;
 
 	//	Convert to viewport
-	pos.x *= _viewport_size.x;
-	pos.y *= _viewport_size.y;
+	const Rect screen_viewport = get_screen_viewport();
+	pos.x *= screen_viewport.w;
+	pos.y *= screen_viewport.h;
+	pos.x += screen_viewport.x;
+	pos.y += screen_viewport.y;
 
 	return pos;
 }
@@ -81,10 +91,12 @@ Vec3 Camera::world_to_viewport( const Vec3& location ) const
 Ray Camera::viewport_to_world( const Vec2& position ) const
 {
 	//	Normalize the viewport-space position of range: 0.0f:1.0f
+	const Rect screen_viewport = get_screen_viewport();
 	const Vec2 normalized_screen_pos {
-		position.x / _viewport_size.x,
-		position.y / _viewport_size.y
+		( position.x - screen_viewport.x ) / screen_viewport.w,
+		( position.y - screen_viewport.y ) / screen_viewport.h
 	};
+
 	//	Translate to screen-space position of range -1.0f:1.0f
 	const Vec2 screen_space_pos {
 		( normalized_screen_pos.x - 0.5f ) * 2.0f,
@@ -125,26 +137,36 @@ void Camera::set_offset( const Vec3& offset )
 	_is_view_matrix_dirty = true;
 }
 
-void Camera::reset( float width, float height )
+void Camera::reset()
 {
-	_viewport_size.x = width, _viewport_size.y = height;
-	viewport = { 0.0f, 0.0f, width, height };
+	normalized_screen_viewport = { 0.0f, 0.0f, 1.0f, 1.0f };
 	zoom = 1.0f;
 
 	clip = { 0.0f, 0.0f, 0.0f, 0.0f };
 	clip_enabled = false;
 }
 
-void Camera::activate()
+void Camera::set_active()
 {
-	auto& engine = Engine::instance();
-	engine.camera = this;
+	_is_active = true;
 }
 
-bool Camera::is_active()
+bool Camera::is_active() const
 {
-	auto& engine = Engine::instance();
-	return engine.camera == this;
+	return _is_active;
+}
+
+Rect Camera::get_screen_viewport() const
+{
+	const Window* window = Engine::instance().get_window();
+	const Vec2 window_size = window->get_size();
+
+	return Rect {
+		normalized_screen_viewport.x * window_size.x,
+		normalized_screen_viewport.y * window_size.y,
+		normalized_screen_viewport.w * window_size.x,
+		normalized_screen_viewport.h * window_size.y
+	};
 }
 
 void Camera::set_view_matrix( const Mtx4& matrix )
@@ -161,7 +183,7 @@ const Mtx4& Camera::get_view_matrix()
 	if ( _is_view_matrix_dirty || transform->is_matrix_dirty() )
 	{
 		//  TODO: fix this for 2D
-		Vec3 origin = transform->location + _offset;
+		const Vec3 origin = transform->location + _offset;
 		set_view_matrix(
 			Mtx4::create_look_at(
 				origin,
@@ -174,24 +196,19 @@ const Mtx4& Camera::get_view_matrix()
 	return _view_matrix;
 }
 
-const Mtx4& Camera::get_projection_matrix()
+const Mtx4& Camera::get_projection_matrix() const
 {
 	return _projection_matrix;
 }
 
 void Camera::setup_vars()
 {
-	auto window = Engine::instance().get_window();
-
 	//	Listen to window updates
+	Window* window = Engine::instance().get_window();
 	window->on_size_changed.listen( &Camera::_on_window_resized, this );
-
-	_viewport_size = window->get_size();
-	viewport.w, viewport.h = _viewport_size.x, _viewport_size.y;  //  TODO: Remove obsolete camera code
 }
 
 void Camera::_on_window_resized( const Vec2& new_size, const Vec2& old_size )
 {
-	_viewport_size = new_size;
 	update_projection_from_settings();
 }

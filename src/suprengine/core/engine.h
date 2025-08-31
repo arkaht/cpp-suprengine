@@ -97,6 +97,9 @@ namespace suprengine
 
 		void add_timer( const Timer& timer );
 
+		void add_camera( Camera* camera );
+		void remove_camera( const Camera* camera );
+
 		bool is_running() const;
 
 		IGame* get_game() const { return _game.get(); }
@@ -128,7 +131,6 @@ namespace suprengine
 		Event<> on_imgui_update {};
 
 	public:
-		Camera* camera = nullptr;
 		bool is_game_paused = false;
 
 	private:
@@ -142,6 +144,7 @@ namespace suprengine
 		std::vector<SharedPtr<Entity>> _pending_entities {}, _entities {}, _dead_entities {};
 
 		std::vector<Timer> _timers {};
+		std::vector<Camera*> _cameras {};
 
 		std::unique_ptr<IGame> _game;
 		std::unique_ptr<Window> _window;

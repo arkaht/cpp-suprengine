@@ -308,13 +308,13 @@ Mtx4 Mtx4::create_ortho( float width, float height, float near, float far )
 
 Mtx4 Mtx4::create_perspective_fov( float fovY, float width, float height, float near, float far )
 {
-	float scale_y = math::cot( fovY / 2.0f );
-	float scale_x = scale_y * height / width;
+	const float scale_y = math::cot( fovY / 2.0f );
+	const float scale_x = scale_y * height / width;
 	float temp[4][4] {
-		{ scale_x, 0.0f,	0.0f,						  0.0f },
-		{ 0.0f,	   scale_y, 0.0f,						  0.0f },
-		{ 0.0f,    0.0f,	far / ( far - near ),		  1.0f },
-		{ 0.0f,    0.0f,	-near * far / ( far - near ), 0.0f },
+		{ scale_x, 0.0f,	   0.0f,                         0.0f },
+		{ 0.0f,	  scale_y, 0.0f,                         0.0f },
+		{ 0.0f,    0.0f,	   far / ( far - near ),         1.0f },
+		{ 0.0f,    0.0f,	   -near * far / ( far - near ), 0.0f },
 	};
 	return Mtx4( temp );
 }

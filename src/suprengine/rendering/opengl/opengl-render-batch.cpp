@@ -201,10 +201,12 @@ void OpenGLRenderBatch::begin_render()
 {
 	PROFILE_SCOPE( "OpenGL::begin_render" );
 
-	//	Begin ImGui rendering
+	_render_frame = 0;
+
+	// Begin ImGui rendering
 	ImGui::Render();
 
-	//	Clear screen
+	// Clear screen
 	glBindFramebuffer( GL_FRAMEBUFFER, _fbo_id );
 	glClearColor(
 		_background_color.r / 255.0f,
@@ -213,40 +215,45 @@ void OpenGLRenderBatch::begin_render()
 		_background_color.a / 255.0f
 	);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	//	Check camera
-	auto& engine = Engine::instance();
-	_camera = engine.camera;
-	if ( _camera == nullptr )
-	{
-		Logger::error( "No main camera, rendering aborted!" );
-		return;
-	}
-
-	//	Activate shader & vertex array
-	_view_matrix = _camera->get_view_matrix() * _camera->get_projection_matrix();
-
-	//	Store render frame for later use
-	const Updater* updater = engine.get_updater();
-	_render_tick = updater->get_frame_tick();
 }
 
-void OpenGLRenderBatch::render()
+void OpenGLRenderBatch::render( Camera* camera )
 {
 	PROFILE_SCOPE( "OpenGL::render" );
 
-	//	Draw world renderers
+	if ( camera == nullptr )
+	{
+		Logger::error( "Rendering called with no camera, rendering aborted!" );
+		return;
+	}
+
+	_view_matrix = camera->get_view_matrix() * camera->get_projection_matrix();
+
+	// Store render ID for optimizing shader preparations
+	Engine& engine = Engine::instance();
+	const Updater* updater = engine.get_updater();
+	_render_id = updater->get_frame_tick() + _render_frame++;
+
+	const Rect screen_viewport = camera->get_screen_viewport();
+	glViewport(
+		static_cast<GLint>( screen_viewport.x ),
+		static_cast<GLint>( screen_viewport.y ),
+		static_cast<GLsizei>( screen_viewport.w ),
+		static_cast<GLsizei>( screen_viewport.h )
+	);
+
+	// Draw world renderers
 	if ( get_renderers_count( RenderPhase::World ) > 0 )
 	{
 		PROFILE_SCOPE( "OpenGL::render::World" );
 
-		//	Enable clockwise
+		// Enable clockwise
 		glFrontFace( GL_CW );
 
-		//	Enable face culling
+		// Enable face culling
 		glEnable( GL_CULL_FACE );
 
-		//	Enable depth testing
+		// Enable depth testing
 		glEnable( GL_DEPTH_TEST );
 		glDepthFunc( GL_LEQUAL );
 
@@ -255,21 +262,21 @@ void OpenGLRenderBatch::render()
 
 		_render_phase( RenderPhase::World );
 
-		//	Disable options
+		// Disable options
 		glDisable( GL_DEPTH_TEST );
 		glDisable( GL_CULL_FACE );
 		glDisable( GL_BLEND );
 	}
 
-	//	Draw viewport renderers
+	// Draw viewport renderers
 	if ( get_renderers_count( RenderPhase::Viewport ) > 0 )
 	{
 		PROFILE_SCOPE( "OpenGL::render::Viewport" );
 
-		//	Enable counter-clockwise
+		// Enable counter-clockwise
 		glFrontFace( GL_CCW );
 
-		//	Enable blending
+		// Enable blending
 		glEnable( GL_BLEND );
 		glBlendEquationSeparate( GL_FUNC_ADD, GL_FUNC_ADD );
 		glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO );
@@ -284,21 +291,26 @@ void OpenGLRenderBatch::render()
 	//	Debug visual shapes
 	VisDebug::render();
 #endif
-
-	//  ImGui rendering
-	{
-		PROFILE_SCOPE( "OpenGL::render::ImGui" );
-		ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
-	}
 }
 
 void OpenGLRenderBatch::end_render()
 {
+	// Update the viewport to its original size to render the framebuffer on the screen
+	glViewport(
+		0, 0,
+		static_cast<int>( _viewport_size.x ), static_cast<int>( _viewport_size.y )
+	);
+
+	// ImGui rendering
+	{
+		PROFILE_SCOPE( "OpenGL::render::ImGui" );
+		ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+	}
+
 	PROFILE_SCOPE( "OpenGL::end_render" );
 
-	const Vec2 window_size = _window->get_size();
-	const int width = static_cast<int>( window_size.x );
-	const int height = static_cast<int>( window_size.y );
+	const int width = static_cast<int>( _viewport_size.x );
+	const int height = static_cast<int>( _viewport_size.y );
 	
 	//	Copy framebuffer into post-process framebuffer
 	glBindFramebuffer( GL_READ_FRAMEBUFFER, _fbo_id );
@@ -324,17 +336,7 @@ void OpenGLRenderBatch::end_render()
 void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 {
 	_viewport_size = size;
-
-	//	Update viewport
-	glViewport(
-		0, 0,
-		static_cast<int>( _viewport_size.x ), static_cast<int>( _viewport_size.y )
-	);
-
-	//	Update screen offset
 	_screen_offset = size * 0.5f;
-
-	//	Update viewport matrix
 	_viewport_matrix = Mtx4::create_simple_view_projection( size.x, size.y );
 
 	update_framebuffers();
@@ -345,7 +347,7 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	_color_shader->activate();
 
 	//	Prepare shader only once per frame
-	if ( _color_shader->prepare( _render_tick ) )
+	if ( _color_shader->prepare( _render_id ) )
 	{
 		_color_shader->set_mtx4( "u_view_projection", _viewport_matrix );
 	}
@@ -391,7 +393,7 @@ void OpenGLRenderBatch::draw_texture(
 	_texture_shader->activate();
 
 	//	Prepare shader only once per frame
-	if ( _texture_shader->prepare( _render_tick ) )
+	if ( _texture_shader->prepare( _render_id ) )
 	{
 		_texture_shader->set_mtx4( "u_view_projection", _viewport_matrix );
 	}
@@ -434,7 +436,7 @@ void OpenGLRenderBatch::draw_mesh(
 	shader->activate();
 
 	//	Prepare shader only once per frame
-	if ( shader->prepare( _render_tick ) )
+	if ( shader->prepare( _render_id ) )
 	{
 		shader->set_mtx4( "u_view_projection", _view_matrix );
 
@@ -552,7 +554,7 @@ void OpenGLRenderBatch::draw_line( const Vec3& start, const Vec3& end, const Col
 	shader->activate();
 
 	//	Prepare shader only once per frame
-	if ( shader->prepare( _render_tick ) )
+	if ( shader->prepare( _render_id ) )
 	{
 		shader->set_mtx4( "u_view_projection", _view_matrix );
 	}

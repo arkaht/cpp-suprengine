@@ -11,10 +11,9 @@ namespace suprengine
 		float x, y;
 		float w, h;
 
-		Rect( float x, float y, float w, float h ) 
-			: x ( x ), y ( y ), w ( w ), h ( h ) {};
-		Rect( Vec2 pos, Vec2 size ) 
-			: x ( pos.x ), y ( pos.y ), w ( size.x ), h ( size.y ) {};
+		Rect() : x( 0 ), y( 0 ), w( 0 ), h( 0 ) {}
+		Rect( float x, float y, float w, float h ) : x( x ), y( y ), w( w ), h( h ) {}
+		Rect( Vec2 pos, Vec2 size ) : x( pos.x ), y( pos.y ), w( size.x ), h( size.y ) {}
 
 		Rect& operator+=( const Vec2& v )
 		{
@@ -32,6 +31,7 @@ namespace suprengine
 				h * m,
 			};
 		}
+
 		Rect operator/( const float m ) const
 		{
 			return Rect {
@@ -42,21 +42,45 @@ namespace suprengine
 			};
 		}
 
-		Vec2 get_pos() const { return Vec2 { x, y }; }
-		Vec2 get_size() const { return Vec2 { w, h }; }
+		Vec2 get_pos() const
+		{
+			return Vec2 { x, y };
+		}
+
+		Vec2 get_size() const
+		{
+			return Vec2 { w, h };
+		}
 
 		SDL_Rect to_sdl_rect() const
 		{
 			return SDL_Rect {
-				(int) x,
-				(int) y,
-				(int) w,
-				(int) h,
+				(int)x,
+				(int)y,
+				(int)w,
+				(int)h,
 			};
 		}
 
-		void add_pos( const Vec2& pos ) { x += pos.x, y += pos.y; }
-		void set_pos( const Vec2& pos ) { x = pos.x, y = pos.y; }
-		void set_size( const Vec2& size ) { w = size.x, h = size.y; }
+		void add_pos( const Vec2& pos )
+		{
+			x += pos.x, y += pos.y;
+		}
+
+		void set_pos( const Vec2& pos )
+		{
+			x = pos.x, y = pos.y;
+		}
+
+		void set_size( const Vec2& size )
+		{
+			w = size.x, h = size.y;
+		}
+
+		std::string to_string() const
+		{
+			return "x=" + std::to_string( x ) + ";y=" + std::to_string( y ) + ";"
+			     + "w=" + std::to_string( w ) + ";h=" + std::to_string( h );
+		}
 	};
 }

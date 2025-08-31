@@ -6,12 +6,14 @@
 
 using namespace suprengine;
 
-Window::Window( const std::string& title, int width, int height, WindowMode mode ) 
-	:	_title( title )
+Window::Window(
+	const std::string& title,
+	const int width, const int height,
+	const WindowMode mode
+)
+	: _size( Vec2 { static_cast<float>( width ), static_cast<float>( height ) } ),
+	  _title( title )
 {
-	_size.x = static_cast<float>( width );
-	_size.y = static_cast<float>( height );
-
 	_sdl_window = SDL_CreateWindow(
 		_title.c_str(),
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -34,7 +36,7 @@ Window::~Window()
 	SDL_DestroyWindow( _sdl_window );
 }
 
-void Window::set_mode( WindowMode mode )
+void Window::set_mode( const WindowMode mode )
 {
 	if ( mode == _mode ) return;
 
@@ -81,7 +83,7 @@ void Window::set_mode( WindowMode mode )
 	_mode = mode;
 }
 
-void Window::set_size( Vec2 size, bool is_new_size )
+void Window::set_size( const Vec2 size, const bool is_new_size )
 {
 	const Vec2 old_size = _current_size;
 
@@ -92,7 +94,7 @@ void Window::set_size( Vec2 size, bool is_new_size )
 	_current_size = size;
 
 	//  resize window
-	SDL_SetWindowSize( _sdl_window, (int)size.x, (int)size.y );
+	SDL_SetWindowSize( _sdl_window, static_cast<int>( size.x ), static_cast<int>( size.y ) );
 
 	//  broadcast event
 	on_size_changed.invoke( size, old_size );

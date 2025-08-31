@@ -1,10 +1,8 @@
 #include "engine.h"
 
-#include <suprengine/math/vec2.h>
+#include <suprengine/components/collider.h>
 #include <suprengine/core/assets.h>
 #include <suprengine/core/entity.h>
-#include <suprengine/components/transform.h>
-#include <suprengine/components/collider.h>
 #include <suprengine/core/scene.h>
 
 #include <suprengine/tools/profiler.h>
@@ -13,7 +11,6 @@
 #include <backends/imgui_impl_sdl2.h>
 #include <implot.h>
 
-#include <unordered_map>
 #include <algorithm>
 
 using namespace suprengine;
@@ -216,13 +213,26 @@ void Engine::clear_entities()
 	_entities.clear();
 	_dead_entities.clear();
 
-	//  Reset active camera
-	camera = nullptr;
+	//  Clear cameras
+	_cameras.clear();
 }
 
 void Engine::add_timer( const Timer& timer )
 {
 	_timers.emplace_back( timer );
+}
+
+void Engine::add_camera( Camera* camera )
+{
+	ASSERT( std::find( _cameras.begin(), _cameras.end(), camera ) == _cameras.end() );
+	_cameras.push_back( camera );
+}
+
+void Engine::remove_camera( const Camera* camera )
+{
+	auto itr = std::find( _cameras.begin(), _cameras.end(), camera );
+	ASSERT( itr != _cameras.end() );
+	_cameras.erase( itr );
 }
 
 bool Engine::is_running() const
@@ -370,23 +380,6 @@ void Engine::render()
 	//  Start rendering
 	_render_batch->begin_render();
 
-	//  Apply camera
-	//  NOTE: This code doesn't do anything when using the OpenGL 
-	//  render-batch. It was originally here for supporting SDL and
-	//  2D.
-	if ( camera != nullptr ) 
-	{
-		//  Apply transform
-		_render_batch->scale( camera->zoom );
-		_render_batch->translate( camera->viewport.get_pos() );
-
-		//  Apply clipping
-		if ( camera->clip_enabled )
-		{
-			_render_batch->clip( camera->clip );
-		}
-	}
-
 #ifdef ENABLE_VISDEBUG
 	//  Debug render entities & components
 	if ( VisDebug::is_channel_active( DebugChannel::Entity ) )
@@ -406,8 +399,12 @@ void Engine::render()
 	}
 #endif
 
-	//  Render components
-	_render_batch->render();
+	//  Render scene
+	for ( Camera* camera : _cameras )
+	{
+		if ( !camera->is_active() ) continue;
+		_render_batch->render( camera );
+	}
 
 	//  End rendering
 	_render_batch->end_render();
