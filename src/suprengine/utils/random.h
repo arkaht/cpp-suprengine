@@ -11,16 +11,16 @@ namespace suprengine
 	class random
 	{
 	public:
-		static int generate( int min, int max )
+		static int generate( const int min, const int max )
 		{
-			std::uniform_int_distribution<> dist( min, max );
+			std::uniform_int_distribution dist( min, max );
 			return dist( get_generator() );
 		}
 
-		static float generate( float min, float max )
+		static float generate( const float min, const float max )
 		{
-			std::uniform_real_distribution<> dist( (double)min, (double)max );
-			return (float)dist( get_generator() );
+			std::uniform_real_distribution dist( min, max );
+			return dist( get_generator() );
 		}
 
 		static float generate( const Vec2& bounds )
@@ -38,9 +38,9 @@ namespace suprengine
 			return generate_bool() ? 1 : -1;
 		}
 
-		static Vec3 generate_location( 
-			float min_x, float min_y, float min_z, 
-			float max_x, float max_y, float max_z 
+		static Vec3 generate_location(
+			const float min_x, const float min_y, const float min_z,
+			const float max_x, const float max_y, const float max_z
 		)
 		{
 			return Vec3 {
@@ -61,14 +61,14 @@ namespace suprengine
 		static Vec3 generate_direction()
 		{
 			//  https://math.stackexchange.com/a/44691
-			float angle = generate( 0.0f, math::DOUBLE_PI );
-			float z = generate( -1.0f, 1.0f );
-			float m = math::sqrt( 1.0f - z * z );
+			const float angle = generate( 0.0f, math::DOUBLE_PI );
+			const float z = generate( -1.0f, 1.0f );
+			const float m = math::sqrt( 1.0f - z * z );
 
 			return Vec3 {
 				m * math::cos( angle ),
 				m * math::sin( angle ),
-				z,	
+				z,
 			};
 		}
 
@@ -77,20 +77,20 @@ namespace suprengine
 			return Quaternion::look_at( generate_direction(), Vec3::up );
 		}
 
-		static Color generate_color( bool should_randomize_alpha = false )
+		static Color generate_color( const bool should_randomize_alpha = false )
 		{
-			return Color 
-			{ 
-				(unsigned char)random::generate( 0, 255 ),
-				(unsigned char)random::generate( 0, 255 ),
-				(unsigned char)random::generate( 0, 255 ),
-				should_randomize_alpha 
-					? (unsigned char)random::generate( 0, 255 )
-					: (unsigned char)255
+			return Color
+			{
+				static_cast<unsigned char>( generate( 0, 255 ) ),
+				static_cast<unsigned char>( generate( 0, 255 ) ),
+				static_cast<unsigned char>( generate( 0, 255 ) ),
+				should_randomize_alpha
+					? static_cast<unsigned char>( generate( 0, 255 ) )
+					: static_cast<unsigned char>( 255 )
 			};
 		}
 
-		static Vec3 generate_scale( float min, float max )
+		static Vec3 generate_scale( const float min, const float max )
 		{
 			return Vec3( generate( min, max ) );
 		}
@@ -98,10 +98,10 @@ namespace suprengine
 		template <typename T>
 		static const T& generate( const std::vector<T>& list )
 		{
-			return list[generate( 0, (int)list.size() - 1 )];
+			return list[generate( 0, static_cast<int>( list.size() ) - 1 )];
 		}
 
-		static void seed( unsigned int seed )
+		static void seed( const unsigned int seed )
 		{
 			auto& generator = get_generator();
 			generator.seed( seed );
@@ -109,7 +109,7 @@ namespace suprengine
 
 		static std::mt19937& get_generator()
 		{
-			static std::mt19937 generator( (unsigned int)std::time( nullptr ) );
+			static std::mt19937 generator( static_cast<unsigned int>( std::time( nullptr ) ) );
 			return generator;
 		}
 	};

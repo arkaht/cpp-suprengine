@@ -1,5 +1,7 @@
 #include "mtx4.h"
 
+#include <suprengine/math/math.h>
+
 using namespace suprengine;
 
 static float m4Ident[4][4] {

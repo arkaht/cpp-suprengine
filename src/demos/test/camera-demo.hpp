@@ -2,13 +2,14 @@
 
 #include <suprengine/core/component.h>
 #include <suprengine/core/entity.h>
-#include <suprengine/core/input-manager.h>
+#include <suprengine/input/input-manager.h>
 
-#include <suprengine/components/spring-arm.hpp>
+#include <suprengine/components/looker.hpp>
 #include <suprengine/components/mover.hpp>
-#include <suprengine/components/mouse-follower.hpp>
-#include <suprengine/components/mouse-looker.hpp>
+#include <suprengine/components/spring-arm.hpp>
 #include <suprengine/components/target-rotator.h>
+
+#include "suprengine/components/input-component.h"
 
 using namespace suprengine;
 
@@ -24,14 +25,30 @@ namespace test
 			STATIC,
 		};
 
-		CameraDemo( SafePtr<Entity> player ) 
-			: player( player )
+		CameraDemo(
+			SafePtr<Entity> player,
+			InputAction<Vec2>* move_action,
+			InputAction<Vec2>* look_action,
+			InputAction<bool>* sprint_action,
+			InputAction<float>* vertical_action
+		)
+			: player( player ),
+			  move_action( move_action ),
+			  look_action( look_action ),
+			  sprint_action( sprint_action ),
+			  vertical_action( vertical_action )
 		{}
 
 		void setup() override
 		{
-			mover = create_component<Mover>();
-			mouse_looker = create_component<MouseLooker>( 1.0f );
+			input_component = create_component<InputComponent>(
+				InputContext {
+					.use_mouse_and_keyboard = true,
+					.gamepad_id = 0
+				}
+			);
+			mover = create_component<Mover>( input_component, move_action, sprint_action, vertical_action );
+			mouse_looker = create_component<Looker>( input_component, look_action, 3.0f );
 			spring_arm = create_component<SpringArm>( player->transform );
 			target_rotator = create_component<TargetRotator>( player->transform );
 
@@ -66,12 +83,18 @@ namespace test
 	private:
 		SafePtr<Entity> player;
 
+		SharedPtr<InputComponent> input_component;
 		SharedPtr<SpringArm> spring_arm;
 		SharedPtr<Mover> mover;
-		SharedPtr<MouseLooker> mouse_looker;
+		SharedPtr<Looker> mouse_looker;
 		SharedPtr<TargetRotator> target_rotator;
 
-		CameraMode current_mode = CameraMode::TPS;
+		CameraMode current_mode = CameraMode::FPS;
+
+		InputAction<Vec2>* move_action = nullptr;
+		InputAction<Vec2>* look_action = nullptr;
+		InputAction<bool>* sprint_action = nullptr;
+		InputAction<float>* vertical_action = nullptr;
 
 		void _enable_mode( CameraMode mode )
 		{

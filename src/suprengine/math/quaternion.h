@@ -17,7 +17,7 @@ namespace suprengine
 		float w = 1.0f;
 
 	public:
-		Quaternion() {}
+		Quaternion() = default;
 		explicit Quaternion( float x, float y, float z, float w );
 		explicit Quaternion( const Vec3& axis, float angle );
 
@@ -98,7 +98,7 @@ namespace suprengine
 		);
 
 	public:
-		Quaternion operator+( const Quaternion& p )
+		Quaternion operator+( const Quaternion& p ) const
 		{
 			return concatenate( *this, p );
 		}

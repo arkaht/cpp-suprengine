@@ -21,14 +21,10 @@ namespace suprengine
 	class SafePtr : public std::weak_ptr<T>
 	{
 	public:
-		SafePtr() {}
+		SafePtr() = default;
 		SafePtr( nullptr_t ) {}
-		SafePtr( std::weak_ptr<T> ptr )
-			: std::weak_ptr<T>( ptr )
-		{}
-		SafePtr( std::shared_ptr<T> ptr )
-			: std::weak_ptr<T>( ptr )
-		{}
+		SafePtr( std::weak_ptr<T> ptr ) : std::weak_ptr<T>( ptr ) {}
+		SafePtr( std::shared_ptr<T> ptr ) : std::weak_ptr<T>( ptr ) {}
 
 		/*
 		 * Returns whenever the pointer to the object is valid.

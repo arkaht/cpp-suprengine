@@ -1,5 +1,7 @@
 #include "vec3.h"
 
+#include <suprengine/math/math.h>
+#include <suprengine/math/vec2.h>
 #include <suprengine/math/vec4.h>
 #include <suprengine/math/mtx4.h>
 #include <suprengine/math/quaternion.h>
@@ -19,31 +21,14 @@ const Vec3 Vec3::up( 0.0f, 0.0f, 1.0f );
 
 const Vec3 Vec3::infinity( math::PLUS_INFINITY, math::PLUS_INFINITY, math::PLUS_INFINITY );
 
-Vec3::Vec3( float value )
-	: x( value ), y( value ), z( value )
-{}
+Vec3::Vec3( const Vec2& vec, const float z ) : x( vec.x ), y( vec.y ), z( z ) {}
 
-Vec3::Vec3( float x, float y, float z )
-	: x( x ), y( y ), z( z )
-{}
+Vec3::Vec3( const Vec4& vec ) : x( vec.x ), y( vec.y ), z( vec.z ) {}
 
-Vec3::Vec3( const Vec2& vec, float z )
-	: x( vec.x ), y( vec.y ), z( z )
-{}
-
-Vec3::Vec3( const Vec4& vec )
-	: x( vec.x ), y( vec.y ), z( vec.z )
-{}
-
-Vec3& Vec3::operator=( float value )
+Vec3& Vec3::operator=( const float value )
 {
 	x = y = z = value;
 	return *this;
-}
-
-float Vec3::length_sqr() const
-{
-	return x * x + y * y + z * z;
 }
 
 float Vec3::length() const
@@ -51,9 +36,9 @@ float Vec3::length() const
 	return math::sqrt( length_sqr() );
 }
 
-float Vec3::length2d_sqr() const
+float Vec3::length_sqr() const
 {
-	return x * x + y * y;
+	return x * x + y * y + z * z;
 }
 
 float Vec3::length2d() const
@@ -61,9 +46,14 @@ float Vec3::length2d() const
 	return math::sqrt( length2d_sqr() );
 }
 
+float Vec3::length2d_sqr() const
+{
+	return x * x + y * y;
+}
+
 void Vec3::normalize()
 {
-	float len = length();
+	const float len = length();
 	if ( len == 0.0f ) return;
 
 	x /= len;
@@ -73,7 +63,7 @@ void Vec3::normalize()
 
 void Vec3::normalize2d()
 {
-	float len = length2d();
+	const float len = length2d();
 	if ( len == 0.0f ) return;
 
 	x /= len;
@@ -100,11 +90,6 @@ std::string Vec3::to_string() const
 	return "x=" + std::to_string( x )
 		+ ";y=" + std::to_string( y )
 		+ ";z=" + std::to_string( z );
-}
-
-const float* Vec3::get_as_float_ptr() const
-{
-	return reinterpret_cast<const float*>( &x );
 }
 
 float Vec3::distance( const Vec3& from, const Vec3& to )
@@ -226,7 +211,7 @@ Vec3 Vec3::slerp( const Vec3& a, const Vec3& b, float t )
 
 Vec3 Vec3::nlerp( const Vec3& a, const Vec3& b, float t )
 {
-	return Vec3::lerp( a, b, t ).normalized();
+	return lerp( a, b, t ).normalized();
 }
 
 Vec3 Vec3::reflect( const Vec3& value, const Vec3& n )
@@ -293,4 +278,103 @@ Vec3 Vec3::transform( const Vec3& value, const Quaternion& q )
 	Vec3 retVal = value;
 	retVal += 2.0f * Vec3::cross( qv, Vec3::cross( qv, value ) + q.w * value );
 	return retVal;
+}
+
+Vec3& Vec3::operator+=( const Vec3& rhs )
+{
+	x += rhs.x;
+	y += rhs.y;
+	z += rhs.z;
+	return *this;
+}
+
+Vec3& Vec3::operator-=( const Vec3& rhs )
+{
+	x -= rhs.x;
+	y -= rhs.y;
+	z -= rhs.z;
+	return *this;
+}
+
+Vec3& Vec3::operator*=( const Vec3& rhs )
+{
+	x *= rhs.x;
+	y *= rhs.y;
+	z *= rhs.z;
+	return *this;
+}
+
+Vec3& Vec3::operator*=( const float rhs )
+{
+	x *= rhs;
+	y *= rhs;
+	z *= rhs;
+	return *this;
+}
+
+Vec3& Vec3::operator/=( const Vec3& rhs )
+{
+	x /= rhs.x;
+	y /= rhs.y;
+	z /= rhs.z;
+	return *this;
+}
+
+Vec3& Vec3::operator/=( const float rhs )
+{
+	x /= rhs;
+	y /= rhs;
+	z /= rhs;
+	return *this;
+}
+
+Vec3 Vec3::operator-() const
+{
+	return Vec3 { -x, -y, -z };
+}
+
+Vec3 suprengine::operator+( const Vec3& lhs, const Vec3& rhs )
+{
+	return Vec3( lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z );
+}
+
+Vec3 suprengine::operator-( const Vec3& lhs, const Vec3& rhs )
+{
+	return Vec3( lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z );
+}
+
+Vec3 suprengine::operator*( const Vec3& lhs, const Vec3& rhs )
+{
+	return Vec3( lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z );
+}
+
+Vec3 suprengine::operator*( const Vec3& lhs, const float rhs )
+{
+	return Vec3( lhs.x * rhs, lhs.y * rhs, lhs.z * rhs );
+}
+
+Vec3 suprengine::operator*( const float lhs, const Vec3& rhs )
+{
+	return Vec3( rhs.x * lhs, rhs.y * lhs, rhs.z * lhs );
+}
+
+Vec3 suprengine::operator/( const Vec3& lhs, const Vec3& rhs )
+{
+	return Vec3( lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z );
+}
+
+Vec3 suprengine::operator/( const Vec3& lhs, const float rhs )
+{
+	return Vec3( lhs.x / rhs, lhs.y / rhs, lhs.z / rhs );
+}
+
+bool suprengine::operator==( const Vec3& lhs, const Vec3& rhs )
+{
+	return math::near_value( lhs.x, rhs.x ) && math::near_value( lhs.y, rhs.y )
+		&& math::near_value( lhs.z, rhs.z );
+}
+
+bool suprengine::operator!=( const Vec3& lhs, const Vec3& rhs )
+{
+	return !( lhs == rhs );
 }

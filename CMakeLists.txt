@@ -7,6 +7,12 @@ set(SUPRENGINE_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(SUPRENGINE_SOURCE "${SUPRENGINE_INCLUDE}/suprengine")
 set(SUPRENGINE_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets" CACHE INTERNAL "")
 
+#  Define platforms macros
+if (WIN32)
+	add_compile_definitions(PLATFORM_WINDOWS)
+endif (WIN32)
+
+#  Define features macros
 add_compile_definitions(ENABLE_VISDEBUG)
 add_compile_definitions(ENABLE_MEMORY_PROFILER)
 

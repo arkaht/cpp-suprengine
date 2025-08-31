@@ -50,7 +50,7 @@ Engine::~Engine()
 }
 
 #ifdef ENABLE_MEMORY_PROFILER
-static void* custom_imgui_alloc( std::size_t bytes, void* user_data )
+static void* custom_imgui_alloc( const std::size_t bytes, void* user_data )
 {
 	return MemoryProfiler::allocate( "ImGui", bytes );
 }
@@ -66,21 +66,19 @@ bool Engine::init( IGame* game )
 	PROFILE_SCOPE( "Engine::init" );
 
 	//	Init SDL
-	int sdl_status = SDL_Init( SDL_INIT_VIDEO );
+	const int sdl_status = SDL_Init( SDL_INIT_VIDEO );
 	ASSERT_MSG( sdl_status == 0, SDL_GetError() );
 
 	//	Setup game
 	game->set_engine( this );
 	_game = std::unique_ptr<IGame>( game );
 
-	//  Get game infos
-	const GameInfos infos = _game->get_infos();
-
 	//  Init window
 	{
+		const GameInfos infos = _game->get_infos();
 		PROFILE_SCOPE( "Engine::init::Window" );
 
-		_window = std::make_unique<Window>( 
+		_window = std::make_unique<Window>(
 			infos.title,
 			infos.width,
 			infos.height,
@@ -169,7 +167,7 @@ void Engine::loop()
 	}
 }
 
-void Engine::add_entity( SharedPtr<Entity> entity )
+void Engine::add_entity( const SharedPtr<Entity>& entity )
 {
 	//  Add to pending entities if currently updating...
 	if ( _is_updating )
@@ -189,7 +187,7 @@ void Engine::add_entity( SharedPtr<Entity> entity )
 	}
 }
 
-void Engine::remove_entity( SharedPtr<Entity> entity )
+void Engine::remove_entity( const SharedPtr<Entity>& entity )
 {
 	//  Remove from actives
 	auto itr = std::find( _entities.begin(), _entities.end(), entity );
@@ -234,71 +232,18 @@ bool Engine::is_running() const
 
 void Engine::process_input()
 {
-	_inputs->update();
-
-	ImGuiIO& imgui_io = ImGui::GetIO();
-
-	//  Read window events
-	SDL_Event event;
-	while ( SDL_PollEvent( &event ) )
+	const bool can_run = _inputs->update();
+	if ( !can_run )
 	{
-		//  Send event to ImGui
-		ImGui_ImplSDL2_ProcessEvent( &event );
-
-		//  TODO?: Move most of it to the InputManager class
-		switch ( event.type )
-		{
-			case SDL_MOUSEBUTTONDOWN:
-			{
-				if ( imgui_io.WantCaptureMouse ) continue;
-
-				const MouseButton button = _inputs->convert_sdl_mouse_button( event.button.button );
-				_inputs->take_mouse_button_down( button );
-
-				break;
-			}
-			case SDL_MOUSEBUTTONUP:
-			{
-				//	NOTE: We are not checking for ImGui's IO here in order to update the mouse
-				//	button even when the user is releasing it on an ImGui interface, which would
-				//	cause bugs otherwise.
-
-				const MouseButton button = _inputs->convert_sdl_mouse_button( event.button.button );
-				_inputs->take_mouse_button_up( button );
-
-				break;
-			}
-			//  Store mouse delta for this frame
-			case SDL_MOUSEMOTION:
-			{
-				if ( imgui_io.WantCaptureMouse ) continue;
-
-				_inputs->mouse_delta.x = static_cast<float>( event.motion.xrel );
-				_inputs->mouse_delta.y = static_cast<float>( event.motion.yrel );
-				break;
-			}
-			//  Store mouse wheel for this frame
-			case SDL_MOUSEWHEEL:
-			{
-				if ( imgui_io.WantCaptureMouse ) continue;
-
-				_inputs->mouse_wheel.x = static_cast<float>( event.wheel.x );
-				_inputs->mouse_wheel.y = static_cast<float>( event.wheel.y );
-				break;
-			}
-			//  Quit game when closing window
-			case SDL_QUIT:
-			{
-				_is_running = false;
-				break;
-			}
-		}
+		_is_running = false;
+		return;
 	}
 	
 	//  Quit game when pressing a key
 	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_ESCAPE ) )
 	{
 		_is_running = false;
+		return;
 	}
 #ifdef ENABLE_VISDEBUG
 	//  Toggle debug mode
@@ -311,7 +256,7 @@ void Engine::process_input()
 #endif
 }
 
-void Engine::update( float dt )
+void Engine::update( const float dt )
 {
 	PROFILE_SCOPE( "Engine::update" );
 
@@ -427,7 +372,7 @@ void Engine::render()
 
 	//  Apply camera
 	//  NOTE: This code doesn't do anything when using the OpenGL 
-	//  render-batch. It was orignally here for supporting SDL and 
+	//  render-batch. It was originally here for supporting SDL and
 	//  2D.
 	if ( camera != nullptr ) 
 	{
@@ -448,14 +393,14 @@ void Engine::render()
 	{
 		PROFILE_SCOPE( "Engine::render::debug" );
 
-		auto _render_batch = get_render_batch();
-		for ( auto& entity : _entities )
+		RenderBatch* render_batch = get_render_batch();
+		for ( const SharedPtr<Entity>& entity : _entities )
 		{
-			entity->debug_render( _render_batch );
+			entity->debug_render( render_batch );
 
-			for ( auto& component : entity->components )
+			for ( const SharedPtr<Component>& component : entity->components )
 			{
-				component->debug_render( _render_batch );
+				component->debug_render( render_batch );
 			}
 		}
 	}

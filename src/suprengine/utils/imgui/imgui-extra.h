@@ -5,6 +5,9 @@
 
 #include <vector>
 
+#include <suprengine/math/vec2.h>
+#include <suprengine/utils/usings.h>
+
 namespace ImGui::Extra
 {
 	/*

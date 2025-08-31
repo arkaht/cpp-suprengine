@@ -3,8 +3,8 @@
 #include <suprengine/core/scene.h>
 
 #include <suprengine/components/colliders/box-collider.h>
+#include <suprengine/components/looker.hpp>
 #include <suprengine/components/mover.hpp>
-#include <suprengine/components/mouse-looker.hpp>
 #include <suprengine/components/renderers/model-renderer.hpp>
 
 #include <camera-demo.hpp>

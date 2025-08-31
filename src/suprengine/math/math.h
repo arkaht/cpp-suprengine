@@ -179,8 +179,8 @@ namespace suprengine::math
 	}
 	
 	template <typename T>
-	inline T lerp( T a, T b, float f )
+	inline T lerp( T a, T b, float t )
 	{
-		return a + (T)( f * ( b - a ) );
+		return a + static_cast<T>( t * ( b - a ) );
 	}
 }

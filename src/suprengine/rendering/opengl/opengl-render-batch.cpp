@@ -9,9 +9,9 @@
 
 #include <gl/glew.h>
 
-#include <imgui.h>
-#include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_opengl3.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <imgui.h>
 
 #include <filesystem>
 
@@ -81,6 +81,9 @@ void GLAPIENTRY message_callback(
 		case GL_DEBUG_SEVERITY_HIGH:
 			log_severity = "HIGH";
 			break;
+		default:
+			// Prevent debug messages from flooding the console.
+			return;
 	}
 
 	if ( type == GL_DEBUG_TYPE_ERROR )
@@ -395,6 +398,7 @@ void OpenGLRenderBatch::draw_texture(
 
 	_texture_shader->set_mtx4( "u_world_transform", matrix );
 	_texture_shader->set_color( "u_modulate", color );
+	_texture_shader->set_vec2( "u_tiling", Vec2::one );
 
 	//	Source rect
 	const Vec2 size = texture->get_size();

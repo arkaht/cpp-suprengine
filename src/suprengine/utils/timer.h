@@ -9,10 +9,13 @@ namespace suprengine
 	using lambda = std::function<void()>;
 	struct Timer
 	{
-		Timer() {}
-		Timer( const lambda& callback, float time, std::uint32_t repetitions = 1 )
-			: max_time( time ), repetitions( repetitions ), callback( callback )
-		{}
+		Timer() = default;
+		Timer(
+			const lambda& callback,
+			const float time,
+			const std::uint32_t repetitions = 1
+		)
+			: max_time( time ), repetitions( repetitions ), callback( callback ) {}
 
 		/*
 		 * Maximum time in seconds the timer should wait before calling
