@@ -36,4 +36,7 @@ packages/
 out/
 build/
 
+# JetBrains IDE
+.idea/
+
 CMakeSettings.json
