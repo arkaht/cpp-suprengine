@@ -40,10 +40,9 @@ namespace suprengine
 		~InputManager();
 
 		/*
-		 * Update inputs and handle SDL events.
-		 * Returns whenever the game can still run.
+		 * Update inputs.
 		 */
-		bool update();
+		void update();
 
 		template <typename T>
 		std::enable_if_t<is_input_action_valid<T>, InputAction<T>*> create_action( const std::string& name )
@@ -134,12 +133,6 @@ namespace suprengine
 		Vec2 mouse_wheel {};
 
 	private:
-		/*
-		 * Poll all SDL events and handle them.
-		 * Returns whenever the game can still run.
-		 */
-		bool poll_events();
-
 		bool find_next_gamepad_id( int& gamepad_id ) const;
 
 	private:

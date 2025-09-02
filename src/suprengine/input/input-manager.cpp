@@ -1,9 +1,9 @@
 #include "input-manager.h"
 
-#include <backends/imgui_impl_sdl2.h>
-
 #include <suprengine/input/devices/xinput-device.h>
 #include <suprengine/utils/assert.h>
+
+#include "imgui.h"
 
 using namespace suprengine;
 
@@ -28,7 +28,7 @@ InputManager::~InputManager()
 	}
 }
 
-bool InputManager::update()
+void InputManager::update()
 {
 	//  Reset mouse input
 	mouse_delta = Vec2::zero;
@@ -63,67 +63,10 @@ bool InputManager::update()
 		gamepad_inputs.current_buttons = GamepadButton::None;
 	}
 
-	if ( !poll_events() ) return false;
-
 	for ( InputDevice* input_device : _input_devices )
 	{
 		input_device->update();
 	}
-
-	return true;
-}
-
-bool InputManager::poll_events()
-{
-	const ImGuiIO& imgui_io = ImGui::GetIO();
-
-	//  Read window events
-	SDL_Event event;
-	while ( SDL_PollEvent( &event ) )
-	{
-		//  Send event to ImGui
-		ImGui_ImplSDL2_ProcessEvent( &event );
-
-		switch ( event.type )
-		{
-			case SDL_MOUSEBUTTONDOWN:
-			{
-				if ( imgui_io.WantCaptureMouse ) continue;
-
-				const MouseButton button = sdl_to_mouse_button( event.button.button );
-				take_mouse_button_down( button );
-
-				break;
-			}
-			case SDL_MOUSEBUTTONUP:
-			{
-				//	NOTE: We are not checking for ImGui's IO here in order to update the mouse
-				//	button even when the user is releasing it on an ImGui interface, which would
-				//	cause bugs otherwise.
-
-				const MouseButton button = sdl_to_mouse_button( event.button.button );
-				take_mouse_button_up( button );
-
-				break;
-			}
-			case SDL_MOUSEWHEEL:
-			{
-				if ( imgui_io.WantCaptureMouse ) continue;
-
-				//  Store mouse wheel for this frame
-				mouse_wheel.x = static_cast<float>( event.wheel.x );
-				mouse_wheel.y = static_cast<float>( event.wheel.y );
-				break;
-			}
-			case SDL_QUIT:
-			{
-				//  Quit game when closing window
-				return false;
-			}
-		}
-	}
-
-	return true;
 }
 
 void InputManager::take_mouse_button_down( const MouseButton button )

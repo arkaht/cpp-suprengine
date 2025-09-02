@@ -129,6 +129,7 @@ namespace suprengine
 		 * Called when ImGui windows are updating.
 		 */
 		Event<> on_imgui_update {};
+		Event<SDL_Event> on__event {};
 
 	public:
 		bool is_game_paused = false;

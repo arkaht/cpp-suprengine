@@ -237,11 +237,82 @@ bool Engine::is_running() const
 
 void Engine::process_input()
 {
-	const bool can_run = _inputs->update();
-	if ( !can_run )
+	_inputs->update();
+
+	const ImGuiIO& imgui_io = ImGui::GetIO();
+
+	// TODO: Think of a way to avoid the engine directly modifying systems data (i.e. encapsulation)
+	//		 by dispatching them the event. Also try to not hardcode ImGui in it (i.e. call priority, handled events).
+
+	// Read window events
+	SDL_Event event;
+	while ( SDL_PollEvent( &event ) )
 	{
-		_is_running = false;
-		return;
+		// Send event to ImGui
+		ImGui_ImplSDL2_ProcessEvent( &event );
+
+		switch ( event.type )
+		{
+			// Window events
+			case SDL_WINDOWEVENT:
+			{
+				switch ( event.window.event )
+				{
+					case SDL_WINDOWEVENT_RESIZED:
+					{
+						const int width = event.window.data1;
+						const int height = event.window.data2;
+
+						const Vec2 new_size = Vec2 {
+							static_cast<float>( width ),
+							static_cast<float>( height )
+						};
+						_window->set_size( new_size );
+
+						Logger::info( "Resized window to %dx%d", width, height );
+						break;
+					}
+				}
+				break;
+			}
+				// Mouse events
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				if ( imgui_io.WantCaptureMouse ) continue;
+
+				const MouseButton button = sdl_to_mouse_button( event.button.button );
+				_inputs->take_mouse_button_down( button );
+
+				break;
+			}
+			case SDL_MOUSEBUTTONUP:
+			{
+				// NOTE: We are not checking for ImGui's IO here in order to update the mouse
+				// button even when the user is releasing it on an ImGui interface, which would
+				// cause bugs otherwise.
+
+				const MouseButton button = sdl_to_mouse_button( event.button.button );
+				_inputs->take_mouse_button_up( button );
+
+				break;
+			}
+			case SDL_MOUSEWHEEL:
+			{
+				if ( imgui_io.WantCaptureMouse ) continue;
+
+				// Store mouse wheel for this frame
+				_inputs->mouse_wheel.x = static_cast<float>( event.wheel.x );
+				_inputs->mouse_wheel.y = static_cast<float>( event.wheel.y );
+				break;
+			}
+				// Misc event
+			case SDL_QUIT:
+			{
+				// Request to quit the game when the user close the window
+				_is_running = false;
+				return;
+			}
+		}
 	}
 	
 	//  Quit game when pressing a key
