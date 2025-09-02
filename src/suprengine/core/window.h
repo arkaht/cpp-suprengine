@@ -16,10 +16,20 @@ namespace suprengine
 		BorderlessFullscreen,
 	};
 
+	struct WindowInfos
+	{
+		std::string title;
+		int width;
+		int height;
+		WindowMode mode = WindowMode::Windowed;
+		bool is_resizable = false;
+	};
+
 	class Window
 	{
 	public:
-		Window( const std::string& title, int width, int height, WindowMode mode = WindowMode::Windowed );
+		explicit Window( const WindowInfos& infos );
+
 		Window( const Window& ) = delete;
 		Window& operator=( const Window& ) = delete;
 		~Window();

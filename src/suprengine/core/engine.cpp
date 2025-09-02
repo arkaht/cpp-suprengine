@@ -75,12 +75,7 @@ bool Engine::init( IGame* game )
 		const GameInfos infos = _game->get_infos();
 		PROFILE_SCOPE( "Engine::init::Window" );
 
-		_window = std::make_unique<Window>(
-			infos.title,
-			infos.width,
-			infos.height,
-			infos.window_mode
-		);
+		_window = std::make_unique<Window>( infos.window );
 	}
 
 	//  Init render batch

@@ -6,27 +6,30 @@
 
 using namespace suprengine;
 
-Window::Window(
-	const std::string& title,
-	const int width, const int height,
-	const WindowMode mode
-)
-	: _size( Vec2 { static_cast<float>( width ), static_cast<float>( height ) } ),
-	  _title( title )
+Window::Window( const WindowInfos& infos )
+	: _size( Vec2 { static_cast<float>( infos.width ), static_cast<float>( infos.height ) } ),
+	  _title( infos.title )
 {
+	int flags = SDL_WINDOW_OPENGL;
+
+	if ( infos.is_resizable )
+	{
+		flags = flags | SDL_WINDOW_RESIZABLE;
+	}
+
 	_sdl_window = SDL_CreateWindow(
 		_title.c_str(),
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		width, height,
-		SDL_WINDOW_OPENGL
+		infos.width, infos.height,
+		flags
 	);
 	ASSERT_MSG( _sdl_window != nullptr, "Window couldn't be created!" );
 
 	_current_size = _size;
 
-	if ( mode != WindowMode::Windowed )
+	if ( infos.mode != WindowMode::Windowed )
 	{
-		set_mode( mode );
+		set_mode( infos.mode );
 	}
 }
 

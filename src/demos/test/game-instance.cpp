@@ -37,9 +37,10 @@ void GameInstance::release()
 GameInfos GameInstance::get_infos() const
 {
 	GameInfos infos {};
-	infos.title	 = "Suprengine Test";
-	infos.width	 = 1280;
-	infos.height = 720;
+	infos.window.title	 	  = "Suprengine Test";
+	infos.window.width	 	  = 1280;
+	infos.window.height  	  = 720;
+	infos.window.is_resizable = true;
 	return infos;
 }
 

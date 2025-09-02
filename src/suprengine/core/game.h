@@ -11,10 +11,7 @@ namespace suprengine
 	 */
 	struct GameInfos
 	{
-		std::string title;
-		int width;
-		int height;
-		WindowMode window_mode = WindowMode::Windowed;
+		WindowInfos window;
 	};
 
 	class IGame
