@@ -127,7 +127,7 @@ void GameScene::update( float dt )
 	auto inputs = engine->get_inputs();
 	float time = engine->get_updater()->get_accumulated_seconds();
 
-	if ( inputs->is_key_just_pressed( SDL_SCANCODE_F1 ) )
+	if ( inputs->is_key_just_pressed( PhysicalKey::F1 ) )
 	{
 		inputs->set_relative_mouse_mode( !inputs->is_relative_mouse_mode_enabled() );
 	}
@@ -224,7 +224,7 @@ void GameScene::update( float dt )
 		);
 	}
 
-	if ( inputs->is_key_just_pressed( SDL_SCANCODE_F ) )
+	if ( inputs->is_key_just_pressed( PhysicalKey::F ) )
 	{
 		ground_collider->is_active = !ground_collider->is_active;
 	}

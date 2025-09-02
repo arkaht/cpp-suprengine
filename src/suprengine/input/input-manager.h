@@ -66,23 +66,24 @@ namespace suprengine
 			return nullptr;
 		}
 
-		void take_key_down( SDL_Scancode key );
+		void take_key_down( PhysicalKey key );
 
-		bool is_key_just_pressed( SDL_Scancode key ) const;
-		bool is_key_just_released( SDL_Scancode key ) const;
-		bool is_key_pressed( SDL_Scancode key ) const;
-		bool is_key_released( SDL_Scancode key ) const;
-		bool is_key_up( SDL_Scancode key ) const;
-		bool is_key_down( SDL_Scancode key ) const;
-		KeyState get_key_state( SDL_Scancode key ) const;
+		// TODO: Overload methods with VirtualKey enum
+		bool is_key_just_pressed( PhysicalKey key ) const;
+		bool is_key_just_released( PhysicalKey key ) const;
+		bool is_key_pressed( PhysicalKey key ) const;
+		bool is_key_released( PhysicalKey key ) const;
+		bool is_key_up( PhysicalKey key ) const;
+		bool is_key_down( PhysicalKey key ) const;
+		KeyState get_key_state( PhysicalKey key ) const;
 		/*
 		 * Returns a value in range [-value; value] representing the input axis
 		 * of both keys. Keys need to be press to change the final value.
 		 */
 		float get_keys_as_axis(
-			SDL_Scancode negative_key,
-			SDL_Scancode positive_key,
-			float value = 1.0f,
+			PhysicalKey negative_key,
+			PhysicalKey positive_key,
+			float value			= 1.0f,
 			float default_value = 0.0f
 		) const;
 

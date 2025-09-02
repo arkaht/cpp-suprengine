@@ -14,7 +14,7 @@ void InputAction<bool>::assign_mouse_button( MouseButton button )
 	_assigned_mouse_button = button;
 }
 
-void InputAction<bool>::assign_key( const SDL_Scancode key )
+void InputAction<bool>::assign_key( const PhysicalKey key )
 {
 	_assigned_keys.push_back( key );
 }
@@ -50,7 +50,7 @@ bool InputAction<bool>::read_value( const InputContext& context ) const
 		}
 
 		// Evaluate keyboard inputs
-		for ( const SDL_Scancode key : _assigned_keys )
+		for ( const PhysicalKey key : _assigned_keys )
 		{
 			if ( _inputs->is_key_down( key ) )
 			{
@@ -82,8 +82,8 @@ void InputAction<bool>::populate_imgui( const InputContext& context )
  */
 
 void InputAction<float>::assign_keys(
-	const SDL_Scancode negative_key,
-	const SDL_Scancode positive_key
+	const PhysicalKey negative_key,
+	const PhysicalKey positive_key
 )
 {
 	_assigned_negative_key = negative_key;
@@ -142,8 +142,8 @@ float InputAction<float>::read_value( const InputContext& context ) const
 
 	if ( context.is_using_keyboard_and_mouse() )
 	{
-		if ( _assigned_negative_key != SDL_SCANCODE_UNKNOWN
-		  && _assigned_positive_key != SDL_SCANCODE_UNKNOWN )
+		if ( _assigned_negative_key != PhysicalKey::None
+		  && _assigned_positive_key != PhysicalKey::None )
 		{
 			value = _inputs->get_keys_as_axis( _assigned_negative_key, _assigned_positive_key );
 		}
@@ -172,8 +172,8 @@ void InputAction<float>::populate_imgui( const InputContext& context )
 
 void InputAction<Vec2>::assign_keys(
 	Axis2D axis,
-	const SDL_Scancode negative_key,
-	const SDL_Scancode positive_key
+	const PhysicalKey negative_key,
+	const PhysicalKey positive_key
 )
 {
 	AxisKeys& keys = _keys_axes[static_cast<int>( axis )];
@@ -223,8 +223,8 @@ Vec2 InputAction<Vec2>::read_value( const InputContext& context ) const
 		for ( int i = 0; i < 2; i++ )
 		{
 			const AxisKeys& keys = _keys_axes[i];
-			if ( keys.negative_key == SDL_SCANCODE_UNKNOWN
-			  || keys.positive_key == SDL_SCANCODE_UNKNOWN ) continue;
+			if ( keys.negative_key == PhysicalKey::None
+			  || keys.positive_key == PhysicalKey::None ) continue;
 
 			value.set_axis(
 				static_cast<Axis2D>( i ),

@@ -83,48 +83,51 @@ void InputManager::take_mouse_button_up( const MouseButton button )
 	_current_mouse_state = _current_mouse_state ^ button;
 }
 
-void InputManager::take_key_down( const SDL_Scancode key )
+void InputManager::take_key_down( const PhysicalKey key )
 {
-	_current_keyboard_states[key] = true;
+	const SDL_Scancode scancode = static_cast<SDL_Scancode>( key );
+	_current_keyboard_states[scancode] = true;
 }
 
-bool InputManager::is_key_just_pressed( const SDL_Scancode key ) const
+bool InputManager::is_key_just_pressed( const PhysicalKey key ) const
 { 
 	return get_key_state( key ) == KeyState::Pressed; 
 }
 
-bool InputManager::is_key_just_released( const SDL_Scancode key ) const
+bool InputManager::is_key_just_released( const PhysicalKey key ) const
 { 
 	return get_key_state( key ) == KeyState::Released; 
 }
 
-bool InputManager::is_key_pressed( const SDL_Scancode key ) const
+bool InputManager::is_key_pressed( const PhysicalKey key ) const
 {
 	const KeyState state = get_key_state( key );
 	return state == KeyState::Pressed || state == KeyState::Down;
 }
 
-bool InputManager::is_key_released( const SDL_Scancode key ) const
+bool InputManager::is_key_released( const PhysicalKey key ) const
 {
 	const KeyState state = get_key_state( key );
 	return state == KeyState::Released || state == KeyState::Up;
 }
 
-bool InputManager::is_key_up( const SDL_Scancode key ) const
+bool InputManager::is_key_up( const PhysicalKey key ) const
 { 
 	return get_key_state( key ) == KeyState::Up; 
 }
 
-bool InputManager::is_key_down( const SDL_Scancode key ) const
+bool InputManager::is_key_down( const PhysicalKey key ) const
 { 
 	return get_key_state( key ) == KeyState::Down; 
 }
 
-KeyState InputManager::get_key_state( const SDL_Scancode key ) const
+KeyState InputManager::get_key_state( const PhysicalKey key ) const
 {
-	if ( _last_keyboard_states[key] )
+	const SDL_Scancode scancode = static_cast<SDL_Scancode>( key );
+
+	if ( _last_keyboard_states[scancode] )
 	{
-		if ( _current_keyboard_states[key] )
+		if ( _current_keyboard_states[scancode] )
 		{
 			return KeyState::Down;
 		}
@@ -132,7 +135,7 @@ KeyState InputManager::get_key_state( const SDL_Scancode key ) const
 		return KeyState::Released;
 	}
 
-	if ( _current_keyboard_states[key] )
+	if ( _current_keyboard_states[scancode] )
 	{
 		return KeyState::Pressed;
 	}
@@ -141,8 +144,8 @@ KeyState InputManager::get_key_state( const SDL_Scancode key ) const
 }
 
 float InputManager::get_keys_as_axis(
-	const SDL_Scancode negative_key,
-	const SDL_Scancode positive_key,
+	const PhysicalKey negative_key,
+	const PhysicalKey positive_key,
 	const float value,
 	const float default_value
 ) const

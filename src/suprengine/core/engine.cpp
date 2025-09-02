@@ -316,14 +316,14 @@ void Engine::process_input()
 	}
 	
 	//  Quit game when pressing a key
-	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_ESCAPE ) )
+	if ( _inputs->is_key_just_pressed( PhysicalKey::Escape ) )
 	{
 		_is_running = false;
 		return;
 	}
 #ifdef ENABLE_VISDEBUG
 	//  Toggle debug mode
-	if ( _inputs->is_key_just_pressed( SDL_SCANCODE_COMMA ) )
+	if ( _inputs->is_key_just_pressed( PhysicalKey::Comma ) )
 	{
 		VisDebug::active_channels = VisDebug::active_channels == DebugChannel::None
 			? DebugChannel::All

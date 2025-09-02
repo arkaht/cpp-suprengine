@@ -75,7 +75,7 @@ namespace suprengine
 		/*
 		 * Assign a new key that will trigger the action.
 		 */
-		void assign_key( SDL_Scancode key );
+		void assign_key( PhysicalKey key );
 		/*
 		 * Assign a new gamepad button that will trigger the action.
 		 * Giving a value with multiple buttons will behave as an AND operator,
@@ -89,7 +89,7 @@ namespace suprengine
 
 	private:
 		MouseButton _assigned_mouse_button = MouseButton::None;
-		std::vector<SDL_Scancode> _assigned_keys {};
+		std::vector<PhysicalKey> _assigned_keys {};
 		std::vector<GamepadButton> _assigned_gamepad_buttons {};
 	};
 
@@ -112,7 +112,7 @@ namespace suprengine
 		 * Assign two keyboard keys that will trigger the action.
 		 * Multiple calls will override the previously assigned values.
 		 */
-		void assign_keys( SDL_Scancode negative_key, SDL_Scancode positive_key );
+		void assign_keys( PhysicalKey negative_key, PhysicalKey positive_key );
 		/*
 		 * Assign two gamepad buttons that will trigger the action.
 		 * Giving a value with multiple buttons will behave as an AND operator,
@@ -125,8 +125,8 @@ namespace suprengine
 		void populate_imgui( const InputContext& context ) override;
 
 	private:
-		SDL_Scancode _assigned_negative_key = SDL_SCANCODE_UNKNOWN;
-		SDL_Scancode _assigned_positive_key = SDL_SCANCODE_UNKNOWN;
+		PhysicalKey _assigned_negative_key = PhysicalKey::None;
+		PhysicalKey _assigned_positive_key = PhysicalKey::None;
 		GamepadButton _assigned_gamepad_negative_button = GamepadButton::None;
 		GamepadButton _assigned_gamepad_positive_button = GamepadButton::None;
 	};
@@ -142,7 +142,7 @@ namespace suprengine
 		 * Assign an axis with two keys.
 		 * Multiple calls with the same axis will override the previously assigned value.
 		 */
-		void assign_keys( Axis2D axis, SDL_Scancode negative_key, SDL_Scancode positive_key );
+		void assign_keys( Axis2D axis, PhysicalKey negative_key, PhysicalKey positive_key );
 		void assign_gamepad_joystick( JoystickSide side, JoystickInputModifier modifier = JoystickInputModifier::None );
 		void assign_mouse_delta( float multiplier = 0.05f );
 
@@ -156,8 +156,8 @@ namespace suprengine
 	private:
 		struct AxisKeys
 		{
-			SDL_Scancode negative_key = SDL_SCANCODE_UNKNOWN;
-			SDL_Scancode positive_key = SDL_SCANCODE_UNKNOWN;
+			PhysicalKey negative_key = PhysicalKey::None;
+			PhysicalKey positive_key = PhysicalKey::None;
 		};
 
 		AxisKeys _keys_axes[2] {};

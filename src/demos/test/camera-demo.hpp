@@ -72,11 +72,11 @@ namespace test
 		{
 			auto inputs = Engine::instance().get_inputs();
 
-			if ( inputs->is_key_just_pressed( SDL_SCANCODE_1 ) )
+			if ( inputs->is_key_just_pressed( PhysicalKey::One ) )
 				set_mode( CameraMode::FPS );
-			else if ( inputs->is_key_just_pressed( SDL_SCANCODE_2 ) )
+			else if ( inputs->is_key_just_pressed( PhysicalKey::Two ) )
 				set_mode( CameraMode::TPS );
-			else if ( inputs->is_key_just_pressed( SDL_SCANCODE_3 ) )
+			else if ( inputs->is_key_just_pressed( PhysicalKey::Three ) )
 				set_mode( CameraMode::STATIC );
 		}
 
