@@ -151,6 +151,11 @@ void Camera::set_active()
 	_is_active = true;
 }
 
+void Camera::set_inactive()
+{
+	_is_active = false;
+}
+
 bool Camera::is_active() const
 {
 	return _is_active;

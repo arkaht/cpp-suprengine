@@ -99,6 +99,7 @@ namespace suprengine
 
 		void add_camera( Camera* camera );
 		void remove_camera( const Camera* camera );
+		Camera* get_camera( int camera_id ) const;
 
 		bool is_running() const;
 

@@ -230,6 +230,12 @@ void Engine::remove_camera( const Camera* camera )
 	_cameras.erase( itr );
 }
 
+Camera* Engine::get_camera( const int camera_id ) const
+{
+	if (camera_id >= _cameras.size()) return nullptr;
+	return _cameras[camera_id];
+}
+
 bool Engine::is_running() const
 {
 	return _is_running;

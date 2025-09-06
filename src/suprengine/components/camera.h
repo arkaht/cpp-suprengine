@@ -70,6 +70,7 @@ namespace suprengine
 		void reset();
 
 		void set_active();
+		void set_inactive();
 		bool is_active() const;
 
 		/**
