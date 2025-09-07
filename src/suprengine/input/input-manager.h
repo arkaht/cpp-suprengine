@@ -53,7 +53,7 @@ namespace suprengine
 			return input_action;
 		}
 		template <typename T>
-		InputAction<T>* get_action( const std::string& name )
+		InputAction<T>* get_action( const std::string& name ) const
 		{
 			for ( InputActionBase* input_action : _input_actions )
 			{
