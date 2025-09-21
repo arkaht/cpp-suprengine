@@ -28,6 +28,18 @@ namespace suprengine
 			return generate( bounds.x, bounds.y );
 		}
 
+		template <typename T>
+		static const T& generate( const std::vector<T>& list )
+		{
+			return list[generate( 0, static_cast<int>( list.size() ) - 1 )];
+		}
+
+		template <typename T>
+		static const T& generate( const T* array, const int size )
+		{
+			return array[generate( 0, size - 1 )];
+		}
+
 		static bool generate_bool()
 		{
 			return generate( 0, 1 ) == 1;
@@ -93,12 +105,6 @@ namespace suprengine
 		static Vec3 generate_scale( const float min, const float max )
 		{
 			return Vec3( generate( min, max ) );
-		}
-
-		template <typename T>
-		static const T& generate( const std::vector<T>& list )
-		{
-			return list[generate( 0, static_cast<int>( list.size() ) - 1 )];
 		}
 
 		static void seed( const unsigned int seed )
