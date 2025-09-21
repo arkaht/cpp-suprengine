@@ -192,6 +192,7 @@ bool InputManager::connect_gamepad( int& gamepad_id )
 	ASSERT( !gamepad_inputs.is_connected );
 
 	gamepad_inputs.is_connected = true;
+	on_gamepad_connected.invoke( gamepad_id );
 
 	Logger::info( "Gamepad %d is connected!", gamepad_id );
 	return true;
@@ -203,6 +204,7 @@ void InputManager::disconnect_gamepad( const int gamepad_id )
 	ASSERT( gamepad_inputs.is_connected );
 
 	gamepad_inputs.is_connected = false;
+	on_gamepad_disconnected.invoke( gamepad_id );
 
 	Logger::info( "Gamepad %d has been disconnected!", gamepad_id );
 }

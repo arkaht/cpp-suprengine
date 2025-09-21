@@ -10,6 +10,8 @@
 #include <suprengine/input/buttons.h>
 #include <suprengine/input/input-action.h>
 
+#include "suprengine/utils/event.h"
+
 namespace suprengine
 {
 	class InputDevice;
@@ -132,6 +134,22 @@ namespace suprengine
 	public:
 		Vec2 mouse_delta {};
 		Vec2 mouse_wheel {};
+
+	public:
+		/**
+		 * Called when a gamepad device is connected to the system and is ready to be used
+		 * by the engine.
+		 *
+		 * @param gamepad_id Index of the gamepad.
+		 */
+		Event<int> on_gamepad_connected {};
+		/**
+		 * Called when a gamepad device is disconnected from the system and can no longer be used
+		 * by the engine.
+		 *
+		 * @param gamepad_id Index of the gamepad.
+		 */
+		Event<int> on_gamepad_disconnected {};
 
 	private:
 		bool find_next_gamepad_id( int& gamepad_id ) const;
