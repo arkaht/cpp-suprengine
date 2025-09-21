@@ -85,11 +85,10 @@ Vec3 Camera::world_to_viewport( const Vec3& location ) const
 	pos.y = ( pos.y + 1.0f ) * 0.5f;
 
 	//	Convert to viewport
-	const Rect screen_viewport = get_screen_viewport();
-	pos.x *= screen_viewport.w;
-	pos.y *= screen_viewport.h;
-	pos.x += screen_viewport.x;
-	pos.y += screen_viewport.y;
+	const Window* window = Engine::instance().get_window();
+	const Vec2 window_size = window->get_size();
+	pos.x *= window_size.x;
+	pos.y *= window_size.y;
 
 	return pos;
 }
