@@ -73,8 +73,8 @@ Vec3 Camera::world_to_viewport( const Vec3& location ) const
 	Vec3 pos = location;
 
 	//	Pass location to view & projection matrices
-	pos = Vec3::transform( pos, _view_matrix );
-	pos = Vec3::transform( pos, _projection_matrix );
+	pos = Vec3::transform( pos, get_view_matrix() );
+	pos = Vec3::transform( pos, get_projection_matrix() );
 
 	//	Normalize by Z-axis
 	pos.x /= pos.z;
@@ -114,7 +114,7 @@ Ray Camera::viewport_to_world( const Vec2& position ) const
 	const Vec3 proj_space_far_pos( screen_space_pos.x, screen_space_pos.y, 1.0f );
 
 	//	Compute inverse view-projection matrix
-	const Mtx4 inverse_matrix = ( _view_matrix * _projection_matrix ).inverse();
+	const Mtx4 inverse_matrix = ( get_view_matrix() * get_projection_matrix() ).inverse();
 
 	//	Compute world-space locations
 	const Vec3 world_space_near_pos = Vec3::transform_with_perspective_div( proj_space_near_pos, inverse_matrix );
