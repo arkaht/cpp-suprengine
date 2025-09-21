@@ -22,18 +22,6 @@ namespace suprengine
 	class Camera : public Component
 	{
 	public:
-		CameraProjectionSettings projection_settings;
-
-		/**
-		 * Rectangle specifying where the scene is going to be rendered on screen.
-		 * It is expressed in normalized coordinates to automatically adapt with window resizing.
-		 */
-		Rect normalized_screen_viewport { 0, 0, 1.0f, 1.0f };
-		float zoom { 1.0f };
-
-		Rect clip { 0, 0, 0, 0 };
-		bool clip_enabled { false };
-
 		Vec3 up_direction = Vec3::up;
 		
 	public:
@@ -47,17 +35,19 @@ namespace suprengine
 
 		void setup_simple_projection();
 		void setup_perspective( float fov, float znear, float zfar );
-		void update_projection_from_settings();
+		void update_projection();
 
 		void set_fov( float fov );
 
+		const CameraProjectionSettings& get_projection_settings() const;
+
 		/**
-		 * Translate a 3D-world location into a 2D-viewport position.
+		 * Translate a 3D-world location into a 2D-viewport pixel position.
 		 * Returns a Vec3 where Z > 0.0f helps to determine visibility.
 		 */
 		Vec3 world_to_viewport( const Vec3& location ) const;
 		/**
-		 * Translate a 2D-viewport position into a 3D-world location.
+		 * Translate a 2D-viewport pixel position into a 3D-world location.
 		 * Returns a Ray starting at the near plane and ending at the far plane.
 		 */
 		Ray viewport_to_world( const Vec2& position ) const;
@@ -74,6 +64,14 @@ namespace suprengine
 		bool is_active() const;
 
 		/**
+		 * Set the viewport specifying where the scene is going to be rendered inside the window.
+		 * Expressed in normalized coordinates to automatically adapt with window resizing.
+		 * @param viewport Rectangle in normalized coordinates.
+		 */
+		void set_viewport( const Rect& viewport );
+		Rect get_viewport() const;
+
+		/**
 		 * Compute the screen viewport using the normalized screen-viewport.
 		 * @return Screen viewport, in pixels.
 		 */
@@ -84,8 +82,8 @@ namespace suprengine
 		 * Needs to be updated each end of frame before the actual rendering occurs.
 		 */
 		void set_view_matrix( const Mtx4& matrix );
+		const Mtx4& get_view_matrix() const;
 
-		const Mtx4& get_view_matrix();
 		const Mtx4& get_projection_matrix() const;
 
 	private:
@@ -96,8 +94,18 @@ namespace suprengine
 	private:
 		Mtx4 _projection_matrix;
 		Mtx4 _view_matrix;
+
+		bool _is_projection_matrix_dirty = true;
 		bool _is_view_matrix_dirty = true;
 		bool _is_active = false;
+
+		CameraProjectionSettings _projection_settings {};
+
+		/**
+		 * Rectangle specifying where the scene is going to be rendered on screen.
+		 * Expressed in normalized coordinates to automatically adapt with window resizing.
+		 */
+		Rect _viewport { 0, 0, 1.0f, 1.0f };
 
 		Vec3 _offset {};
 	};

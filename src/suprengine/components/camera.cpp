@@ -7,23 +7,23 @@
 using namespace suprengine;
 
 Camera::Camera( const CameraProjectionSettings& projection_settings ) :
-	projection_settings( projection_settings )
+	_projection_settings( projection_settings )
 {
 }
 
 void Camera::setup()
 {
 	setup_vars();
-	update_projection_from_settings();
+	update_projection();
 
 	auto& engine = Engine::instance();
-	engine.add_camera( this );
+	engine.add_camera( as<Camera>() );
 }
 
 void Camera::unsetup()
 {
 	auto& engine = Engine::instance();
-	engine.remove_camera( this );
+	engine.remove_camera( as<Camera>() );
 }
 
 void Camera::setup_simple_projection()
@@ -43,23 +43,29 @@ void Camera::setup_perspective( const float fov, const float znear, const float 
 		screen_viewport.w, screen_viewport.h,
 		znear, zfar
 	);
+	_is_projection_matrix_dirty = false;
 }
 
-void Camera::update_projection_from_settings()
+void Camera::update_projection()
 {
 	setup_perspective(
-		projection_settings.fov,
-		projection_settings.znear,
-		projection_settings.zfar
+		_projection_settings.fov,
+		_projection_settings.znear,
+		_projection_settings.zfar
 	);
 }
 
 void Camera::set_fov( const float fov )
 {
-	if ( fov == projection_settings.fov ) return;
+	if ( fov == _projection_settings.fov ) return;
 
-	projection_settings.fov = fov;
-	update_projection_from_settings();
+	_projection_settings.fov = fov;
+	_is_projection_matrix_dirty = true;
+}
+
+const CameraProjectionSettings& Camera::get_projection_settings() const
+{
+	return _projection_settings;
 }
 
 Vec3 Camera::world_to_viewport( const Vec3& location ) const
@@ -137,13 +143,20 @@ void Camera::set_offset( const Vec3& offset )
 	_is_view_matrix_dirty = true;
 }
 
+void Camera::set_viewport( const Rect& viewport )
+{
+	_viewport = viewport;
+	_is_projection_matrix_dirty = true;
+}
+
+Rect Camera::get_viewport() const
+{
+	return _viewport;
+}
+
 void Camera::reset()
 {
-	normalized_screen_viewport = { 0.0f, 0.0f, 1.0f, 1.0f };
-	zoom = 1.0f;
-
-	clip = { 0.0f, 0.0f, 0.0f, 0.0f };
-	clip_enabled = false;
+	_viewport = Rect { 0.0f, 0.0f, 1.0f, 1.0f };
 }
 
 void Camera::set_active()
@@ -167,10 +180,10 @@ Rect Camera::get_screen_viewport() const
 	const Vec2 window_size = window->get_size();
 
 	return Rect {
-		normalized_screen_viewport.x * window_size.x,
-		normalized_screen_viewport.y * window_size.y,
-		normalized_screen_viewport.w * window_size.x,
-		normalized_screen_viewport.h * window_size.y
+		_viewport.x * window_size.x,
+		_viewport.y * window_size.y,
+		_viewport.w * window_size.x,
+		_viewport.h * window_size.y
 	};
 }
 
@@ -183,13 +196,14 @@ void Camera::set_view_matrix( const Mtx4& matrix )
 	transform->get_matrix();
 }
 
-const Mtx4& Camera::get_view_matrix()
+const Mtx4& Camera::get_view_matrix() const
 {
 	if ( _is_view_matrix_dirty || transform->is_matrix_dirty() )
 	{
-		//  TODO: fix this for 2D
 		const Vec3 origin = transform->location + _offset;
-		set_view_matrix(
+
+		Camera* self = const_cast<Camera*>( this );
+		self->set_view_matrix(
 			Mtx4::create_look_at(
 				origin,
 				origin + transform->get_forward(),
@@ -203,6 +217,12 @@ const Mtx4& Camera::get_view_matrix()
 
 const Mtx4& Camera::get_projection_matrix() const
 {
+	if ( _is_projection_matrix_dirty )
+	{
+		Camera* self = const_cast<Camera*>( this );
+		self->update_projection();
+	}
+
 	return _projection_matrix;
 }
 
@@ -215,5 +235,5 @@ void Camera::setup_vars()
 
 void Camera::_on_window_resized( const Vec2& new_size, const Vec2& old_size )
 {
-	update_projection_from_settings();
+	update_projection();
 }
