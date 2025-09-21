@@ -95,8 +95,15 @@ namespace suprengine
 		virtual void begin_imgui_frame() = 0;
 
 		virtual void begin_render() = 0;
-		virtual void render( Camera* camera ) = 0;
+		virtual void render( SharedPtr<Camera> camera ) = 0;
 		virtual void end_render() = 0;
+
+		/**
+		 * Get the current rendering camera.
+		 * Assumed to be valid during rendering and returns nullptr otherwise.
+		 * @return Rendering camera.
+		 */
+		virtual SharedPtr<Camera> get_camera() = 0;
 
 		virtual void on_window_resized( const Vec2& size ) = 0;
 

@@ -97,9 +97,9 @@ namespace suprengine
 
 		void add_timer( const Timer& timer );
 
-		void add_camera( Camera* camera );
-		void remove_camera( const Camera* camera );
-		Camera* get_camera( int camera_id ) const;
+		void add_camera(SharedPtr<Camera> camera);
+		void remove_camera(SharedPtr<Camera> camera);
+		SharedPtr<Camera> get_camera( int camera_id ) const;
 
 		bool is_running() const;
 
@@ -146,7 +146,7 @@ namespace suprengine
 		std::vector<SharedPtr<Entity>> _pending_entities {}, _entities {}, _dead_entities {};
 
 		std::vector<Timer> _timers {};
-		std::vector<Camera*> _cameras {};
+		std::vector<SharedPtr<Camera>> _cameras {};
 
 		std::unique_ptr<IGame> _game;
 		std::unique_ptr<Window> _window;

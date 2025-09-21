@@ -217,20 +217,20 @@ void Engine::add_timer( const Timer& timer )
 	_timers.emplace_back( timer );
 }
 
-void Engine::add_camera( Camera* camera )
+void Engine::add_camera( const SharedPtr<Camera> camera )
 {
 	ASSERT( std::find( _cameras.begin(), _cameras.end(), camera ) == _cameras.end() );
 	_cameras.push_back( camera );
 }
 
-void Engine::remove_camera( const Camera* camera )
+void Engine::remove_camera( const SharedPtr<Camera> camera )
 {
 	auto itr = std::find( _cameras.begin(), _cameras.end(), camera );
 	ASSERT( itr != _cameras.end() );
 	_cameras.erase( itr );
 }
 
-Camera* Engine::get_camera( const int camera_id ) const
+SharedPtr<Camera> Engine::get_camera( const int camera_id ) const
 {
 	if (camera_id >= _cameras.size()) return nullptr;
 	return _cameras[camera_id];
@@ -472,7 +472,7 @@ void Engine::render()
 #endif
 
 	//  Render scene
-	for ( Camera* camera : _cameras )
+	for ( const SharedPtr<Camera> camera : _cameras )
 	{
 		if ( !camera->is_active() ) continue;
 		_render_batch->render( camera );

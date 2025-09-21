@@ -217,7 +217,7 @@ void OpenGLRenderBatch::begin_render()
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
-void OpenGLRenderBatch::render( Camera* camera )
+void OpenGLRenderBatch::render( const SharedPtr<Camera> camera )
 {
 	PROFILE_SCOPE( "OpenGL::render" );
 
@@ -227,6 +227,7 @@ void OpenGLRenderBatch::render( Camera* camera )
 		return;
 	}
 
+	_camera = camera;
 	_view_matrix = camera->get_view_matrix() * camera->get_projection_matrix();
 
 	// Store render ID for optimizing shader preparations
@@ -291,6 +292,8 @@ void OpenGLRenderBatch::render( Camera* camera )
 	//	Debug visual shapes
 	VisDebug::render();
 #endif
+
+	_camera = nullptr;
 }
 
 void OpenGLRenderBatch::end_render()
@@ -331,6 +334,11 @@ void OpenGLRenderBatch::end_render()
 
 	//	Populate rendering
 	SDL_GL_SwapWindow( _window->get_sdl_window() );
+}
+
+SharedPtr<Camera> OpenGLRenderBatch::get_camera()
+{
+	return _camera;
 }
 
 void OpenGLRenderBatch::on_window_resized( const Vec2& size )

@@ -28,8 +28,10 @@ namespace suprengine
 		void begin_imgui_frame() override;
 
 		void begin_render() override;
-		void render( Camera* camera ) override;
+		void render( SharedPtr<Camera> camera ) override;
 		void end_render() override;
+
+		SharedPtr<Camera> get_camera() override;
 
 		/*
 		 * Called whenever the window is resized.
@@ -126,6 +128,7 @@ namespace suprengine
 
 		uint32 _samples = 8;
 
+		SharedPtr<Camera> _camera = nullptr;
 		VertexArray* _rect_vertex_array = nullptr;
 		VertexArray* _quad_vertex_array = nullptr;
 
