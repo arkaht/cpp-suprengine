@@ -4,7 +4,7 @@ using namespace suprengine;
 
 Rect Transform::get_rect( const Rect& rect )
 {
-	return {
+	return Rect {
 		location.x + rect.x * scale.x,
 		location.y + rect.y * scale.y,
 		rect.w * scale.x,
