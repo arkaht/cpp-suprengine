@@ -19,12 +19,12 @@ Entity::~Entity()
 	}
 }
 
-void Entity::add_component( SharedPtr<Component> component )
+void Entity::add_component( const SharedPtr<Component>& component )
 {
 	if ( std::find( components.begin(), components.end(), component ) != components.end() ) return;
 
 	//  Get update order
-	int order = component->get_priority_order();
+	const int order = component->get_priority_order();
 
 	//  Search insertion iterator
 	auto itr = components.begin();
@@ -42,9 +42,9 @@ void Entity::add_component( SharedPtr<Component> component )
 	component->setup();
 }
 
-void Entity::remove_component( SharedPtr<Component> component )
+void Entity::remove_component( const SharedPtr<Component>& component )
 {
-	auto itr = std::find( components.begin(), components.end(), component );
+	const auto itr = std::find( components.begin(), components.end(), component );
 	if ( itr == components.end() ) return;
 
 	component->unsetup();
@@ -59,10 +59,10 @@ void Entity::init()
 	transform = create_component<Transform>();
 }
 
-void Entity::update( float dt )
+void Entity::update( const float dt )
 {
 	//  Update components first
-	for ( auto& component : components )
+	for ( const SharedPtr<Component>& component : components )
 	{
 		if ( !component->is_active ) continue;
 		component->update( dt );

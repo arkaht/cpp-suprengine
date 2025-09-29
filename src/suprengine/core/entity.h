@@ -41,8 +41,8 @@ namespace suprengine
 			
 			return component;
 		}
-		void add_component( SharedPtr<Component> component );
-		void remove_component( SharedPtr<Component> component );
+		void add_component( const SharedPtr<Component>& component );
+		void remove_component( const SharedPtr<Component>& component);
 		/*
 		 * Find for a component matching the given type from the
 		 * vector of components of the entity.
