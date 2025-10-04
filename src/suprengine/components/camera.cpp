@@ -38,6 +38,12 @@ void Camera::setup_simple_projection()
 void Camera::setup_perspective( const float fov, const float znear, const float zfar )
 {
 	const Rect screen_viewport = get_screen_viewport();
+
+	_viewport_matrix = Mtx4::create_simple_view_projection(
+		screen_viewport.w,
+		screen_viewport.h
+	);
+
 	_projection_matrix = Mtx4::create_perspective_fov(
 		fov * math::DEG2RAD,
 		screen_viewport.w, screen_viewport.h,
@@ -223,6 +229,11 @@ const Mtx4& Camera::get_projection_matrix() const
 	}
 
 	return _projection_matrix;
+}
+
+const Mtx4& Camera::get_viewport_matrix() const
+{
+	return _viewport_matrix;
 }
 
 void Camera::setup_vars()

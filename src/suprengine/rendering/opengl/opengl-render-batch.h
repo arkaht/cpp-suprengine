@@ -136,8 +136,7 @@ namespace suprengine
 		SharedPtr<Shader> _texture_shader = nullptr;
 		SharedPtr<Shader> _framebuffer_shader = nullptr;
 
-		Mtx4 _view_matrix;
-		Mtx4 _viewport_matrix;
+		Mtx4 _view_projection_matrix;
 
 		uint32 _render_id = 0;
 		uint8 _render_frame = 0;

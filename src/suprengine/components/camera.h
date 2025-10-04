@@ -23,7 +23,7 @@ namespace suprengine
 	{
 	public:
 		Vec3 up_direction = Vec3::up;
-		
+
 	public:
 		Camera() = default;
 		explicit Camera(
@@ -85,6 +85,7 @@ namespace suprengine
 		const Mtx4& get_view_matrix() const;
 
 		const Mtx4& get_projection_matrix() const;
+		const Mtx4& get_viewport_matrix() const;
 
 	private:
 		void setup_vars();
@@ -93,6 +94,7 @@ namespace suprengine
 
 	private:
 		Mtx4 _projection_matrix;
+		Mtx4 _viewport_matrix;
 		Mtx4 _view_matrix;
 
 		bool _is_projection_matrix_dirty = true;

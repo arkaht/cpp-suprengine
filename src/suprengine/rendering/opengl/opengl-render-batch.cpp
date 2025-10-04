@@ -228,7 +228,7 @@ void OpenGLRenderBatch::render( const SharedPtr<Camera> camera )
 	}
 
 	_camera = camera;
-	_view_matrix = camera->get_view_matrix() * camera->get_projection_matrix();
+	_view_projection_matrix = camera->get_view_matrix() * camera->get_projection_matrix();
 
 	// Store render ID for optimizing shader preparations
 	Engine& engine = Engine::instance();
@@ -345,7 +345,6 @@ void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 {
 	_viewport_size = size;
 	_screen_offset = size * 0.5f;
-	_viewport_matrix = Mtx4::create_simple_view_projection( size.x, size.y );
 
 	update_framebuffers();
 }
@@ -357,7 +356,7 @@ void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const C
 	//	Prepare shader only once per frame
 	if ( _color_shader->prepare( _render_id ) )
 	{
-		_color_shader->set_mtx4( "u_view_projection", _viewport_matrix );
+		_color_shader->set_mtx4( "u_view_projection", _camera->get_viewport_matrix() );
 	}
 
 	//	Setup matrices
@@ -403,7 +402,7 @@ void OpenGLRenderBatch::draw_texture(
 	//	Prepare shader only once per frame
 	if ( _texture_shader->prepare( _render_id ) )
 	{
-		_texture_shader->set_mtx4( "u_view_projection", _viewport_matrix );
+		_texture_shader->set_mtx4( "u_view_projection", _camera->get_viewport_matrix() );
 	}
 
 	_texture_shader->set_mtx4( "u_world_transform", matrix );
@@ -446,7 +445,7 @@ void OpenGLRenderBatch::draw_mesh(
 	//	Prepare shader only once per frame
 	if ( shader->prepare( _render_id ) )
 	{
-		shader->set_mtx4( "u_view_projection", _view_matrix );
+		shader->set_mtx4( "u_view_projection", _view_projection_matrix );
 
 		//	Ambient lighting
 		shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
@@ -564,7 +563,7 @@ void OpenGLRenderBatch::draw_line( const Vec3& start, const Vec3& end, const Col
 	//	Prepare shader only once per frame
 	if ( shader->prepare( _render_id ) )
 	{
-		shader->set_mtx4( "u_view_projection", _view_matrix );
+		shader->set_mtx4( "u_view_projection", _view_projection_matrix );
 	}
 
 	//	Send instance parameters
