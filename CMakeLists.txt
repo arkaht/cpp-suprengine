@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(SUPRENGINE_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(SUPRENGINE_SOURCE "${SUPRENGINE_INCLUDE}/suprengine")
 set(SUPRENGINE_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets" CACHE INTERNAL "")
+set(SUPRENGINE_ENABLE_TESTS ON CACHE INTERNAL "")
 
 #  Define platforms macros
 if(WIN32)
@@ -152,7 +153,7 @@ macro(suprengine_symlink_assets project_target project_name)
 endmacro()
 
 #  Declare test executable
-if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+if (SUPRENGINE_ENABLE_TESTS)
     add_subdirectory("src/demos/test")
 	message("Included Suprengine test")
 else()
