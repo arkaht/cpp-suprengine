@@ -17,6 +17,11 @@
 
 namespace suprengine
 {
+	struct ShaderAssetInfo;
+}
+
+namespace suprengine
+{
 	class VertexArray;
 
 	class Assets
@@ -35,7 +40,7 @@ namespace suprengine
 		static SharedPtr<Font> load_font( rconst_str name, rconst_str path, int size = 12 );
 		static SharedPtr<Font> get_font( rconst_str path, int size );
 
-		static SharedPtr<Shader> load_shader( rconst_str name, rconst_str vtx_path, rconst_str frg_path, rconst_str tsc_path = "", rconst_str tse_path = "", rconst_str geo_path = "", bool append_resources_path = true );
+		static SharedPtr<Shader> load_shader( rconst_str name, const ShaderAssetInfo& asset_info );
 		static SharedPtr<Shader> get_shader( rconst_str name );
 
 		static SharedPtr<Model> add_model( rconst_str name, SharedPtr<Model> model );

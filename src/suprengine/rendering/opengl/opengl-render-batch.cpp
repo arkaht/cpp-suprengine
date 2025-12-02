@@ -4,6 +4,8 @@
 #include <suprengine/core/game.h>
 #include <suprengine/core/engine.h>
 
+#include <suprengine/data/shader-asset-info.h>
+
 #include <suprengine/rendering/texture.h>
 #include <suprengine/tools/vis-debug.h>
 
@@ -704,28 +706,38 @@ void OpenGLRenderBatch::_load_assets()
 	//	Load shaders
 	_framebuffer_shader = Assets::load_shader(
 		"suprengine::framebuffer",
-		"assets/suprengine/shaders/framebuffer.vert",
-		"assets/suprengine/shaders/framebuffer.frag"
+		ShaderAssetInfo {
+			.vertex_path = "assets/suprengine/shaders/framebuffer.vert",
+			.fragment_path = "assets/suprengine/shaders/framebuffer.frag",
+		}
 	);
 	_color_shader = Assets::load_shader(
 		"suprengine::color",
-		"assets/suprengine/shaders/transform.vert",
-		"assets/suprengine/shaders/color.frag"
+		ShaderAssetInfo {
+			.vertex_path = "assets/suprengine/shaders/transform.vert",
+			.fragment_path = "assets/suprengine/shaders/color.frag"
+		}
 	);
 	_texture_shader = Assets::load_shader(
 		"suprengine::texture",
-		"assets/suprengine/shaders/texture.vert",
-		"assets/suprengine/shaders/texture.frag"
+		ShaderAssetInfo {
+			.vertex_path = "assets/suprengine/shaders/texture.vert",
+			.fragment_path = "assets/suprengine/shaders/texture.frag"
+		}
 	);
 	Assets::load_shader(
 		SHADER_LIT_MESH,
-		"assets/suprengine/shaders/lit-mesh.vert",
-		"assets/suprengine/shaders/lit-mesh.frag"
+		ShaderAssetInfo {
+			.vertex_path = "assets/suprengine/shaders/lit-mesh.vert",
+			.fragment_path = "assets/suprengine/shaders/lit-mesh.frag"
+		}
 	);
 	Assets::load_shader(
 		"suprengine::line",
-		"assets/suprengine/shaders/line.vert",
-		"assets/suprengine/shaders/color.frag"
+		ShaderAssetInfo {
+			.vertex_path = "assets/suprengine/shaders/line.vert",
+			.fragment_path = "assets/suprengine/shaders/color.frag"
+		}
 	);
 
 	//	Load textures

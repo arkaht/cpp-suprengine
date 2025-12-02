@@ -4,6 +4,7 @@
 
 #include <assimp/postprocess.h>
 
+#include <suprengine/data/shader-asset-info.h>
 #include <suprengine/rendering/model.h>
 #include <suprengine/rendering/vertex-array.h>
 #include <suprengine/utils/logger.h>
@@ -73,13 +74,7 @@ SharedPtr<Font> Assets::get_font( rconst_str name, int size )
 	return (*itr).second;
 }
 
-static SharedPtr<Shader> load_shader_from_file(
-	rconst_str vtx_filename, 
-	rconst_str frg_filename, 
-	rconst_str tsc_filename, 
-	rconst_str tse_filename, 
-	rconst_str geo_filename 
-)
+static SharedPtr<Shader> load_shader_from_file( const ShaderAssetInfo& asset_info )
 {
 	//	TODO: Refactor this function
 	// 1. Retrieve the vertex/fragment source code from filePath
@@ -91,13 +86,13 @@ static SharedPtr<Shader> load_shader_from_file(
 	try
 	{
 		// Open files
-		std::ifstream vertexShaderFile( vtx_filename );
+		std::ifstream vertexShaderFile( asset_info.vertex_path );
 		if ( !vertexShaderFile.is_open() )
 		{
 			throw std::exception( "vertex file not found!" );
 		}
 
-		std::ifstream fragmentShaderFile( frg_filename );
+		std::ifstream fragmentShaderFile( asset_info.fragment_path );
 		if ( !fragmentShaderFile.is_open() )
 		{
 			throw std::exception( "fragment file not found!" );
@@ -114,36 +109,39 @@ static SharedPtr<Shader> load_shader_from_file(
 		vertex_code = vShaderStream.str();
 		fragment_code = fShaderStream.str();
 		// If tess control shader path is present, also load a tess control shader
-		if ( tsc_filename != "" )
+		if ( !asset_info.tesselation_control_path.empty() )
 		{
-			std::ifstream tessControlShaderFile( tsc_filename );
+			std::ifstream tessControlShaderFile( asset_info.tesselation_control_path );
 			std::stringstream tcShaderStream;
 			tcShaderStream << tessControlShaderFile.rdbuf();
 			tessControlShaderFile.close();
 			tess_control_code = tcShaderStream.str();
 		}
 		// If tess evaluation shader path is present, also load a tess evaluation shader
-		if ( tse_filename != "" )
+		if ( !asset_info.tesselation_evaluation_path.empty() )
 		{
-			std::ifstream tessEvalShaderFile( tse_filename );
+			std::ifstream tessEvalShaderFile( asset_info.tesselation_evaluation_path );
 			std::stringstream teShaderStream;
 			teShaderStream << tessEvalShaderFile.rdbuf();
 			tessEvalShaderFile.close();
 			tess_eval_code = teShaderStream.str();
 		}
 		// If geometry shader path is present, also load a geometry shader
-		if ( geo_filename != "" )
+		if ( !asset_info.geometry_path.empty() )
 		{
-			std::ifstream geometryShaderFile( geo_filename );
+			std::ifstream geometryShaderFile( asset_info.geometry_path );
 			std::stringstream gShaderStream;
 			gShaderStream << geometryShaderFile.rdbuf();
 			geometryShaderFile.close();
 			geometry_code = gShaderStream.str();
 		}
 	}
-	catch ( std::exception e )
+	catch ( const std::exception& e )
 	{
-		Logger::error( "SHADER: failed to read shader files (vertex: '" + vtx_filename + "'; fragment: '" + frg_filename + "'): '" + e.what() + "'\n" );
+		Logger::error(
+			"SHADER: failed to read shader files (vertex: '%s', fragment: '%s'): '%s'\n",
+			*asset_info.vertex_path, *asset_info.fragment_path, e.what()
+		);
 		return nullptr;
 	}
 
@@ -152,31 +150,30 @@ static SharedPtr<Shader> load_shader_from_file(
 		new Shader(
 			*vertex_code,
 			*fragment_code,
-			!tsc_filename.empty() ? *tess_control_code : nullptr,
-			!tse_filename.empty() ? *tess_eval_code : nullptr,
-			!geo_filename.empty() ? *geometry_code : nullptr
+			!asset_info.tesselation_control_path.empty() ? *tess_control_code : nullptr,
+			!asset_info.tesselation_evaluation_path.empty() ? *tess_eval_code : nullptr,
+			!asset_info.geometry_path.empty() ? *geometry_code : nullptr
 		)
 	);
 
 	return shader;
 }
 
-SharedPtr<Shader> Assets::load_shader(
-	rconst_str name,
-	rconst_str vtx_filename,
-	rconst_str frg_filename,
-	rconst_str tsc_filename,
-	rconst_str tse_filename,
-	rconst_str geo_filename,
-	bool append_resources_path
-)
+SharedPtr<Shader> Assets::load_shader( rconst_str name, const ShaderAssetInfo& asset_info )
 {
-	Logger::info(
-		"Loading shader '%s' with vertex '%s' and fragment '%s'",
-		*name, *vtx_filename, *frg_filename
-	);
+	if ( !asset_info.vertex_path.empty() && !asset_info.fragment_path.empty() )
+	{
+		Logger::info(
+			"Loading shader '%s' with vertex '%s' and fragment '%s'",
+			*name, *asset_info.vertex_path, *asset_info.fragment_path
+		);
+	}
+	else
+	{
+		ASSERT_MSG( false, "Unknown type of shader" );
+	}
 
-	_shaders[name] = load_shader_from_file( vtx_filename, frg_filename, tsc_filename, tse_filename, geo_filename );
+	_shaders[name] = load_shader_from_file( asset_info );
 	return get_shader( name );
 }
 
