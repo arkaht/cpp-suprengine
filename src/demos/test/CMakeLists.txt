@@ -17,4 +17,4 @@ target_link_libraries(TEST0 PRIVATE SUPRENGINE)
 
 #  Copy DLLs and assets
 suprengine_copy_dlls(TEST0)
-suprengine_copy_assets(TEST0 "test")
+suprengine_symlink_assets(TEST0 "test")
