@@ -12,10 +12,10 @@ out vec4 out_color;
 
 void main() 
 {
-	vec2 suv = vec2( 
+	vec2 transformed_uv = vec2(
 		u_source_rect.x + uv.x * u_source_rect.z,
 		u_source_rect.y + uv.y * u_source_rect.w
 	);
 
-	out_color = texture( u_texture, suv * u_tiling ) * u_modulate;
+	out_color = texture( u_texture, transformed_uv * u_tiling ) * u_modulate;
 }
