@@ -4,8 +4,9 @@
 #include <suprengine/core/game.h>
 #include <suprengine/core/engine.h>
 
-#include <suprengine/data/shader-asset-info.h>
+#include <suprengine/data/shader/shader-asset-info.h>
 
+#include <suprengine/rendering/shader-program.h>
 #include <suprengine/rendering/texture.h>
 #include <suprengine/tools/vis-debug.h>
 
@@ -232,7 +233,7 @@ void OpenGLRenderBatch::render( const SharedPtr<Camera> camera )
 	_camera = camera;
 	_view_projection_matrix = camera->get_view_matrix() * camera->get_projection_matrix();
 
-	// Store render ID for optimizing shader preparations
+	// Store render ID for optimizing shader program preparations
 	Engine& engine = Engine::instance();
 	const Updater* updater = engine.get_updater();
 	_render_id = updater->get_frame_tick() + _render_frame++;
@@ -330,7 +331,7 @@ void OpenGLRenderBatch::end_render()
 	//	Render framebuffer
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 	_rect_vertex_array->activate();
-	_framebuffer_shader->activate();
+	_framebuffer_shader_program->activate();
 	glBindTexture( GL_TEXTURE_2D, _pp_texture_id );
 	_draw_elements( 6 );
 
@@ -353,19 +354,19 @@ void OpenGLRenderBatch::on_window_resized( const Vec2& size )
 
 void OpenGLRenderBatch::draw_rect( DrawType draw_type, const Rect& rect, const Color& color )
 {
-	_color_shader->activate();
+	_color_shader_program->activate();
 
-	//	Prepare shader only once per frame
-	if ( _color_shader->prepare( _render_id ) )
+	//	Prepare shader_program only once per frame
+	if ( _color_shader_program->prepare( _render_id ) )
 	{
-		_color_shader->set_mtx4( "u_view_projection", _camera->get_viewport_matrix() );
+		_color_shader_program->set_mtx4( "u_view_projection", _camera->get_viewport_matrix() );
 	}
 
 	//	Setup matrices
 	const Mtx4 scale_matrix = Mtx4::create_scale( rect.w, rect.h, 1.0f );
 	const Mtx4 location_matrix = _compute_location_matrix( rect.x, rect.y, 0.0f );
-	_color_shader->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
-	_color_shader->set_color( "u_modulate", color );
+	_color_shader_program->set_mtx4( "u_world_transform", scale_matrix * location_matrix );
+	_color_shader_program->set_color( "u_modulate", color );
 
 	_quad_vertex_array->activate();
 	_draw_elements( 6 );
@@ -399,21 +400,21 @@ void OpenGLRenderBatch::draw_texture(
 	const Color& color
 )
 {
-	_texture_shader->activate();
+	_texture_shader_program->activate();
 
-	//	Prepare shader only once per frame
-	if ( _texture_shader->prepare( _render_id ) )
+	//	Prepare shader_program only once per frame
+	if ( _texture_shader_program->prepare( _render_id ) )
 	{
-		_texture_shader->set_mtx4( "u_view_projection", _camera->get_viewport_matrix() );
+		_texture_shader_program->set_mtx4( "u_view_projection", _camera->get_viewport_matrix() );
 	}
 
-	_texture_shader->set_mtx4( "u_world_transform", matrix );
-	_texture_shader->set_color( "u_modulate", color );
-	_texture_shader->set_vec2( "u_tiling", Vec2::one );
+	_texture_shader_program->set_mtx4( "u_world_transform", matrix );
+	_texture_shader_program->set_color( "u_modulate", color );
+	_texture_shader_program->set_vec2( "u_tiling", Vec2::one );
 
 	//	Source rect
 	const Vec2 size = texture->get_size();
-	_texture_shader->set_vec4(
+	_texture_shader_program->set_vec4(
 		"u_source_rect",
 		src_rect.x / size.x,
 		src_rect.y / size.y,
@@ -422,7 +423,7 @@ void OpenGLRenderBatch::draw_texture(
 	);
 
 	//	Origin
-	_texture_shader->set_vec2( "u_origin", origin );
+	_texture_shader_program->set_vec2( "u_origin", origin );
 
 	//	Draw
 	_quad_vertex_array->activate();
@@ -433,33 +434,33 @@ void OpenGLRenderBatch::draw_texture(
 void OpenGLRenderBatch::draw_mesh(
 	const Mtx4& matrix,
 	const Mesh* mesh,
-	SharedPtr<Shader> shader,
+	SharedPtr<ShaderProgram> shader_program,
 	SharedPtr<Texture> texture,
 	const Color& color
 )
 {
-	ASSERT_MSG( mesh != nullptr, "Shader is invalid" );
-	ASSERT_MSG( shader != nullptr, "Shader is invalid" );
+	ASSERT( mesh != nullptr );
+	ASSERT( shader_program != nullptr );
 
 	//	Update uniforms
-	shader->activate();
+	shader_program->activate();
 
-	//	Prepare shader only once per frame
-	if ( shader->prepare( _render_id ) )
+	//	Prepare shader_program only once per frame
+	if ( shader_program->prepare( _render_id ) )
 	{
-		shader->set_mtx4( "u_view_projection", _view_projection_matrix );
+		shader_program->set_mtx4( "u_view_projection", _view_projection_matrix );
 
 		//	Ambient lighting
-		shader->set_vec3( "u_ambient_direction", _ambient_light.direction );
-		shader->set_color( "u_ambient_color", _ambient_light.color );
-		shader->set_float( "u_ambient_scale", _ambient_light.scale );
-		shader->set_float( "u_ambient_min_brightness", _ambient_light.min_brightness );
+		shader_program->set_vec3( "u_ambient_direction", _ambient_light.direction );
+		shader_program->set_color( "u_ambient_color", _ambient_light.color );
+		shader_program->set_float( "u_ambient_scale", _ambient_light.scale );
+		shader_program->set_float( "u_ambient_min_brightness", _ambient_light.min_brightness );
 	}
 
 	//	Update mesh-specific uniforms
-	shader->set_mtx4( "u_world_transform", matrix );
-	shader->set_color( "u_modulate", color );
-	shader->set_vec2( "u_tiling", mesh->tiling );
+	shader_program->set_mtx4( "u_world_transform", matrix );
+	shader_program->set_color( "u_modulate", color );
+	shader_program->set_vec2( "u_tiling", mesh->tiling );
 
 	VertexArray* vertex_array = mesh->get_vertex_array();
 	vertex_array->activate();
@@ -486,15 +487,15 @@ void OpenGLRenderBatch::draw_mesh(
 
 void OpenGLRenderBatch::draw_mesh( const Mtx4& matrix, Mesh* mesh, int texture_id, const Color& color )
 {
-	SharedPtr<Shader> shader = mesh->get_shader();
-	SharedPtr<Texture> texture = mesh->get_texture( texture_id );
-	draw_mesh( matrix, mesh, shader, texture, color );
+	const SharedPtr<ShaderProgram> shader_program = Assets::get_shader_program( mesh->shader_program_name );
+	const SharedPtr<Texture> texture = mesh->get_texture( texture_id );
+	draw_mesh( matrix, mesh, shader_program, texture, color );
 }
 
 void OpenGLRenderBatch::draw_model(
 	const Mtx4& matrix,
 	const SharedPtr<Model>& model,
-	rconst_str shader_name,
+	rconst_str shader_program_name,
 	const Color& color
 )
 {
@@ -504,21 +505,21 @@ void OpenGLRenderBatch::draw_model(
 	{
 		Mesh* mesh = model->get_mesh( i );
 
-		//	Get shader to use
-		SharedPtr<Shader> shader = nullptr;
-		if ( !shader_name.empty() )
+		// Get shader program to use
+		SharedPtr<ShaderProgram> shader_program = nullptr;
+		if ( !shader_program_name.empty() )
 		{
-			shader = Assets::get_shader( shader_name );
+			shader_program = Assets::get_shader_program( shader_program_name );
 		}
 		else
 		{
-			shader = mesh->shader_name.empty()
-				? Assets::get_shader( model->shader_name )
-				: mesh->get_shader();
+			shader_program = mesh->shader_program_name.empty()
+				? Assets::get_shader_program( model->shader_program_name )
+				: Assets::get_shader_program( mesh->shader_program_name );
 		}
 
 		//	Draw mesh
-		draw_mesh( matrix, mesh, shader, mesh->get_texture( 0 ), color );
+		draw_mesh( matrix, mesh, shader_program, mesh->get_texture( 0 ), color );
 	}
 }
 
@@ -558,20 +559,20 @@ void OpenGLRenderBatch::draw_line( const Vec3& start, const Vec3& end, const Col
 		nullptr, 0
 	);
 
-	//	Activate line shader
-	SharedPtr<Shader> shader = Assets::get_shader( "suprengine::line" );
-	shader->activate();
+	//	Activate line shader program
+	SharedPtr<ShaderProgram> shader_program = Assets::get_shader_program( "suprengine::line" );
+	shader_program->activate();
 
-	//	Prepare shader only once per frame
-	if ( shader->prepare( _render_id ) )
+	//	Prepare shader program only once per frame
+	if ( shader_program->prepare( _render_id ) )
 	{
-		shader->set_mtx4( "u_view_projection", _view_projection_matrix );
+		shader_program->set_mtx4( "u_view_projection", _view_projection_matrix );
 	}
 
 	//	Send instance parameters
-	shader->set_color( "u_modulate", color );
-	shader->set_vec3( "u_origin", start );
-	shader->set_vec3( "u_offset", end - start );
+	shader_program->set_color( "u_modulate", color );
+	shader_program->set_vec3( "u_origin", start );
+	shader_program->set_vec3( "u_offset", end - start );
 
 	//	Draw line
 	line_vertex_array.activate();
@@ -704,39 +705,49 @@ void OpenGLRenderBatch::_load_assets()
 	);
 
 	//	Load shaders
-	_framebuffer_shader = Assets::load_shader(
-		"suprengine::framebuffer",
-		ShaderAssetInfo {
-			.vertex_path = "assets/suprengine/shaders/framebuffer.vert",
-			.fragment_path = "assets/suprengine/shaders/framebuffer.frag",
+	_framebuffer_shader_program = Assets::load_shader_program(
+		ShaderProgramAssetInfo {
+			.name = "suprengine::framebuffer",
+			.shaders = {
+				{ "assets/suprengine/shaders/framebuffer.vert", ShaderType::Vertex },
+				{ "assets/suprengine/shaders/framebuffer.frag", ShaderType::Fragment },
+			},
 		}
 	);
-	_color_shader = Assets::load_shader(
-		"suprengine::color",
-		ShaderAssetInfo {
-			.vertex_path = "assets/suprengine/shaders/transform.vert",
-			.fragment_path = "assets/suprengine/shaders/color.frag"
+	_color_shader_program = Assets::load_shader_program(
+		ShaderProgramAssetInfo {
+			.name = "suprengine::color",
+			.shaders = {
+				{ "assets/suprengine/shaders/transform.vert", ShaderType::Vertex },
+				{ "assets/suprengine/shaders/color.frag", ShaderType::Fragment },
+			},
 		}
 	);
-	_texture_shader = Assets::load_shader(
-		"suprengine::texture",
-		ShaderAssetInfo {
-			.vertex_path = "assets/suprengine/shaders/texture.vert",
-			.fragment_path = "assets/suprengine/shaders/texture.frag"
+	_texture_shader_program = Assets::load_shader_program(
+		ShaderProgramAssetInfo {
+			.name = "suprengine::texture",
+			.shaders = {
+				{ "assets/suprengine/shaders/texture.vert", ShaderType::Vertex },
+				{ "assets/suprengine/shaders/texture.frag", ShaderType::Fragment },
+			},
 		}
 	);
-	Assets::load_shader(
-		SHADER_LIT_MESH,
-		ShaderAssetInfo {
-			.vertex_path = "assets/suprengine/shaders/lit-mesh.vert",
-			.fragment_path = "assets/suprengine/shaders/lit-mesh.frag"
+	Assets::load_shader_program(
+		ShaderProgramAssetInfo {
+			.name = SHADER_LIT_MESH,
+			.shaders = {
+				{ "assets/suprengine/shaders/lit-mesh.vert", ShaderType::Vertex },
+				{ "assets/suprengine/shaders/lit-mesh.frag", ShaderType::Fragment },
+			},
 		}
 	);
-	Assets::load_shader(
-		"suprengine::line",
-		ShaderAssetInfo {
-			.vertex_path = "assets/suprengine/shaders/line.vert",
-			.fragment_path = "assets/suprengine/shaders/color.frag"
+	Assets::load_shader_program(
+		ShaderProgramAssetInfo {
+			.name = "suprengine::line",
+			.shaders = {
+				{ "assets/suprengine/shaders/line.vert", ShaderType::Vertex },
+				{ "assets/suprengine/shaders/color.frag", ShaderType::Fragment },
+			}
 		}
 	);
 

@@ -9,14 +9,17 @@
 
 namespace suprengine
 {
+	class ShaderProgram;
 	class VertexArray;
-	class Shader;
 	class Texture;
-	
+}
+
+namespace suprengine
+{
 	class Mesh
 	{
 	public:
-		Mesh( VertexArray* vertex_array, rconst_str shader_name = "" );
+		Mesh( VertexArray* vertex_array, rconst_str shader_program_name = "" );
 		Mesh( const Mesh& mesh ) = delete;
 		~Mesh();
 
@@ -25,11 +28,11 @@ namespace suprengine
 		int add_texture( SharedPtr<Texture> texture );
 		SharedPtr<Texture> get_texture( int id );
 
-		SharedPtr<Shader> get_shader() const;
+		SharedPtr<ShaderProgram> get_shader_program() const;
 		VertexArray* get_vertex_array() const;
 
 	public:
-		std::string shader_name {};
+		std::string shader_program_name {};
 		Vec2 tiling = Vec2::one;
 		bool should_cull_faces = true;
 

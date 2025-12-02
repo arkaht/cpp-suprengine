@@ -64,7 +64,7 @@ namespace suprengine
 		void draw_mesh(
 			const Mtx4& matrix,
 			const Mesh* mesh,
-			SharedPtr<Shader> shader,
+			SharedPtr<ShaderProgram> shader,
 			SharedPtr<Texture> texture,
 			const Color& color = Color::white
 		) override;
@@ -77,7 +77,7 @@ namespace suprengine
 		void draw_model( 
 			const Mtx4& matrix, 
 			const SharedPtr<Model>& model,
-			rconst_str shader_name,
+			rconst_str shader_program_name,
 			const Color& color = Color::white
 		) override;
 		void draw_debug_model( 
@@ -132,9 +132,9 @@ namespace suprengine
 		VertexArray* _rect_vertex_array = nullptr;
 		VertexArray* _quad_vertex_array = nullptr;
 
-		SharedPtr<Shader> _color_shader = nullptr;
-		SharedPtr<Shader> _texture_shader = nullptr;
-		SharedPtr<Shader> _framebuffer_shader = nullptr;
+		SharedPtr<ShaderProgram> _color_shader_program = nullptr;
+		SharedPtr<ShaderProgram> _texture_shader_program = nullptr;
+		SharedPtr<ShaderProgram> _framebuffer_shader_program = nullptr;
 
 		Mtx4 _view_projection_matrix;
 

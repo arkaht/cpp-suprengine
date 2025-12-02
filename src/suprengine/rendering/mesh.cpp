@@ -7,8 +7,8 @@
 
 using namespace suprengine;
 
-Mesh::Mesh( VertexArray* vertex_array, rconst_str shader_name )
-	: _vertex_array( vertex_array ), shader_name( shader_name )
+Mesh::Mesh( VertexArray* vertex_array, rconst_str shader_program_name )
+	: _vertex_array( vertex_array ), shader_program_name( shader_program_name )
 {}
 
 Mesh::~Mesh()
@@ -31,9 +31,9 @@ SharedPtr<Texture> Mesh::get_texture( int id )
 	return _textures[id];
 }
 
-SharedPtr<Shader> Mesh::get_shader() const
+SharedPtr<ShaderProgram> Mesh::get_shader_program() const
 {
-	return Assets::get_shader( shader_name );
+	return Assets::get_shader_program( shader_program_name );
 }
 
 VertexArray* Mesh::get_vertex_array() const

@@ -17,13 +17,13 @@
 
 namespace suprengine
 {
-	struct ShaderAssetInfo;
+	class VertexArray;
+	class ShaderProgram;
+	struct ShaderProgramAssetInfo;
 }
 
 namespace suprengine
 {
-	class VertexArray;
-
 	class Assets
 	{
 	public:
@@ -40,8 +40,8 @@ namespace suprengine
 		static SharedPtr<Font> load_font( rconst_str name, rconst_str path, int size = 12 );
 		static SharedPtr<Font> get_font( rconst_str path, int size );
 
-		static SharedPtr<Shader> load_shader( rconst_str name, const ShaderAssetInfo& asset_info );
-		static SharedPtr<Shader> get_shader( rconst_str name );
+		static SharedPtr<ShaderProgram> load_shader_program( const ShaderProgramAssetInfo& asset_info );
+		static SharedPtr<ShaderProgram> get_shader_program( rconst_str name );
 
 		static SharedPtr<Model> add_model( rconst_str name, SharedPtr<Model> model );
 		static SharedPtr<Model> load_model( rconst_str name, rconst_str path, rconst_str shader_name = "" );
@@ -83,9 +83,9 @@ namespace suprengine
 				{
 					return _fonts;
 				}
-				else if constexpr ( std::is_same_v<AssetType, Shader> )
+				else if constexpr ( std::is_same_v<AssetType, ShaderProgram> )
 				{
-					return _shaders;
+					return _shader_programs;
 				}
 				else if constexpr ( std::is_same_v<AssetType, Model> )
 				{
@@ -119,7 +119,7 @@ namespace suprengine
 
 		static std::map<std::string, SharedPtr<Texture>> _textures;
 		static std::map<std::string, SharedPtr<Font>> _fonts;
-		static std::map<std::string, SharedPtr<Shader>> _shaders;
+		static std::map<std::string, SharedPtr<ShaderProgram>> _shader_programs;
 		static std::map<std::string, SharedPtr<Model>> _models;
 		static std::map<std::string, SharedPtr<Curve>> _curves;
 
@@ -129,8 +129,6 @@ namespace suprengine
 		static std::string _resources_path;
 		static Assimp::Importer _importer;
 		static curve_x::CurveSerializer _curve_serializer;
-
-		static bool _read_file( rconst_str path, std::string* data );
 
 		static VertexArray* load_mesh( const aiMesh* mesh );
 		static std::vector<Mesh*> load_node( const aiNode* node, const aiScene* scene );
