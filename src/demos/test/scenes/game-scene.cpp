@@ -112,7 +112,7 @@ void GameScene::init()
 	camera_owner->transform->location = Vec3 { 5.0f, 3.0f, 7.0f };
 	//camera_owner->transform->look_at( mesh->transform->location );
 	auto camera = camera_owner->create_component<Camera>( CameraProjectionSettings {} );
-	camera->activate();
+	camera->set_active();
 
 	RenderBatch* render_batch = _game->get_engine()->get_render_batch();
 	render_batch->set_ambient_direction( -Vec3::up );
