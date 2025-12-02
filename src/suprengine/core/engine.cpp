@@ -472,10 +472,11 @@ void Engine::render()
 #endif
 
 	//  Render scene
-	for ( const SharedPtr<Camera> camera : _cameras )
+	for ( const SharedPtr<Camera>& camera : _cameras )
 	{
 		if ( !camera->is_active() ) continue;
-		_render_batch->render( camera );
+
+		_scene->render( _render_batch.get(), camera );
 	}
 
 	//  End rendering

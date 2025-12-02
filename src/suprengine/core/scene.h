@@ -2,6 +2,13 @@
 
 #include <suprengine/tools/memory-profiler.h>
 
+#include "suprengine/components/camera.h"
+
+namespace suprengine
+{
+	class RenderBatch;
+}
+
 namespace suprengine
 {
 	class IGame;
@@ -15,6 +22,7 @@ namespace suprengine
 
 		virtual void init() {}
 		virtual void update( float dt ) {}
+		virtual void render( RenderBatch* render_batch, const SharedPtr<Camera>& camera );
 
 		IGame* get_game() const { return _game; }
 
