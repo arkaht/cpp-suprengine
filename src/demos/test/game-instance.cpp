@@ -4,6 +4,8 @@
 
 #include <suprengine/core/assets.h>
 
+#include <suprengine/modules/debug-ui/debug-ui.h>
+
 using namespace test;
 
 void GameInstance::load_assets()
@@ -15,6 +17,8 @@ void GameInstance::load_assets()
 
 void GameInstance::init()
 {
+	DebugUI::listen();
+
     Engine& engine = Engine::instance();
 	InputManager* inputs = engine.get_inputs();
 
