@@ -38,6 +38,8 @@ namespace suprengine
 		void update_projection();
 
 		void set_fov( float fov );
+		void set_znear( float znear );
+		void set_zfar( float zfar );
 
 		const CameraProjectionSettings& get_projection_settings() const;
 

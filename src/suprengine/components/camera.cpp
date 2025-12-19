@@ -65,7 +65,23 @@ void Camera::set_fov( const float fov )
 {
 	if ( fov == _projection_settings.fov ) return;
 
-	_projection_settings.fov = fov;
+	_projection_settings.fov	= fov;
+	_is_projection_matrix_dirty = true;
+}
+
+void Camera::set_znear( const float znear )
+{
+	if ( znear == _projection_settings.znear ) return;
+
+	_projection_settings.znear	= znear;
+	_is_projection_matrix_dirty = true;
+}
+
+void Camera::set_zfar( const float zfar )
+{
+	if ( zfar == _projection_settings.zfar ) return;
+
+	_projection_settings.zfar	= zfar;
 	_is_projection_matrix_dirty = true;
 }
 
